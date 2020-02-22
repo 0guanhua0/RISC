@@ -1,0 +1,61 @@
+plugins {
+    // Apply the java plugin to add support for Java
+    id 'java'
+
+    // Apply the application plugin to add support for building a CLI application.
+    id 'application'
+
+    id 'com.bmuschko.clover' version '2.2.3'
+    id 'org.openjfx.javafxplugin' version '0.0.8'
+}
+
+repositories {
+    // Use jcenter for resolving dependencies.
+    // You can declare any Maven/Ivy/file repository here.
+    jcenter()
+}
+
+dependencies {
+    // This dependency is used by the application.
+    implementation 'com.google.guava:guava:28.1-jre'
+
+    // Use JUnit Jupiter API for testing.
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.2'
+
+    // Use JUnit Jupiter Engine for testing.
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.5.2'
+
+    clover 'org.openclover:clover:4.3.1'
+}
+
+test {
+    testLogging {
+        showStandardStreams = true
+        exceptionFormat = 'full'
+    }
+}
+
+clover {
+    compiler {
+        additionalArgs = "-g:lines,source,vars"
+    }
+}
+
+javafx {
+    version = "13"
+    modules = [ 'javafx.controls' ]
+}
+
+application {
+    // Define the main class for the application.
+    mainClassName = 'edu.duke.ece651.App'
+}
+
+run {
+    standardInput = System.in
+}
+
+test {
+    // Use junit platform for unit tests
+    useJUnitPlatform()
+}
