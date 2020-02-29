@@ -39,11 +39,10 @@ clover {
     compiler {
         additionalArgs = "-g:lines,source,vars"
     }
-    report {
+    report{
+        xml= true
         html = true
-        xml = true
     }
-
 }
 
 javafx {
@@ -63,4 +62,24 @@ run {
 test {
     // Use junit platform for unit tests
     useJUnitPlatform()
+}
+
+tasks.withType(JavaCompile) {
+ options.debug = true
+}
+task resolveDependencies {
+   doLast {
+       project.rootProject.allprojects.each { subProject ->
+           subProject.buildscript.configurations.each { configuration->
+              if(configuration.canBeResolved) {
+                 configuration.resolve()
+              }
+           }
+           subProject.configurations.each { configuration ->
+              if(configuration.canBeResolved) {
+                 configuration.resolve()
+              }
+           }
+       }
+   }
 }

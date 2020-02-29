@@ -6,3 +6,12 @@ build
 
 # Ignore tmp files of emacs
 *~
+
+# Ignore ide files
+.idea
+
+# Ignore output files
+out
+
+#
+*/*/*.iml
