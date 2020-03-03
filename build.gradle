@@ -26,6 +26,9 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.5.2'
 
     clover 'org.openclover:clover:4.3.1'
+
+    // GSON library, use to parse json string
+    implementation 'com.google.code.gson:gson:2.8.6'
 }
 
 test {
@@ -52,7 +55,7 @@ javafx {
 
 application {
     // Define the main class for the application.
-    mainClassName = 'edu.duke.ece651.App'
+    mainClassName = 'edu.duke.ece651.Action'
 }
 
 run {
