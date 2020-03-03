@@ -76,6 +76,8 @@ public class Client {
         return in.readLine();
     }
 
+    // TODO: receive and parse to get a WorldMap object
+
     /**
      *  This function translate the host name to its corresponding IP address.
      * @param hostStr string of the host name

@@ -2,8 +2,6 @@ package edu.duke.ece651.client;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import edu.duke.ece651.Action;
 import edu.duke.ece651.AttackAction;
 import edu.duke.ece651.MoveAction;
@@ -46,12 +44,12 @@ public class ClientTest {
         String msgSTC = "Hi client";
         new Thread(() -> {
             try {
-                Socket socket = server.waitBeginner();
+                Socket socket = server.accept();
                 assertNotNull(socket);
-                assertEquals(msgCTS, Server.recvData(socket));
-                Server.sendData(socket, msgSTC);
+                assertEquals(msgCTS, Server.recvStr(socket));
+                Server.send(socket, msgSTC);
                 socket.shutdownOutput();
-                Server.sendData(socket, msgSTC);
+                Server.send(socket, msgSTC);
             }catch (IOException e){
                 System.out.println(e.toString());
             }
@@ -77,12 +75,12 @@ public class ClientTest {
 
         new Thread(() -> {
             try {
-                Socket socket = server.waitBeginner();
+                Socket socket = server.accept();
                 assertNotNull(socket);
 
                 assertEquals(actions, Server.recvActions(socket));
                 socket.shutdownOutput();
-                Server.sendData(socket, "hello");
+                Server.send(socket, "hello");
             }catch (IOException e){
                 System.out.println(e.toString());
             }

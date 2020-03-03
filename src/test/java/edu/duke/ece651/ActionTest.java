@@ -27,6 +27,7 @@ public class ActionTest {
         MoveAction action3 = new MoveAction("A", "C");
         assertEquals(action1, action2);
         assertNotEquals(action1, action3);
+        assertNotEquals(action1, new AttackAction("A", "B"));
     }
 
     @Test
@@ -51,5 +52,6 @@ public class ActionTest {
         AttackAction action3 = new AttackAction("A", "C");
         assertEquals(action1, action2);
         assertNotEquals(action1, action3);
+        assertNotEquals(action1, new MoveAction("A", "B"));
     }
 } 

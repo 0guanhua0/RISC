@@ -39,7 +39,7 @@ public class Server {
      * This function will keep waiting(blocking) a new connection(the beginner in this case).
      * @return the socket info of the beginner
      */
-    public Socket waitBeginner(){
+    public Socket accept(){
         List<Socket> players = waitAllPlayers(1);
         return players.get(0);
     }
@@ -62,6 +62,31 @@ public class Server {
     }
 
     /**
+     * This function will send the data to target socket.
+     * @param s target socket
+     * @param data data string to be sent
+     * @throws IOException probably because the stream is already closed
+     */
+    public static void send(Socket s, String data) throws IOException {
+        PrintWriter printWriter = new PrintWriter(s.getOutputStream());
+        printWriter.println(data);
+        printWriter.flush();
+    }
+
+    // TODO: send map
+
+    /**
+     * This function will receive one line from the target socket.
+     * @param s target socket
+     * @return received data
+     * @throws IOException probably because the stream is already closed
+     */
+    public static String recvStr(Socket s) throws IOException {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(s.getInputStream()));
+        return bufferedReader.readLine();
+    }
+
+    /**
      * Receive all actions one user want to perform in one round.
      * @param s target socket
      * @return Map of actions; key is action type, e.g. move; value is list of actions
@@ -70,29 +95,6 @@ public class Server {
     public static HashMap<String, List<Action>> recvActions(Socket s) throws IOException {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(s.getInputStream()));
         return Deserializer.deserializeActions(bufferedReader.readLine());
-    }
-
-    /**
-     * This function will send the data to target socket.
-     * @param s target socket
-     * @param data data to be sent
-     * @throws IOException probably because the stream is already closed
-     */
-    public static void sendData(Socket s, String data) throws IOException {
-        PrintWriter printWriter = new PrintWriter(s.getOutputStream());
-        printWriter.println(data);
-        printWriter.flush();
-    }
-
-    /**
-     * This function will receive one line from the target socket.
-     * @param s target socket
-     * @return received data
-     * @throws IOException probably because the stream is already closed
-     */
-    public static String recvData(Socket s) throws IOException {
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(s.getInputStream()));
-        return bufferedReader.readLine();
     }
 
     /**
