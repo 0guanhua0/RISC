@@ -34,7 +34,7 @@ public class ServerTest {
     @Test
     public void testWaitBeginner() throws IOException {
         new Thread(() -> {
-            Socket socket = server.waitBeginner();
+            Socket socket = server.accept();
             assertNotNull(socket);
         }).start();
         new Client("localhost", PORT);
@@ -88,12 +88,12 @@ public class ServerTest {
 
         new Thread(() -> {
             try {
-                Socket socket = server.waitBeginner();
+                Socket socket = server.accept();
                 assertNotNull(socket);
-                assertEquals(msgCTS, Server.recvData(socket));
-                Server.sendData(socket, msgSTC);
+                assertEquals(msgCTS, Server.recvStr(socket));
+                Server.send(socket, msgSTC);
                 socket.shutdownOutput();
-                Server.sendData(socket, msgSTC);
+                Server.send(socket, msgSTC);
             }catch (IOException e){
                 System.out.println(e.toString());
             }

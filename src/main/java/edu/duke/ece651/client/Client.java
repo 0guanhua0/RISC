@@ -1,5 +1,8 @@
 package edu.duke.ece651.client;
 
+import com.google.gson.Gson;
+import edu.duke.ece651.Action;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -7,6 +10,8 @@ import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * This class wraps up the network socket, and can be used to communicate with remote server.
@@ -44,6 +49,15 @@ public class Client {
     }
 
     /**
+     * This function will send all actions user specify in one round.
+     * @param actions map of actions; key is the action type, e.g. move; value is list of actions
+     */
+    public void sendActions(HashMap<String, List<Action>> actions){
+        String str = new Gson().toJson(actions);
+        sendData(str);
+    }
+
+    /**
      * Send data to remote server.
      * @param data data to be sent
      */
@@ -61,6 +75,8 @@ public class Client {
     public String recvData() throws IOException {
         return in.readLine();
     }
+
+    // TODO: receive and parse to get a WorldMap object
 
     /**
      *  This function translate the host name to its corresponding IP address.
