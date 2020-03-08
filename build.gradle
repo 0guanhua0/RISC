@@ -7,9 +7,11 @@
 plugins {
     id 'com.bmuschko.clover' version '2.2.3'
 }
+
 subprojects{
     apply plugin: "java"
     apply plugin: "com.bmuschko.clover"
+
     repositories {
         jcenter()
     }
@@ -20,7 +22,7 @@ subprojects{
         testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.5.1'
         clover 'org.openclover:clover:4.3.1'
         testCompile "org.mockito:mockito-core:2.+"
-	// GSON library, use to parse json string
+	    // GSON library, use to parse json string
         implementation 'org.json:json:20180813'
         implementation 'com.google.code.gson:gson:2.8.6'
     }
@@ -28,6 +30,10 @@ subprojects{
     clover{
         compiler{
             additionalArgs = "-g:lines,source,vars"
+        }
+        report{
+            xml= true
+            html = true
         }
     }
     test{
@@ -68,4 +74,21 @@ tasks.register("run-client") {
     dependsOn project('client').getTasksByName('run',false)
     group = 'Run Client/Server'
     description = 'Run the Client'
+}
+
+task resolveDependencies {
+    doLast {
+        project.rootProject.allprojects.each { subProject ->
+            subProject.buildscript.configurations.each { configuration->
+                if(configuration.canBeResolved) {
+                    configuration.resolve()
+                }
+            }
+            subProject.configurations.each { configuration ->
+                if(configuration.canBeResolved) {
+                    configuration.resolve()
+                }
+            }
+        }
+    }
 }
