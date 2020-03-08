@@ -31,20 +31,33 @@ subprojects{
         compiler{
             additionalArgs = "-g:lines,source,vars"
         }
+
         report{
             xml= true
             html = true
         }
     }
+
     test{
         testLogging{
             showStandardStreams = true
             exceptionFormat = 'full'
         }
     }
+
     test {
         // Use junit platform for unit tests
         useJUnitPlatform()
+    }
+}
+
+clover {
+    compiler {
+        additionalArgs = "-g:lines,source,vars"
+    }
+    report{
+        xml= true
+        html = true
     }
 }
 
