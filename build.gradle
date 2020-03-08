@@ -33,7 +33,7 @@ subprojects{
         }
 
         report{
-            xml= true
+            xml = true
             html = true
         }
     }
