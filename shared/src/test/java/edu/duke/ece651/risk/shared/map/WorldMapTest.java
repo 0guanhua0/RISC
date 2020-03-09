@@ -87,5 +87,13 @@ class WorldMapTest {
         assert neigh.contains(territory5);
         assert neigh.contains(territory7);
 
+        assert worldMap.hasFreeTerritory("The Storm Kingdom");
+        territory1.setOwner(1);
+        assert !worldMap.hasFreeTerritory("The Storm Kingdom");
+
+        assert !worldMap.hasFreeTerritory("Kingdom");
+
     }
+
+
 }

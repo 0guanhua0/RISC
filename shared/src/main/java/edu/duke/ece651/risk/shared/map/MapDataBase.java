@@ -14,17 +14,18 @@ import java.util.Set;
 public class MapDataBase {
     Map<String, WorldMap> mapHub;
     public MapDataBase(){
+        mapHub = new HashMap<>();
         //the first map--A Clash of Kings
         //TODO read from input files rather than hardcoding here
         Map<String,Set<String>> atlas1 = new HashMap<>();
-        String name1 = "A Clash of Kings";
-        String t1 = "The Storm Kingdom";
-        String t2 = "Kingdom of the Reach";
-        String t3 = "Kingdom of the Rock";
-        String t4 = "Kingdom of Mountain and Vale";
-        String t5 = "Kingdom of the Isles and the Rivers";
-        String t6 = "Kingdom of the North";
-        String t7 = "Principality of Dorne";
+        String name1 = "a clash of kings";
+        String t1 = "the storm kingdom";
+        String t2 = "kingdom of the reach";
+        String t3 = "kingdom of the rock";
+        String t4 = "kingdom of mountain and vale";
+        String t5 = "kingdom of the isles and the rivers";
+        String t6 = "kingdom of the north";
+        String t7 = "principality of dorne";
         Set<String> s1 = new HashSet<>(){{
             add(t3);
             add(t2);
@@ -76,5 +77,16 @@ public class MapDataBase {
         }};
         WorldMap worldMap1 = new WorldMap(atlas1);
         mapHub.put(name1,worldMap1);
+    }
+    public boolean containsMap(String inputName){
+        String mapName = inputName.toLowerCase();
+        return mapHub.containsKey(mapName);
+    }
+    public WorldMap getMap(String inputName){
+        if (!containsMap(inputName)){
+            throw new IllegalArgumentException("Input map name doesn't exist!");
+        }
+        String mapName = inputName.toLowerCase();
+        return mapHub.get(mapName);
     }
 }
