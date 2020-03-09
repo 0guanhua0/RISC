@@ -15,8 +15,4 @@ public interface Action {
      * Perform the action.
      */
     void perform();
-
-    public static void main(String[] args) {
-        System.out.println("Hello World");
-    }
 }
