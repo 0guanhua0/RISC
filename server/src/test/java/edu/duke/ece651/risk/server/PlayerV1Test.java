@@ -12,9 +12,9 @@ class PlayerV1Test {
     @Test
     void constructor(){
         PlayerV1<String> p1 = new PlayerV1<String>("Red",1);
-        assert p1.territories.isEmpty();
-        assert p1.color.equals("Red");
-        assert 1==p1.id;
+        assert (p1.territories.isEmpty());
+        assert (p1.color.equals("Red"));
+        assert (1==p1.id);
     }
 
     @Test
@@ -27,10 +27,10 @@ class PlayerV1Test {
         }};
         p1.addTerritory(n1);
         p1.addTerritory(n2);
-        assert p1.territories.contains(n1);
-        assert p1.territories.contains(n2);
-        assert 1==n1.getOwner();
-        assert 1==n2.getOwner();
+        assert (p1.territories.contains(n1));
+        assert (p1.territories.contains(n2));
+        assert (1==n1.getOwner());
+        assert (1==n2.getOwner());
     }
 
     @Test
@@ -48,13 +48,13 @@ class PlayerV1Test {
         TerritoryV1 n3 = new TerritoryV1("n3");
         try{
             p1.loseTerritory(n3);
-            assert false;
+            assert (false);
         }catch (Exception e){
-            assert true;
+            assert (true);
         }
-        assert !p1.territories.contains(n1);
-        assert p1.territories.contains(n2);
-        assert n1.isFree();
-        assert !n2.isFree();
+        assert (!p1.territories.contains(n1));
+        assert (p1.territories.contains(n2));
+        assert (n1.isFree());
+        assert (!n2.isFree());
     }
 }

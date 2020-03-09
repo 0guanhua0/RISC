@@ -81,17 +81,17 @@ class WorldMapTest {
 
         territory1.status.getName().equals("The Storm Kingdom");
         Set<Territory> neigh = territory1.neigh;
-        assert 4==neigh.size();
-        assert neigh.contains(territory2);
-        assert neigh.contains(territory3);
-        assert neigh.contains(territory5);
-        assert neigh.contains(territory7);
+        assert (4==neigh.size());
+        assert (neigh.contains(territory2));
+        assert (neigh.contains(territory3));
+        assert (neigh.contains(territory5));
+        assert (neigh.contains(territory7));
 
-        assert worldMap.hasFreeTerritory("The Storm Kingdom");
+        assert (worldMap.hasFreeTerritory("The Storm Kingdom"));
         territory1.setOwner(1);
-        assert !worldMap.hasFreeTerritory("The Storm Kingdom");
+        assert (!worldMap.hasFreeTerritory("The Storm Kingdom"));
 
-        assert !worldMap.hasFreeTerritory("Kingdom");
+        assert (!worldMap.hasFreeTerritory("Kingdom"));
 
     }
 

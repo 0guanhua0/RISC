@@ -10,23 +10,23 @@ class TStatusTest {
     void testOwnerId() {
         TStatus test = new TStatus("test");
         test.setOwnerId(1);
-        assert 1==test.getOwnerId();
+        assert (1==test.getOwnerId());
     }
 
     @Test
     void testFree() {
         TStatus test = new TStatus("test");
-        assert true==test.isFree();
+        assert (true==test.isFree());
         test.setIsFree(false);
-        assert false==test.isFree;
+        assert (false==test.isFree);
         test.setIsFree(true);
-        assert true==test.isFree;
+        assert (true==test.isFree);
     }
 
     @Test
     void getName() {
         TStatus test = new TStatus("test");
         String name = test.getName();
-        assert "test" ==name;
+        assert ("test" ==name);
     }
 }
