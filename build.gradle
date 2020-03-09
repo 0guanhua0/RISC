@@ -51,6 +51,17 @@ subprojects{
     }
 }
 
+clover{
+        compiler{
+            additionalArgs = "-g:lines,source,vars"
+        }
+
+        report{
+            xml = true
+            html = true
+        }
+}
+
 // Project specific stuff
 project (':shared'){
 }

@@ -30,7 +30,7 @@ public class Client{
 
         edu.duke.ece651.risk.shared.Client c = new edu.duke.ece651.risk.shared.Client();
         c.init("127.0.0.1", port);
-        c.sendData(tmp);
+        c.send(tmp);
 
     }
 }
