@@ -38,25 +38,11 @@ public class Server {
      * @return the socket info of the beginner
      */
     public Socket accept(){
-        List<Socket> players = waitAllPlayers(1);
-        return players.get(0);
-    }
-
-    /**
-     * This function will keep accepting new connection, until the number of connections reachs cnt.
-     * @param cnt the desired number of connections(i.e. players)
-     * @return List of the socket info of all connections(players).
-     */
-    public List<Socket> waitAllPlayers(int cnt){
-        // TODO: maybe send some initial data to each new player
-        List<Socket> players = new ArrayList<>(cnt);
-        while (players.size() < cnt){
-            Socket s = acceptOrNull();
-            if (s != null){
-                players.add(s);
-            }
+        try {
+            return serverSocket.accept();
+        } catch (IOException e) {
+            return null;
         }
-        return players;
     }
 
     /**
@@ -93,17 +79,5 @@ public class Server {
     public static HashMap<String, List<Action>> recvActions(Socket s) throws IOException {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(s.getInputStream()));
         return Deserializer.deserializeActions(bufferedReader.readLine());
-    }
-
-    /**
-     * This is a helper method to accept a socket from the ServerSocket
-     * or return null if it timeout.
-     */
-    Socket acceptOrNull() {
-        try {
-            return serverSocket.accept();
-        } catch (IOException e) {
-            return null;
-        }
     }
 }

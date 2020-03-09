@@ -51,16 +51,16 @@ public class Client {
      * This function will send all actions user specify in one round.
      * @param actions map of actions; key is the action type, e.g. move; value is list of actions
      */
-    public void sendActions(HashMap<String, List<Action>> actions){
+    public void send(HashMap<String, List<Action>> actions){
         String str = new Gson().toJson(actions);
-        sendData(str);
+        send(str);
     }
 
     /**
      * Send data to remote server.
      * @param data data to be sent
      */
-    public void sendData(String data){
+    public void send(String data){
         out.println(data);
         // finish writing data, flush it(remote can use readLine to receive)
         out.flush();

@@ -33,7 +33,7 @@ subprojects{
         }
 
         report{
-            xml= true
+            xml = true
             html = true
         }
     }
@@ -48,16 +48,6 @@ subprojects{
     test {
         // Use junit platform for unit tests
         useJUnitPlatform()
-    }
-}
-
-clover {
-    compiler {
-        additionalArgs = "-g:lines,source,vars"
-    }
-    report{
-        xml= true
-        html = true
     }
 }
 
