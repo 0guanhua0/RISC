@@ -15,3 +15,7 @@ out
 
 #
 */*/*.iml
+
+.gitignore
+tmp
+gradle/wrapper/gradle-wrapper.properties
