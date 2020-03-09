@@ -4,8 +4,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class TerritoryV1Test {
 
 
@@ -74,5 +72,15 @@ class TerritoryV1Test {
         }
         test.lossNUnits(5);
         assert 0==test.getUnitsNum();
+    }
+
+    @Test
+    void setStatus(){
+        TerritoryV1 territoryV1 = new TerritoryV1("test");
+        assert territoryV1.isFree();
+        territoryV1.setOwner(3);
+        assert !territoryV1.isFree();
+        territoryV1.setIsFree(true);
+        assert territoryV1.isFree();
     }
 }

@@ -5,6 +5,7 @@ import java.util.Set;
 
 public abstract class Territory {
     Set<Territory> neigh;
+    //class to represent current status of this territory
     TStatus status;
 
     public int getOwner(){
@@ -21,6 +22,11 @@ public abstract class Territory {
 
     public boolean isFree(){
         return status.isFree();
+    }
+
+    public void setIsFree(boolean isFree){
+        status.setIsFree(isFree);
+        status.setOwnerId(0);
     }
 
     abstract int getUnitsNum();
