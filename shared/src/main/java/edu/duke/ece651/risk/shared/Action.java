@@ -15,8 +15,4 @@ public interface Action {
      * Perform the action.
      */
     void perform();
-<<<<<<< HEAD
-
-=======
->>>>>>> 8e74d9de8c2d1b8aa837937bd7e8c689b6a99f54
 }
