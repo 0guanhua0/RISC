@@ -1,5 +1,8 @@
-package edu.duke.ece651.risk.shared;
+package edu.duke.ece651.risk.shared.network;
 
+import edu.duke.ece651.risk.shared.action.Action;
+import edu.duke.ece651.risk.shared.action.AttackAction;
+import edu.duke.ece651.risk.shared.action.MoveAction;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 

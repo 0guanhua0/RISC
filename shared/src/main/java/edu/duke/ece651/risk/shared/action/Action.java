@@ -1,4 +1,4 @@
-package edu.duke.ece651.risk.shared;
+package edu.duke.ece651.risk.shared.action;
 
 /**
  * The interface for all actions.

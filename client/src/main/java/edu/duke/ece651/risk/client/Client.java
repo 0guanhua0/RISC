@@ -1,7 +1,7 @@
 package edu.duke.ece651.risk.client;
 
 
-import edu.duke.ece651.risk.shared.Server;
+import edu.duke.ece651.risk.shared.network.Server;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -28,7 +28,7 @@ public class Client{
 
         String tmp= new String("hello from client");
 
-        edu.duke.ece651.risk.shared.Client c = new edu.duke.ece651.risk.shared.Client();
+        edu.duke.ece651.risk.shared.network.Client c = new edu.duke.ece651.risk.shared.network.Client();
         c.init("127.0.0.1", port);
         c.send(tmp);
 

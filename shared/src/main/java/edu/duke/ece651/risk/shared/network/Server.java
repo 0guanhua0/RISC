@@ -1,4 +1,8 @@
-package edu.duke.ece651.risk.shared;
+package edu.duke.ece651.risk.shared.network;
+
+import com.google.gson.Gson;
+import edu.duke.ece651.risk.shared.action.Action;
+import edu.duke.ece651.risk.shared.map.WorldMap;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -6,7 +10,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -57,7 +60,15 @@ public class Server {
         printWriter.flush();
     }
 
-    // TODO: send map
+    /**
+     * This function will send the world map to target socket.
+     * @param s target socket
+     * @param map world map object to be sent
+     * @throws IOException probably because the stream is already closed
+     */
+    public static void send(Socket s, WorldMap map) throws IOException {
+        send(s, new Gson().toJson(map));
+    }
 
     /**
      * This function will receive one line from the target socket.

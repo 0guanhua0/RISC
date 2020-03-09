@@ -4,6 +4,7 @@
 package edu.duke.ece651.risk.server;
 
 public class App {
+
     public String getGreeting() {
         return "Hello world.";
     }

@@ -1,6 +1,8 @@
-package edu.duke.ece651.risk.shared;
+package edu.duke.ece651.risk.shared.network;
 
 import com.google.gson.Gson;
+import edu.duke.ece651.risk.shared.action.Action;
+import edu.duke.ece651.risk.shared.map.WorldMap;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -75,7 +77,14 @@ public class Client {
         return in.readLine();
     }
 
-    // TODO: receive and parse to get a WorldMap object
+    /**
+     * Receive a world map object from remote server.
+     * @return a world map object
+     * @throws IOException probably input stream closed
+     */
+    public WorldMap recvMap() throws IOException {
+        return new Gson().fromJson(in.readLine(), WorldMap.class);
+    }
 
     /**
      *  This function translate the host name to its corresponding IP address.

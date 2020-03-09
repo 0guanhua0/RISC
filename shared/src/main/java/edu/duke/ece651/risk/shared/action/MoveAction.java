@@ -1,4 +1,4 @@
-package edu.duke.ece651.risk.shared;
+package edu.duke.ece651.risk.shared.action;
 
 public class MoveAction implements Action{
     String src;

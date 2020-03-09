@@ -1,7 +1,10 @@
-package edu.duke.ece651.risk.shared;
+package edu.duke.ece651.risk.shared.network;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import edu.duke.ece651.risk.shared.action.Action;
+import edu.duke.ece651.risk.shared.action.AttackAction;
+import edu.duke.ece651.risk.shared.action.MoveAction;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
