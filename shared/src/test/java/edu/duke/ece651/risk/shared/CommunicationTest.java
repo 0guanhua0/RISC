@@ -5,11 +5,14 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ServerTest {
+public class CommunicationTest {
     private static final int SLEEP_TIME = 500;
     private static final int PORT = 8080;
     static Server server;
@@ -22,6 +25,7 @@ public class ServerTest {
                 server = new Server(PORT);
                 // this should throw an IO exception
                 Server s1 = new Server(PORT);
+                s1.accept();
             } catch (IOException e) {
                 System.out.println(e.toString());
             }
@@ -31,7 +35,7 @@ public class ServerTest {
     }
 
     @Test
-    public void testWaitBeginner() throws IOException {
+    public void testAccept() throws IOException {
         new Thread(() -> {
             Socket socket = server.accept();
             assertNotNull(socket);
@@ -40,48 +44,14 @@ public class ServerTest {
     }
     
     @Test
-    public void testWaitAllPlayers() throws IOException {
-        int cnt = 2;
-        new Thread(() -> {
-            List<Socket> players = server.waitAllPlayers(cnt);
-            assertEquals(players.size(), cnt);
-        }).start();
-        for (int i = 0; i < cnt; i++){
-            new Client().init("127.0.0.1", PORT);
-        }
-    }
-
-    @Test
-    public void testWaitAllPlayersNull() throws IOException, InterruptedException {
-        int cnt = 2;
-        int port = 12345;
-        Server s1 = new Server(port);
-        s1.serverSocket.setSoTimeout(100);
-        new Thread(() -> {
-            try {
-                Thread.sleep(1000);
-                for (int i = 0; i < cnt; i++){
-                    new Client().init("127.0.0.1", port);
-                    //Thread.sleep(2000);
-                }
-                new Client().init("hello", port);
-            }catch (IOException | InterruptedException e){
-                System.out.println(e.toString());
-            }
-        }).start();
-        List<Socket> players = s1.waitAllPlayers(cnt);
-        assertEquals(players.size(), cnt);
-    }
-    
-    @Test
-    public void testAcceptOrNull() throws IOException {
+    public void testAcceptNull() throws IOException {
         Server s = new Server();
         s.serverSocket.close();
-        assertNull(s.acceptOrNull());
+        assertNull(s.accept());
     }
     
     @Test
-    public void testSendRecvData() throws IOException {
+    public void testSendRecvStr() throws IOException {
         String msgCTS = "Hello server";
         String msgSTC = "Hi client";
 
@@ -99,8 +69,44 @@ public class ServerTest {
         }).start();
         Client client = new Client();
         client.init("127.0.0.1", PORT);
-        client.sendData(msgCTS);
+        client.send(msgCTS);
         assertEquals(msgSTC, client.recvData());
     }
 
+    @Test
+    public void testSendActions() throws IOException, InterruptedException {
+        HashMap<String, List<Action>> actions = new HashMap<>();
+        List<Action> moveActions = new ArrayList<>();
+        List<Action> attackActions = new ArrayList<>();
+
+        moveActions.add(new MoveAction("A", "B"));
+        attackActions.add(new AttackAction("A", "B"));
+
+        actions.put("move", moveActions);
+        actions.put("attack", attackActions);
+
+        new Thread(() -> {
+            try {
+                Socket socket = server.accept();
+                assertNotNull(socket);
+
+                assertEquals(actions, Server.recvActions(socket));
+                socket.shutdownOutput();
+                Server.send(socket, "hello");
+            }catch (IOException e){
+                System.out.println(e.toString());
+            }
+        }).start();
+        Thread.sleep(500);
+        Client client = new Client();
+        client.init("127.0.0.1", PORT);
+        client.send(actions);
+    }
+
+    @Test
+    public void testGetHostByName() throws UnknownHostException {
+        Client client = new Client();
+        assertEquals("67.159.88.31", client.getHostByName("vcm-12305.vm.duke.edu"));
+        assertThrows(UnknownHostException.class, ()->{client.getHostByName("hello");});
+    }
 } 
