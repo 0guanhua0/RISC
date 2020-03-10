@@ -34,10 +34,12 @@ public class WorldMap {
             curTerri.setNeigh(neigh);
         }
     }
-    public boolean hasTerritory(String name){
+    public boolean hasTerritory(String input){
+        String name = input.toLowerCase();
         return atlas.containsKey(name);
     }
-    public Territory getTerritory(String name){
+    public Territory getTerritory(String input){
+        String name = input.toLowerCase();
         return atlas.get(name);
     }
     //if there is no territory with such name or this territory is currently occupied,return false
