@@ -76,35 +76,35 @@ public class CommunicationTest {
         assertEquals(msgSTC, client.recvData());
     }
 
-    @Test
-    public void testSendActions() throws IOException, InterruptedException {
-        HashMap<String, List<Action>> actions = new HashMap<>();
-        List<Action> moveActions = new ArrayList<>();
-        List<Action> attackActions = new ArrayList<>();
-
-        moveActions.add(new MoveAction("A", "B"));
-        attackActions.add(new AttackAction("A", "B"));
-
-        actions.put("move", moveActions);
-        actions.put("attack", attackActions);
-
-        new Thread(() -> {
-            try {
-                Socket socket = server.accept();
-                assertNotNull(socket);
-
-                assertEquals(actions, Server.recvActions(socket));
-                socket.shutdownOutput();
-                Server.send(socket, "hello");
-            }catch (IOException e){
-                System.out.println(e.toString());
-            }
-        }).start();
-        Thread.sleep(500);
-        Client client = new Client();
-        client.init("127.0.0.1", PORT);
-        client.send(actions);
-    }
+//    @Test
+//    public void testSendActions() throws IOException, InterruptedException {
+//        HashMap<String, List<Action>> actions = new HashMap<>();
+//        List<Action> moveActions = new ArrayList<>();
+//        List<Action> attackActions = new ArrayList<>();
+//
+//        moveActions.add(new MoveAction("A", "B"));
+//        attackActions.add(new AttackAction("A", "B"));
+//
+//        actions.put("move", moveActions);
+//        actions.put("attack", attackActions);
+//
+//        new Thread(() -> {
+//            try {
+//                Socket socket = server.accept();
+//                assertNotNull(socket);
+//
+//                assertEquals(actions, Server.recvActions(socket));
+//                socket.shutdownOutput();
+//                Server.send(socket, "hello");
+//            }catch (IOException e){
+//                System.out.println(e.toString());
+//            }
+//        }).start();
+//        Thread.sleep(500);
+//        Client client = new Client();
+//        client.init("127.0.0.1", PORT);
+//        client.send(actions);
+//    }
 
     @Test
     public void testGetHostByName() throws UnknownHostException {

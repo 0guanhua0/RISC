@@ -97,4 +97,13 @@ class TerritoryV1Test {
         assert (stormKindom.getNeigh().contains(n1));
         assert (stormKindom.getNeigh().contains(n2));
     }
+
+    @Test
+    void isAdjacentTo() {
+        TerritoryV1 t1 = new TerritoryV1("n1");
+        TerritoryV1 t2 = new TerritoryV1("n2");
+        TerritoryV1 t3 = new TerritoryV1("n3");
+        TerritoryV1 t4 = new TerritoryV1("n4");
+
+    }
 }

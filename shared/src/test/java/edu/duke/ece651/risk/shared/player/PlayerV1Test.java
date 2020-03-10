@@ -1,12 +1,11 @@
-package edu.duke.ece651.risk.server;
+package edu.duke.ece651.risk.shared.player;
 
 import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.TerritoryV1;
+//import edu.duke.ece651.risk.shared.player.PlayerV1;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class PlayerV1Test {
     @Test

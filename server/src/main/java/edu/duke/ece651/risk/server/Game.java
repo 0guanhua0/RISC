@@ -10,6 +10,7 @@ public class Game {
     private Socket socket;
     private String data;
 
+
     public Game() throws IOException {
         connect = new Server();
     }

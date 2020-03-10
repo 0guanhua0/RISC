@@ -1,22 +1,49 @@
 package edu.duke.ece651.risk.shared.action;
 
+import edu.duke.ece651.risk.shared.map.Territory;
+import edu.duke.ece651.risk.shared.map.WorldMap;
+
 public class MoveAction implements Action{
     String src;
     String dest;
-
-    public MoveAction(String src, String dest){
+    int playerId;
+    int unitsNum;
+    public MoveAction(String src, String dest,
+                      int playerId, int unitsNum) {
         this.src = src;
         this.dest = dest;
+        this.playerId = playerId;
+        this.unitsNum = unitsNum;
     }
 
+
     @Override
-    public boolean isValid() {
-        return !src.equals(dest);
+    public boolean isValid(WorldMap map) {
+        //check if two input names are valid
+        if (!map.hasTerritory(src)||!map.hasTerritory(dest)){
+            return false;
+        }
+        Territory srcNode = map.getTerritory(src);
+        Territory destNode = map.getTerritory(dest);
+        if (srcNode.getOwner()!=playerId||!srcNode.hasPathTo(destNode)){
+            return false;
+        }else if (srcNode.getUnitsNum()<unitsNum){
+            return false;
+        }else{
+            return true;
+        }
     }
-
     @Override
-    public void perform() {
-
+    public void perform(WorldMap map) {
+        //perform the real action
+        if (!isValid(map)){
+            throw new IllegalArgumentException("Invalid move action!");
+        }
+        //update the state of src and target territory
+        Territory srcNode = map.getTerritory(src);
+        Territory destNode = map.getTerritory(dest);
+        srcNode.lossNUnits(unitsNum);
+        destNode.addNUnits(unitsNum);
     }
 
     @Override

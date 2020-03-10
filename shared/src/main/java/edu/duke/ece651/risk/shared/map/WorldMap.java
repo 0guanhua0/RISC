@@ -34,6 +34,9 @@ public class WorldMap {
             curTerri.setNeigh(neigh);
         }
     }
+    public boolean hasTerritory(String name){
+        return atlas.containsKey(name);
+    }
     public Territory getTerritory(String name){
         return atlas.get(name);
     }
@@ -41,4 +44,5 @@ public class WorldMap {
     public boolean hasFreeTerritory(String name){
         return atlas.containsKey(name)&& atlas.get(name).isFree();
     }
+
 }
