@@ -43,7 +43,8 @@ public class WorldMap {
         return atlas.get(name);
     }
     //if there is no territory with such name or this territory is currently occupied,return false
-    public boolean hasFreeTerritory(String name){
+    public boolean hasFreeTerritory(String input){
+        String name = input.toLowerCase();
         return atlas.containsKey(name)&& atlas.get(name).isFree();
     }
 

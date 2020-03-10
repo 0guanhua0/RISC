@@ -3,6 +3,8 @@ package edu.duke.ece651.risk.shared.action;
 import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 
+import java.util.Objects;
+
 public class MoveAction implements Action{
     String src;
     String dest;
@@ -51,12 +53,16 @@ public class MoveAction implements Action{
         destNode.addNUnits(unitsNum);
     }
 
+
     @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof MoveAction){
-            MoveAction moveAction = (MoveAction) obj;
-            return moveAction.src.equals(this.src) && moveAction.dest.equals(this.dest);
-        }
-        return false;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof MoveAction)) return false;
+        MoveAction that = (MoveAction) o;
+        return playerId == that.playerId &&
+                unitsNum == that.unitsNum &&
+                src.equals(that.src) &&
+                dest.equals(that.dest);
     }
+
 }

@@ -14,6 +14,13 @@ class PlayerV1Test {
         assert (p1.territories.isEmpty());
         assert (p1.color.equals("Red"));
         assert (1==p1.id);
+        try {
+            PlayerV1<String> p2 = new PlayerV1<String>("Red",0);
+            assert (false);
+        }catch (Exception e){
+            assert (true);
+        }
+
     }
 
     @Test
