@@ -1,6 +1,6 @@
 package edu.duke.ece651.risk.server;
 
-import edu.duke.ece651.risk.shared.Server;
+import edu.duke.ece651.risk.shared.network.Server;
 
 import java.io.IOException;
 import java.net.Socket;
