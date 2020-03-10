@@ -83,4 +83,18 @@ class TerritoryV1Test {
         territoryV1.setIsFree(true);
         assert (territoryV1.isFree());
     }
+
+    @Test
+    void getNeigh(){
+        TerritoryV1 stormKindom = new TerritoryV1("The Storm Kindom");
+        TerritoryV1 n1 = new TerritoryV1("n1");
+        TerritoryV1 n2 = new TerritoryV1("n2");
+        HashSet<Territory> neigh = new HashSet<>(){{
+            add(n1);
+            add(n2);
+        }};
+        stormKindom.setNeigh(neigh);
+        assert (stormKindom.getNeigh().contains(n1));
+        assert (stormKindom.getNeigh().contains(n2));
+    }
 }

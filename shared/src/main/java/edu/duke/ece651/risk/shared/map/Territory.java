@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 public abstract class Territory {
+
     Set<Territory> neigh;
     //class to represent current status of this territory
     TStatus status;
@@ -15,7 +16,9 @@ public abstract class Territory {
         status.setIsFree(false);
         status.setOwnerId(id);
     }
-
+    public Set<Territory> getNeigh() {
+        return neigh;
+    }
     public void setNeigh(Set<Territory> neigh){
         this.neigh = neigh;
     }
