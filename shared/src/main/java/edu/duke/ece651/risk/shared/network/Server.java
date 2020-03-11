@@ -67,7 +67,7 @@ public class Server {
      * @throws IOException probably because the stream is already closed
      */
     public static void send(Socket s, WorldMap map) throws IOException {
-        send(s, new Gson().toJson(map));
+        send(s, map.toJSON());
     }
 
     /**
