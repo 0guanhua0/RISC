@@ -68,7 +68,6 @@ class MoveActionTest {
         //test unexisted path between two territories controlled by the same player
         MoveAction a3 = new MoveAction("kingdom of the north", "principality of dorne", 1, 1);
         assert (!a3.isValid(worldMap));
-
         //test move to a territories which the user has no control over
         MoveAction a4 = new MoveAction("kingdom of the rock", "kingdom of the reach", 1, 1);
         assert (!a4.isValid(worldMap));

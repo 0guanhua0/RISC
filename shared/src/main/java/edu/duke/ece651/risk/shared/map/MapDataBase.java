@@ -17,7 +17,8 @@ public class MapDataBase {
         mapHub = new HashMap<>();
         //the first map--A Clash of Kings
         //TODO read from input files rather than hardcoding here
-        //https://www.google.com/imgres?imgurl=https%3A%2F%2F4.bp.blogspot.com%2F-KeZBbmX_Lbg%2FWmXhqT8wdmI%2FAAAAAAAABCQ%2FUR2pXAxwcss25bhcvUTiGojqCOxrgtkWACLcBGAs%2Fs1600%2FSix-Kingdoms-Map-Cropped2.png&imgrefurl=http%3A%2F%2Fsevenkingdomssevenhells.blogspot.com%2F2018%2F01%2Fthe-six-kingdoms.html&tbnid=f3Q1CgrIMiNzlM&vet=12ahUKEwiRufeZzo3oAhXH41MKHePwD_MQMygFegUIARDwAQ..i&docid=O_sfDTzxZzV-MM&w=473&h=1059&q=%20seven%20kingdom%20atlas&client=safari&ved=2ahUKEwiRufeZzo3oAhXH41MKHePwD_MQMygFegUIARDwAQ
+        //the visualization of the worldmap:
+        // https://www.google.com/imgres?imgurl=https%3A%2F%2F4.bp.blogspot.com%2F-KeZBbmX_Lbg%2FWmXhqT8wdmI%2FAAAAAAAABCQ%2FUR2pXAxwcss25bhcvUTiGojqCOxrgtkWACLcBGAs%2Fs1600%2FSix-Kingdoms-Map-Cropped2.png&imgrefurl=http%3A%2F%2Fsevenkingdomssevenhells.blogspot.com%2F2018%2F01%2Fthe-six-kingdoms.html&tbnid=f3Q1CgrIMiNzlM&vet=12ahUKEwiRufeZzo3oAhXH41MKHePwD_MQMygFegUIARDwAQ..i&docid=O_sfDTzxZzV-MM&w=473&h=1059&q=%20seven%20kingdom%20atlas&client=safari&ved=2ahUKEwiRufeZzo3oAhXH41MKHePwD_MQMygFegUIARDwAQ
         Map<String,Set<String>> atlas1 = new HashMap<>();
         String name1 = "a clash of kings";
         String t1 = "the storm kingdom";

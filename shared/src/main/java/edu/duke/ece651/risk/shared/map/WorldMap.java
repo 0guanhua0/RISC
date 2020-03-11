@@ -39,6 +39,9 @@ public class WorldMap {
         return atlas.containsKey(name);
     }
     public Territory getTerritory(String input){
+        if (!hasTerritory(input)){
+            throw new IllegalArgumentException("No such territory inside the map");
+        }
         String name = input.toLowerCase();
         return atlas.get(name);
     }
