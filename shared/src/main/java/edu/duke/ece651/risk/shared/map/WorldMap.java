@@ -34,11 +34,21 @@ public class WorldMap {
             curTerri.setNeigh(neigh);
         }
     }
-    public Territory getTerritory(String name){
+    public boolean hasTerritory(String input){
+        String name = input.toLowerCase();
+        return atlas.containsKey(name);
+    }
+    public Territory getTerritory(String input){
+        if (!hasTerritory(input)){
+            throw new IllegalArgumentException("No such territory inside the map");
+        }
+        String name = input.toLowerCase();
         return atlas.get(name);
     }
     //if there is no territory with such name or this territory is currently occupied,return false
-    public boolean hasFreeTerritory(String name){
+    public boolean hasFreeTerritory(String input){
+        String name = input.toLowerCase();
         return atlas.containsKey(name)&& atlas.get(name).isFree();
     }
+
 }

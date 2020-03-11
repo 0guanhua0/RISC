@@ -1,9 +1,11 @@
 package edu.duke.ece651.risk.shared.map;
 
+import edu.duke.ece651.risk.shared.player.Player;
+import edu.duke.ece651.risk.shared.player.PlayerV1;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
-
+import static org.junit.jupiter.api.Assertions.*;
 class TerritoryV1Test {
 
 
@@ -94,7 +96,45 @@ class TerritoryV1Test {
             add(n2);
         }};
         stormKindom.setNeigh(neigh);
-        assert (stormKindom.getNeigh().contains(n1));
-        assert (stormKindom.getNeigh().contains(n2));
+        assertTrue(stormKindom.getNeigh().contains(n1));
+        assertTrue (stormKindom.getNeigh().contains(n2));
+    }
+
+    @Test
+    void hasPathTo() {
+        MapDataBase mapDataBase = new MapDataBase();
+        //prepare the world
+        WorldMap worldMap = mapDataBase.getMap("a clash of kings");
+        Territory storm = worldMap.getTerritory("the storm kingdom");
+        Territory reach = worldMap.getTerritory("kingdom of the reach");
+        Territory rock = worldMap.getTerritory("kingdom of the rock");
+        Territory vale = worldMap.getTerritory("kingdom of mountain and vale");
+        Territory north = worldMap.getTerritory("kingdom of the north");
+        Territory dorne = worldMap.getTerritory("principality of dorne");
+        //two players join this game
+        Player<String> p1 = new PlayerV1<>("Red",1);
+        Player<String> p2 = new PlayerV1<>("Blue", 2);
+        //assign some territories to each player
+        p1.addTerritory(north);
+        p1.addTerritory(vale);
+        p1.addTerritory(rock);
+        p1.addTerritory(dorne);
+        p2.addTerritory(storm);
+        p2.addTerritory(reach);
+
+        assertTrue(storm.hasPathTo(reach));
+        assertTrue(reach.hasPathTo(storm));
+        assertTrue(north.hasPathTo(vale));
+        assertFalse(storm.hasPathTo(storm));
+        assertFalse(storm.hasPathTo(vale));
+        assertFalse(storm.hasPathTo(dorne));
+
+        //change the ownership of reach to p1
+        p2.loseTerritory(reach);
+        p1.addTerritory(reach);
+        assertTrue(1==reach.getOwner());
+        assertTrue(north.hasPathTo(dorne));
+        assertFalse(north.hasPathTo(storm));
+
     }
 }

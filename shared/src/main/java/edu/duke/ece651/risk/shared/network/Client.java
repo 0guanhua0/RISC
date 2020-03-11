@@ -20,7 +20,6 @@ import java.util.List;
 public class Client {
     private BufferedReader in;
     private PrintWriter out;
-
     /**
      * The default constructor.
      * After this, you probably need to call init() explicitly to initialize client(i.e. connect to server)

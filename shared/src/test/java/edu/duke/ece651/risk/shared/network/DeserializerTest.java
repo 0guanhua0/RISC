@@ -14,21 +14,21 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DeserializerTest { 
 
-    @Test
-    public void testDeserializeActions() {
-        HashMap<String, List<Action>> actions = new HashMap<>();
-        List<Action> moveActions = new ArrayList<>();
-        List<Action> attackActions = new ArrayList<>();
-
-        moveActions.add(new MoveAction("A", "B"));
-        moveActions.add(new MoveAction("C", "F"));
-        moveActions.add(new MoveAction("R", "y"));
-        attackActions.add(new AttackAction("A", "B"));
-
-        actions.put("move", moveActions);
-        actions.put("attack", attackActions);
-
-        assertEquals(actions, Deserializer.deserializeActions(new Gson().toJson(actions)));
-    }
+//    @Test
+//    public void testDeserializeActions() {
+//        HashMap<String, List<Action>> actions = new HashMap<>();
+//        List<Action> moveActions = new ArrayList<>();
+//        List<Action> attackActions = new ArrayList<>();
+//
+//        moveActions.add(new MoveAction("A", "B"));
+//        moveActions.add(new MoveAction("C", "F"));
+//        moveActions.add(new MoveAction("R", "y"));
+//        attackActions.add(new AttackAction("A", "B"));
+//
+//        actions.put("move", moveActions);
+//        actions.put("attack", attackActions);
+//
+//        assertEquals(actions, Deserializer.deserializeActions(new Gson().toJson(actions)));
+//    }
 
 } 

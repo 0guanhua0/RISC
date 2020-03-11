@@ -1,4 +1,4 @@
-package edu.duke.ece651.risk.server;
+package edu.duke.ece651.risk.shared.player;
 
 import edu.duke.ece651.risk.shared.map.Territory;
 
