@@ -1,5 +1,6 @@
 package edu.duke.ece651.risk.shared.player;
 
+import java.net.Socket;
 import java.util.HashSet;
 
 /**
@@ -10,12 +11,7 @@ import java.util.HashSet;
  **/
 public class PlayerV1<T> extends Player<T> {
 
-    public PlayerV1(T color, int id) {
-        if (id<=0){
-            throw new IllegalArgumentException("Id must be positive");
-        }
-        this.color = color;
-        this.id = id;
-        this.territories = new HashSet<>();
+    public PlayerV1(T color, int id, Socket socket) {
+        super(color, id, socket);
     }
 }

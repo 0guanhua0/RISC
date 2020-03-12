@@ -24,7 +24,8 @@ public class Server {
      * @throws IOException if creation of the ServerSocket fails(likely due to the port being unavailable).
      */
     public Server() throws IOException {
-        serverSocket = new ServerSocket(8000);
+        serverSocket = new ServerSocket(12345);
+        serverSocket.setSoTimeout(1000);
     }
 
     /**
