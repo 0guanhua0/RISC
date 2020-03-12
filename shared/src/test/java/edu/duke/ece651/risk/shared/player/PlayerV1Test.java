@@ -64,5 +64,4 @@ class PlayerV1Test {
         assert (n1.isFree());
         assert (!n2.isFree());
     }
-    
 }
