@@ -29,8 +29,7 @@ public class CommunicationTest {
                 server = new Server(PORT);
                 // this should throw an IO exception
                 Server s1 = new Server(PORT);
-            } catch (IOException e) {
-                System.out.println(e.toString());
+            } catch (IOException ignored) {
             }
         }).start();
         // pause to give the server some time to setup
@@ -66,8 +65,7 @@ public class CommunicationTest {
                 Server.send(socket, msgSTC);
                 socket.shutdownOutput();
                 Server.send(socket, msgSTC);
-            }catch (IOException e){
-                System.out.println(e.toString());
+            }catch (IOException ignored){
             }
         }).start();
         Client client = new Client();
@@ -95,8 +93,7 @@ public class CommunicationTest {
                 assertEquals(actions, Server.recvActions(socket));
                 socket.shutdownOutput();
                 Server.send(socket, "hello");
-            }catch (IOException e){
-                System.out.println(e.toString());
+            }catch (IOException ignored){
             }
         }).start();
         Thread.sleep(500);
@@ -118,8 +115,7 @@ public class CommunicationTest {
 
                 socket.shutdownOutput();
                 Server.send(socket, "hello");
-            }catch (IOException e){
-                System.out.println(e.toString());
+            }catch (IOException ignored){
             }
         }).start();
         Thread.sleep(500);
