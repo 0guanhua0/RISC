@@ -16,9 +16,8 @@ public class TerritoryV1 extends Territory{
     List<Unit> units;
 
     public TerritoryV1(String name) {
-        this.status = new TStatus(name);
-        this.units = new ArrayList<>();
-        this.neigh = new HashSet<>();
+       super(name);
+       this.units = new ArrayList<>();
     }
 
     public void addNUnits(int num){

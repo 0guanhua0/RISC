@@ -11,7 +11,7 @@ import java.util.HashSet;
  **/
 public class PlayerV1<T> extends Player<T> {
 
-    public PlayerV1(T color, int id) {
+    public PlayerV1(T color, int id) throws IllegalArgumentException{
         super(color, id, null);
     }
     public PlayerV1(T color, int id, Socket socket) {

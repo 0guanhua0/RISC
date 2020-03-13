@@ -8,10 +8,10 @@ import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class PlayerV1Test {
+class PlayerTest {
     @Test
     void constructor(){
-        PlayerV1<String> p1 = new PlayerV1<String>("Red",1);
+        Player<String> p1 = new PlayerV1<String>("Red",1);
         assert (p1.territories.isEmpty());
         assert (p1.color.equals("Red"));
         assert (1==p1.id);
@@ -20,13 +20,14 @@ class PlayerV1Test {
 
     @Test
     void addTerritory() {
-        PlayerV1<String> p1 = new PlayerV1<String>("Red",1);
+        Player<String> p1 = new PlayerV1<String>("Red",1);
         TerritoryV1 n1 = new TerritoryV1("n1");
         TerritoryV1 n2 = new TerritoryV1("n2");
         HashSet<Territory> n1Neigh = new HashSet<>(){{
             add(n2);
         }};
         p1.addTerritory(n1);
+        assertThrows(IllegalArgumentException.class,()->{p1.addTerritory(n1);});
         p1.addTerritory(n2);
         assert (p1.territories.contains(n1));
         assert (p1.territories.contains(n2));
@@ -58,5 +59,4 @@ class PlayerV1Test {
         assert (n1.isFree());
         assert (!n2.isFree());
     }
-    
 }

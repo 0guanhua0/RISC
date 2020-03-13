@@ -1,9 +1,6 @@
 package edu.duke.ece651.risk.shared.map;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @program: risk-map
@@ -11,8 +8,8 @@ import java.util.Set;
  * @author: Chengda Wu(cw402)
  * @create: 2020-03-09 10:20
  **/
-public class MapDataBase {
-    Map<String, WorldMap> mapHub;
+public class MapDataBase<T> {
+    Map<String, WorldMap<T>> mapHub;
     public MapDataBase(){
         mapHub = new HashMap<>();
         //the first map--A Clash of Kings
@@ -62,8 +59,10 @@ public class MapDataBase {
             add(t2);
             add(t1);
         }};
+
         atlas1.put(t7,s7);
-        WorldMap worldMap1 = new WorldMap(atlas1);
+        List<String> colorList = new ArrayList<>(Arrays.asList("red","blue","black"));
+        WorldMap<T> worldMap1 = new WorldMap(atlas1,colorList);
         mapHub.put(name1,worldMap1);
     }
     public boolean containsMap(String inputName){

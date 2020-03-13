@@ -12,7 +12,7 @@ package edu.duke.ece651.risk.shared.map;
 
 public class TStatus {
 
-    //player id of the owner of corresponding territory
+    //player id of the owner of corresponding territory, 0 to represent this territory is currently free
     private int ownerId;
     //name of corresponding territory
     String name;
@@ -22,6 +22,7 @@ public class TStatus {
     public TStatus(String name) {
         this.name = name;
         this.isFree = true;
+        this.ownerId = 0;
     }
 
     public void setOwnerId(int ownerId) {
