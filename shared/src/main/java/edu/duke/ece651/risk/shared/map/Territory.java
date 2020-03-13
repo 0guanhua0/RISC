@@ -1,14 +1,18 @@
 package edu.duke.ece651.risk.shared.map;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 public abstract class Territory {
 
-    Set<Territory> neigh;
+    transient Set<Territory> neigh;
+    // this is only for serialize & deserialize purpose
+    List<String> neighNames;
     //class to represent current status of this territory
     TStatus status;
+
     //get the owner id of corresponding territory
     public int getOwner(){
         return status.getOwnerId();
@@ -24,6 +28,18 @@ public abstract class Territory {
     }
     public void setNeigh(Set<Territory> neigh){
         this.neigh = neigh;
+        neighNames = new ArrayList<>(neigh.size());
+        for (Territory t : neigh){
+            neighNames.add(t.status.name);
+        }
+    }
+
+    public String getName() {
+        return status.getName();
+    }
+
+    public List<String> getNeighNames(){
+        return this.neighNames;
     }
 
     public boolean isFree(){
@@ -60,6 +76,7 @@ public abstract class Territory {
         Set<Territory> visited = new HashSet<>();
         return DFSHelper(this,target,visited);
     }
+
     public abstract int getUnitsNum();
 
     public abstract void addNUnits(int num);

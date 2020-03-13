@@ -80,9 +80,10 @@ public class Client {
      * Receive a world map object from remote server.
      * @return a world map object
      * @throws IOException probably input stream closed
+     * @throws ClassNotFoundException probably json string is invalid(e.g. not generate by calling toJSON() method)
      */
-    public WorldMap recvMap() throws IOException {
-        return new Gson().fromJson(in.readLine(), WorldMap.class);
+    public WorldMap recvMap() throws IOException, ClassNotFoundException {
+        return Deserializer.deserializeWorldMap(in.readLine());
     }
 
     /**
