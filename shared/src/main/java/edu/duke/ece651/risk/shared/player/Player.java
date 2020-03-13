@@ -22,7 +22,7 @@ public abstract class Player<T> {
     Socket socket;
     Set<Territory> territories;
 
-    public Player(T color, int id, Socket socket){
+    public Player(T color, int id, Socket socket) throws IllegalArgumentException{
         if (id <= 0){
             throw new IllegalArgumentException("ID must large than 0.");
         }
@@ -32,29 +32,32 @@ public abstract class Player<T> {
         this.socket = socket;
     }
 
-    public void addTerritory(Territory territory){
+    public void addTerritory(Territory territory) throws IllegalArgumentException{
+        if (!territory.isFree()){
+            throw new IllegalArgumentException("You can not occupy an occupied territory");
+        }
         territories.add(territory);
         territory.setOwner(this.id);
     }
 
-    public void loseTerritory(Territory territory){
+    public void loseTerritory(Territory territory) throws IllegalArgumentException{
         if(!territories.contains(territory)){
             throw new IllegalArgumentException("there territory doesn't belong to this user!");
         }
         territories.remove(territory);
         territory.setIsFree(true);
     }
-
-    public void send(String data) throws IOException {
-        if (socket != null){
-            Server.send(socket, data);
-        }
-    }
-
-    public String recv() throws IOException {
-        if (socket != null){
-            return Server.recvStr(socket);
-        }
-        return "";
-    }
+    //TODO: revoke the comment and test this two methods
+//    public void send(String data) throws IOException {
+//        if (socket != null){
+//            Server.send(socket, data);
+//        }
+//    }
+//
+//    public String recv() throws IOException {
+//        if (socket != null){
+//            return Server.recvStr(socket);
+//        }
+//        return "";
+//    }
 }

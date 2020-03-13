@@ -14,10 +14,12 @@ import java.util.*;
  * @author: Chengda Wu (cw402)
  * @create: 2020-03-08 20:49
  **/
-public class WorldMap implements Serializable {
+public class WorldMap<T> implements Serializable {
     Map<String, Territory> atlas;
-
-    public WorldMap(Map<String,Set<String>> adjaList){
+    List<T> playerColor;
+    public WorldMap(){}
+    public WorldMap(Map<String,Set<String>> adjaList,List<T> playerColor){
+        this.playerColor = playerColor;
         atlas = new HashMap<>();
         //initialize each single territory
         for (Map.Entry<String, Set<String>> entry : adjaList.entrySet()) {
@@ -37,15 +39,15 @@ public class WorldMap implements Serializable {
             curTerri.setNeigh(neigh);
         }
     }
-
-    public WorldMap(){
-
-    }
-
-    public void setMap(Map<String, Territory> map){
+    public void setAtlas(Map<String, Territory> map){
         this.atlas = map;
     }
-
+    public void setPlayerColor(List<T> playerColor) {
+        this.playerColor = playerColor;
+    }
+    public List<T> getPlayerColor() {
+        return playerColor;
+    }
     public Map<String, Territory> getAtlas() {
         return atlas;
     }

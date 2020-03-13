@@ -2,10 +2,7 @@ package edu.duke.ece651.risk.shared.map;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -57,4 +54,33 @@ class WorldMapTest {
     }
 
 
+    @Test
+    void setPlayerColor() {
+        MapDataBase mapDataBase = new MapDataBase();
+        WorldMap worldMap = mapDataBase.getMap("A clash of Kings");
+        Territory territory1 = worldMap.getTerritory(t1);
+        Territory territory2 = worldMap.getTerritory(t2);
+        Territory territory3 = worldMap.getTerritory(t3);
+        Territory territory4 = worldMap.getTerritory(t4);
+        Territory territory6 = worldMap.getTerritory(t6);
+        Territory territory7 = worldMap.getTerritory(t7);
+        List<String> playerColor = worldMap.getPlayerColor();
+        Map<String,Territory> map = new HashMap<>();
+        map.put(t1,territory1);
+        map.put(t2,territory2);
+        map.put(t3,territory3);
+        map.put(t4,territory4);
+        map.put(t6,territory6);
+        map.put(t7,territory7);
+
+        WorldMap<String> myMap = new WorldMap<>();
+        myMap.setAtlas(map);
+        myMap.setPlayerColor(playerColor);
+        assertEquals(myMap.atlas.get(t1),territory1);
+        assertEquals(myMap.atlas.get(t2),territory2);
+        assertTrue(myMap.playerColor.contains("red"));
+        assertTrue(myMap.playerColor.contains("black"));
+        assertTrue(myMap.playerColor.contains("blue"));
+
+    }
 }

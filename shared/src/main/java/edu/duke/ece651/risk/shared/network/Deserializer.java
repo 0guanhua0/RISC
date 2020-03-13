@@ -5,9 +5,7 @@ import com.google.gson.reflect.TypeToken;
 import edu.duke.ece651.risk.shared.action.Action;
 import edu.duke.ece651.risk.shared.action.AttackAction;
 import edu.duke.ece651.risk.shared.action.MoveAction;
-import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.map.Territory;
-import edu.duke.ece651.risk.shared.map.TerritoryV1;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -71,7 +69,7 @@ public class Deserializer {
             t.setNeigh(neighs);
         }
         WorldMap worldMap = new WorldMap();
-        worldMap.setMap(map);
+        worldMap.setAtlas(map);
         return worldMap;
     }
 }

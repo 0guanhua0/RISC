@@ -13,6 +13,12 @@ public abstract class Territory {
     //class to represent current status of this territory
     TStatus status;
 
+    public Territory(String name) {
+        this.neigh = new HashSet<>();
+        this.neighNames = new ArrayList<>();
+        this.status = new TStatus(name);
+    }
+
     //get the owner id of corresponding territory
     public int getOwner(){
         return status.getOwnerId();
