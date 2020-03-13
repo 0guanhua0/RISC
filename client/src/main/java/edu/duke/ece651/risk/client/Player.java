@@ -6,7 +6,8 @@ import edu.duke.ece651.risk.shared.network.Server;
 import java.io.IOException;
 import java.net.Socket;
 
-public class Client{
+public class Player{
+    private Integer playerId;
     public static void main (String[] args) throws IOException, InterruptedException {
         int port = 12345;
         new Thread(()->{

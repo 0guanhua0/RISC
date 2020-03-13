@@ -16,6 +16,17 @@ class Instruction0 implements Instruction {
 
     }
 
+    public static void srcInfo() {
+        System.out.println("input source territory");
+    }
+
+    public static void dstInfo() {
+        System.out.println("input destination territory");
+    }
+
+    public static void unitInfo() {
+        System.out.println("input unit number");
+    }
 
 
 }
