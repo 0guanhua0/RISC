@@ -6,6 +6,7 @@ import edu.duke.ece651.risk.shared.network.Server;
 import java.io.IOException;
 import java.net.Socket;
 
+// TODO: probably change to "GameClient"(avoid duplication and confusing)
 public class Client{
     public static void main (String[] args) throws IOException, InterruptedException {
         int port = 12345;

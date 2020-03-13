@@ -24,7 +24,8 @@ public class Server {
      * @throws IOException if creation of the ServerSocket fails(likely due to the port being unavailable).
      */
     public Server() throws IOException {
-        serverSocket = new ServerSocket(8000);
+        serverSocket = new ServerSocket(12345);
+        serverSocket.setSoTimeout(1000);
     }
 
     /**
@@ -58,16 +59,6 @@ public class Server {
         PrintWriter printWriter = new PrintWriter(s.getOutputStream());
         printWriter.println(data);
         printWriter.flush();
-    }
-
-    /**
-     * This function will send the world map to target socket.
-     * @param s target socket
-     * @param map world map object to be sent
-     * @throws IOException probably because the stream is already closed
-     */
-    public static void send(Socket s, WorldMap map) throws IOException {
-        send(s, new Gson().toJson(map));
     }
 
     /**

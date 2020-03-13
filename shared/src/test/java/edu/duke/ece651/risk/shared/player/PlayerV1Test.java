@@ -1,12 +1,12 @@
 package edu.duke.ece651.risk.shared.player;
 
-import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.TerritoryV1;
-import edu.duke.ece651.risk.shared.map.WorldMap;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class PlayerV1Test {
     @Test
@@ -15,13 +15,7 @@ class PlayerV1Test {
         assert (p1.territories.isEmpty());
         assert (p1.color.equals("Red"));
         assert (1==p1.id);
-        try {
-            PlayerV1<String> p2 = new PlayerV1<String>("Red",0);
-            assert (false);
-        }catch (Exception e){
-            assert (true);
-        }
-
+        assertThrows(IllegalArgumentException.class, ()->{new PlayerV1<String>("Red",0);});
     }
 
     @Test
