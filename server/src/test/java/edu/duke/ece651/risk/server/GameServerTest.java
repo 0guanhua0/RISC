@@ -110,7 +110,7 @@ public class GameServerTest {
         gameServer.rooms.put(roomID, new RoomController(roomID, null));
 
         assertEquals(roomID, gameServer.askValidRoomNum(socket));
-        assertEquals("Invalid choice, try again\n", outputStream.toString());
+        assertEquals("Invalid choice, try again\n".repeat(2), outputStream.toString());
 
         verify(socket, atLeast(3)).getInputStream();
     }

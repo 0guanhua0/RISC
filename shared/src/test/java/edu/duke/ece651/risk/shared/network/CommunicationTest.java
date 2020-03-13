@@ -111,7 +111,7 @@ public class CommunicationTest {
                 Socket socket = server.accept();
                 assertNotNull(socket);
 
-                Server.send(socket, map);
+                Server.send(socket, map.toJSON());
 
                 socket.shutdownOutput();
                 Server.send(socket, "hello");

@@ -4,12 +4,9 @@ import edu.duke.ece651.risk.shared.network.Server;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.util.HashMap;
+import java.security.InvalidKeyException;
 import java.util.Map;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 public class GameServer {
     // the server object, use to communicate with all players
@@ -23,7 +20,7 @@ public class GameServer {
         this.server = server;
         BlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<>(32);
         this.threadPool = new ThreadPoolExecutor(4, 16, 5, TimeUnit.SECONDS, workQueue);
-        this.rooms = new HashMap<>();
+        this.rooms = new ConcurrentHashMap<>();
     }
 
     /**
@@ -76,10 +73,10 @@ public class GameServer {
                 String choice = Server.recvStr(socket);
                 int num = Integer.parseInt(choice);
                 if (num >= 0 && !rooms.containsKey(num)){
-                    continue;
+                    throw new InvalidKeyException();
                 }
                 return num;
-            }catch (NumberFormatException | NullPointerException e){
+            }catch (NumberFormatException | NullPointerException | InvalidKeyException e){
                 // Number format error
                 Server.send(socket, "Invalid choice, try again");
             }

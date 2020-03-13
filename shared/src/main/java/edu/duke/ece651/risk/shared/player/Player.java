@@ -23,8 +23,8 @@ public abstract class Player<T> {
     Set<Territory> territories;
 
     public Player(T color, int id, Socket socket){
-        if (id < 0){
-            throw new IllegalArgumentException("ID must large or equal to 0.");
+        if (id <= 0){
+            throw new IllegalArgumentException("ID must large than 0.");
         }
         this.color = color;
         this.id = id;
@@ -39,7 +39,7 @@ public abstract class Player<T> {
 
     public void loseTerritory(Territory territory){
         if(!territories.contains(territory)){
-            throw new IllegalArgumentException("there territory doesn't belong to this uesr!");
+            throw new IllegalArgumentException("there territory doesn't belong to this user!");
         }
         territories.remove(territory);
         territory.setIsFree(true);
