@@ -57,7 +57,7 @@ public class GameServerTest {
 
         verify(server, atLeast(3)).accept();
     }
-    
+
     @Test
     public void testHandleIncomeRequest() throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -71,6 +71,9 @@ public class GameServerTest {
         gameServer.handleIncomeRequest(socket1);
         assertEquals(1, gameServer.rooms.size());
         assertEquals("Welcome to the fancy RISK game!!!\n", outputStream.toString());
+        assertEquals(1,gameServer.rooms.get(0).players.size());
+        assertEquals(0,gameServer.rooms.get(0).roomID);
+
 
         outputStream.reset();
         Socket socket2 = mock(Socket.class);
@@ -82,6 +85,8 @@ public class GameServerTest {
         gameServer.handleIncomeRequest(socket2);
         assertEquals(1, gameServer.rooms.size());
         assertEquals("Welcome to the fancy RISK game!!!\n", outputStream.toString());
+        assertEquals(2,gameServer.rooms.get(0).players.size());
+        assertEquals(0,gameServer.rooms.get(0).roomID);
 
         outputStream.reset();
         Socket socket3 = mock(Socket.class);
@@ -93,6 +98,8 @@ public class GameServerTest {
         gameServer.handleIncomeRequest(socket3);
         assertEquals(1, gameServer.rooms.size());
         assertEquals("Welcome to the fancy RISK game!!!\n", outputStream.toString());
+        assertEquals(3,gameServer.rooms.get(0).players.size());
+        assertEquals(0,gameServer.rooms.get(0).roomID);
     }
     
     @Test
