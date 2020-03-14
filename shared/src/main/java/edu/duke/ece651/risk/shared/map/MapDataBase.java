@@ -66,8 +66,12 @@ public class MapDataBase<T> {
         mapHub.put(name1,worldMap1);
     }
     public boolean containsMap(String inputName){
-        String mapName = inputName.toLowerCase();
-        return mapHub.containsKey(mapName);
+        if (null==inputName||inputName.isEmpty()){
+            return false;
+        }else{
+            String mapName = inputName.toLowerCase();
+            return mapHub.containsKey(mapName);
+        }
     }
     public WorldMap getMap(String inputName){
         if (!containsMap(inputName)){

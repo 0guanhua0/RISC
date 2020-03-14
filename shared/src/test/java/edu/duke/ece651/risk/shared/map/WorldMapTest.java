@@ -64,7 +64,7 @@ class WorldMapTest {
         Territory territory4 = worldMap.getTerritory(t4);
         Territory territory6 = worldMap.getTerritory(t6);
         Territory territory7 = worldMap.getTerritory(t7);
-        List<String> playerColor = worldMap.getPlayerColor();
+        List<String> playerColor = worldMap.getColorList();
         Map<String,Territory> map = new HashMap<>();
         map.put(t1,territory1);
         map.put(t2,territory2);
@@ -75,12 +75,12 @@ class WorldMapTest {
 
         WorldMap<String> myMap = new WorldMap<>();
         myMap.setAtlas(map);
-        myMap.setPlayerColor(playerColor);
+        myMap.setColorList(playerColor);
         assertEquals(myMap.atlas.get(t1),territory1);
         assertEquals(myMap.atlas.get(t2),territory2);
-        assertTrue(myMap.playerColor.contains("red"));
-        assertTrue(myMap.playerColor.contains("black"));
-        assertTrue(myMap.playerColor.contains("blue"));
+        assertTrue(myMap.colorList.contains("red"));
+        assertTrue(myMap.colorList.contains("black"));
+        assertTrue(myMap.colorList.contains("blue"));
 
     }
 }

@@ -1,5 +1,6 @@
 package edu.duke.ece651.risk.server;
 
+import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.network.Server;
 
 import java.io.IOException;
@@ -55,7 +56,8 @@ public class GameServer {
         if (choice < 0){
             // create a new room
             int roomID = rooms.size();
-            rooms.put(roomID, new RoomController(roomID, socket));
+            //TODO here I create a MapDataBase object for every room, a more efficient approach would be using deep copy to build a new object of WorldMap after this user choose the WorldMap she wants
+            rooms.put(roomID, new RoomController(roomID, socket,new MapDataBase<String>()));
         }else {
             // join an existing room
             rooms.get(choice).addPlayer(socket);
@@ -84,6 +86,7 @@ public class GameServer {
     }
 
     public static void main(String[] args) throws IOException {
+        MapDataBase<String> mapDataBase = new MapDataBase<>();
         GameServer gameServer = new GameServer(new Server());
         gameServer.run();
     }

@@ -1,5 +1,6 @@
 package edu.duke.ece651.risk.server;
 
+import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.network.Client;
 import edu.duke.ece651.risk.shared.network.Server;
 import org.junit.jupiter.api.Test;
@@ -116,7 +117,7 @@ public class GameServerTest {
 
         int roomID = 0;
         GameServer gameServer = new GameServer(null);
-        gameServer.rooms.put(roomID, new RoomController(roomID, null));
+        gameServer.rooms.put(roomID, new RoomController(roomID, null,new MapDataBase<String>()));
 
         assertEquals(roomID, gameServer.askValidRoomNum(socket));
         assertEquals("Invalid choice, try again\n".repeat(2), outputStream.toString());

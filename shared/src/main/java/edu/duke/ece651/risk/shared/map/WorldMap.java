@@ -16,10 +16,10 @@ import java.util.*;
  **/
 public class WorldMap<T> implements Serializable {
     Map<String, Territory> atlas;
-    List<T> playerColor;
+    List<T> colorList;
     public WorldMap(){}
-    public WorldMap(Map<String,Set<String>> adjaList,List<T> playerColor){
-        this.playerColor = playerColor;
+    public WorldMap(Map<String,Set<String>> adjaList,List<T> colorList){
+        this.colorList = colorList;
         atlas = new HashMap<>();
         //initialize each single territory
         for (Map.Entry<String, Set<String>> entry : adjaList.entrySet()) {
@@ -42,11 +42,11 @@ public class WorldMap<T> implements Serializable {
     public void setAtlas(Map<String, Territory> map){
         this.atlas = map;
     }
-    public void setPlayerColor(List<T> playerColor) {
-        this.playerColor = playerColor;
+    public void setColorList(List<T> colorList) {
+        this.colorList = colorList;
     }
-    public List<T> getPlayerColor() {
-        return playerColor;
+    public List<T> getColorList() {
+        return colorList;
     }
     public Map<String, Territory> getAtlas() {
         return atlas;

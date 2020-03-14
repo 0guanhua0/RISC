@@ -47,17 +47,16 @@ public abstract class Player<T> {
         territories.remove(territory);
         territory.setIsFree(true);
     }
-    //TODO: revoke the comment and test this two methods
-//    public void send(String data) throws IOException {
-//        if (socket != null){
-//            Server.send(socket, data);
-//        }
-//    }
-//
-//    public String recv() throws IOException {
-//        if (socket != null){
-//            return Server.recvStr(socket);
-//        }
-//        return "";
-//    }
+    public void send(String data) throws IOException {
+        if (socket != null){
+            Server.send(socket, data);
+        }
+    }
+
+    public String recv() throws IOException {
+        if (socket != null){
+            return Server.recvStr(socket);
+        }
+        return "";
+    }
 }
