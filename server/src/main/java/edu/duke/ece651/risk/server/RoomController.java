@@ -1,15 +1,19 @@
 package edu.duke.ece651.risk.server;
 
+import edu.duke.ece651.risk.shared.action.Action;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.map.WorldMap;
+import edu.duke.ece651.risk.shared.network.Deserializer;
 import edu.duke.ece651.risk.shared.player.Player;
 import edu.duke.ece651.risk.shared.player.PlayerV1;
 
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 //TODO take client losing connection into consideration
+//TODO
 public class RoomController {
     int roomID;
     // all players in current room
@@ -23,21 +27,30 @@ public class RoomController {
         }
         this.roomID = roomID;
         this.players = new ArrayList<>();
-        this.players.add(new PlayerV1<>("G", this.players.size() + 1, socket));
+        this.players.add(new PlayerV1<>(this.players.size() + 1, socket));
         askForMap(mapDataBase);
+        List<String> colorList = map.getColorList();
+        players.get(0).setColor(colorList.get(0));
     }
 
     void addPlayer(Socket socket){
         List<String> colorList = map.getColorList();
-        players.add(new PlayerV1<String>(colorList.get(players.size()), players.size() + 1, socket));
-        // TODO: replace magic 2 with the actual player number support by current WorldMap
-        if (players.size() >= 3){
+        players.add(new PlayerV1<>(colorList.get(players.size()), players.size() + 1, socket));
+        if (players.size() == colorList.size()){
             startGame();
         }
     }
 
     void startGame() {
 
+    }
+    //TODO take exception of msg into consideration
+    void playSingleRoundGame() throws IOException {
+        for (Player<String> player : players) {
+            String msg = player.recv();
+            HashMap<String, List<Action>> actionMap = Deserializer.deserializeActions(msg);
+            actionMap.get()
+        }
     }
 
     void endGame() {

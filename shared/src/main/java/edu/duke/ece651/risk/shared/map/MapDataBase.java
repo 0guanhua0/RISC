@@ -61,7 +61,7 @@ public class MapDataBase<T> {
         }};
 
         atlas1.put(t7,s7);
-        List<String> colorList = new ArrayList<>(Arrays.asList("red","blue","black"));
+        List<String> colorList = new ArrayList<>(Arrays.asList("red","blue"));
         WorldMap<T> worldMap1 = new WorldMap(atlas1,colorList);
         mapHub.put(name1,worldMap1);
     }

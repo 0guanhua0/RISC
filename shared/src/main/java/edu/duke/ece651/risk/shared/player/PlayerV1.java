@@ -17,4 +17,7 @@ public class PlayerV1<T> extends Player<T> {
     public PlayerV1(T color, int id, Socket socket) {
         super(color, id, socket);
     }
+    public PlayerV1(int id,Socket socket){
+        super(id,socket);
+    }
 }
