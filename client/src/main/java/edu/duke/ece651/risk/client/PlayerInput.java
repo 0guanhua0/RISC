@@ -74,7 +74,6 @@ public class PlayerInput {
                 actionList.addActions("M", m);
                 break;
         }
-
     }
 
 
