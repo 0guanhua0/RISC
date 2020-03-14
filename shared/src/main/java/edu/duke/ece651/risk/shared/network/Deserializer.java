@@ -11,6 +11,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static edu.duke.ece651.risk.shared.Constant.ACTION_ATTACK;
+import static edu.duke.ece651.risk.shared.Constant.ACTION_MOVE;
+
 /**
  * This is the deserializer for server part, which deserialize the json string and return what's needed.
  */
@@ -26,12 +29,12 @@ public class Deserializer {
 
         JSONObject jsonObject = new JSONObject(jsonStr);
 
-        actions.put("move",
-                new Gson().fromJson(jsonObject.getJSONArray("move").toString(),
+        actions.put(ACTION_MOVE,
+                new Gson().fromJson(jsonObject.getJSONArray(ACTION_MOVE).toString(),
                         new TypeToken<ArrayList<MoveAction>>(){}.getType())
         );
-        actions.put("attack",
-                new Gson().fromJson(jsonObject.getJSONArray("attack").toString(),
+        actions.put(ACTION_ATTACK,
+                new Gson().fromJson(jsonObject.getJSONArray(ACTION_ATTACK).toString(),
                         new TypeToken<ArrayList<AttackAction>>(){}.getType())
         );
 
