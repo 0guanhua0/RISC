@@ -1,7 +1,12 @@
 package edu.duke.ece651.risk.client;
 
 public interface Instruction {
-    public void actInfo(String player);
-    public void selfInfo(String player);
-    
+    public static void actInfo(String player) {
+
+    }
+
+    public static void selfInfo(String player) {
+
+    }
+
 }

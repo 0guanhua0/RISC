@@ -13,8 +13,9 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class PlayerInput {
-    public void main(InputStream inputStream, int player_id, HashMap<String, List<Action>> actions) throws IOException {
+    public static void read(InputStream inputStream, Player player, HashMap<String, List<Action>> actions) throws IOException {
         while (true) {
+            Instruction0.actInfo(player.getPlayerName());
             //read
             String str = readInput(inputStream);
             //D: done
@@ -23,22 +24,21 @@ public class PlayerInput {
             }
             //M/A
             if (str.equals("A") || str.equals("M")) {
-                readAction(inputStream, player_id, str, actions);
+                readAction(inputStream, player.getPlayerId(), str, actions);
             }
-
 
         }
     }
 
 
     //read from input
-    public String readInput(InputStream inputStream) throws IOException {
+    public static String readInput(InputStream inputStream) throws IOException {
         BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
         String insn = in.readLine();
         return insn;
     }
 
-    public void readAction(InputStream inputStream, int player_id, String currAct, HashMap<String, List<Action>> actions) throws IOException {
+    public static void readAction(InputStream inputStream, int player_id, String currAct, HashMap<String, List<Action>> actions) throws IOException {
         Instruction0.srcInfo();
         String src = readInput(inputStream);
         Instruction0.dstInfo();
@@ -56,9 +56,15 @@ public class PlayerInput {
         switch (currAct) {
             case "A":
                 AttackAction a = new AttackAction(src, dst, player_id, unitNum);
+                List<Action> act = actions.get("A");
+                act.add(a);
+                actions.put("A", act);
                 break;
             case "M":
                 MoveAction m = new MoveAction(src, dst, player_id, unitNum);
+                List<Action> actM = actions.get("M");
+                actM.add(m);
+                actions.put("M", actM);
                 break;
         }
 
@@ -68,9 +74,9 @@ public class PlayerInput {
 
     }
 
-    private Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?");
+    private static Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?");
 
-    public boolean isNumeric(String strNum) {
+    public static boolean isNumeric(String strNum) {
         if (strNum == null) {
             return false;
         }
