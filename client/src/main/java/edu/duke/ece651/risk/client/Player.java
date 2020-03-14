@@ -1,6 +1,8 @@
 package edu.duke.ece651.risk.client;
 
-
+/**
+ * store player info
+ */
 public class Player{
     private Integer playerId;
     private String playerName;

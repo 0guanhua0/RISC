@@ -1,6 +1,5 @@
 package edu.duke.ece651.risk.client;
 
-import edu.duke.ece651.risk.shared.action.Action;
 import edu.duke.ece651.risk.shared.action.AttackAction;
 import edu.duke.ece651.risk.shared.action.MoveAction;
 
@@ -8,17 +7,14 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.List;
-import java.util.regex.Pattern;
 
 /**
  * the class deal with player input
  */
 public class PlayerInput {
-    public static void read(InputStream inputStream, Player player, HashMap<String, List<Action>> actions) throws IOException {
+    public static void read(InputStream inputStream, Player player, ActionList actList) throws IOException {
         while (true) {
-            Instruction0.actInfo(player.getPlayerName());
+            Instruction.actInfo(player.getPlayerName());
             //read
             String str = readInput(inputStream);
             //D: done
@@ -27,7 +23,10 @@ public class PlayerInput {
             }
             //M/A
             if (str.equals("A") || str.equals("M")) {
-                readAction(inputStream, player.getPlayerId(), str, actions);
+                readAction(inputStream, player.getPlayerId(), str, actList);
+            }
+            else {
+                System.out.println("invalid input");
             }
 
         }
@@ -41,33 +40,38 @@ public class PlayerInput {
         return insn;
     }
 
-    public static void readAction(InputStream inputStream, int player_id, String currAct, HashMap<String, List<Action>> actions) throws IOException {
-        Instruction0.srcInfo();
+    /**
+     * read player action
+     * @param inputStream System.in
+     * @param player_id player id
+     * @param currAct curr action
+     * @param actionList list store aciton
+     * @throws IOException io exception
+     */
+    public static void readAction(InputStream inputStream, int player_id, String currAct, ActionList actionList) throws IOException {
+        Instruction.srcInfo();
         String src = readInput(inputStream);
-        Instruction0.dstInfo();
+        Instruction.dstInfo();
         String dst = readInput(inputStream);
 
         //read unit
-        Instruction0.unitInfo();
+        Instruction.unitInfo();
         String unit = readInput(inputStream);
-        if (!isNumeric(unit)) {
+
+        if(!Format.isNumeric(unit)) {
             System.out.println("invalid unit number");
+            return;
         }
 
-        int unitNum = Integer.parseInt(unit);
-
+        int unitNum  = Integer.parseInt(unit);
         switch (currAct) {
             case "A":
                 AttackAction a = new AttackAction(src, dst, player_id, unitNum);
-                List<Action> act = actions.get("A");
-                act.add(a);
-                actions.put("A", act);
+                actionList.addActions("A", a);
                 break;
             case "M":
                 MoveAction m = new MoveAction(src, dst, player_id, unitNum);
-                List<Action> actM = actions.get("M");
-                actM.add(m);
-                actions.put("M", actM);
+                actionList.addActions("M", m);
                 break;
         }
 
@@ -75,19 +79,11 @@ public class PlayerInput {
 
 
 
+
+
     }
 
-    /**
-     * regular expression to check is number or not
-     */
-    private static Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?");
 
-    public static boolean isNumeric(String strNum) {
-        if (strNum == null) {
-            return false;
-        }
-        return pattern.matcher(strNum).matches();
-    }
 
 
 }
