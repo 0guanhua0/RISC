@@ -12,6 +12,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
 
+/**
+ * the class deal with player input
+ */
 public class PlayerInput {
     public static void read(InputStream inputStream, Player player, HashMap<String, List<Action>> actions) throws IOException {
         while (true) {
@@ -74,6 +77,9 @@ public class PlayerInput {
 
     }
 
+    /**
+     * regular expression to check is number or not
+     */
     private static Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?");
 
     public static boolean isNumeric(String strNum) {

@@ -10,11 +10,12 @@ import java.util.List;
 
 public class Client {
     private static int port = 12345;
+    private static String ip = "127.0.0.1";
 
     public static void main (String[] args) throws IOException, InterruptedException {
 
         edu.duke.ece651.risk.shared.network.Client client = new edu.duke.ece651.risk.shared.network.Client();
-        client.init("127.0.0.1", port);
+        client.init(ip, port);
 
         Player player = new Player(0, "A");
 
