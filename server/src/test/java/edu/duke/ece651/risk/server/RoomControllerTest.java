@@ -6,6 +6,8 @@ import static org.mockito.Mockito.*;
 
 import edu.duke.ece651.risk.shared.action.MoveAction;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
+import edu.duke.ece651.risk.shared.map.Territory;
+import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.risk.shared.network.Deserializer;
 import edu.duke.ece651.risk.shared.player.Player;
 import org.junit.jupiter.api.Test;
@@ -52,28 +54,6 @@ public class RoomControllerTest {
     }
 
 
-    @Test
-    void testStartGame() throws IOException {
-        //set up the game
-        MapDataBase<String> mapDataBase = new MapDataBase<>();
-        Socket p1Socket = mock(Socket.class);
-        Socket p2Socket = mock(Socket.class);
-        when(p1Socket.getInputStream()).
-                thenReturn(new ByteArrayInputStream("a clash of kings".getBytes()));
-        when(p1Socket.getOutputStream()).thenReturn(new ByteArrayOutputStream());
-        RoomController roomController = new RoomController(0,p1Socket, mapDataBase);
-        roomController.addPlayer(p2Socket);
-
-        //let the player1 choose the territory
-        when(p1Socket.getOutputStream()).thenReturn(new ByteArrayOutputStream());
-        when(p1Socket.getInputStream()).
-                thenReturn(new ByteArrayInputStream(("the storm kingdom," +
-                          "kingdom of mountain and vale,kingdom of the rock").getBytes()));
-
-        //let player2 choose the territory
-        roomController.startGame();
-
-    }
 
 
     @Test
@@ -81,31 +61,47 @@ public class RoomControllerTest {
 //    I just test the funcionality of playSingleRoundGame
     void testPlaySingleRoundGame() throws IOException {
 
-        //set up the game
-        MapDataBase<String> mapDataBase = new MapDataBase<>();
-        Socket p1Socket = mock(Socket.class);
-        Socket p2Socket = mock(Socket.class);
-        when(p1Socket.getInputStream()).
-                thenReturn(new ByteArrayInputStream("a clash of kings".getBytes()));
-        when(p1Socket.getOutputStream()).thenReturn(new ByteArrayOutputStream());
-        RoomController roomController = new RoomController(0,p1Socket, mapDataBase);
-        roomController.addPlayer(p2Socket);
-
-        //a map of valid move actions(under initial map) for player1
-
-        //a map of invalid move(under initial map) actions for player1
-
-        //a map of valid move actions(under initial map) for player2
-
-        //a map of invalid move actions(under initial map) for player2
-
-
-        String fakeActions = "fake actions";
-        //mock interaction with player1
-        when(p1Socket.getOutputStream()).thenReturn(new ByteArrayOutputStream());
-        when(p1Socket.getInputStream()).thenReturn(new ByteArrayInputStream(fakeActions.getBytes()));
-//        when(Deserializer.deserializeActions(fakeActions)).thenReturn();
-        //mock receive a list of valid actions from player2
+//        //set up the game
+//        MapDataBase<String> mapDataBase = new MapDataBase<>();
+//        Socket p1Socket = mock(Socket.class);
+//        Socket p2Socket = mock(Socket.class);
+//        when(p1Socket.getInputStream()).
+//                thenReturn(new ByteArrayInputStream("a clash of kings".getBytes()));
+//        when(p1Socket.getOutputStream()).thenReturn(new ByteArrayOutputStream());
+//        RoomController roomController = new RoomController(0,p1Socket, mapDataBase);
+//        roomController.addPlayer(p2Socket);
+//
+//        //let each player choose some territories they want
+//        WorldMap<String> curMap = mapDataBase.getMap("a clash of kings");
+//        Territory t1 = curMap.getTerritory("kingdom of the north");
+//        Territory t2 = curMap.getTerritory("kigngdom of mountain and vale");
+//        Territory t3 = curMap.getTerritory("kingdom of the rock");
+//        roomController.players.get(0).addTerritory(t1);
+//        roomController.players.get(0).addTerritory(t2);
+//        roomController.players.get(0).addTerritory(t3);
+//        Territory t4 = curMap.getTerritory("kingdom of the reach");
+//        Territory t5 = curMap.getTerritory("the storm kingdom");
+//        Territory t6 = curMap.getTerritory("principality of dorne");
+//        roomController.players.get(0).addTerritory(t4);
+//        roomController.players.get(0).addTerritory(t5);
+//        roomController.players.get(0).addTerritory(t6);
+//
+//
+//        //a map of valid move actions(under initial map) for player1
+//
+//        //a map of invalid move(under initial map) actions for player1
+//
+//        //a map of valid move actions(under initial map) for player2
+//
+//        //a map of invalid move actions(under initial map) for player2
+//
+//
+//        String fakeActions = "fake actions";
+//        //mock interaction with player1
+//        when(p1Socket.getOutputStream()).thenReturn(new ByteArrayOutputStream());
+//        when(p1Socket.getInputStream()).thenReturn(new ByteArrayInputStream(fakeActions.getBytes()));
+////        when(Deserializer.deserializeActions(fakeActions)).thenReturn();
+//        //mock receive a list of valid actions from player2
 
     }
     @Test

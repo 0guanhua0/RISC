@@ -2,6 +2,7 @@ package edu.duke.ece651.risk.server;
 
 import edu.duke.ece651.risk.shared.action.Action;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
+import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.risk.shared.network.Deserializer;
 import edu.duke.ece651.risk.shared.player.Player;
@@ -107,6 +108,10 @@ public class RoomController {
                 }
                 if (isValid) {
                     occupied.addAll(terrNames);
+                    for (String terrName : terrNames) {
+                        Territory territory = map.getTerritory(terrName);
+                        player.addTerritory(territory);
+                    }
                     break;
                 }
             }
@@ -114,35 +119,35 @@ public class RoomController {
     }
     //TODO take exception into consideration
     void playSingleRoundGame(int round) throws IOException {
-        for (int i = 0; i < players.size(); i++) {
-            Player<String> player = players.get(i);
-            //inform client that new round of game begins
-            player.send(""+round);
-            String actionMsg = player.recv();
-            HashMap<String, List<Action>> actionMap = Deserializer.deserializeActions(actionMsg);
-            boolean isValid = true;
-            for (String actionName : actionMap.keySet()) {
-                List<Action> actions = actionMap.get(actionName);
-                for (int j = 0; j < actions.size(); j++) {
-                    Action action = actions.get(j);
-                    if (action.isValid(map)){
-                        //inform client that previous input has failed
-                        player.send("Invalid "+j);
-                        isValid = false;
-                        break;
-                    }
-                }
-                if (!isValid) break;
-            }
-            if (isValid){
+        for (Player<String> player : players) {
+            while (true){
+                //inform client that new round of game begins
+                player.send(""+round);
+                String actionMsg = player.recv();
+                HashMap<String, List<Action>> actionMap = Deserializer.deserializeActions(actionMsg);
+                boolean isValid = true;
                 for (String actionName : actionMap.keySet()) {
                     List<Action> actions = actionMap.get(actionName);
-                    for (Action action : actions) {
-                        action.perform(map);
+                    for (int j = 0; j < actions.size(); j++) {
+                        Action action = actions.get(j);
+                        if (action.isValid(map)){
+                            //inform client that previous input has failed
+                            player.send("Invalid "+j);
+                            isValid = false;
+                            break;
+                        }
                     }
+                    if (!isValid) break;
                 }
-            }else{
-                i--;
+                if (isValid){
+                    for (String actionName : actionMap.keySet()) {
+                        List<Action> actions = actionMap.get(actionName);
+                        for (Action action : actions) {
+                            action.perform(map);
+                        }
+                    }
+                    break;
+                }
             }
         }
     }
