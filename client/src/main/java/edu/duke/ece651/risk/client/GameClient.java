@@ -35,7 +35,7 @@ public class GameClient {
         //curr round
         while (true) {
             Display.showMap();
-            Instruction.selfInfo(player.getPlayerName());
+            InsPrompt.selfInfo(player.getPlayerName());
 
             ActionList aL = new ActionList();
             PlayerInput.read(System.in, player, aL);
