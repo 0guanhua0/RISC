@@ -40,14 +40,12 @@ public class RoomController {
         players.add(new PlayerV1<>(colorList.get(players.size()), players.size() + 1, socket));
         if (players.size() == colorList.size()){
             //TODO run the whole game
-//            this.runGame();
+            System.out.println("run this game");
+            //this.runGame();
         }
     }
 
     void askForMap(MapDataBase<String> mapDataBase) throws IOException {
-        if (players.size()!=1){
-            throw new IllegalStateException("Invalid number of players");
-        }
         Player<String> firstPlayer = players.get(0);
         while(true){
             firstPlayer.send("Please select the map you want");

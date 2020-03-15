@@ -11,7 +11,6 @@ import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.TerritoryV1;
 import edu.duke.ece651.risk.shared.map.WorldMap;
-import edu.duke.ece651.risk.shared.network.Deserializer;
 import edu.duke.ece651.risk.shared.player.Player;
 import org.junit.jupiter.api.Test;
 
@@ -25,6 +24,9 @@ public class RoomControllerTest {
 
     @Test
     void testConstructor() throws IOException {
+
+        assertThrows(IllegalArgumentException.class,()->{new RoomController(-1,null,new MapDataBase<String>());});
+
         Socket playerSocket = mock(Socket.class);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         when(playerSocket.getInputStream()).
@@ -47,25 +49,40 @@ public class RoomControllerTest {
         MapDataBase<String> mapDataBase = new MapDataBase<>();
         Socket p1Socket = mock(Socket.class);
         when(p1Socket.getInputStream()).
-                thenReturn(new ByteArrayInputStream("a clash of kings".getBytes()));
+                thenReturn(new ByteArrayInputStream("test".getBytes()));
         when(p1Socket.getOutputStream()).thenReturn(new ByteArrayOutputStream());
         RoomController roomController = new RoomController(0,p1Socket, mapDataBase);
         roomController.addPlayer(null);
-        assertEquals(roomController.players.size(),2);
+        roomController.addPlayer(null);
+        assertEquals(roomController.players.size(),3);
         assertEquals(roomController.players.get(0).getColor(),"red");
         assertEquals(roomController.players.get(1).getColor(),"blue");
+        assertEquals(roomController.players.get(2).getColor(),"black");
         assertEquals(roomController.players.size(),roomController.map.getColorList().size());
     }
 
     @Test
-    public void testAskForMap() {
+    public void testAskForMap() throws IOException {
+        assertThrows(IllegalArgumentException.class,()->{new RoomController(-1,null,new MapDataBase<String>());});
 
+        Socket playerSocket = mock(Socket.class);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        when(playerSocket.getInputStream()).
+                thenReturn(new ByteArrayInputStream("hogwarts".getBytes())).
+                thenReturn(new ByteArrayInputStream("".getBytes())).
+                thenReturn(new ByteArrayInputStream("a clash of kings".getBytes()));
+        when(playerSocket.getOutputStream()).thenReturn(outputStream);
+        MapDataBase<String> mapDataBase = new MapDataBase<>();
+        RoomController roomController = new RoomController(0,playerSocket, mapDataBase);
+        assertEquals(roomController.roomID,0);
+        assertEquals(roomController.players.size(),1);
+        assertEquals(roomController.map,mapDataBase.getMap("a clash of kings"));
+        verify(playerSocket, times(3)).getInputStream();
+        verify(playerSocket, times(3)).getOutputStream();
     }
 
 
     @Test
-//    note that below is unit testing for testPlaySingleRoundGame, so here I don't test whether action can work here,
-//    I just test the funcionality of playSingleRoundGame
     void testPlaySingleRoundGame() throws IOException {
 
         //set up the game
@@ -228,9 +245,8 @@ public class RoomControllerTest {
         verify(p1Socket, times(2)).getOutputStream();
         verify(p2Socket, times(0)).getInputStream();
         verify(p2Socket, times(1)).getOutputStream();
-        
-    }
 
+    }
     @Test
     public void testRunGame() {
 

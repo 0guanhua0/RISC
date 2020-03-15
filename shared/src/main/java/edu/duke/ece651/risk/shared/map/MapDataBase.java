@@ -8,12 +8,13 @@ import java.util.*;
  * @author: Chengda Wu(cw402)
  * @create: 2020-03-09 10:20
  **/
+
+//TODO read from input files rather than hardcoding here
 public class MapDataBase<T> {
     Map<String, WorldMap<T>> mapHub;
     public MapDataBase(){
         mapHub = new HashMap<>();
         //the first map--A Clash of Kings
-        //TODO read from input files rather than hardcoding here
         //the visualization of the worldmap:
         // https://www.google.com/imgres?imgurl=https%3A%2F%2F4.bp.blogspot.com%2F-KeZBbmX_Lbg%2FWmXhqT8wdmI%2FAAAAAAAABCQ%2FUR2pXAxwcss25bhcvUTiGojqCOxrgtkWACLcBGAs%2Fs1600%2FSix-Kingdoms-Map-Cropped2.png&imgrefurl=http%3A%2F%2Fsevenkingdomssevenhells.blogspot.com%2F2018%2F01%2Fthe-six-kingdoms.html&tbnid=f3Q1CgrIMiNzlM&vet=12ahUKEwiRufeZzo3oAhXH41MKHePwD_MQMygFegUIARDwAQ..i&docid=O_sfDTzxZzV-MM&w=473&h=1059&q=%20seven%20kingdom%20atlas&client=safari&ved=2ahUKEwiRufeZzo3oAhXH41MKHePwD_MQMygFegUIARDwAQ
         Map<String,Set<String>> atlas1 = new HashMap<>();
@@ -64,6 +65,18 @@ public class MapDataBase<T> {
         List<String> colorList = new ArrayList<>(Arrays.asList("red","blue"));
         WorldMap<T> worldMap1 = new WorldMap(atlas1,colorList);
         mapHub.put(name1,worldMap1);
+
+
+        String testName1 = "t1";
+        String testName2 = "t2";
+        String testName3 = "t3";
+        Map<String,Set<String>> atlas2 = new HashMap<>();
+        atlas2.put(testName1, new HashSet<>(){{ add(testName2); }});
+        atlas2.put(testName2, new HashSet<>(){{ add(testName1);add(testName3);}});
+        atlas2.put(testName3, new HashSet<>(){{ add(testName2); }});
+        WorldMap<T> worldMap2 = new WorldMap(atlas2,Arrays.asList("red","blue","black"));
+        mapHub.put("test",worldMap2);
+
     }
     public boolean containsMap(String inputName){
         if (null==inputName||inputName.isEmpty()){
