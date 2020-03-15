@@ -14,6 +14,8 @@ import java.util.*;
  * @author: Chengda Wu (cw402)
  * @create: 2020-03-08 20:49
  **/
+
+//TODO take generic and serializable into consideration
 public class WorldMap<T> implements Serializable {
     Map<String, Territory> atlas;
     List<T> colorList;

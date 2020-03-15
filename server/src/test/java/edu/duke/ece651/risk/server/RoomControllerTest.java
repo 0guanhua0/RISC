@@ -9,6 +9,7 @@ import edu.duke.ece651.risk.shared.action.Action;
 import edu.duke.ece651.risk.shared.action.MoveAction;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.map.Territory;
+import edu.duke.ece651.risk.shared.map.TerritoryV1;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.risk.shared.network.Deserializer;
 import edu.duke.ece651.risk.shared.player.Player;
@@ -161,17 +162,60 @@ public class RoomControllerTest {
         assertEquals(t5.getUnitsNum(),3);
     }
     @Test
+    void getWinnerId() throws IOException {
+        Socket p1Socket = mock(Socket.class);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        when(p1Socket.getInputStream()).thenReturn(new ByteArrayInputStream("a clash of kings".getBytes()));
+        when(p1Socket.getOutputStream()).thenReturn(outputStream);
+        MapDataBase<String> mapDataBase = new MapDataBase<>();
+        WorldMap curMap = mapDataBase.getMap("a clash of kings");
+        RoomController roomController = new RoomController(0,p1Socket, mapDataBase);
+        roomController.addPlayer(null);
+        Territory t1 = curMap.getTerritory("kingdom of the north");
+        Territory t2 = curMap.getTerritory("kingdom of mountain and vale");
+        Territory t3 = curMap.getTerritory("kingdom of the rock");
+        Territory t4 = curMap.getTerritory("kingdom of the reach");
+        Territory t5 = curMap.getTerritory("the storm kingdom");
+        Territory t6 = curMap.getTerritory("principality of dorne");
+
+        Player<String> player1 = roomController.players.get(0);
+        Player<String> player2 = roomController.players.get(1);
+        player1.addTerritory(t1);
+        player1.addTerritory(t2);
+        player1.addTerritory(t3);
+        player1.addTerritory(t4);
+        player1.addTerritory(t5);
+        player1.addTerritory(t6);
+        assertEquals(roomController.getWinnerId(),1);
+
+        player1.loseTerritory(t1);
+        player2.addTerritory(t1);
+        assertEquals(roomController.getWinnerId(),-1);
+
+        player2.loseTerritory(t1);
+        player1.addTerritory(t1);
+        assertEquals(roomController.getWinnerId(),1);
+
+        Territory test = new TerritoryV1("some name");
+        player1.addTerritory(test);
+        assertThrows(IllegalStateException.class,()->{roomController.getWinnerId();});
+    }
+
+
+    @Test
     public void testRunGame() {
-        
+
     }
     
     @Test
     public void testEndGame() { 
         
     }
-    
+
     @Test
-    public void testAskForMap() { 
-        
+    public void testAskForMap() {
+
     }
+
+
 }

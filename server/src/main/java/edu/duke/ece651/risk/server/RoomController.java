@@ -155,13 +155,20 @@ public class RoomController {
 
     //return -1 when no wins
     int getWinnerId(){
+        int res = -1;
         int targetNum = map.getTerriNum();
+        int totalNum = 0;
         for (Player<String> player : players) {
-            if (player.getTerrNum()==targetNum){
-                return player.getId();
+            int curNum = player.getTerrNum();
+            totalNum += curNum;
+            if (curNum>targetNum||totalNum>targetNum){
+                throw new IllegalStateException("Illegal State of current world");
+            }
+            if (curNum==targetNum){
+                res =  player.getId();
             }
         }
-        return -1;
+        return res;
     }
 
     void endGame(int winnerId) throws IOException {
