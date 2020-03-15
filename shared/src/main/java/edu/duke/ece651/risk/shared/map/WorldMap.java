@@ -1,9 +1,11 @@
 package edu.duke.ece651.risk.shared.map;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import com.google.gson.Gson;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.Serializable;
+import java.util.*;
 
 /**
  * @program: risk-Map
@@ -12,9 +14,12 @@ import java.util.Set;
  * @author: Chengda Wu (cw402)
  * @create: 2020-03-08 20:49
  **/
-public class WorldMap {
+public class WorldMap<T> implements Serializable {
     Map<String, Territory> atlas;
-    public WorldMap(Map<String,Set<String>> adjaList){
+    List<T> playerColor;
+    public WorldMap(){}
+    public WorldMap(Map<String,Set<String>> adjaList,List<T> playerColor){
+        this.playerColor = playerColor;
         atlas = new HashMap<>();
         //initialize each single territory
         for (Map.Entry<String, Set<String>> entry : adjaList.entrySet()) {
@@ -34,10 +39,24 @@ public class WorldMap {
             curTerri.setNeigh(neigh);
         }
     }
+    public void setAtlas(Map<String, Territory> map){
+        this.atlas = map;
+    }
+    public void setPlayerColor(List<T> playerColor) {
+        this.playerColor = playerColor;
+    }
+    public List<T> getPlayerColor() {
+        return playerColor;
+    }
+    public Map<String, Territory> getAtlas() {
+        return atlas;
+    }
+
     public boolean hasTerritory(String input){
         String name = input.toLowerCase();
         return atlas.containsKey(name);
     }
+
     public Territory getTerritory(String input){
         if (!hasTerritory(input)){
             throw new IllegalArgumentException("No such territory inside the map");
@@ -45,10 +64,31 @@ public class WorldMap {
         String name = input.toLowerCase();
         return atlas.get(name);
     }
+
     //if there is no territory with such name or this territory is currently occupied,return false
     public boolean hasFreeTerritory(String input){
         String name = input.toLowerCase();
-        return atlas.containsKey(name)&& atlas.get(name).isFree();
+        return atlas.containsKey(name) && atlas.get(name).isFree();
     }
 
+    public String toJSON(){
+        JSONObject jsonObject = new JSONObject();
+        // serialize all territory into a json array
+        JSONArray territories = new JSONArray();
+        for (String key : atlas.keySet()){
+            JSONObject tmp = new JSONObject();
+            Territory territory = atlas.get(key);
+
+            tmp.put("territory", new Gson().toJson(territory));
+            tmp.put("name", territory.getName());
+            // this is used for deserialization
+            tmp.put("type", territory.getClass().getName());
+
+            territories.put(tmp);
+        }
+        jsonObject.put("atlas", territories);
+        return jsonObject.toString();
+    }
+
+    // TODO: have better implement equals here
 }
