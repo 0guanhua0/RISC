@@ -112,7 +112,9 @@ public class RoomControllerTest {
         //a map of valid move actions(under initial map) for player1
         Map<String, List<Action>> actionMap1 = new HashMap<>();
         MoveAction a11 = new MoveAction("kingdom of the north", "kingdom of mountain and vale", 1, 1);
-        actionMap1.put("move", Arrays.asList(a11));
+        MoveAction a12 = new MoveAction("kingdom of mountain and vale", "kingdom of the rock",1, 1);
+
+        actionMap1.put("move", Arrays.asList(a11,a12));
         actionMap1.put("attack", new ArrayList<Action>());
         String action1Str = new Gson().toJson(actionMap1);
 
@@ -146,8 +148,17 @@ public class RoomControllerTest {
 
         roomController.playSingleRoundGame(1);
 
-
-
+        verify(p1Socket, times(2+1)).getInputStream();
+        verify(p1Socket, times(3+1)).getOutputStream();
+        verify(p2Socket, times(2)).getInputStream();
+        verify(p2Socket, times(3)).getOutputStream();
+        assertEquals(roomController.players.get(0).getTerrNum(),4);
+        assertEquals(roomController.players.get(1).getTerrNum(),2);
+        assertEquals(t1.getUnitsNum(),2);
+        assertEquals(t2.getUnitsNum(),2);
+        assertEquals(t3.getUnitsNum(),2);
+        assertEquals(t4.getUnitsNum(),3);
+        assertEquals(t5.getUnitsNum(),3);
     }
     @Test
     public void testRunGame() {

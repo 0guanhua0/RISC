@@ -68,7 +68,7 @@ public class RoomController {
         int playerNum = map.getColorList().size();
         if (playerNum>TerriNum){
             throw new IllegalArgumentException("The number of players can't be larger than the number of territories");
-        }else if(0!=TerriNum/playerNum){
+        }else if(0!=TerriNum%playerNum){
             throw new IllegalArgumentException("This is unfair to the last player!");
         }
         int singleNum = TerriNum/playerNum;
@@ -121,14 +121,10 @@ public class RoomController {
     void playSingleRoundGame(int round) throws IOException {
         int i = 1;
         for (Player<String> player : players) {
-            System.out.println("player"+(i));
-            i++;
             while (true){
-                System.out.println("inside while");
                 //inform client that new round of game begins
                 player.send(""+round);
                 String actionMsg = player.recv();
-                System.out.println(actionMsg);
                 Map<String, List<Action>> actionMap = Deserializer.deserializeActions(actionMsg);
                 boolean isValid = true;
                 for (String actionName : actionMap.keySet()) {
@@ -145,7 +141,6 @@ public class RoomController {
                     if (!isValid) break;
                 }
                 if (isValid){
-                    System.out.println("success");
                     for (String actionName : actionMap.keySet()) {
                         List<Action> actions = actionMap.get(actionName);
                         for (Action action : actions) {
@@ -153,8 +148,6 @@ public class RoomController {
                         }
                     }
                     break;
-                }else {
-                    System.out.println("fail");
                 }
             }
         }
