@@ -79,7 +79,6 @@ class WorldMapTest {
         assertEquals(myMap.atlas.get(t1),territory1);
         assertEquals(myMap.atlas.get(t2),territory2);
         assertTrue(myMap.colorList.contains("red"));
-        assertTrue(myMap.colorList.contains("black"));
         assertTrue(myMap.colorList.contains("blue"));
 
     }

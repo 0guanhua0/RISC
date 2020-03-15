@@ -17,12 +17,7 @@ class MapDataBaseTest {
     @Test
     void getMap() {
         MapDataBase mapDataBase = new MapDataBase();
-        try {
-            WorldMap test = mapDataBase.getMap("test");
-            assert (false);
-        }catch (Exception e){
-            assert (true);
-        }
+        assertThrows(IllegalArgumentException.class,()->{mapDataBase.getMap("not exist");});
         if (mapDataBase.containsMap("a clash of kings")){
             WorldMap map = mapDataBase.getMap("a clash of kings");
         }else{

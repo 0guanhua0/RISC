@@ -63,27 +63,32 @@ public class GameServerTest {
 
     @Test
     public void testHandleIncomeRequest() throws IOException {
+
+        //prepare for the first player who creates a new room
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         Socket socket1 = mock(Socket.class);
         when(socket1.getInputStream())
-                .thenReturn(new ByteArrayInputStream("-1".getBytes()));
+                .thenReturn(new ByteArrayInputStream("-1".getBytes()))
+                .thenReturn(new ByteArrayInputStream("test".getBytes()));
         when(socket1.getOutputStream()).thenReturn(outputStream);
 
+        //handle the request for first player
         GameServer gameServer = new GameServer(null);
         assertEquals(0, gameServer.rooms.size());
         gameServer.handleIncomeRequest(socket1);
         assertEquals(1, gameServer.rooms.size());
-        assertEquals("Welcome to the fancy RISK game!!!\n", outputStream.toString());
+        assertEquals("Welcome to the fancy RISK game!!!\nPlease select the map you want\n", outputStream.toString());
         assertEquals(1,gameServer.rooms.get(0).players.size());
         assertEquals(0,gameServer.rooms.get(0).roomID);
 
 
+        //prepare for the second player who joins in this room
         outputStream.reset();
         Socket socket2 = mock(Socket.class);
         when(socket2.getInputStream())
                 .thenReturn(new ByteArrayInputStream("0".getBytes()));
         when(socket2.getOutputStream()).thenReturn(outputStream);
-
+        //handle the request for second player
         assertEquals(1, gameServer.rooms.size());
         gameServer.handleIncomeRequest(socket2);
         assertEquals(1, gameServer.rooms.size());
@@ -91,12 +96,13 @@ public class GameServerTest {
         assertEquals(2,gameServer.rooms.get(0).players.size());
         assertEquals(0,gameServer.rooms.get(0).roomID);
 
+        //prepare for the third player who joins in this room
         outputStream.reset();
         Socket socket3 = mock(Socket.class);
         when(socket3.getInputStream())
                 .thenReturn(new ByteArrayInputStream("0".getBytes()));
         when(socket3.getOutputStream()).thenReturn(outputStream);
-
+        //handle the request for third player
         assertEquals(1, gameServer.rooms.size());
         gameServer.handleIncomeRequest(socket3);
         assertEquals(1, gameServer.rooms.size());
@@ -108,21 +114,28 @@ public class GameServerTest {
     @Test
     public void testAskValidRoomNum() throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        Socket socket = mock(Socket.class);
-        when(socket.getInputStream())
+        //perpare the sockets for player who wants to create this game
+        Socket socket1 = mock(Socket.class);
+        when(socket1.getInputStream())
+                .thenReturn(new ByteArrayInputStream("-1".getBytes()))
+                .thenReturn(new ByteArrayInputStream("test".getBytes()));
+        when(socket1.getOutputStream()).
+                thenReturn(new ByteArrayOutputStream());
+        //prepare socket for the second player who wants to join in this game
+        Socket socket2 = mock(Socket.class);
+        when(socket2.getInputStream())
                 .thenReturn(new ByteArrayInputStream("abc".getBytes()))
                 .thenReturn(new ByteArrayInputStream("10".getBytes()))
                 .thenReturn(new ByteArrayInputStream("0".getBytes()));
-        when(socket.getOutputStream()).thenReturn(outputStream);
+        when(socket2.getOutputStream()).thenReturn(outputStream);
 
         int roomID = 0;
         GameServer gameServer = new GameServer(null);
-        gameServer.rooms.put(roomID, new RoomController(roomID, null,new MapDataBase<String>()));
-
-        assertEquals(roomID, gameServer.askValidRoomNum(socket));
+        gameServer.rooms.put(roomID, new RoomController(roomID, socket1,new MapDataBase<String>()));
+        assertEquals(roomID, gameServer.askValidRoomNum(socket2));
         assertEquals("Invalid choice, try again\n".repeat(2), outputStream.toString());
 
-        verify(socket, atLeast(3)).getInputStream();
+        verify(socket2, atLeast(3)).getInputStream();
     }
     
     @Test
