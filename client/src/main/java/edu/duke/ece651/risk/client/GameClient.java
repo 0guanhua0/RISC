@@ -34,7 +34,7 @@ public class GameClient {
 
         //curr round
         while (true) {
-            Display.showMap();
+            SceneCLI.showMap();
             InsPrompt.selfInfo(player.getPlayerName());
 
             ActionList aL = new ActionList();
