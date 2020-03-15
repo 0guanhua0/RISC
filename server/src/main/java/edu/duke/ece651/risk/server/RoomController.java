@@ -161,7 +161,7 @@ public class RoomController {
         for (Player<String> player : players) {
             int curNum = player.getTerrNum();
             totalNum += curNum;
-            if (curNum>targetNum||totalNum>targetNum){
+            if (totalNum>targetNum){
                 throw new IllegalStateException("Illegal State of current world");
             }
             if (curNum==targetNum){
@@ -178,7 +178,7 @@ public class RoomController {
         //tell all players that we want to end this game
         for (Player<String> player : players) {
             if (player.getId()!=winnerId){
-                player.send("Game has finished, Player"+winnerId+" is the winner");
+                player.send("Game has finished, Player"+winnerId+" is the winner!");
             }else{
                 player.send("Game has finished, you are the winner!");
             }

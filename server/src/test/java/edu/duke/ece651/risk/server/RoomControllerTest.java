@@ -57,7 +57,10 @@ public class RoomControllerTest {
         assertEquals(roomController.players.size(),roomController.map.getColorList().size());
     }
 
+    @Test
+    public void testAskForMap() {
 
+    }
 
 
     @Test
@@ -201,21 +204,36 @@ public class RoomControllerTest {
         assertThrows(IllegalStateException.class,()->{roomController.getWinnerId();});
     }
 
+    @Test
+    public void testEndGame() throws IOException {
+        Socket p1Socket = mock(Socket.class);
+        Socket p2Socket = mock(Socket.class);
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        when(p1Socket.getInputStream()).thenReturn(new ByteArrayInputStream("a clash of kings".getBytes()));
+        when(p1Socket.getOutputStream()).thenReturn(outputStream);
+        MapDataBase<String> mapDataBase = new MapDataBase<>();
+        WorldMap curMap = mapDataBase.getMap("a clash of kings");
+        RoomController roomController = new RoomController(0,p1Socket, mapDataBase);
+        roomController.addPlayer(p2Socket);
+        assertThrows(IllegalArgumentException.class,()->{roomController.endGame(-1);});
+        ByteArrayOutputStream p1OutStream = new ByteArrayOutputStream();
+        ByteArrayOutputStream p2OutStream = new ByteArrayOutputStream();
+        when(p1Socket.getOutputStream()).thenReturn(p1OutStream);
+        when(p2Socket.getOutputStream()).thenReturn(p2OutStream);
+        roomController.endGame(1);
+        assertEquals(p1OutStream.toString().strip(),"Game has finished, you are the winner!".strip());
+        assertEquals(p2OutStream.toString().strip(),"Game has finished, Player1 is the winner!".strip());
+        verify(p1Socket, times(1)).getInputStream();
+        verify(p1Socket, times(2)).getOutputStream();
+        verify(p2Socket, times(0)).getInputStream();
+        verify(p2Socket, times(1)).getOutputStream();
+        
+    }
 
     @Test
     public void testRunGame() {
 
     }
-    
-    @Test
-    public void testEndGame() { 
-        
-    }
-
-    @Test
-    public void testAskForMap() {
-
-    }
-
 
 }

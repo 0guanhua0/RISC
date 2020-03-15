@@ -70,6 +70,7 @@ public class Deserializer {
         }
         WorldMap worldMap = new WorldMap();
         worldMap.setAtlas(map);
+        //TODO take colorList field into consideration
         return worldMap;
     }
 }
