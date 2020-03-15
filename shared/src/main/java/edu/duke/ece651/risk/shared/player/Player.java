@@ -46,6 +46,10 @@ public abstract class Player<T> {
         this.socket = socket;
     }
 
+    public int getId() {
+        return id;
+    }
+
     public T getColor() {
         return color;
     }
@@ -78,5 +82,8 @@ public abstract class Player<T> {
             return Server.recvStr(socket);
         }
         return "";
+    }
+    public int getTerrNum(){
+        return territories.size();
     }
 }

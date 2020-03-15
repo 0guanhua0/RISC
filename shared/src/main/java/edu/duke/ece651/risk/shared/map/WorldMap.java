@@ -17,7 +17,10 @@ import java.util.*;
 public class WorldMap<T> implements Serializable {
     Map<String, Territory> atlas;
     List<T> colorList;
-    public WorldMap(){}
+    public WorldMap(){
+        this.atlas = new HashMap<>();
+        this.colorList = new ArrayList<>();
+    }
     public WorldMap(Map<String,Set<String>> adjaList,List<T> colorList){
         this.colorList = colorList;
         atlas = new HashMap<>();
@@ -65,6 +68,9 @@ public class WorldMap<T> implements Serializable {
         return atlas.get(name);
     }
 
+    public int getTerriNum(){
+        return atlas.size();
+    }
     //if there is no territory with such name or this territory is currently occupied,return false
     public boolean hasFreeTerritory(String input){
         String name = input.toLowerCase();
