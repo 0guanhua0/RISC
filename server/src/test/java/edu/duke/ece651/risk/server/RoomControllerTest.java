@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
+import com.google.gson.Gson;
 import edu.duke.ece651.risk.shared.action.Action;
 import edu.duke.ece651.risk.shared.action.MoveAction;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
@@ -76,7 +77,7 @@ public class RoomControllerTest {
         //let each player choose some territories they want
         WorldMap<String> curMap = mapDataBase.getMap("a clash of kings");
         Territory t1 = curMap.getTerritory("kingdom of the north");
-        Territory t2 = curMap.getTerritory("kigngdom of mountain and vale");
+        Territory t2 = curMap.getTerritory("kingdom of mountain and vale");
         Territory t3 = curMap.getTerritory("kingdom of the rock");
         Territory t4 = curMap.getTerritory("kingdom of the reach");
         Territory t5 = curMap.getTerritory("the storm kingdom");
@@ -104,25 +105,27 @@ public class RoomControllerTest {
         //a map of valid move actions(under initial map) for player1
         Map<String, List<Action>> actionMap1 = new HashMap<>();
         MoveAction a11 = new MoveAction("kingdom of the north", "kingdom of mountain and vale", 1, 1);
-        actionMap1.put("Move", Arrays.asList(a11));
+        actionMap1.put("move", Arrays.asList(a11));
+        actionMap1.put("attack", new ArrayList<Action>());
+
+        String action1Str = new Gson().toJson(actionMap1);
         //a map of invalid move(under initial map) actions for player1
 
         //a map of valid move actions(under initial map) for player2
         Map<String, List<Action>> actionMap2 = new HashMap<>();
         MoveAction a22 = new MoveAction("kingdom of the reach", "the storm kingdom", 2, 1);
-        actionMap2.put("Move", Arrays.asList(a22));
+        actionMap2.put("move", Arrays.asList(a22));
+        actionMap2.put("attack", new ArrayList<Action>());
+        String action2Str = new Gson().toJson(actionMap2);
+
         //a map of invalid move actions(under initial map) for player2
 
-        String fakeActions = "fake actions";
         //mock interaction with player1
         when(p1Socket.getOutputStream()).thenReturn(new ByteArrayOutputStream());
-        when(p1Socket.getInputStream()).thenReturn(new ByteArrayInputStream(fakeActions.getBytes()));
-        when(Deserializer.deserializeActions(fakeActions)).thenReturn(actionMap1);
+        when(p1Socket.getInputStream()).thenReturn(new ByteArrayInputStream(action1Str.getBytes()));
         //mock receive a list of valid actions from player2
-        when(p1Socket.getOutputStream()).thenReturn(new ByteArrayOutputStream());
-        when(p1Socket.getInputStream()).thenReturn(new ByteArrayInputStream(fakeActions.getBytes()));
-        when(Deserializer.deserializeActions(fakeActions)).thenReturn(actionMap2);
-
+        when(p2Socket.getOutputStream()).thenReturn(new ByteArrayOutputStream());
+        when(p2Socket.getInputStream()).thenReturn(new ByteArrayInputStream(action2Str.getBytes()));
         roomController.playSingleRoundGame(1);
 
 

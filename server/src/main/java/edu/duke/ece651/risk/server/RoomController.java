@@ -40,6 +40,7 @@ public class RoomController {
         players.add(new PlayerV1<>(colorList.get(players.size()), players.size() + 1, socket));
         if (players.size() == colorList.size()){
             //TODO run the whole game
+//            this.runGame();
         }
     }
 
@@ -118,8 +119,12 @@ public class RoomController {
     }
     //TODO take exception into consideration
     void playSingleRoundGame(int round) throws IOException {
+        int i = 1;
         for (Player<String> player : players) {
+            System.out.println("player"+(i));
+            i++;
             while (true){
+                System.out.println("inside while");
                 //inform client that new round of game begins
                 player.send(""+round);
                 String actionMsg = player.recv();
@@ -129,7 +134,7 @@ public class RoomController {
                     List<Action> actions = actionMap.get(actionName);
                     for (int j = 0; j < actions.size(); j++) {
                         Action action = actions.get(j);
-                        if (action.isValid(map)){
+                        if (!action.isValid(map)){
                             //inform client that previous input has failed
                             player.send("Invalid "+j);
                             isValid = false;
@@ -139,6 +144,7 @@ public class RoomController {
                     if (!isValid) break;
                 }
                 if (isValid){
+                    System.out.println("success");
                     for (String actionName : actionMap.keySet()) {
                         List<Action> actions = actionMap.get(actionName);
                         for (Action action : actions) {
