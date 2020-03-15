@@ -1,12 +1,12 @@
 package edu.duke.ece651.risk.client;
 
+import edu.duke.ece651.risk.shared.Constant;
 import edu.duke.ece651.risk.shared.action.AttackAction;
 import edu.duke.ece651.risk.shared.action.MoveAction;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.util.Scanner;
 
 /**
  * the class deal with player input
@@ -14,7 +14,7 @@ import java.io.InputStreamReader;
 public class PlayerInput {
     public static void read(InputStream inputStream, Player player, ActionList actList) throws IOException {
         while (true) {
-            Instruction.actInfo(player.getPlayerName());
+            InsPrompt.actInfo(player.getPlayerName());
             //read
             String str = readInput(inputStream);
             //D: done
@@ -35,9 +35,12 @@ public class PlayerInput {
 
     //read from input
     public static String readInput(InputStream inputStream) throws IOException {
-        BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
-        String insn = in.readLine();
-        return insn;
+        Scanner scanner = new Scanner(inputStream);
+        StringBuilder sb = new StringBuilder();
+        while (scanner.hasNext()) {
+            sb.append(scanner.nextLine());
+        }
+        return sb.toString();
     }
 
     /**
@@ -49,13 +52,13 @@ public class PlayerInput {
      * @throws IOException io exception
      */
     public static void readAction(InputStream inputStream, int player_id, String currAct, ActionList actionList) throws IOException {
-        Instruction.srcInfo();
+        InsPrompt.srcInfo();
         String src = readInput(inputStream);
-        Instruction.dstInfo();
+        InsPrompt.dstInfo();
         String dst = readInput(inputStream);
 
         //read unit
-        Instruction.unitInfo();
+        InsPrompt.unitInfo();
         String unit = readInput(inputStream);
 
         if(!Format.isNumeric(unit)) {
@@ -67,11 +70,11 @@ public class PlayerInput {
         switch (currAct) {
             case "A":
                 AttackAction a = new AttackAction(src, dst, player_id, unitNum);
-                actionList.addActions("A", a);
+                actionList.addAction(Constant.ACTION_ATTACK, a);
                 break;
             case "M":
                 MoveAction m = new MoveAction(src, dst, player_id, unitNum);
-                actionList.addActions("M", m);
+                actionList.addAction(Constant.ACTION_MOVE, m);
                 break;
         }
     }

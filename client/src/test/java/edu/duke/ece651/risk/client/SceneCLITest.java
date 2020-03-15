@@ -4,10 +4,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class DisplayTest {
+class SceneCLITest {
 
     @Test
     void showMap() {
-        Display.showMap();
+        SceneCLI.showMap();
     }
 }

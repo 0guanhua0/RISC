@@ -1,5 +1,6 @@
 package edu.duke.ece651.risk.client;
 
+import edu.duke.ece651.risk.shared.Constant;
 import edu.duke.ece651.risk.shared.action.Action;
 
 import java.util.ArrayList;
@@ -16,8 +17,8 @@ public class ActionList {
         actions = new HashMap();
         ArrayList a = new ArrayList();
         ArrayList m = new ArrayList();
-        actions.put("A", a);
-        actions.put("M", m);
+        actions.put(Constant.ACTION_ATTACK, a);
+        actions.put(Constant.ACTION_MOVE, m);
     }
 
     /**
@@ -33,7 +34,7 @@ public class ActionList {
      * @param s type
      * @param a action
      */
-    public void addActions(String s, Action a) {
+    public void addAction(String s, Action a) {
         List<Action> act = actions.get(s);
         act.add(a);
         actions.put(s, act);

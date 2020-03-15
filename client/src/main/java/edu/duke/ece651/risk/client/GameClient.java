@@ -1,9 +1,6 @@
 package edu.duke.ece651.risk.client;
 
-import edu.duke.ece651.risk.shared.network.Server;
-
 import java.io.IOException;
-import java.net.Socket;
 
 /**
  * main class for player
@@ -15,18 +12,6 @@ public class GameClient {
 
     public static void main(String[] args) throws IOException, InterruptedException {
 
-        //build network connection
-        new Thread(() -> {
-            try {
-                Server serve = new Server(port);
-                Socket socket = serve.accept();
-                System.out.println(Server.recvStr(socket));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }).start();
-        Thread.sleep(500);
-
         edu.duke.ece651.risk.shared.network.Client client = new edu.duke.ece651.risk.shared.network.Client();
         client.init(ip, port);
 
@@ -34,6 +19,8 @@ public class GameClient {
 
         //curr round
         while (true) {
+            //recv data from server
+            //client.recvData();
             SceneCLI.showMap();
             InsPrompt.selfInfo(player.getPlayerName());
 
