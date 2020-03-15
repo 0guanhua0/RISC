@@ -22,7 +22,7 @@ public class Deserializer {
      * @param jsonStr json string representation
      * @return Map of actions; key is action type, e.g. move; value is list of actions
      */
-    public static HashMap<String, List<Action>> deserializeActions(String jsonStr){
+    public static Map<String, List<Action>> deserializeActions(String jsonStr){
         HashMap<String, List<Action>> actions = new HashMap<>();
 
         JSONObject jsonObject = new JSONObject(jsonStr);

@@ -10,10 +10,8 @@ import edu.duke.ece651.risk.shared.player.PlayerV1;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
+
 //TODO for every method that have networking, take client losing connection into consideration
 //TODO for every method that have networking, handle some exceptions rather than just throwing it
 public class RoomController {
@@ -41,7 +39,7 @@ public class RoomController {
         List<String> colorList = map.getColorList();
         players.add(new PlayerV1<>(colorList.get(players.size()), players.size() + 1, socket));
         if (players.size() == colorList.size()){
-            runGame();
+            //TODO run the whole game
         }
     }
 
@@ -63,11 +61,12 @@ public class RoomController {
     //call this method to let each player choose  territories they want
     //TODO maybe change this method to a multi-thread version? the current version is letting each player choose one by one
     //TODO maybe add a new action type to check the integrity and correctness of data outside current method is a wise idea
+    //TODO take assign units for each territory into consideration
     void startGame() throws IOException, IllegalArgumentException {
         int TerriNum = map.getTerriNum();
         int playerNum = map.getColorList().size();
-        if (playerNum<TerriNum){
-            throw new IllegalArgumentException("The number of players can't be smaller than the number of territories");
+        if (playerNum>TerriNum){
+            throw new IllegalArgumentException("The number of players can't be larger than the number of territories");
         }else if(0!=TerriNum/playerNum){
             throw new IllegalArgumentException("This is unfair to the last player!");
         }
@@ -124,7 +123,7 @@ public class RoomController {
                 //inform client that new round of game begins
                 player.send(""+round);
                 String actionMsg = player.recv();
-                HashMap<String, List<Action>> actionMap = Deserializer.deserializeActions(actionMsg);
+                Map<String, List<Action>> actionMap = Deserializer.deserializeActions(actionMsg);
                 boolean isValid = true;
                 for (String actionName : actionMap.keySet()) {
                     List<Action> actions = actionMap.get(actionName);

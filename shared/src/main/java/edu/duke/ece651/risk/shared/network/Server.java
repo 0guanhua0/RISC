@@ -12,6 +12,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This class wraps up network server socket, can be used to setup a simple TCP server.
@@ -78,7 +79,7 @@ public class Server {
      * @return Map of actions; key is action type, e.g. move; value is list of actions
      * @throws IOException probably because the stream is already closed
      */
-    public static HashMap<String, List<Action>> recvActions(Socket s) throws IOException {
+    public static Map<String, List<Action>> recvActions(Socket s) throws IOException {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(s.getInputStream()));
         return Deserializer.deserializeActions(bufferedReader.readLine());
     }
