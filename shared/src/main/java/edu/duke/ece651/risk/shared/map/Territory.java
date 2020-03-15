@@ -85,7 +85,7 @@ public abstract class Territory {
 
     public abstract int getUnitsNum();
 
-    public abstract void addNUnits(int num);
+    public abstract void addNUnits(int num) throws IllegalArgumentException;
 
     public abstract void lossNUnits(int num);
 

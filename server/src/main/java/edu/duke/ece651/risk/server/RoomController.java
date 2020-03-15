@@ -128,6 +128,7 @@ public class RoomController {
                 //inform client that new round of game begins
                 player.send(""+round);
                 String actionMsg = player.recv();
+                System.out.println(actionMsg);
                 Map<String, List<Action>> actionMap = Deserializer.deserializeActions(actionMsg);
                 boolean isValid = true;
                 for (String actionName : actionMap.keySet()) {
@@ -152,6 +153,8 @@ public class RoomController {
                         }
                     }
                     break;
+                }else {
+                    System.out.println("fail");
                 }
             }
         }

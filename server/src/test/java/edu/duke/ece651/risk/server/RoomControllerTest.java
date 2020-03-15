@@ -91,41 +91,59 @@ public class RoomControllerTest {
         roomController.players.get(1).addTerritory(t4);
         roomController.players.get(1).addTerritory(t5);
 
-        //assign some units to each territory, 5 units for each player
+        //assign some units to each territory, 6 units for each player
         //player 1
-        t1.addNUnits(2);
+        t1.addNUnits(3);
         t2.addNUnits(2);
         t3.addNUnits(1);
         t6.addNUnits(1);
         //player 2
-        t4.addNUnits(2);
+        t4.addNUnits(4);
         t5.addNUnits(2);
 
+        //a map of invalid move actions(under initial map) for player1
+        Map<String, List<Action>> actionMap0 = new HashMap<>();
+        MoveAction a01 = new MoveAction("kingdom of the north", "kingdom of mountain and vale", 1, 1);
+        MoveAction a02 = new MoveAction("kingdom of the north", "principality of dorne", 1, 1);
+        actionMap0.put("move", Arrays.asList(a01,a02));
+        actionMap0.put("attack", new ArrayList<Action>());
+        String action0Str = new Gson().toJson(actionMap0);
 
         //a map of valid move actions(under initial map) for player1
         Map<String, List<Action>> actionMap1 = new HashMap<>();
         MoveAction a11 = new MoveAction("kingdom of the north", "kingdom of mountain and vale", 1, 1);
         actionMap1.put("move", Arrays.asList(a11));
         actionMap1.put("attack", new ArrayList<Action>());
-
         String action1Str = new Gson().toJson(actionMap1);
-        //a map of invalid move(under initial map) actions for player1
 
-        //a map of valid move actions(under initial map) for player2
+        //a map of invalid move actions(under initial map) for player2
         Map<String, List<Action>> actionMap2 = new HashMap<>();
-        MoveAction a22 = new MoveAction("kingdom of the reach", "the storm kingdom", 2, 1);
-        actionMap2.put("move", Arrays.asList(a22));
+        MoveAction a21 = new MoveAction("the storm kingdom","kingdom of the reach",  2, 0);
+        MoveAction a22 = new MoveAction("the storm kingdom","kingdom of the reach",  2, 4);
+        actionMap2.put("move", Arrays.asList(a21,a22));
         actionMap2.put("attack", new ArrayList<Action>());
         String action2Str = new Gson().toJson(actionMap2);
 
-        //a map of invalid move actions(under initial map) for player2
+        //a map of valid move actions(under initial map) for player2
+        Map<String, List<Action>> actionMap3 = new HashMap<>();
+        MoveAction a31 = new MoveAction("kingdom of the reach", "the storm kingdom", 2, 1);
+        actionMap3.put("move", Arrays.asList(a31));
+        actionMap3.put("attack", new ArrayList<Action>());
+        String action3Str = new Gson().toJson(actionMap3);
+
 
         //mock interaction with player1
-        when(p1Socket.getOutputStream()).thenReturn(new ByteArrayOutputStream());
-        when(p1Socket.getInputStream()).thenReturn(new ByteArrayInputStream(action1Str.getBytes()));
+        when(p1Socket.getOutputStream()).thenReturn(new ByteArrayOutputStream())
+                                         .thenReturn(new ByteArrayOutputStream());
+        when(p1Socket.getInputStream()).thenReturn(new ByteArrayInputStream(action0Str.getBytes()))
+                                        .thenReturn(new ByteArrayInputStream(action1Str.getBytes()));
+
         //mock receive a list of valid actions from player2
-        when(p2Socket.getOutputStream()).thenReturn(new ByteArrayOutputStream());
-        when(p2Socket.getInputStream()).thenReturn(new ByteArrayInputStream(action2Str.getBytes()));
+        when(p2Socket.getOutputStream()).thenReturn(new ByteArrayOutputStream())
+                                        .thenReturn(new ByteArrayOutputStream());
+        when(p2Socket.getInputStream()).thenReturn(new ByteArrayInputStream(action2Str.getBytes()))
+                                       .thenReturn(new ByteArrayInputStream(action3Str.getBytes()));
+
         roomController.playSingleRoundGame(1);
 
 

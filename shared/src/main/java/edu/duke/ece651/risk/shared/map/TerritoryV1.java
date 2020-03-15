@@ -20,14 +20,17 @@ public class TerritoryV1 extends Territory{
        this.units = new ArrayList<>();
     }
 
-    public void addNUnits(int num){
+    public void addNUnits(int num) throws IllegalArgumentException {
+        if (num<0){
+            throw new IllegalArgumentException("Input number can't be negative");
+        }
         for (int i = 0; i < num; i++) {
             units.add(new Unit("soldier"));
         }
     }
     public void lossNUnits(int num) throws IllegalArgumentException{
-        if (num>units.size()){
-            throw new IllegalArgumentException("Input num is too big!");
+        if (num>units.size()||num<0){
+            throw new IllegalArgumentException("Invalid input number");
         }
         for (int i = 0; i < num; i++) {
             units.remove(units.size() - 1);
