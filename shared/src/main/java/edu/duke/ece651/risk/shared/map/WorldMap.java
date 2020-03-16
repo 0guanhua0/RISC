@@ -15,8 +15,8 @@ import java.util.*;
  * @create: 2020-03-08 20:49
  **/
 
-//TODO take generic and serializable into considerationi
-public class WorldMap<T> implements Serializable {
+//TODO take generic and serializable into consideration
+public class WorldMap<T extends Serializable> implements Serializable {
     Map<String, Territory> atlas;
     List<T> colorList;
     public WorldMap(){
@@ -77,25 +77,6 @@ public class WorldMap<T> implements Serializable {
     public boolean hasFreeTerritory(String input){
         String name = input.toLowerCase();
         return atlas.containsKey(name) && atlas.get(name).isFree();
-    }
-
-    public String toJSON(){
-        JSONObject jsonObject = new JSONObject();
-        // serialize all territory into a json array
-        JSONArray territories = new JSONArray();
-        for (String key : atlas.keySet()){
-            JSONObject tmp = new JSONObject();
-            Territory territory = atlas.get(key);
-
-            tmp.put("territory", new Gson().toJson(territory));
-            tmp.put("name", territory.getName());
-            // this is used for deserialization
-            tmp.put("type", territory.getClass().getName());
-
-            territories.put(tmp);
-        }
-        jsonObject.put("atlas", territories);
-        return jsonObject.toString();
     }
 
     // TODO: have better implement equals here

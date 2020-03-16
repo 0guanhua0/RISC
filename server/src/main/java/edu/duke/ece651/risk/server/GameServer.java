@@ -2,8 +2,12 @@ package edu.duke.ece651.risk.server;
 
 import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.network.Server;
+import edu.duke.ece651.risk.shared.player.Player;
+import edu.duke.ece651.risk.shared.player.PlayerV1;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.Socket;
 import java.security.InvalidKeyException;
 import java.util.Map;
@@ -34,7 +38,7 @@ public class GameServer {
                 threadPool.execute(()-> {
                     try {
                         handleIncomeRequest(socket);
-                    } catch (IOException e) {
+                    } catch (IOException | ClassNotFoundException e) {
                         // IO Exception, probably a bette way is write to log file
                     }
                 });
@@ -49,44 +53,47 @@ public class GameServer {
      * 3. pass the socket(i.e player) to corresponding "room"
      * @param socket represent a newly accept player
      */
-    void handleIncomeRequest(Socket socket) throws IOException {
+    void handleIncomeRequest(Socket socket) throws IOException, ClassNotFoundException {
+        // here we wrap the socket with player object ASAP(i.e. decouple socket with stream)
+        PlayerV1<String> player = new PlayerV1<>(socket.getInputStream(), socket.getOutputStream());
+
         String helloInfo = "Welcome to the fancy RISK game!!!";
-        Server.send(socket, helloInfo);
-        int choice = askValidRoomNum(socket);
+        player.send(helloInfo);
+
+        int choice = askValidRoomNum(player);
         if (choice < 0){
             // create a new room
             int roomID = rooms.size();
             //TODO here I create a MapDataBase object for every room, a more efficient approach would be using deep copy to build a new object of WorldMap after this user choose the WorldMap she wants
-            rooms.put(roomID, new RoomController(roomID, socket,new MapDataBase<String>()));
+            rooms.put(roomID, new RoomController(roomID, player, new MapDataBase<String>()));
         }else {
             // join an existing room
-            rooms.get(choice).addPlayer(socket);
+            rooms.get(choice).addPlayer(player);
         }
     }
 
     /**
      * This function asks the player whether he/she want to start a new room or join an existing room.
-     * @param socket represent a newly accept player
+     * @param player player object, handle the communication
      * @return room number/ID, e.g. -1(or any negative number) stands for a new room, > 0 stands for an existing room
      */
-    int askValidRoomNum(Socket socket) throws IOException {
+    int askValidRoomNum(Player<?> player) throws IOException {
         while (true){
             try {
-                String choice = Server.recvStr(socket);
+                String choice = (String) player.recv();
                 int num = Integer.parseInt(choice);
                 if (num >= 0 && !rooms.containsKey(num)){
                     throw new InvalidKeyException();
                 }
                 return num;
-            }catch (NumberFormatException | NullPointerException | InvalidKeyException e){
+            }catch (NumberFormatException | NullPointerException | InvalidKeyException | ClassNotFoundException e){
                 // Number format error
-                Server.send(socket, "Invalid choice, try again");
+                player.send("Invalid choice, try again");
             }
         }
     }
 
     public static void main(String[] args) throws IOException {
-        MapDataBase<String> mapDataBase = new MapDataBase<>();
         GameServer gameServer = new GameServer(new Server());
         gameServer.run();
     }

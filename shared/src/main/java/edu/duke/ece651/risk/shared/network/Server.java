@@ -1,18 +1,8 @@
 package edu.duke.ece651.risk.shared.network;
 
-import com.google.gson.Gson;
-import edu.duke.ece651.risk.shared.action.Action;
-import edu.duke.ece651.risk.shared.map.WorldMap;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * This class wraps up network server socket, can be used to setup a simple TCP server.
@@ -51,36 +41,26 @@ public class Server {
     }
 
     /**
-     * This function will send the data to target socket.
-     * @param s target socket
-     * @param data data string to be sent
+     * Send the data to the output stream
+     * @param out output stream
+     * @param object data to be sent
      * @throws IOException probably because the stream is already closed
      */
-    public static void send(Socket s, String data) throws IOException {
-        PrintWriter printWriter = new PrintWriter(s.getOutputStream());
-        printWriter.println(data);
-        printWriter.flush();
+    public static void send(OutputStream out, Object object) throws IOException {
+        ObjectOutputStream objectOutputStream = new ObjectOutputStream(out);
+        objectOutputStream.writeObject(object);
+        objectOutputStream.flush();
     }
 
     /**
-     * This function will receive one line from the target socket.
-     * @param s target socket
+     * This function will receive an object from target stream.
+     * @param in input stream
      * @return received data
      * @throws IOException probably because the stream is already closed
+     * @throws ClassNotFoundException probably because receive some illegal data
      */
-    public static String recvStr(Socket s) throws IOException {
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(s.getInputStream()));
-        return bufferedReader.readLine();
+    public static Object recv(InputStream in) throws IOException, ClassNotFoundException {
+        return new ObjectInputStream(in).readObject();
     }
 
-    /**
-     * Receive all actions one user want to perform in one round.
-     * @param s target socket
-     * @return Map of actions; key is action type, e.g. move; value is list of actions
-     * @throws IOException probably because the stream is already closed
-     */
-    public static Map<String, List<Action>> recvActions(Socket s) throws IOException {
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(s.getInputStream()));
-        return Deserializer.deserializeActions(bufferedReader.readLine());
-    }
 }

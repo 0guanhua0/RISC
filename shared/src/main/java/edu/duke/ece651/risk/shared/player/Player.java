@@ -1,10 +1,8 @@
 package edu.duke.ece651.risk.shared.player;
 
 import edu.duke.ece651.risk.shared.map.Territory;
-import edu.duke.ece651.risk.shared.network.Server;
 
-import java.io.IOException;
-import java.net.Socket;
+import java.io.*;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,44 +16,63 @@ import java.util.Set;
 
 public abstract class Player<T> {
 
-
     T color;
     int id;
-    Socket socket;
+    // TODO: not sure whether this will cause deadlock in real situation
+    // if it caused, consider change it to InputStream
+    ObjectInputStream in;
+    ObjectOutputStream out;
     Set<Territory> territories;
+
+    public Player(InputStream in, OutputStream out) throws IOException {
+        this.territories = new HashSet<>();
+        this.in = new ObjectInputStream(in);
+        this.out = new ObjectOutputStream(out);
+    }
 
     //since only after first player communicating with server and selecting the map
     // can we get the color field for player, so color can't be a input field for first player
-    public Player(int id, Socket socket) throws IllegalArgumentException{
+    public Player(int id, InputStream in, OutputStream out) throws IllegalArgumentException, IOException {
         if (id <= 0){
             throw new IllegalArgumentException("ID must large than 0.");
         }
         this.id = id;
         this.territories = new HashSet<>();
-        this.socket = socket;
+        this.in = new ObjectInputStream(in);
+        this.out = new ObjectOutputStream(out);
     }
 
     //this constructor should be called for all players except for first player
-    public Player(T color, int id, Socket socket) throws IllegalArgumentException{
+    public Player(T color, int id, InputStream in, OutputStream out) throws IllegalArgumentException, IOException {
         if (id <= 0){
             throw new IllegalArgumentException("ID must large than 0.");
         }
         this.color = color;
         this.id = id;
         this.territories = new HashSet<>();
-        this.socket = socket;
+        this.in = new ObjectInputStream(in);
+        this.out = new ObjectOutputStream(out);
     }
 
     public int getId() {
         return id;
     }
 
+    public void setId(int id){
+        if (id <= 0){
+            throw new IllegalArgumentException("ID must large than 0.");
+        }
+        this.id = id;
+    }
+
     public T getColor() {
         return color;
     }
+
     public void setColor(T color) {
         this.color = color;
     }
+
     public void addTerritory(Territory territory) throws IllegalArgumentException{
         if (!territory.isFree()){
             throw new IllegalArgumentException("You can not occupy an occupied territory");
@@ -71,18 +88,16 @@ public abstract class Player<T> {
         territories.remove(territory);
         territory.setIsFree(true);
     }
-    public void send(String data) throws IOException {
-        if (socket != null){
-            Server.send(socket, data);
-        }
+
+    public void send(Object data) throws IOException {
+        out.writeObject(data);
+        out.flush();
     }
 
-    public String recv() throws IOException {
-        if (socket != null){
-            return Server.recvStr(socket);
-        }
-        return "";
+    public Object recv() throws IOException, ClassNotFoundException {
+        return in.readObject();
     }
+
     public int getTerrNum(){
         return territories.size();
     }

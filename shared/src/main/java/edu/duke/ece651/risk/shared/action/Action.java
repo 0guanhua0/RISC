@@ -11,10 +11,11 @@ public interface Action {
      * Check the validation of current action.
      * @return true if valid
      */
-    boolean isValid(WorldMap worldMap);
+    boolean isValid(WorldMap<?> worldMap);
 
     /**
      * Perform the action.
+     * @return true if perform successful
      */
-    void perform(WorldMap worldMap);
+    boolean perform(WorldMap<?> worldMap);
 }

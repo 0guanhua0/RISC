@@ -1,7 +1,12 @@
 package edu.duke.ece651.risk.shared.player;
 
-import java.net.Socket;
-import java.util.HashSet;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+
+import static edu.duke.ece651.risk.shared.Mock.setupMockInput;
 
 /**
  * @program: risk
@@ -11,13 +16,19 @@ import java.util.HashSet;
  **/
 public class PlayerV1<T> extends Player<T> {
 
-    public PlayerV1(T color, int id) throws IllegalArgumentException{
-        super(color, id, null);
+    public PlayerV1(InputStream in, OutputStream out) throws IOException {
+        super(in, out);
     }
-    public PlayerV1(T color, int id, Socket socket) {
-        super(color, id, socket);
+
+    public PlayerV1(T color, int id) throws IllegalArgumentException, IOException {
+        // just for testing purpose
+        super(color, id, setupMockInput(new ArrayList<>()), new ByteArrayOutputStream());
     }
-    public PlayerV1(int id,Socket socket){
-        super(id,socket);
+
+    public PlayerV1(T color, int id, InputStream in, OutputStream out) throws IOException {
+        super(color, id, in, out);
+    }
+    public PlayerV1(int id, InputStream in, OutputStream out) throws IOException {
+        super(id, in, out);
     }
 }

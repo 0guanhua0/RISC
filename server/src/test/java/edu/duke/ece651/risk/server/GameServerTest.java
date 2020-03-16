@@ -3,13 +3,17 @@ package edu.duke.ece651.risk.server;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.network.Client;
 import edu.duke.ece651.risk.shared.network.Server;
+import edu.duke.ece651.risk.shared.player.Player;
+import edu.duke.ece651.risk.shared.player.PlayerV1;
 import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Arrays;
 
+import static edu.duke.ece651.risk.shared.Mock.readAllStringFromObjectStream;
+import static edu.duke.ece651.risk.shared.Mock.setupMockInput;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
@@ -33,19 +37,23 @@ public class GameServerTest {
     @Test
     public void testRun() throws IOException, InterruptedException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        Socket socket = mock(Socket.class);
-        when(socket.getInputStream())
-                .thenReturn(new ByteArrayInputStream("-1".getBytes()));
-        when(socket.getOutputStream()).thenReturn(outputStream);
+        Socket socket1 = mock(Socket.class);
+        when(socket1.getInputStream()).thenReturn(setupMockInput(new ArrayList<>(Arrays.asList("-1", "-1"))));
+        when(socket1.getOutputStream()).thenReturn(outputStream);
+
+        Socket socket2 = mock(Socket.class);
+        when(socket2.getInputStream()).thenReturn(setupMockInput(new ArrayList<>()));
+        when(socket2.getOutputStream()).thenReturn(new ByteArrayOutputStream());
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         stream.close();
         Socket socketError = mock(Socket.class);
+        when(socketError.getInputStream()).thenReturn(setupMockInput(new ArrayList<>()));
         when(socketError.getOutputStream()).thenReturn(stream);
 
         Server server = mock(Server.class);
 
-        when(server.accept()).thenReturn(null).thenReturn(socket).thenReturn(socketError);
+        when(server.accept()).thenReturn(socket1).thenReturn(socket2).thenReturn(socketError);
 
         Thread thread = new Thread(()->{
             GameServer gameServer = new GameServer(server);
@@ -62,14 +70,12 @@ public class GameServerTest {
     }
 
     @Test
-    public void testHandleIncomeRequest() throws IOException {
-
+    public void testHandleIncomeRequest() throws IOException, ClassNotFoundException {
         //prepare for the first player who creates a new room
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         Socket socket1 = mock(Socket.class);
         when(socket1.getInputStream())
-                .thenReturn(new ByteArrayInputStream("-1".getBytes()))
-                .thenReturn(new ByteArrayInputStream("test".getBytes()));
+                .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList("-1", "test"))));
         when(socket1.getOutputStream()).thenReturn(outputStream);
 
         //handle the request for first player
@@ -77,7 +83,7 @@ public class GameServerTest {
         assertEquals(0, gameServer.rooms.size());
         gameServer.handleIncomeRequest(socket1);
         assertEquals(1, gameServer.rooms.size());
-        assertEquals("Welcome to the fancy RISK game!!!\nPlease select the map you want\n", outputStream.toString());
+        assertEquals("Welcome to the fancy RISK game!!!Please select the map you want", readAllStringFromObjectStream(outputStream));
         assertEquals(1,gameServer.rooms.get(0).players.size());
         assertEquals(0,gameServer.rooms.get(0).roomID);
 
@@ -86,13 +92,13 @@ public class GameServerTest {
         outputStream.reset();
         Socket socket2 = mock(Socket.class);
         when(socket2.getInputStream())
-                .thenReturn(new ByteArrayInputStream("0".getBytes()));
+                .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList("0", "0"))));
         when(socket2.getOutputStream()).thenReturn(outputStream);
         //handle the request for second player
         assertEquals(1, gameServer.rooms.size());
         gameServer.handleIncomeRequest(socket2);
         assertEquals(1, gameServer.rooms.size());
-        assertEquals("Welcome to the fancy RISK game!!!\n", outputStream.toString());
+        assertEquals("Welcome to the fancy RISK game!!!", readAllStringFromObjectStream(outputStream));
         assertEquals(2,gameServer.rooms.get(0).players.size());
         assertEquals(0,gameServer.rooms.get(0).roomID);
 
@@ -100,50 +106,35 @@ public class GameServerTest {
         outputStream.reset();
         Socket socket3 = mock(Socket.class);
         when(socket3.getInputStream())
-                .thenReturn(new ByteArrayInputStream("0".getBytes()));
+                .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList("0", "0"))));
         when(socket3.getOutputStream()).thenReturn(outputStream);
         //handle the request for third player
         assertEquals(1, gameServer.rooms.size());
         gameServer.handleIncomeRequest(socket3);
         assertEquals(1, gameServer.rooms.size());
-        assertEquals("Welcome to the fancy RISK game!!!\n", outputStream.toString());
+        assertEquals("Welcome to the fancy RISK game!!!", readAllStringFromObjectStream(outputStream));
         assertEquals(3,gameServer.rooms.get(0).players.size());
         assertEquals(0,gameServer.rooms.get(0).roomID);
     }
     
     @Test
-    public void testAskValidRoomNum() throws IOException {
+    public void testAskValidRoomNum() throws IOException, ClassNotFoundException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        //perpare the sockets for player who wants to create this game
-        Socket socket1 = mock(Socket.class);
-        when(socket1.getInputStream())
-                .thenReturn(new ByteArrayInputStream("-1".getBytes()))
-                .thenReturn(new ByteArrayInputStream("test".getBytes()));
-        when(socket1.getOutputStream()).
-                thenReturn(new ByteArrayOutputStream());
-        //prepare socket for the second player who wants to join in this game
-        Socket socket2 = mock(Socket.class);
-        when(socket2.getInputStream())
-                .thenReturn(new ByteArrayInputStream("abc".getBytes()))
-                .thenReturn(new ByteArrayInputStream("10".getBytes()))
-                .thenReturn(new ByteArrayInputStream("0".getBytes()));
-        when(socket2.getOutputStream()).thenReturn(outputStream);
-
+        Player<String> player1 = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList("-1", "test"))), new ByteArrayOutputStream());
+        Player<String> player2 = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList("abc", "10", "0"))), outputStream);
         int roomID = 0;
         GameServer gameServer = new GameServer(null);
-        gameServer.rooms.put(roomID, new RoomController(roomID, socket1,new MapDataBase<String>()));
-        assertEquals(roomID, gameServer.askValidRoomNum(socket2));
-        assertEquals("Invalid choice, try again\n".repeat(2), outputStream.toString());
-
-        verify(socket2, atLeast(3)).getInputStream();
+        gameServer.rooms.put(roomID, new RoomController(roomID, player1, new MapDataBase<String>()));
+        assertEquals(roomID, gameServer.askValidRoomNum(player2));
+        assertEquals("Invalid choice, try again".repeat(2), readAllStringFromObjectStream(outputStream));
     }
     
     @Test
-    public void testMain() throws IOException, InterruptedException {
+    public void testMain() throws IOException, InterruptedException, ClassNotFoundException {
         Thread th = new Thread(()->{
             try {
                 GameServer.main(null);
-            } catch (IOException e) {
+            } catch (IOException ignored) {
             }
         });
         th.start();
@@ -151,12 +142,13 @@ public class GameServerTest {
 
         Client client = new Client();
         client.init("127.0.0.1", 12345);
-        assertEquals("Welcome to the fancy RISK game!!!", client.recvData());
+        assertEquals("Welcome to the fancy RISK game!!!", client.recv());
         client.send("-1");
 
-        Thread.sleep(1000);
+        Thread.sleep(2000);
 
         th.interrupt();
+        th.join();
     }
     
 

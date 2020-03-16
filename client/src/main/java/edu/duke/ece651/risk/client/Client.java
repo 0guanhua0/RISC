@@ -14,8 +14,8 @@ public class Client{
             try {
                 Server serve = new Server(port);
                 Socket socket = serve.accept();
-                System.out.println(Server.recvStr(socket));
-            } catch (IOException e) {
+                System.out.println(Server.recv(socket.getInputStream()));
+            } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
         }).start();

@@ -1,25 +1,22 @@
 package edu.duke.ece651.risk.shared.network;
 
-import com.google.gson.Gson;
-import edu.duke.ece651.risk.shared.action.Action;
-import edu.duke.ece651.risk.shared.map.WorldMap;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * This class wraps up the network socket, and can be used to communicate with remote server.
  */
 public class Client {
-    private BufferedReader in;
-    private PrintWriter out;
+    Socket socket;
+    /** WARNING!!! Do not use ObjectInputStream here, it will stuck
+     * when call new ObjectInputStream(inStream), it will try to read stream header info from inStream
+     * (which will block forever, since no header for now)
+     */
+    InputStream in;
+    ObjectOutputStream out;
+
     /**
      * The default constructor.
      * After this, you probably need to call init() explicitly to initialize client(i.e. connect to server)
@@ -43,47 +40,29 @@ public class Client {
      * @throws IOException probably because of invalid host name or wrong port number
      */
     public void init(String ip, int port) throws IOException {
-        Socket socket = new Socket(ip, port);
-        in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        out = new PrintWriter(socket.getOutputStream());
-    }
-
-    /**
-     * This function will send all actions user specify in one round.
-     * @param actions map of actions; key is the action type, e.g. move; value is list of actions
-     */
-    public void send(HashMap<String, List<Action>> actions){
-        String str = new Gson().toJson(actions);
-        send(str);
+        socket = new Socket(ip, port);
+        in = socket.getInputStream();
+        out = new ObjectOutputStream(socket.getOutputStream());
     }
 
     /**
      * Send data to remote server.
-     * @param data data to be sent
+     * @param object data to be sent
+     * @throws IOException probably output stream closed
      */
-    public void send(String data){
-        out.println(data);
-        // finish writing data, flush it(remote can use readLine to receive)
+    public void send(Object object) throws IOException {
+        out.writeObject(object);
         out.flush();
     }
 
     /**
      * Receive data from remote server.
-     * @return data received
+     * @return object received(cast to whatever you need)
      * @throws IOException probably input stream closed
+     * @throws ClassNotFoundException probably because receive wrong format(not an Object)
      */
-    public String recvData() throws IOException {
-        return in.readLine();
-    }
-
-    /**
-     * Receive a world map object from remote server.
-     * @return a world map object
-     * @throws IOException probably input stream closed
-     * @throws ClassNotFoundException probably json string is invalid(e.g. not generate by calling toJSON() method)
-     */
-    public WorldMap recvMap() throws IOException, ClassNotFoundException {
-        return Deserializer.deserializeWorldMap(in.readLine());
+    public Object recv() throws IOException, ClassNotFoundException {
+        return new ObjectInputStream(in).readObject();
     }
 
     /**

@@ -1,21 +1,19 @@
 package edu.duke.ece651.risk.shared.map;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public abstract class Territory {
+public abstract class Territory implements Serializable {
 
     transient Set<Territory> neigh;
-    // this is only for serialize & deserialize purpose
-    List<String> neighNames;
     //class to represent current status of this territory
     TStatus status;
 
     public Territory(String name) {
         this.neigh = new HashSet<>();
-        this.neighNames = new ArrayList<>();
         this.status = new TStatus(name);
     }
 
@@ -34,18 +32,10 @@ public abstract class Territory {
     }
     public void setNeigh(Set<Territory> neigh){
         this.neigh = neigh;
-        neighNames = new ArrayList<>(neigh.size());
-        for (Territory t : neigh){
-            neighNames.add(t.status.name);
-        }
     }
 
     public String getName() {
         return status.getName();
-    }
-
-    public List<String> getNeighNames(){
-        return this.neighNames;
     }
 
     public boolean isFree(){

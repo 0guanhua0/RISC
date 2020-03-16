@@ -1,5 +1,6 @@
 package edu.duke.ece651.risk.shared.map;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -9,8 +10,9 @@ import java.util.*;
  * @create: 2020-03-09 10:20
  **/
 
-//TODO read from input files rather than hardcoding here
-public class MapDataBase<T> {
+// TODO: read from input files rather than hardcoding here
+// TODO: do we really need T here? since we hard code the map, we already know the type
+public class MapDataBase<T extends Serializable> {
     Map<String, WorldMap<T>> mapHub;
     public MapDataBase(){
         mapHub = new HashMap<>();
@@ -86,7 +88,7 @@ public class MapDataBase<T> {
             return mapHub.containsKey(mapName);
         }
     }
-    public WorldMap getMap(String inputName){
+    public WorldMap<T> getMap(String inputName){
         if (!containsMap(inputName)){
             throw new IllegalArgumentException("Input map name doesn't exist!");
         }
