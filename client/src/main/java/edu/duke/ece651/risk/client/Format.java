@@ -1,11 +1,18 @@
 package edu.duke.ece651.risk.client;
 
-public interface Format {
-    public Boolean check(String action);
-}
+import java.util.regex.Pattern;
 
-class Format0 implements Format {
-    public Boolean check(String action) {
-        return (action.equals("M") || action.equals("A") || action.equals("D"));
+public class Format {
+    /**
+     * regular expression to check is number or not¢
+     */
+    private static Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?");
+
+    public static boolean isNumeric(String strNum) {
+        if (strNum == null) {
+            return false;
+        }
+        return pattern.matcher(strNum).matches();
     }
 }
+
