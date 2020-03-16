@@ -2,7 +2,6 @@ package edu.duke.ece651.risk.client;
 
 import edu.duke.ece651.risk.shared.network.Server;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -30,14 +29,16 @@ class GameClientTest {
         Thread.sleep(500);
 
         String[] args = new String[0];
-        GameClient.main(args);
 
-        String s = "D\n";
+        String s = "Q\n";
         InputStream stream = new ByteArrayInputStream(s.getBytes(StandardCharsets.UTF_8));
 
+        System.setIn(stream);
+
+        GameClient.main(args);
 
 
-        Mockito.when(System.in).thenReturn(stream);
+
 
     }
 }

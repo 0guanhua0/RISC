@@ -17,4 +17,6 @@ public interface Action {
      * Perform the action.
      */
     void perform(WorldMap worldMap);
+
+    public boolean equals(Object obj);
 }

@@ -19,7 +19,7 @@ public class GameClient {
         Player player = new Player(0, "A");
 
         //curr round
-        for (int i = 0; i < 10; i++){
+        while (true){
             //recv data from server
             //client.recvData();
             SceneCLI.showMap();
@@ -27,6 +27,11 @@ public class GameClient {
 
             ActionList aL = new ActionList();
             Scanner sc = new Scanner(System.in);
+
+            //if Q then quit
+            if(sc.nextLine().equals("Q")) {
+                break;
+            }
             PlayerInput.read(sc, player, aL);
 
             client.send(aL.getActions());
