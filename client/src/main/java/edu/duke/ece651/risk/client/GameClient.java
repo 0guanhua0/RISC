@@ -1,6 +1,7 @@
 package edu.duke.ece651.risk.client;
 
 import java.io.IOException;
+import java.util.Scanner;
 
 /**
  * main class for player
@@ -25,7 +26,8 @@ public class GameClient {
             InsPrompt.selfInfo(player.getPlayerName());
 
             ActionList aL = new ActionList();
-            PlayerInput.read(System.in, player, aL);
+            Scanner sc = new Scanner(System.in);
+            PlayerInput.read(sc, player, aL);
 
             client.send(aL.getActions());
         }

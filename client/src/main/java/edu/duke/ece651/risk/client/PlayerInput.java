@@ -4,26 +4,25 @@ import edu.duke.ece651.risk.shared.Constant;
 import edu.duke.ece651.risk.shared.action.AttackAction;
 import edu.duke.ece651.risk.shared.action.MoveAction;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Scanner;
 
 /**
  * the class deal with player input
  */
 public class PlayerInput {
-    public static void read(InputStream inputStream, Player player, ActionList actList) throws IOException {
+    public static void read(Scanner scanner, Player player, ActionList actList) {
         while (true) {
             InsPrompt.actInfo(player.getPlayerName());
             //read
-            String str = readInput(inputStream);
+            String str = scanner.nextLine();
+            System.out.println(str);
             //D: done
             if (str.equals("D")) {
                 break;
             }
             //M/A
             if (str.equals("A") || str.equals("M")) {
-                readAction(inputStream, player.getPlayerId(), str, actList);
+                readAction(scanner, player.getPlayerId(), str, actList);
             }
             else {
                 System.out.println("invalid input");
@@ -32,54 +31,36 @@ public class PlayerInput {
         }
     }
 
-
-    //read from input
-    public static String readInput(InputStream inputStream) throws IOException {
-        Scanner scanner = new Scanner(inputStream);
-        StringBuilder sb = new StringBuilder();
-        while (scanner.hasNext()) {
-            sb.append(scanner.nextLine());
-        }
-        return sb.toString();
-    }
-
     /**
      * read player action
-     * @param inputStream System.in
      * @param player_id player id
      * @param currAct curr action
      * @param actionList list store aciton
-     * @throws IOException io exception
      */
-    public static void readAction(InputStream inputStream, int player_id, String currAct, ActionList actionList) throws IOException {
+    public static void readAction(Scanner sc, int player_id, String currAct, ActionList actionList) {
         InsPrompt.srcInfo();
-        String src = readInput(inputStream);
+        String src = sc.nextLine();
         InsPrompt.dstInfo();
-        String dst = readInput(inputStream);
+        String dst = sc.nextLine();
 
         //read unit
         InsPrompt.unitInfo();
-        String unit = readInput(inputStream);
+        String unit = sc.nextLine();
 
         if(!Format.isNumeric(unit)) {
             System.out.println("invalid unit number");
             return;
         }
-
         int unitNum  = Integer.parseInt(unit);
         switch (currAct) {
             case "A":
                 AttackAction a = new AttackAction(src, dst, player_id, unitNum);
                 actionList.addAction(Constant.ACTION_ATTACK, a);
-                break;
+                return;
             case "M":
                 MoveAction m = new MoveAction(src, dst, player_id, unitNum);
                 actionList.addAction(Constant.ACTION_MOVE, m);
-                break;
+                return;
         }
     }
-
-
-
-
 }

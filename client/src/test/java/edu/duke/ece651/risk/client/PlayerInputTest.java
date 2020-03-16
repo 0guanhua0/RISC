@@ -1,12 +1,9 @@
 package edu.duke.ece651.risk.client;
 
-import edu.duke.ece651.risk.shared.Constant;
 import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
+import java.util.Scanner;
 
 class PlayerInputTest {
     static Player player = new Player(0, "A");
@@ -14,35 +11,41 @@ class PlayerInputTest {
 
     @Test
     void read() throws IOException {
-        String s0 = "D\r";
-        InputStream stream0 = new ByteArrayInputStream(s0.getBytes(StandardCharsets.UTF_8));
-        PlayerInput.read(stream0, player, aL);
+        String s0 = "D";
+        Scanner sc0 = new Scanner(s0);
+        PlayerInput.read(sc0, player, aL);
 
-        s0 = "M";
-        InputStream stream1 = new ByteArrayInputStream(s0.getBytes(StandardCharsets.UTF_8));
-        PlayerInput.read(stream1, player, aL);
 
+        s0 = "K\nD";
+        sc0 = new Scanner(s0);
+
+        PlayerInput.read(sc0, player, aL);
+
+
+/*
         s0 = "K";
         InputStream stream2 = new ByteArrayInputStream(s0.getBytes(StandardCharsets.UTF_8));
         PlayerInput.read(stream2, player, aL);
+
+         */
     }
 
 
     @Test
-    void readInput() throws IOException {
-        String s0 = "A";
-        InputStream stream0 = new ByteArrayInputStream(s0.getBytes(StandardCharsets.UTF_8));
+    void readAction() {
+        String s0 = "A\nB\nA\n";
+        Scanner sc0 = new Scanner(s0);
+        PlayerInput.readAction(sc0, 0, "A", aL);
 
-        System.setIn(stream0);
-        assert (PlayerInput.readInput(System.in).equals("A"));
-    }
+        String s1 = "A\nB\n10\n";
+        Scanner sc1 = new Scanner(s1);
+        PlayerInput.readAction(sc1, 0, "A", aL);
 
-    @Test
-    void readAction() throws IOException {
-        String s0 = "0";
-        InputStream stream0 = new ByteArrayInputStream(s0.getBytes(StandardCharsets.UTF_8));
+        String s2 = "A\nB\n10\n";
+        Scanner sc2 = new Scanner(s2);
+        PlayerInput.readAction(sc2, 0, "M", aL);
 
-        System.setIn(stream0);
-        PlayerInput.readAction(stream0, 0, Constant.ACTION_ATTACK, aL);
+
+
     }
 }
