@@ -2,9 +2,13 @@ package edu.duke.ece651.risk.client;
 
 import edu.duke.ece651.risk.shared.network.Server;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 
 class GameClientTest {
 
@@ -12,7 +16,7 @@ class GameClientTest {
     private static String ip = "127.0.0.1";
 
     @Test
-    void main() throws InterruptedException {
+    void main() throws InterruptedException, IOException {
         //build network connection
         new Thread(() -> {
             try {
@@ -24,5 +28,16 @@ class GameClientTest {
             }
         }).start();
         Thread.sleep(500);
+
+        String[] args = new String[0];
+        GameClient.main(args);
+
+        String s = "D\n";
+        InputStream stream = new ByteArrayInputStream(s.getBytes(StandardCharsets.UTF_8));
+
+
+
+        Mockito.when(System.in).thenReturn(stream);
+
     }
 }

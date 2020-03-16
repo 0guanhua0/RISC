@@ -11,7 +11,7 @@ public class GameClient {
     private static int port = 8080;
     private static String ip = "127.0.0.1";
 
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args) throws IOException {
 
         edu.duke.ece651.risk.shared.network.Client client = new edu.duke.ece651.risk.shared.network.Client();
         client.init(ip, port);
@@ -19,7 +19,7 @@ public class GameClient {
         Player player = new Player(0, "A");
 
         //curr round
-        while (true) {
+        for (int i = 0; i < 10; i++){
             //recv data from server
             //client.recvData();
             SceneCLI.showMap();
