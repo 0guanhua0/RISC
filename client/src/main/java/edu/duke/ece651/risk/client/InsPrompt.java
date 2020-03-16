@@ -9,7 +9,8 @@ class InsPrompt {
         System.out.println( "You are the " + player + " player, what would you like to do?\n" +
                 " (M)ove\n" +
                 " (A)ttack\n" +
-                " (D)one");
+                " (D)one\n" +
+                " (Q)uit");
     }
 
 

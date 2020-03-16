@@ -7,9 +7,16 @@ public class Player{
     private Integer playerId;
     private String playerName;
 
+    public Player(){
+        playerId = 0;
+        playerName = "";
+    }
 
-    public Player(Integer playerId, String playerName) {
+    public void setPlayerId(Integer playerId) {
         this.playerId = playerId;
+    }
+
+    public void setPlayerName(String playerName) {
         this.playerName = playerName;
     }
 

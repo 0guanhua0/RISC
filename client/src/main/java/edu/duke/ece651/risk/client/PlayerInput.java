@@ -10,42 +10,57 @@ import java.util.Scanner;
  * the class deal with player input
  */
 public class PlayerInput {
-    public static void read(Scanner scanner, Player player, ActionList actList) {
+    /**
+     * Ask user for action type input. e.g.
+     * D(one)
+     * A(ttack)
+     * M(ove)
+     * Q(uit)
+     * @param scanner scanner
+     * @param player interacting user
+     * @param actList action list
+     * @return false when user want ot quit the game
+     */
+    public static boolean read(Scanner scanner, Player player, ActionList actList) {
         while (true) {
             InsPrompt.actInfo(player.getPlayerName());
             //read
-            String str = scanner.nextLine();
+            String str = scanner.nextLine().toUpperCase();
             System.out.println(str);
             //D: done
-            if (str.equals("D")) {
-                break;
+            switch (str) {
+                case "D":
+                    return true;
+                //M/A
+                case "A":
+                case "M":
+                    readAction(scanner, player.getPlayerId(), str, actList);
+                    break;
+                case "Q":
+                    return false;
+                default:
+                    System.out.println("invalid input");
+                    break;
             }
-            //M/A
-            if (str.equals("A") || str.equals("M")) {
-                readAction(scanner, player.getPlayerId(), str, actList);
-            }
-            else {
-                System.out.println("invalid input");
-            }
-
         }
     }
 
     /**
      * read player action
+     * @param scanner scanner
      * @param player_id player id
      * @param currAct curr action
      * @param actionList list store aciton
      */
-    public static void readAction(Scanner sc, int player_id, String currAct, ActionList actionList) {
+    public static void readAction(Scanner scanner, int player_id, String currAct, ActionList actionList) {
         InsPrompt.srcInfo();
-        String src = sc.nextLine();
+        String src = scanner.nextLine().toUpperCase();
         InsPrompt.dstInfo();
-        String dst = sc.nextLine();
+        String dst = scanner.nextLine().toUpperCase();
 
         //read unit
         InsPrompt.unitInfo();
-        String unit = sc.nextLine();
+        String unit = scanner.nextLine();
 
         if(!Format.isNumeric(unit)) {
             System.out.println("invalid unit number");
@@ -56,11 +71,11 @@ public class PlayerInput {
             case "A":
                 AttackAction a = new AttackAction(src, dst, player_id, unitNum);
                 actionList.addAction(Constant.ACTION_ATTACK, a);
-                return;
+                break;
             case "M":
                 MoveAction m = new MoveAction(src, dst, player_id, unitNum);
                 actionList.addAction(Constant.ACTION_MOVE, m);
-                return;
+                break;
         }
     }
 }

@@ -14,9 +14,9 @@ public class ActionList {
     private HashMap<String, List<Action>> actions;
 
     public ActionList() {
-        actions = new HashMap();
-        ArrayList a = new ArrayList();
-        ArrayList m = new ArrayList();
+        actions = new HashMap<>();
+        ArrayList<Action> a = new ArrayList<>();
+        ArrayList<Action> m = new ArrayList<>();
         actions.put(Constant.ACTION_ATTACK, a);
         actions.put(Constant.ACTION_MOVE, m);
     }
@@ -35,8 +35,9 @@ public class ActionList {
      * @param a action
      */
     public void addAction(String s, Action a) {
-        List<Action> act = actions.get(s);
-        act.add(a);
-        actions.put(s, act);
+        actions.get(s).add(a);
+//        List<Action> act = actions.get(s);
+//        act.add(a);
+//        actions.put(s, act);
     }
 }
