@@ -2,6 +2,8 @@ package edu.duke.ece651.risk.client;
 
 import edu.duke.ece651.risk.shared.network.Client;
 import edu.duke.ece651.risk.shared.network.Server;
+import edu.duke.ece651.risk.shared.player.Player;
+import edu.duke.ece651.risk.shared.player.PlayerV1;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -18,7 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
-import static edu.duke.ece651.risk.shared.Constant.SUCCESSFUL;
+import static edu.duke.ece651.risk.shared.Constant.*;
 import static edu.duke.ece651.risk.shared.Mock.send;
 import static edu.duke.ece651.risk.shared.Mock.setupMockInput;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,8 +31,12 @@ public class GameClientTest {
     static private ByteArrayOutputStream outContent;
     static Thread serverThread;
 
+    static final String PLAYER_COLOR = "Green";
+    static final int PLAYER_ID = 1;
+
     @BeforeAll
-    static void beforeAll(){
+    static void beforeAll() {
+        List<Integer> fakeRooms = new ArrayList<>(Arrays.asList(0, 1, 2, 3));
         outContent = new ByteArrayOutputStream();
         // setup "game server" at hte beginning
         serverThread = new Thread(() -> {
@@ -42,16 +48,20 @@ public class GameClientTest {
                     // TODO: mock what an real server will do
 
                     // 1) accept
-                    Socket socket = server.accept();
+                    Socket socket = spyServer.accept();
                     if (socket != null){
-                        send(socket.getOutputStream(), "Hello");
-                        System.out.println("Hello");
+                        Player<String> player = new PlayerV1<>(PLAYER_COLOR, PLAYER_ID, socket.getInputStream(), socket.getOutputStream());
+                        player.send("Hello");
                         // 2) ask room number
-                        // 3) ask map
+                        player.send(fakeRooms);
+                        player.recv(); // ignore the value
+                        player.send(SUCCESSFUL);
+                        // 3) ask map(if it's the beginner)
                         // 4) send initial message
+                        player.sendPlayerInfo();
                     }
                 }
-            } catch (IOException ignored) {
+            } catch (IOException | ClassNotFoundException ignored) {
             }
         });
         serverThread.start();
@@ -79,12 +89,10 @@ public class GameClientTest {
     
     @Test
     public void testInitGame() throws IOException, ClassNotFoundException {
-        Client client = mock(Client.class);
-        when(client.recv())
-                .thenReturn("Welcome to fancy RISK!");
-
         GameClient gameClient = new GameClient();
-        gameClient.initGame(new Scanner(""));
+        gameClient.initGame(new Scanner("c\n"));
+        assertEquals(PLAYER_ID, gameClient.player.playerId);
+        assertEquals(PLAYER_COLOR, gameClient.player.playerColor);
     }
     
     @Test

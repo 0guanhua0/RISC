@@ -21,7 +21,7 @@ public class PlayerInput {
      * @param actList action list
      * @return false when user want ot quit the game
      */
-    public static boolean read(Scanner scanner, Player player, ActionList actList) {
+    public static boolean read(Scanner scanner, Player<String> player, ActionList actList) {
         while (true) {
             InsPrompt.actInfo(player.getPlayerName());
             //read
@@ -34,7 +34,7 @@ public class PlayerInput {
                 //M/A
                 case "A":
                 case "M":
-                    readAction(scanner, player.getPlayerId(), str, actList);
+                    readAction(scanner, player.getPlayerID(), str, actList);
                     break;
                 case "Q":
                     return false;
@@ -48,11 +48,11 @@ public class PlayerInput {
     /**
      * read player action
      * @param scanner scanner
-     * @param player_id player id
+     * @param playerId player id
      * @param currAct curr action
      * @param actionList list store aciton
      */
-    public static void readAction(Scanner scanner, int player_id, String currAct, ActionList actionList) {
+    public static void readAction(Scanner scanner, int playerId, String currAct, ActionList actionList) {
         InsPrompt.srcInfo();
         String src = scanner.nextLine().toUpperCase();
         InsPrompt.dstInfo();
@@ -69,11 +69,11 @@ public class PlayerInput {
         int unitNum  = Integer.parseInt(unit);
         switch (currAct) {
             case "A":
-                AttackAction a = new AttackAction(src, dst, player_id, unitNum);
+                AttackAction a = new AttackAction(src, dst, playerId, unitNum);
                 actionList.addAction(Constant.ACTION_ATTACK, a);
                 break;
             case "M":
-                MoveAction m = new MoveAction(src, dst, player_id, unitNum);
+                MoveAction m = new MoveAction(src, dst, playerId, unitNum);
                 actionList.addAction(Constant.ACTION_MOVE, m);
                 break;
         }

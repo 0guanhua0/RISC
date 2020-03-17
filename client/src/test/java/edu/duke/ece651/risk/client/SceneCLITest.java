@@ -28,6 +28,6 @@ class SceneCLITest {
     @Test
     void showMap() {
         SceneCLI.showMap(null);
-        assertEquals("10 units in Narnia (next to: Elantris, Midkemia)\n", outContent.toString());
+        assertEquals("showing example map\n10 units in Narnia (next to: Elantris, Midkemia)\n", outContent.toString());
     }
 }

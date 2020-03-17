@@ -9,4 +9,7 @@ public class Constant {
     public static final String ACTION_ATTACK = "attackAction";
 
     public static final String SUCCESSFUL = "successful";
+
+    public static final String PLAYER_ID = "playerID";
+    public static final String PLAYER_COLOR = "playerColor";
 }

@@ -2,7 +2,6 @@ package edu.duke.ece651.risk.server;
 
 import edu.duke.ece651.risk.shared.action.Action;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
-import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.risk.shared.player.Player;
 
@@ -30,6 +29,7 @@ public class RoomController {
         askForMap(mapDataBase);
         List<String> colorList = map.getColorList();
         players.get(0).setColor(colorList.get(0));
+        player.sendPlayerInfo();
     }
 
     //call this method to add a new player into this room
@@ -38,6 +38,7 @@ public class RoomController {
         player.setId(players.size() + 1);
         player.setColor(colorList.get(players.size()));
         players.add(player);
+        player.sendPlayerInfo();
         if (players.size() == colorList.size()){
             //TODO run the whole game
 //            System.out.println("run this game");

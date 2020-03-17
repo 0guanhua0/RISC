@@ -19,11 +19,11 @@ import static edu.duke.ece651.risk.shared.Constant.SUCCESSFUL;
  */
 
 public class GameClient {
-    Player player;
+    Player<String> player;
     Client client;
 
     GameClient() {
-        player = new Player();
+        player = new Player<>();
     }
 
     public void run(Scanner scanner) throws IOException, ClassNotFoundException {
@@ -48,9 +48,12 @@ public class GameClient {
         client = new Client(config.getString("host"), config.getInt("port"));
         // receive hello message
         String hello = (String) client.recv();
-        System.out.println(hello);
-        // TODO: interact with server to determine room
-        // TODO: read initial message from server
+        showMsg(hello);
+        // choose room
+        chooseRoom(scanner);
+        // receive player info
+        String playerInfo = (String) client.recv();
+        player.init(playerInfo);
     }
 
     /**

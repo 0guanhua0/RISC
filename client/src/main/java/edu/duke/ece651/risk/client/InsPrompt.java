@@ -26,7 +26,7 @@ class InsPrompt {
 
     public static void insShowMaps(MapDataBase<String> maps){
         for (WorldMap<String> map : maps.getAllMaps()){
-
+            SceneCLI.showMap(map);
         }
     }
 
@@ -59,5 +59,9 @@ class InsPrompt {
 
     public static void insInvalidOption(){
         System.out.println("Invalid option, please try again.");
+    }
+
+    public static void showMsg(String msg){
+        System.out.println(msg);
     }
 }

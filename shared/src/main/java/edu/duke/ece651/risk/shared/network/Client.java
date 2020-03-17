@@ -10,11 +10,7 @@ import java.net.UnknownHostException;
  */
 public class Client {
     Socket socket;
-    /** WARNING!!! Do not use ObjectInputStream here, it will stuck
-     * when call new ObjectInputStream(inStream), it will try to read stream header info from inStream
-     * (which will block forever, since no header for now)
-     */
-    InputStream in;
+    ObjectInputStream in;
     ObjectOutputStream out;
 
     /**
@@ -41,8 +37,13 @@ public class Client {
      */
     public void init(String ip, int port) throws IOException {
         socket = new Socket(ip, port);
-        in = socket.getInputStream();
+        /*
+          WARNING!!! here you should initialize "out-in" in this order!!! Otherwise, it will
+          cause deadlock.(Because server will initialize in "in-out" order.
+          https://stackoverflow.com/questions/21075453/objectinputstream-from-socket-getinputstream
+         */
         out = new ObjectOutputStream(socket.getOutputStream());
+        in = new ObjectInputStream(socket.getInputStream());
     }
 
     /**
@@ -62,7 +63,7 @@ public class Client {
      * @throws ClassNotFoundException probably because receive wrong format(not an Object)
      */
     public Object recv() throws IOException, ClassNotFoundException {
-        return new ObjectInputStream(in).readObject();
+        return in.readObject();
     }
 
     /**
