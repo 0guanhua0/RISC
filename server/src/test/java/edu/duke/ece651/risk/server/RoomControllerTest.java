@@ -10,14 +10,13 @@ import edu.duke.ece651.risk.shared.player.Player;
 import edu.duke.ece651.risk.shared.player.PlayerV1;
 import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.io.*;
+import java.net.Socket;
 import java.util.*;
 
 import static edu.duke.ece651.risk.shared.Mock.readAllStringFromObjectStream;
 import static edu.duke.ece651.risk.shared.Mock.setupMockInput;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RoomControllerTest {
 
@@ -26,12 +25,13 @@ public class RoomControllerTest {
         assertThrows(IllegalArgumentException.class,()->{new RoomController(-1,null, new MapDataBase<String>());});
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-
         Player<String> player = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList("hogwarts", "", "a clash of kings"))), outputStream);
         MapDataBase<String> mapDataBase = new MapDataBase<>();
         RoomController roomController = new RoomController(0, player, mapDataBase);
         assertEquals(roomController.roomID,0);
         assertEquals(roomController.players.size(),1);
+        assertEquals(roomController.players.get(0).getId(),1);
+        assertEquals(roomController.players.get(0).getColor(),"red");
         assertEquals(roomController.map,mapDataBase.getMap("a clash of kings"));
     }
 
@@ -39,7 +39,8 @@ public class RoomControllerTest {
     public void testAddPlayer() throws IOException, ClassNotFoundException {
         // prepare the DataBase
         MapDataBase<String> mapDataBase = new MapDataBase<>();
-        Player<String> player = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList("test"))), new ByteArrayOutputStream());
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        Player<String> player = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList("test"))), stream);
         RoomController roomController = new RoomController(0, player, mapDataBase);
         roomController.addPlayer(new PlayerV1<>(setupMockInput(new ArrayList<>()), new ByteArrayOutputStream()));
         roomController.addPlayer(new PlayerV1<>(setupMockInput(new ArrayList<>()), new ByteArrayOutputStream()));
@@ -54,14 +55,29 @@ public class RoomControllerTest {
     public void testAskForMap() throws IOException, ClassNotFoundException {
         assertThrows(IllegalArgumentException.class,()->{new RoomController(-1,null, new MapDataBase<String>());});
 
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
-        Player<String> player = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList("hogwarts", "", "a clash of kings"))), outputStream);
+        Player<String> player = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList("hogwarts", "","a clash of kings"))), stream);
         MapDataBase<String> mapDataBase = new MapDataBase<>();
         RoomController roomController = new RoomController(0, player, mapDataBase);
         assertEquals(roomController.roomID,0);
         assertEquals(roomController.players.size(),1);
         assertEquals(roomController.map,mapDataBase.getMap("a clash of kings"));
+
+        ByteArrayInputStream temp = new ByteArrayInputStream(stream.toByteArray());
+        ObjectInputStream objectInputStream = new ObjectInputStream(temp);
+        MapDataBase sendBase = (MapDataBase)objectInputStream.readObject();
+        assertTrue(sendBase.containsMap("a clash of kings"));
+        assertTrue(sendBase.containsMap("test"));
+        WorldMap worldMap = sendBase.getMap("a clash of kings");
+        Territory kingdom_of_the_north = worldMap.getTerritory("kingdom of the north");
+        Territory kingdom_of_the_rock = worldMap.getTerritory("kingdom of the rock");
+        assertTrue(kingdom_of_the_north.getNeigh().contains(kingdom_of_the_rock));
+        String errorMsg = (String)objectInputStream.readObject();
+        assertEquals(errorMsg,"The map name you select is invalid");
+        String errorMsg2 = (String)objectInputStream.readObject();
+        assertEquals(errorMsg,"The map name you select is invalid");
+        assertThrows(EOFException.class,()->{String res = (String)objectInputStream.readObject();});
     }
 
     @Test
