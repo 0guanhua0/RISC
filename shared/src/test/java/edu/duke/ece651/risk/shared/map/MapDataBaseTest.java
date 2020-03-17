@@ -8,25 +8,17 @@ class MapDataBaseTest {
 
     @Test
     void containsMap() {
-        MapDataBase mapDataBase = new MapDataBase();
+        MapDataBase<String> mapDataBase = new MapDataBase<String>();
         assert (mapDataBase.containsMap("a clash of kings"));
         assert (mapDataBase.containsMap("a Clash of Kings"));
         assert (!mapDataBase.containsMap("Clash of Kings"));
+        assertFalse(mapDataBase.containsMap(null));
     }
 
     @Test
     void getMap() {
-        MapDataBase mapDataBase = new MapDataBase();
-        try {
-            WorldMap test = mapDataBase.getMap("test");
-            assert (false);
-        }catch (Exception e){
-            assert (true);
-        }
-        if (mapDataBase.containsMap("a clash of kings")){
-            WorldMap map = mapDataBase.getMap("a clash of kings");
-        }else{
-            assert (false);
-        }
+        MapDataBase<String> mapDataBase = new MapDataBase<String>();
+        assertThrows(IllegalArgumentException.class,()->{mapDataBase.getMap("not exist");});
+        assertTrue(mapDataBase.containsMap("a clash of kings"));
     }
 }

@@ -3,7 +3,10 @@ package edu.duke.ece651.risk.shared.action;
 import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 
-public class MoveAction implements Action{
+import java.io.Serializable;
+import java.util.Objects;
+
+public class MoveAction implements Action, Serializable {
     String src;
     String dest;
     int playerId;
@@ -18,28 +21,28 @@ public class MoveAction implements Action{
 
 
     @Override
-    public boolean isValid(WorldMap map) {
+    public boolean isValid(WorldMap<?> map) {
         //check if two input names are valid
         if (!map.hasTerritory(src)||!map.hasTerritory(dest)){
-            System.out.println("first");
+//            System.out.println("first");
             return false;
         }
         Territory srcNode = map.getTerritory(src);
         Territory destNode = map.getTerritory(dest);
         if (srcNode.getOwner()!=playerId){
-            System.out.println("second");
+//            System.out.println("second");
             return false;
         }else if (!srcNode.hasPathTo(destNode)){
             return false;
-        }else if (srcNode.getUnitsNum()<=unitsNum){
-            System.out.println("third");
+        }else if (srcNode.getUnitsNum()<=unitsNum||unitsNum<0){
+//            System.out.println("third");
             return false;
         }else{
             return true;
         }
     }
     @Override
-    public void perform(WorldMap map) {
+    public boolean perform(WorldMap<?> map) {
         //perform the real action
         if (!isValid(map)){
             throw new IllegalArgumentException("Invalid move action!");
@@ -49,6 +52,7 @@ public class MoveAction implements Action{
         Territory destNode = map.getTerritory(dest);
         srcNode.lossNUnits(unitsNum);
         destNode.addNUnits(unitsNum);
+        return true;
     }
 
 

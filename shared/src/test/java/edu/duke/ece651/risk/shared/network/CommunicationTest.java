@@ -7,7 +7,7 @@ import edu.duke.ece651.risk.shared.map.WorldMap;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -53,7 +53,7 @@ public class CommunicationTest {
     }
     
     @Test
-    public void testSendRecvStr() throws IOException {
+    public void testSendRecvStr() throws IOException, ClassNotFoundException {
         String msgCTS = "Hello server";
         String msgSTC = "Hi client";
 
@@ -61,21 +61,20 @@ public class CommunicationTest {
             try {
                 Socket socket = server.accept();
                 assertNotNull(socket);
-                assertEquals(msgCTS, Server.recvStr(socket));
-                Server.send(socket, msgSTC);
-                socket.shutdownOutput();
-                Server.send(socket, msgSTC);
-            }catch (IOException ignored){
+
+                assertEquals(msgCTS, Server.recv(socket.getInputStream()));
+                Server.send(socket.getOutputStream(), msgSTC);
+            }catch (IOException | ClassNotFoundException ignored){
             }
         }).start();
         Client client = new Client();
         client.init("127.0.0.1", PORT);
         client.send(msgCTS);
-        assertEquals(msgSTC, client.recvData());
+        assertEquals(msgSTC, client.recv());
     }
 
     @Test
-    public void testSendActions() throws IOException, InterruptedException {
+    public void testSendActions() throws IOException, InterruptedException, ClassNotFoundException {
         HashMap<String, List<Action>> actions = new HashMap<>();
         List<Action> moveActions = new ArrayList<>();
         List<Action> attackActions = new ArrayList<>();
@@ -90,38 +89,41 @@ public class CommunicationTest {
                 Socket socket = server.accept();
                 assertNotNull(socket);
 
-                assertEquals(actions, Server.recvActions(socket));
-                socket.shutdownOutput();
-                Server.send(socket, "hello");
+                Server.send(socket.getOutputStream(), actions);
             }catch (IOException ignored){
             }
         }).start();
         Thread.sleep(500);
         Client client = new Client();
         client.init("127.0.0.1", PORT);
-        client.send(actions);
+        HashMap<?, List<Action>> actionsRec = (HashMap<?, List<Action>>) client.recv();
+        assertEquals(actions.size(), actionsRec.size());
+        assertEquals(actions.get("move").size(), actionsRec.get("move").size());
     }
 
     @Test
     public void testSendWorldMap() throws IOException, InterruptedException, ClassNotFoundException {
-        WorldMap map = new MapDataBase().getMap("a clash of kings");
+        WorldMap<String> map = new MapDataBase<String>().getMap("a clash of kings");
 
         new Thread(() -> {
             try {
                 Socket socket = server.accept();
                 assertNotNull(socket);
 
-                Server.send(socket, map.toJSON());
+                ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+                objectOutputStream.writeObject(map);
+                objectOutputStream.flush();
 
                 socket.shutdownOutput();
-                Server.send(socket, "hello");
+                Server.send(socket.getOutputStream(), "hello");
             }catch (IOException ignored){
             }
         }).start();
         Thread.sleep(500);
         Client client = new Client();
         client.init("127.0.0.1", PORT);
-        WorldMap map1 = client.recvMap();
+        WorldMap<?> map1 = (WorldMap<?>) client.recv();
+
         assertEquals(map.getAtlas().size(), map1.getAtlas().size());
     }
 

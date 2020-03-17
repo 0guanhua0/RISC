@@ -43,7 +43,7 @@ public class GameClient {
     /**
      * Playing the game, take action in turn until game finish.
      */
-    void playGame(Scanner scanner){
+    void playGame(Scanner scanner) throws IOException {
         while (true){
             //recv data from server
             //client.recvData();

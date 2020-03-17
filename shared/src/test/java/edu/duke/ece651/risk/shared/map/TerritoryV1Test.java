@@ -4,6 +4,7 @@ import edu.duke.ece651.risk.shared.player.Player;
 import edu.duke.ece651.risk.shared.player.PlayerV1;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.util.HashSet;
 import static org.junit.jupiter.api.Assertions.*;
 class TerritoryV1Test {
@@ -15,6 +16,7 @@ class TerritoryV1Test {
         stormKindom.setOwner(3);
         assert (3==stormKindom.getOwner());
         assert (!stormKindom.isFree());
+        assertEquals("The Storm Kindom", stormKindom.getName());
     }
 
     @Test
@@ -46,8 +48,9 @@ class TerritoryV1Test {
         test.addNUnits(10);
         assert (10==test.getUnitsNum());
         for (Unit unit : test.units) {
-            unit.name.equals("soldier");
+            assertEquals("soldier", unit.name);
         }
+        assertThrows(IllegalArgumentException.class, ()->test.addNUnits(-1));
     }
 
     @Test
@@ -57,20 +60,16 @@ class TerritoryV1Test {
         test.addNUnits(10);
         assert (10==test.getUnitsNum());
 
-        try {
-            test.lossNUnits(11);
-            assert (false);
-        }catch (IllegalArgumentException e){
-            assert (10==test.getUnitsNum());
-            for (Unit unit : test.units) {
-                unit.name.equals("soldier");
-            }
+        assertThrows(IllegalArgumentException.class, ()-> test.lossNUnits(11));
+        assertEquals(10, test.getUnitsNum());
+        for (Unit unit : test.units) {
+            assertEquals("soldier", unit.name);
         }
 
         test.lossNUnits(5);
         assert (5==test.getUnitsNum());
         for (Unit unit : test.units) {
-            unit.name.equals("soldier");
+            assertEquals("soldier", unit.name);
         }
         test.lossNUnits(5);
         assert (0==test.getUnitsNum());
@@ -101,10 +100,10 @@ class TerritoryV1Test {
     }
 
     @Test
-    void hasPathTo() {
-        MapDataBase mapDataBase = new MapDataBase();
+    void hasPathTo() throws IOException {
+        MapDataBase<String> mapDataBase = new MapDataBase<>();
         //prepare the world
-        WorldMap worldMap = mapDataBase.getMap("a clash of kings");
+        WorldMap<String> worldMap = mapDataBase.getMap("a clash of kings");
         Territory storm = worldMap.getTerritory("the storm kingdom");
         Territory reach = worldMap.getTerritory("kingdom of the reach");
         Territory rock = worldMap.getTerritory("kingdom of the rock");
@@ -132,7 +131,7 @@ class TerritoryV1Test {
         //change the ownership of reach to p1
         p2.loseTerritory(reach);
         p1.addTerritory(reach);
-        assertTrue(1==reach.getOwner());
+        assertEquals(1, reach.getOwner());
         assertTrue(north.hasPathTo(dorne));
         assertFalse(north.hasPathTo(storm));
 

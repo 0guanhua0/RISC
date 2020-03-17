@@ -67,7 +67,6 @@ class PlayerInputTest {
         actionList = aL.getActions().get(ACTION_MOVE);
         Action action1 = actionList.get(0);
 
-
         assert (action1.equals(m1));
 
 

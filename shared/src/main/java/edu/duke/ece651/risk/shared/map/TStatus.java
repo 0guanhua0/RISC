@@ -1,4 +1,7 @@
 package edu.duke.ece651.risk.shared.map;
+
+import java.io.Serializable;
+
 /**
  * @program: risk-Map
  * @description:
@@ -10,7 +13,7 @@ package edu.duke.ece651.risk.shared.map;
  * @create: 2020-03-08 20:32
  **/
 
-public class TStatus {
+public class TStatus implements Serializable {
 
     //player id of the owner of corresponding territory, 0 to represent this territory is currently free
     private int ownerId;

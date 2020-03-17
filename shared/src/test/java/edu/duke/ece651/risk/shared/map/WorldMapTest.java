@@ -15,8 +15,8 @@ class WorldMapTest {
     private static final String t7 = "Principality of Dorne";
     @Test
     void testWorldMap() {
-        MapDataBase mapDataBase = new MapDataBase();
-        WorldMap worldMap = mapDataBase.getMap("A clash of Kings");
+        MapDataBase<String> mapDataBase = new MapDataBase<>();
+        WorldMap<String> worldMap = mapDataBase.getMap("A clash of Kings");
         //test getTerritory
         Territory territory1 = worldMap.getTerritory(t1);
         Territory territory2 = worldMap.getTerritory(t2);
@@ -25,18 +25,16 @@ class WorldMapTest {
         Territory territory6 = worldMap.getTerritory(t6);
         Territory territory7 = worldMap.getTerritory(t7);
 
-        territory1.status.getName().equals("The Storm Kingdom");
+        assertEquals(6, worldMap.getTerriNum());
+
+        assertEquals("the storm kingdom", territory1.status.getName());
         Set<Territory> neigh = territory1.getNeigh();
         assert (3==neigh.size());
         assert (neigh.contains(territory2));
         assert (neigh.contains(territory3));
         assert (neigh.contains(territory7));
 
-        try {
-            Territory storm = worldMap.getTerritory("The Storm Kingdo");
-            assertTrue(false);
-        }catch (IllegalArgumentException e){}
-
+        assertThrows(IllegalArgumentException.class, ()->worldMap.getTerritory("The Storm Kingdo"));
 
         //test hasTerritory()
         assertTrue(worldMap.hasTerritory("The Storm Kingdom"));
@@ -56,15 +54,15 @@ class WorldMapTest {
 
     @Test
     void setPlayerColor() {
-        MapDataBase mapDataBase = new MapDataBase();
-        WorldMap worldMap = mapDataBase.getMap("A clash of Kings");
+        MapDataBase<String> mapDataBase = new MapDataBase<String>();
+        WorldMap<String> worldMap = mapDataBase.getMap("A clash of Kings");
         Territory territory1 = worldMap.getTerritory(t1);
         Territory territory2 = worldMap.getTerritory(t2);
         Territory territory3 = worldMap.getTerritory(t3);
         Territory territory4 = worldMap.getTerritory(t4);
         Territory territory6 = worldMap.getTerritory(t6);
         Territory territory7 = worldMap.getTerritory(t7);
-        List<String> playerColor = worldMap.getPlayerColor();
+        List<String> playerColor = worldMap.getColorList();
         Map<String,Territory> map = new HashMap<>();
         map.put(t1,territory1);
         map.put(t2,territory2);
@@ -75,12 +73,11 @@ class WorldMapTest {
 
         WorldMap<String> myMap = new WorldMap<>();
         myMap.setAtlas(map);
-        myMap.setPlayerColor(playerColor);
+        myMap.setColorList(playerColor);
         assertEquals(myMap.atlas.get(t1),territory1);
         assertEquals(myMap.atlas.get(t2),territory2);
-        assertTrue(myMap.playerColor.contains("red"));
-        assertTrue(myMap.playerColor.contains("black"));
-        assertTrue(myMap.playerColor.contains("blue"));
+        assertTrue(myMap.colorList.contains("red"));
+        assertTrue(myMap.colorList.contains("blue"));
 
     }
 }

@@ -14,12 +14,17 @@ import java.util.*;
  * @author: Chengda Wu (cw402)
  * @create: 2020-03-08 20:49
  **/
-public class WorldMap<T> implements Serializable {
+
+//TODO take generic and serializable into consideration
+public class WorldMap<T extends Serializable> implements Serializable {
     Map<String, Territory> atlas;
-    List<T> playerColor;
-    public WorldMap(){}
-    public WorldMap(Map<String,Set<String>> adjaList,List<T> playerColor){
-        this.playerColor = playerColor;
+    List<T> colorList;
+    public WorldMap(){
+        this.atlas = new HashMap<>();
+        this.colorList = new ArrayList<>();
+    }
+    public WorldMap(Map<String,Set<String>> adjaList,List<T> colorList){
+        this.colorList = colorList;
         atlas = new HashMap<>();
         //initialize each single territory
         for (Map.Entry<String, Set<String>> entry : adjaList.entrySet()) {
@@ -42,11 +47,11 @@ public class WorldMap<T> implements Serializable {
     public void setAtlas(Map<String, Territory> map){
         this.atlas = map;
     }
-    public void setPlayerColor(List<T> playerColor) {
-        this.playerColor = playerColor;
+    public void setColorList(List<T> colorList) {
+        this.colorList = colorList;
     }
-    public List<T> getPlayerColor() {
-        return playerColor;
+    public List<T> getColorList() {
+        return colorList;
     }
     public Map<String, Territory> getAtlas() {
         return atlas;
@@ -65,29 +70,13 @@ public class WorldMap<T> implements Serializable {
         return atlas.get(name);
     }
 
+    public int getTerriNum(){
+        return atlas.size();
+    }
     //if there is no territory with such name or this territory is currently occupied,return false
     public boolean hasFreeTerritory(String input){
         String name = input.toLowerCase();
         return atlas.containsKey(name) && atlas.get(name).isFree();
-    }
-
-    public String toJSON(){
-        JSONObject jsonObject = new JSONObject();
-        // serialize all territory into a json array
-        JSONArray territories = new JSONArray();
-        for (String key : atlas.keySet()){
-            JSONObject tmp = new JSONObject();
-            Territory territory = atlas.get(key);
-
-            tmp.put("territory", new Gson().toJson(territory));
-            tmp.put("name", territory.getName());
-            // this is used for deserialization
-            tmp.put("type", territory.getClass().getName());
-
-            territories.put(tmp);
-        }
-        jsonObject.put("atlas", territories);
-        return jsonObject.toString();
     }
 
     // TODO: have better implement equals here

@@ -2,7 +2,9 @@ package edu.duke.ece651.risk.shared.action;
 
 import edu.duke.ece651.risk.shared.map.WorldMap;
 
-public class AttackAction implements Action {
+import java.io.Serializable;
+
+public class AttackAction implements Action, Serializable {
     String src;
     String dest;
     int player_id;
@@ -17,13 +19,13 @@ public class AttackAction implements Action {
 
 
     @Override
-    public boolean isValid(WorldMap worldMap) {
+    public boolean isValid(WorldMap<?> worldMap) {
         return !src.equals(dest);
     }
 
     @Override
-    public void perform(WorldMap worldMap) {
-
+    public boolean perform(WorldMap<?> worldMap) {
+        return true;
     }
 
     @Override

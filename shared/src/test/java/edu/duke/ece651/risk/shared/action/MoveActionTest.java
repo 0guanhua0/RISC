@@ -7,16 +7,18 @@ import edu.duke.ece651.risk.shared.player.Player;
 import edu.duke.ece651.risk.shared.player.PlayerV1;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class MoveActionTest {
 
     @Test
-    void isValid() {
-        MapDataBase mapDataBase = new MapDataBase();
+    void isValid() throws IOException {
+        MapDataBase<String> mapDataBase = new MapDataBase<String>();
         //prepare the world
-        WorldMap worldMap = mapDataBase.getMap("a clash of kings");
+        WorldMap<String> worldMap = mapDataBase.getMap("a clash of kings");
         Territory storm = worldMap.getTerritory("the storm kingdom");
         Territory reach = worldMap.getTerritory("kingdom of the reach");
         Territory rock = worldMap.getTerritory("kingdom of the rock");
@@ -27,7 +29,6 @@ class MoveActionTest {
         Player<String> p1 = new PlayerV1<>("Red",1);
         Player<String> p2 = new PlayerV1<>("Blue", 2);
         //assign some territories to each player
-
 
         //player1
         assert (north.isFree());
@@ -85,10 +86,10 @@ class MoveActionTest {
     }
 
     @Test
-    void perform() {
-        MapDataBase mapDataBase = new MapDataBase();
+    void perform() throws IOException {
+        MapDataBase<String> mapDataBase = new MapDataBase<>();
         //prepare the world
-        WorldMap worldMap = mapDataBase.getMap("a clash of kings");
+        WorldMap<String> worldMap = mapDataBase.getMap("a clash of kings");
         Territory storm = worldMap.getTerritory("the storm kingdom");
         Territory reach = worldMap.getTerritory("kingdom of the reach");
         Territory rock = worldMap.getTerritory("kingdom of the rock");
@@ -135,17 +136,8 @@ class MoveActionTest {
         a3.perform(worldMap);
         assert (2==reach.getUnitsNum()&&2==storm.getUnitsNum());
 
-        try {
-            MoveAction a4 = new MoveAction("kingdom of the north", "kingdom of mountain and vale", 2, 1);
-            a4.perform(worldMap);
-            assert (false);
-        }catch (Exception e){
-            assert (true);
-        }
-
-
-
-
+        MoveAction a4 = new MoveAction("kingdom of the north", "kingdom of mountain and vale", 2, 1);
+        assertThrows(IllegalArgumentException.class, ()->a4.perform(worldMap));
     }
 
     @Test
