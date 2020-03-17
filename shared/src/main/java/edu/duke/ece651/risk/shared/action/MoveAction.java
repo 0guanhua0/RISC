@@ -56,20 +56,20 @@ public class MoveAction implements Action, Serializable {
     }
 
 
-//    @Override
-//    public boolean equals(Object o) {
-//        if (this == o) {
-//            return true;
-//        }else if (!(o instanceof MoveAction)){
-//            return false;
-//        }else{
-//            MoveAction that = (MoveAction) o;
-//            return playerId == that.playerId &&
-//                    unitsNum == that.unitsNum &&
-//                    src.equals(that.src) &&
-//                    dest.equals(that.dest);
-//        }
-//
-//    }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }else if (!(o instanceof MoveAction)){
+            return false;
+        }else{
+            MoveAction that = (MoveAction) o;
+            return playerId == that.playerId &&
+                    unitsNum == that.unitsNum &&
+                    src.equals(that.src) &&
+                    dest.equals(that.dest);
+        }
+
+    }
 
 }
