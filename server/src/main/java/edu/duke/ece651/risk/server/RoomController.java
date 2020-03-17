@@ -16,7 +16,7 @@ import java.util.*;
 public class RoomController {
     //TODO maybe change that in the future version? like a beginner to choose that?
     //this variable represents how many units on average we have for a single territory
-    private static final int unitsNum = 5;
+    private static final int unitsPerTerr = 5;
     int roomID;
     // all players in current room
     List<Player<String>> players;
@@ -68,32 +68,33 @@ public class RoomController {
     //TODO maybe changing this method to a multi-thread version in the future?
     //call this method to let each player choose  territories they want
     void startGame() throws IOException, IllegalArgumentException, ClassNotFoundException {
-        int TerriNum = map.getTerriNum();
+        int terriNum = map.getTerriNum();
         int playerNum = players.size();
         //the variable below is the number of territories that a single player can choose
-        int singleNum = TerriNum/playerNum;
+        assert(0==terriNum%playerNum);
+        int terrPerUsr = terriNum/playerNum;
         //the variable below is the total number of units that a single player can choose
-        int totalUnits = unitsNum*singleNum;
+        int totalUnits = unitsPerTerr *terrPerUsr;
         HashSet<String> occupied = new HashSet<>();
         for (Player<String> player : players) {
             //get the current list of occupied territories
-            ClientSelect clientSelect = new ClientSelect(singleNum,unitsNum,occupied);
+            ClientSelect clientSelect = new ClientSelect(terrPerUsr, unitsPerTerr,occupied);
             //tell user to select client
             player.send(clientSelect);
             while (true){
-                boolean isValid = true;
                 ServerSelect serverSelect = (ServerSelect)player.recv();
                 //check if the selection is valid or not
-                if(serverSelect.isValid(map,totalUnits,singleNum)){
+                if(serverSelect.isValid(map,totalUnits,terrPerUsr)){
                     //if valid, update the map
                     for (String terrName : serverSelect.getAllName()) {
                         occupied.add(terrName);
                         Territory territory = map.getTerritory(terrName);
+                        territory.addNUnits(serverSelect.getUnitsNum(terrName));
                         player.addTerritory(territory);
                     }
                     break;
                 }else{
-                    player.send(" “Your initialization is invalid”\n");
+                    player.send("Your initialization is invalid");
                 }
             }
         }

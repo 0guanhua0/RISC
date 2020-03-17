@@ -22,6 +22,13 @@ public class ServerSelect implements Serializable {
         this.chosen = chosen;
     }
 
+    public int getUnitsNum(String terrName){
+        if (!chosen.containsKey(terrName)){
+            throw new IllegalArgumentException("Input key doesn't exist ");
+        }
+        return chosen.get(terrName);
+    }
+
     public Set<String> getAllName(){
         return chosen.keySet();
     }

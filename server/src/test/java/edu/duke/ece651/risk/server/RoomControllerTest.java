@@ -86,27 +86,72 @@ public class RoomControllerTest {
         ByteArrayOutputStream stream1 = new ByteArrayOutputStream();
         ByteArrayOutputStream stream2 = new ByteArrayOutputStream();
 
-        //input objects for p1
-        String selectMap = "a clash of kings";
-        HashMap<String, Integer> p1Chosen  = new HashMap<>();
-        p1Chosen.put("kingdom of the north",5);
-        p1Chosen.put("kingdom of mountain and vale",5);
-        p1Chosen.put("the storm kingdom",5);
+        //first invalid input objects for p1
+        HashMap<String, Integer> p1Chosen1 = new HashMap<>();
+        p1Chosen1.put("kingdom of the north",5);
+        p1Chosen1.put("kingdom of mountain and vale",5);
+        ServerSelect s11 = new ServerSelect(p1Chosen1);
 
-        ServerSelect s1 = new ServerSelect(p1Chosen);
-        //input objects for p2
-        HashMap<String, Integer> p2Chosen  = new HashMap<>();
-        p2Chosen.put("kingdom of the rock",5);
-        p2Chosen.put("kingdom of the reach",5);
-        p2Chosen.put("principality of dorne",5);
-        ServerSelect s2 = new ServerSelect(p2Chosen);
+        //valid input objects for p1
+        HashMap<String, Integer> p1Chosen2  = new HashMap<>();
+        p1Chosen2.put("kingdom of the north",5);
+        p1Chosen2.put("kingdom of mountain and vale",5);
+        p1Chosen2.put("the storm kingdom",5);
+        ServerSelect s12 = new ServerSelect(p1Chosen2);
+
+        // first invalid input objects for p2
+        HashMap<String, Integer> p2Chosen1  = new HashMap<>();
+        p1Chosen2.put("the storm kingdom",5);
+        p2Chosen1.put("kingdom of the reach",5);
+        p2Chosen1.put("principality of dorne",5);
+        ServerSelect s21 = new ServerSelect(p2Chosen1);
+
+        //second invalid input objects for p2
+        HashMap<String, Integer> p2Chosen2  = new HashMap<>();
+        p2Chosen2.put("kingdom of the rock",6);
+        p2Chosen2.put("kingdom of the reach",5);
+        p2Chosen2.put("principality of dorne",5);
+        ServerSelect s22 = new ServerSelect(p2Chosen2);
+
+        // valid input objects for p2
+        HashMap<String, Integer> p2Chosen3  = new HashMap<>();
+        p2Chosen3.put("kingdom of the rock",7);
+        p2Chosen3.put("kingdom of the reach",5);
+        p2Chosen3.put("principality of dorne",3);
+        ServerSelect s23 = new ServerSelect(p2Chosen3);
 
 
-        Player<String> player1 = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList("a clash of kings",s1))), stream1);
-        Player<String> player2 = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList(s2))), stream2);
+        Player<String> player1 = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList("a clash of kings",s11,s12))), stream1);
+        Player<String> player2 = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList(s21,s22,s23))), stream2);
         RoomController roomController = new RoomController(0, player1, mapDataBase);
         roomController.addPlayer(player2);
         roomController.startGame();
+
+        //test state of the system is correct
+        assertEquals(player1.getId(),
+                mapDataBase.getMap("a clash of kings").getTerritory("kingdom of the north").getOwner());
+        assertEquals(5,
+                mapDataBase.getMap("a clash of kings").getTerritory("kingdom of the north").getUnitsNum());
+        assertEquals(player2.getId(),
+                mapDataBase.getMap("a clash of kings").getTerritory("principality of dorne").getOwner());
+        assertEquals(3,
+                mapDataBase.getMap("a clash of kings").getTerritory("principality of dorne").getUnitsNum());
+        //test output is correct
+        ByteArrayInputStream temp = new ByteArrayInputStream(stream1.toByteArray());
+        ObjectInputStream objectInputStream = new ObjectInputStream(temp);
+        objectInputStream.readObject();
+        objectInputStream.readObject();
+        String msg1 = (String)objectInputStream.readObject();
+        assertEquals(msg1,"Your initialization is invalid");
+
+        temp = new ByteArrayInputStream(stream2.toByteArray());
+        objectInputStream = new ObjectInputStream(temp);
+        objectInputStream.readObject();
+        String msg2 = (String)objectInputStream.readObject();
+        assertEquals(msg2,"Your initialization is invalid");
+        String msg3 = (String)objectInputStream.readObject();
+        assertEquals(msg3,"Your initialization is invalid");
+
 
     }
 
