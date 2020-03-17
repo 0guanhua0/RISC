@@ -83,7 +83,6 @@ public class GameServerTest {
         assertEquals(0, gameServer.rooms.size());
         gameServer.handleIncomeRequest(socket1);
         assertEquals(1, gameServer.rooms.size());
-        assertEquals("Welcome to the fancy RISK game!!!Please select the map you want", readAllStringFromObjectStream(outputStream));
         assertEquals(1,gameServer.rooms.get(0).players.size());
         assertEquals(0,gameServer.rooms.get(0).roomID);
 

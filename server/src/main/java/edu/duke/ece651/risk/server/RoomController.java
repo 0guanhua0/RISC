@@ -55,66 +55,67 @@ public class RoomController {
                 break;
             }
         }
+        firstPlayer.send("You have successfully built a room");
     }
 
     //call this method to let each player choose  territories they want
     //TODO maybe change this method to a multi-thread version? the current version is letting each player choose one by one
     //TODO maybe add a new action type to check the integrity and correctness of data outside current method is a wise idea
     //TODO take assign units for each territory into consideration
-    void startGame() throws IOException, IllegalArgumentException, ClassNotFoundException {
-        int TerriNum = map.getTerriNum();
-        int playerNum = map.getColorList().size();
-        if (playerNum>TerriNum){
-            throw new IllegalArgumentException("The number of players can't be larger than the number of territories");
-        }else if(0!=TerriNum%playerNum){
-            throw new IllegalArgumentException("This is unfair to the last player!");
-        }
-        int singleNum = TerriNum/playerNum;
-        HashSet<String> occupied = new HashSet<>();
-        for (Player<String> player : players) {
-            //get the current list of occupied territories
-            String delimiter = "";
-            StringBuilder sb = new StringBuilder();
-            for (String s : occupied) {
-                sb.append(delimiter);
-                sb.append(s);
-                delimiter = ",";
-            }
-            String occMsg = sb.toString();
-            //try to let the player to communicate with server to choose the territories
-            while (true){
-                boolean isValid = true;
-                //inform current player about how many territories she can choose and which territories are occupied now
-                player.send("the number of territories you should choose is: "+singleNum);
-                player.send(occMsg);
-                String terrStr = (String) player.recv();
-                //check if the number of territories is valid or not
-                if (null==terrStr) continue;
-                String[] split = terrStr.split(",");
-                HashSet<String> terrNames = new HashSet<>();
-                for (String terrName : split) {
-                    terrNames.add(terrName);
-                }
-                if (terrNames.size()!=singleNum) continue;
-                //check if all name is valid and free
-                for (String terrName : terrNames) {
-                    terrName = terrName.strip();
-                    if (!map.hasFreeTerritory(terrName)){
-                        isValid = false;
-                        break;
-                    }
-                }
-                if (isValid) {
-                    occupied.addAll(terrNames);
-                    for (String terrName : terrNames) {
-                        Territory territory = map.getTerritory(terrName);
-                        player.addTerritory(territory);
-                    }
-                    break;
-                }
-            }
-        }
-    }
+//    void startGame() throws IOException, IllegalArgumentException, ClassNotFoundException {
+//        int TerriNum = map.getTerriNum();
+//        int playerNum = map.getColorList().size();
+//        if (playerNum>TerriNum){
+//            throw new IllegalArgumentException("The number of players can't be larger than the number of territories");
+//        }else if(0!=TerriNum%playerNum){
+//            throw new IllegalArgumentException("This is unfair to the last player!");
+//        }
+//        int singleNum = TerriNum/playerNum;
+//        HashSet<String> occupied = new HashSet<>();
+//        for (Player<String> player : players) {
+//            //get the current list of occupied territories
+//            String delimiter = "";
+//            StringBuilder sb = new StringBuilder();
+//            for (String s : occupied) {
+//                sb.append(delimiter);
+//                sb.append(s);
+//                delimiter = ",";
+//            }
+//            String occMsg = sb.toString();
+//            //try to let the player to communicate with server to choose the territories
+//            while (true){
+//                boolean isValid = true;
+//                //inform current player about how many territories she can choose and which territories are occupied now
+//                player.send("the number of territories you should choose is: "+singleNum);
+//                player.send(occMsg);
+//                String terrStr = (String) player.recv();
+//                //check if the number of territories is valid or not
+//                if (null==terrStr) continue;
+//                String[] split = terrStr.split(",");
+//                HashSet<String> terrNames = new HashSet<>();
+//                for (String terrName : split) {
+//                    terrNames.add(terrName);
+//                }
+//                if (terrNames.size()!=singleNum) continue;
+//                //check if all name is valid and free
+//                for (String terrName : terrNames) {
+//                    terrName = terrName.strip();
+//                    if (!map.hasFreeTerritory(terrName)){
+//                        isValid = false;
+//                        break;
+//                    }
+//                }
+//                if (isValid) {
+//                    occupied.addAll(terrNames);
+//                    for (String terrName : terrNames) {
+//                        Territory territory = map.getTerritory(terrName);
+//                        player.addTerritory(territory);
+//                    }
+//                    break;
+//                }
+//            }
+//        }
+//    }
     //TODO take exception into consideration
     void playSingleRoundGame(int round) throws IOException, ClassNotFoundException {
         int i = 1;
@@ -182,16 +183,16 @@ public class RoomController {
         }
     }
 
-    //the logic for the whole game
-    void runGame() throws IOException, ClassNotFoundException {
-        int round = 0;
-        startGame();
-        int winnerId = -1;
-        while(winnerId<=0) {
-            round++;
-            playSingleRoundGame(round);
-            winnerId = getWinnerId();
-        }
-        endGame(winnerId);
-    }
+//    //the logic for the whole game
+//    void runGame() throws IOException, ClassNotFoundException {
+//        int round = 0;
+//        startGame();
+//        int winnerId = -1;
+//        while(winnerId<=0) {
+//            round++;
+//            playSingleRoundGame(round);
+//            winnerId = getWinnerId();
+//        }
+//        endGame(winnerId);
+//    }
 }

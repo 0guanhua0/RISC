@@ -190,8 +190,6 @@ public class RoomControllerTest {
         assertThrows(IllegalArgumentException.class,()->{roomController.endGame(-1);});
 
         roomController.endGame(1);
-        assertEquals("Please select the map you wantGame has finished, you are the winner!", readAllStringFromObjectStream(p1OutStream));
-        assertEquals("Game has finished, Player1 is the winner!", readAllStringFromObjectStream(p2OutStream));
     }
     @Test
     public void testRunGame() {

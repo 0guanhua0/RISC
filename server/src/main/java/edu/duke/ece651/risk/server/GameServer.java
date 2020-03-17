@@ -55,7 +55,7 @@ public class GameServer {
      */
     void handleIncomeRequest(Socket socket) throws IOException, ClassNotFoundException {
         // here we wrap the socket with player object ASAP(i.e. decouple socket with stream)
-        PlayerV1<String> player = new PlayerV1<>(socket.getInputStream(), socket.getOutputStream());
+        Player<String> player = new PlayerV1<>(socket.getInputStream(), socket.getOutputStream());
 
         String helloInfo = "Welcome to the fancy RISK game!!!";
         player.send(helloInfo);
