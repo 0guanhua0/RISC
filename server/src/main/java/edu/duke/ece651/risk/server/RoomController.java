@@ -16,7 +16,7 @@ public class RoomController {
     // all players in current room
     List<Player<String>> players;
     // the map this room is playing
-    WorldMap map;
+    WorldMap<String> map;
 
     //constructor: let the starter start the whole game
     public RoomController(int roomID, Player<String> player, MapDataBase<String> mapDataBase) throws IOException, IllegalArgumentException, ClassNotFoundException {

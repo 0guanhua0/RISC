@@ -10,8 +10,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.security.InvalidKeyException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
+
+import static edu.duke.ece651.risk.shared.Constant.SUCCESSFUL;
 
 public class GameServer {
     // the server object, use to communicate with all players
@@ -32,6 +36,7 @@ public class GameServer {
      * This will run forever(until the thread is killed), keep listen for new connection and handle it.
      */
     public void run(){
+        System.out.println("Game server is running, waiting for new connection...");
         while (!Thread.currentThread().isInterrupted()){
             Socket socket = server.accept();
             if (socket != null){
@@ -78,6 +83,11 @@ public class GameServer {
      * @return room number/ID, e.g. -1(or any negative number) stands for a new room, > 0 stands for an existing room
      */
     int askValidRoomNum(Player<?> player) throws IOException {
+        // TODO: send out the room list info(for now just send the id)
+        List<Integer> roomInfo = new ArrayList<>(rooms.size());
+        roomInfo.addAll(rooms.keySet());
+        player.send(roomInfo);
+
         while (true){
             try {
                 String choice = (String) player.recv();
@@ -85,10 +95,11 @@ public class GameServer {
                 if (num >= 0 && !rooms.containsKey(num)){
                     throw new InvalidKeyException();
                 }
+                player.send(SUCCESSFUL);
                 return num;
             }catch (NumberFormatException | NullPointerException | InvalidKeyException | ClassNotFoundException e){
                 // Number format error
-                player.send("Invalid choice, try again");
+                player.send("Invalid choice, try again.");
             }
         }
     }

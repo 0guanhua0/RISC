@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static edu.duke.ece651.risk.shared.Mock.recv;
+import static edu.duke.ece651.risk.shared.Mock.send;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class CommunicationTest {
@@ -62,8 +64,8 @@ public class CommunicationTest {
                 Socket socket = server.accept();
                 assertNotNull(socket);
 
-                assertEquals(msgCTS, Server.recv(socket.getInputStream()));
-                Server.send(socket.getOutputStream(), msgSTC);
+                assertEquals(msgCTS, recv(socket.getInputStream()));
+                send(socket.getOutputStream(), msgSTC);
             }catch (IOException | ClassNotFoundException ignored){
             }
         }).start();
@@ -89,7 +91,7 @@ public class CommunicationTest {
                 Socket socket = server.accept();
                 assertNotNull(socket);
 
-                Server.send(socket.getOutputStream(), actions);
+                send(socket.getOutputStream(), actions);
             }catch (IOException ignored){
             }
         }).start();
@@ -115,7 +117,7 @@ public class CommunicationTest {
                 objectOutputStream.flush();
 
                 socket.shutdownOutput();
-                Server.send(socket.getOutputStream(), "hello");
+                send(socket.getOutputStream(), "hello");
             }catch (IOException ignored){
             }
         }).start();

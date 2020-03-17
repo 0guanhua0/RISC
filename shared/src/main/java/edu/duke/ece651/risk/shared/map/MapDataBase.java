@@ -95,4 +95,7 @@ public class MapDataBase<T extends Serializable> {
         String mapName = inputName.toLowerCase();
         return mapHub.get(mapName);
     }
+    public List<WorldMap<T>> getAllMaps(){
+        return new ArrayList<>(mapHub.values());
+    }
 }

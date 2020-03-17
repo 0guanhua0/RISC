@@ -11,6 +11,7 @@ import java.util.Scanner;
 
 import static edu.duke.ece651.risk.shared.Constant.ACTION_ATTACK;
 import static edu.duke.ece651.risk.shared.Constant.ACTION_MOVE;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class PlayerInputTest {
@@ -28,16 +29,16 @@ class PlayerInputTest {
 
         // invalid + attack(a->b, 10) + move(c->d, 5) + done
         String str = "c\n" + "a\na\nb\n10\n" + "m\nc\nd\n5\n" + "d\n";
-        PlayerInput.read(new Scanner(str), player, actions);
+        assertTrue(PlayerInput.read(new Scanner(str), player, actions));
 
         AttackAction a1 = new AttackAction("A", "B", 0, 10);
 
         Action action0 = actions.getActions().get(Constant.ACTION_ATTACK).get(0);
         assert (action0.equals(a1));
 
-        String s2 = "K\nD\n";
+        String s2 = "K\nq\n";
         Scanner sc2 = new Scanner(s2);
-        PlayerInput.read(sc2, player, actions);
+        assertFalse(PlayerInput.read(sc2, player, actions));
     }
 
 

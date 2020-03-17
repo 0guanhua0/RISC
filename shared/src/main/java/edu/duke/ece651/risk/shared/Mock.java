@@ -17,16 +17,40 @@ public class Mock {
     public static String readAllStringFromObjectStream(ByteArrayOutputStream out) throws IOException, ClassNotFoundException {
         ObjectInputStream stream = new ObjectInputStream(new ByteArrayInputStream(out.toByteArray()));
         StringBuilder stringBuilder = new StringBuilder();
-        String object = "";
         try {
             while(true){
                 // keep reading until throws an exception
-                object = (String) stream.readObject();
-                stringBuilder.append(object);
+                Object object = stream.readObject();
+                if (object instanceof String){
+                    stringBuilder.append(object);
+                }
             }
         }catch (EOFException ignored){
 
         }
         return stringBuilder.toString();
+    }
+
+    /**
+     * Send the data to the output stream
+     * @param out output stream
+     * @param object data to be sent
+     * @throws IOException probably because the stream is already closed
+     */
+    public static void send(OutputStream out, Object object) throws IOException {
+        ObjectOutputStream objectOutputStream = new ObjectOutputStream(out);
+        objectOutputStream.writeObject(object);
+        objectOutputStream.flush();
+    }
+
+    /**
+     * This function will receive an object from target stream.
+     * @param in input stream
+     * @return received data
+     * @throws IOException probably because the stream is already closed
+     * @throws ClassNotFoundException probably because receive some illegal data
+     */
+    public static Object recv(InputStream in) throws IOException, ClassNotFoundException {
+        return new ObjectInputStream(in).readObject();
     }
 }
