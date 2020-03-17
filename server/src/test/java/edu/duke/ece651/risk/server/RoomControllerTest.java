@@ -1,5 +1,6 @@
 package edu.duke.ece651.risk.server;
 
+import edu.duke.ece651.risk.shared.ToServerMsg.ServerSelect;
 import edu.duke.ece651.risk.shared.action.Action;
 import edu.duke.ece651.risk.shared.action.MoveAction;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
@@ -78,6 +79,35 @@ public class RoomControllerTest {
         String errorMsg2 = (String)objectInputStream.readObject();
         assertEquals(errorMsg,"The map name you select is invalid");
         assertThrows(EOFException.class,()->{String res = (String)objectInputStream.readObject();});
+    }
+    @Test
+    void startGame() throws IOException, ClassNotFoundException {
+        MapDataBase<String> mapDataBase = new MapDataBase<>();
+        ByteArrayOutputStream stream1 = new ByteArrayOutputStream();
+        ByteArrayOutputStream stream2 = new ByteArrayOutputStream();
+
+        //input objects for p1
+        String selectMap = "a clash of kings";
+        HashMap<String, Integer> p1Chosen  = new HashMap<>();
+        p1Chosen.put("kingdom of the north",5);
+        p1Chosen.put("kingdom of mountain and vale",5);
+        p1Chosen.put("the storm kingdom",5);
+
+        ServerSelect s1 = new ServerSelect(p1Chosen);
+        //input objects for p2
+        HashMap<String, Integer> p2Chosen  = new HashMap<>();
+        p2Chosen.put("kingdom of the rock",5);
+        p2Chosen.put("kingdom of the reach",5);
+        p2Chosen.put("principality of dorne",5);
+        ServerSelect s2 = new ServerSelect(p2Chosen);
+
+
+        Player<String> player1 = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList("a clash of kings",s1))), stream1);
+        Player<String> player2 = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList(s2))), stream2);
+        RoomController roomController = new RoomController(0, player1, mapDataBase);
+        roomController.addPlayer(player2);
+        roomController.startGame();
+
     }
 
     @Test

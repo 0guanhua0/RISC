@@ -21,20 +21,23 @@ class ServerSelectTest {
         MapDataBase<String> mapDataBase = new MapDataBase<>();
         WorldMap<String> worldMap = mapDataBase.getMap("a clash of kings");
         Map<String,Integer> chosen = new HashMap<>();
+        //here we have 2 territories and 6 units
         chosen.put("kingdom of the reach",3);
         chosen.put("kingdom of the rock",3);
         ServerSelect serverSelect = new ServerSelect(chosen);
-        assertTrue(serverSelect.isValid(worldMap,6));
-        assertFalse(serverSelect.isValid(worldMap,5));
-        assertFalse(serverSelect.isValid(worldMap,7));
+        assertTrue(serverSelect.isValid(worldMap,6,2));
+        assertFalse(serverSelect.isValid(worldMap,5,2));
+        assertFalse(serverSelect.isValid(worldMap,7,2));
+        assertFalse(serverSelect.isValid(worldMap,6,3));
+        assertFalse(serverSelect.isValid(worldMap,6,1));
 
         chosen.put("kingdom of the reach",3);
         chosen.put("kingdom of the rock",-1);
-        assertFalse(serverSelect.isValid(worldMap,2));
+        assertFalse(serverSelect.isValid(worldMap,2,2));
 
         Territory territory = worldMap.getTerritory("kingdom of the reach");
         territory.setOwner(1);
-        assertFalse(serverSelect.isValid(worldMap,6));
+        assertFalse(serverSelect.isValid(worldMap,6,2));
 
     }
 
@@ -47,9 +50,24 @@ class ServerSelectTest {
         chosen.put("kingdom of the rock",3);
         ServerSelect serverSelect = new ServerSelect(chosen);
         PlayerV1<String> playerV1 = new PlayerV1<>("Blue",1);
-        assertThrows(IllegalArgumentException.class,()->{serverSelect.perform(worldMap,5,playerV1);});
-        serverSelect.perform(worldMap,6,playerV1);
+        assertThrows(IllegalArgumentException.class,()->{serverSelect.perform(worldMap,5,2,playerV1);});
+        serverSelect.perform(worldMap,6,2,playerV1);
         assertEquals(worldMap.getTerritory("kingdom of the reach").getOwner(),1);
         assertEquals(worldMap.getTerritory("kingdom of the rock").getOwner(),1);
+    }
+
+    @Test
+    void getAllName() {
+        MapDataBase<String> mapDataBase = new MapDataBase<>();
+        WorldMap<String> worldMap = mapDataBase.getMap("a clash of kings");
+        Map<String,Integer> chosen = new HashMap<>();
+        //here we have 2 territories and 6 units
+        chosen.put("kingdom of the reach",3);
+        chosen.put("kingdom of the rock",3);
+        ServerSelect serverSelect = new ServerSelect(chosen);
+        assertTrue(serverSelect.getAllName().contains("kingdom of the reach"));
+        assertTrue(serverSelect.getAllName().contains("kingdom of the rock"));
+        assertEquals(serverSelect.getAllName().size(),2);
+
     }
 }

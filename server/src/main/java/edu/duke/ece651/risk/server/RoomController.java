@@ -65,16 +65,11 @@ public class RoomController {
         }
     }
 
-    //call this method to let each player choose  territories they want
     //TODO maybe changing this method to a multi-thread version in the future?
+    //call this method to let each player choose  territories they want
     void startGame() throws IOException, IllegalArgumentException, ClassNotFoundException {
         int TerriNum = map.getTerriNum();
-        int playerNum = map.getColorList().size();
-        if (playerNum>TerriNum){
-            throw new IllegalArgumentException("The number of players can't be larger than the number of territories");
-        }else if(0!=TerriNum%playerNum){
-            throw new IllegalArgumentException("This is unfair to the last player!");
-        }
+        int playerNum = players.size();
         //the variable below is the number of territories that a single player can choose
         int singleNum = TerriNum/playerNum;
         //the variable below is the total number of units that a single player can choose
