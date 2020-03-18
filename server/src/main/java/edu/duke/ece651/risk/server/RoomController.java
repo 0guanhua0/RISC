@@ -121,7 +121,9 @@ public class RoomController {
                     }
                 }else if (recvRes instanceof String && ((String)recvRes).equals("Done")){
                     break;
-                }//note that here I  just ignore invalid input
+                }else {
+                    player.send(INVALID_ACTION);
+                }
             }
         }
         //TODO try to update the ownership of territories which are attacked by other players
