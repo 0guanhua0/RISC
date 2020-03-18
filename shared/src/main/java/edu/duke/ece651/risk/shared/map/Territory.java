@@ -8,7 +8,7 @@ import java.util.Set;
 
 public abstract class Territory implements Serializable {
 
-    transient Set<Territory> neigh;
+    Set<Territory> neigh;
     //class to represent current status of this territory
     TStatus status;
 

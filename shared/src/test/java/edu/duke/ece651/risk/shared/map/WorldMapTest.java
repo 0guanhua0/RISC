@@ -15,6 +15,18 @@ class WorldMapTest {
     private static final String t7 = "Principality of Dorne";
     @Test
     void testWorldMap() {
+        //test constructor
+        Map<String, Set<String>> map = new HashMap<>() {{
+            put("a", new HashSet<>());
+            put("b", new HashSet<>());
+            put("c", new HashSet<>());
+        }};
+        List<String> colorList = new ArrayList<>(Arrays.asList("red","blue"));
+        assertThrows(IllegalArgumentException.class,()->{new WorldMap<>(map,colorList);});
+        List<String> colorList2 = new ArrayList<>(Arrays.asList("red","blue","pink","yellow"));
+        assertThrows(IllegalArgumentException.class,()->{new WorldMap<>(map,colorList2);});
+
+
         MapDataBase<String> mapDataBase = new MapDataBase<>();
         WorldMap<String> worldMap = mapDataBase.getMap("A clash of Kings");
         //test getTerritory

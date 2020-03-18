@@ -65,12 +65,9 @@ public class GameServerTest {
             gameServer.run();
         });
         thread.start();
-        //could you explain why do we want the main thread to sleep here
         Thread.sleep(100);
         thread.interrupt();
         thread.join();
-        //Do you think we also need to verify how many times the program enter into this if statement
-        //and how many times threadpool have created a thread to execute？
         verify(server, atLeast(3)).accept();
     }
 

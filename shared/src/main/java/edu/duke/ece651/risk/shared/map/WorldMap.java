@@ -24,6 +24,14 @@ public class WorldMap<T extends Serializable> implements Serializable {
         this.colorList = new ArrayList<>();
     }
     public WorldMap(Map<String,Set<String>> adjaList,List<T> colorList){
+        int playerNum = colorList.size();
+        int terriNum = adjaList.size();
+        if (playerNum>terriNum){
+            throw new IllegalArgumentException("The number of players can't be larger than the number of territories");
+        }else if(0!=terriNum%playerNum){
+            throw new IllegalArgumentException("This is unfair to the last player!");
+        }
+
         this.colorList = colorList;
         atlas = new HashMap<>();
         //initialize each single territory
