@@ -21,4 +21,10 @@ class MapDataBaseTest {
         assertThrows(IllegalArgumentException.class,()->{mapDataBase.getMap("not exist");});
         assertTrue(mapDataBase.containsMap("a clash of kings"));
     }
+
+    @Test
+    void testGetAllMap(){
+        MapDataBase<String> mapDataBase = new MapDataBase<String>();
+        assertTrue(mapDataBase.getAllMaps().containsKey("a clash of kings"));
+    }
 }

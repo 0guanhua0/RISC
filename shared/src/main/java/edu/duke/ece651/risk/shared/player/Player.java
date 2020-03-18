@@ -1,10 +1,14 @@
 package edu.duke.ece651.risk.shared.player;
 
 import edu.duke.ece651.risk.shared.map.Territory;
+import org.json.JSONObject;
 
 import java.io.*;
 import java.util.HashSet;
 import java.util.Set;
+
+import static edu.duke.ece651.risk.shared.Constant.PLAYER_COLOR;
+import static edu.duke.ece651.risk.shared.Constant.PLAYER_ID;
 
 /**
  * @program: risk
@@ -96,6 +100,19 @@ public abstract class Player<T> {
 
     public Object recv() throws IOException, ClassNotFoundException {
         return in.readObject();
+    }
+
+    /**
+     * This function will send the player info to corresponding client(in json format), now it includes:
+     * 1) player id
+     * 2) player color
+     * @throws IOException probably because of stream closed
+     */
+    public void sendPlayerInfo() throws IOException {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(PLAYER_ID, id);
+        jsonObject.put(PLAYER_COLOR, color);
+        send(jsonObject.toString());
     }
 
     public int getTerrNum(){

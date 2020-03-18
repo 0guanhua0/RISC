@@ -11,6 +11,8 @@ import edu.duke.ece651.risk.shared.player.Player;
 import java.io.IOException;
 import java.util.*;
 
+import static edu.duke.ece651.risk.shared.Constant.SUCCESSFUL;
+
 //TODO for every method that have networking, take client losing connection into consideration
 //TODO for every method that have networking, handle some exceptions rather than just throwing it
 public class RoomController {
@@ -21,7 +23,7 @@ public class RoomController {
     // all players in current room
     List<Player<String>> players;
     // the map this room is playing
-    WorldMap map;
+    WorldMap<String> map;
 
 
     //constructor: let the starter start the whole game
@@ -36,6 +38,7 @@ public class RoomController {
         askForMap(mapDataBase);
         List<String> colorList = map.getColorList();
         players.get(0).setColor(colorList.get(0));
+        player.sendPlayerInfo();
     }
 
     //call this method to add a new player into this room
@@ -44,6 +47,7 @@ public class RoomController {
         player.setId(players.size() + 1);
         player.setColor(colorList.get(players.size()));
         players.add(player);
+        player.sendPlayerInfo();
         if (players.size() == colorList.size()){
             //TODO run the whole game
 //            System.out.println("run this game");
@@ -63,6 +67,7 @@ public class RoomController {
                 firstPlayer.send("The map name you select is invalid");
             }
         }
+        firstPlayer.send(SUCCESSFUL);
     }
 
     //TODO maybe changing this method to a multi-thread version in the future?

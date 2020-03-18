@@ -146,14 +146,13 @@ class MoveActionTest {
 
     @Test
     void testEquals() {
-//        MoveAction a0 = new MoveAction("kingdom of the north", "kingdom of mountain and vale", 1, 1);
-//        MoveAction a1 = new MoveAction("kingdom of the north", "kingdom of mountain and vale", 1, 1);
-//        assert(a0.equals(a1));
-//        MoveAction a2 = new MoveAction("kingdom of the north", "kingdom of mountain and vale", 1, 2);
-//        assert(!a0.equals(a2));
-    }
-
-    @Test
-    void testEquals1() {
+        MoveAction a0 = new MoveAction("kingdom of the north", "kingdom of mountain and vale", 1, 1);
+        MoveAction a1 = new MoveAction("kingdom of the north", "kingdom of mountain and vale", 1, 1);
+        assertEquals(a0, a0);
+        assertEquals(a0, a1);
+        MoveAction a2 = new MoveAction("kingdom of the north", "kingdom of mountain and vale", 1, 2);
+        assertNotEquals(a0, a2);
+        AttackAction a3 = new AttackAction("kingdom of the north", "kingdom of mountain and vale", 1, 1);
+        assertNotEquals(a0, a3);
     }
 }
