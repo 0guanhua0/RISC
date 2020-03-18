@@ -17,16 +17,22 @@ class PlayerInputTest {
     static Player<String> player = new Player<>();
 
     @Test
-    void read() {
+    void readValidAction() {
         assertNull(PlayerInput.readValidAction(new Scanner("D\n"), player));
+        assertNull(PlayerInput.readValidAction(new Scanner("A\na\nb\nc\nD\n"), player));
 
         // invalid + attack(a->b, 10) + move(c->d, 5) + done
         Action action1 = PlayerInput.readValidAction(new Scanner("c\n" + "a\na\nb\n10\nd\n"), player);
         assertTrue(action1 instanceof AttackAction);
 
         AttackAction a1 = new AttackAction("A", "B", 0, 10);
-
         assert (a1.equals(action1));
+
+        Action action2 = PlayerInput.readValidAction(new Scanner("c\n" + "m\nc\nd\n5\nd\n"), player);
+        assertTrue(action2 instanceof MoveAction);
+
+        MoveAction a2 = new MoveAction("C", "D", 0, 5);
+        assert (a2.equals(action2));
     }
 
 
@@ -53,8 +59,5 @@ class PlayerInputTest {
         MoveAction m1 = new MoveAction("A", "B", 0, 10);
 
         assertEquals(action2, m1);
-
-
-
     }
 }

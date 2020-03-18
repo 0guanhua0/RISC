@@ -15,6 +15,7 @@ import java.io.*;
 import java.net.Socket;
 import java.util.*;
 
+import static edu.duke.ece651.risk.shared.Constant.SUCCESSFUL;
 import static edu.duke.ece651.risk.shared.Mock.readAllStringFromObjectStream;
 import static edu.duke.ece651.risk.shared.Mock.setupMockInput;
 import static org.junit.jupiter.api.Assertions.*;
@@ -67,10 +68,10 @@ public class RoomControllerTest {
 
         ByteArrayInputStream temp = new ByteArrayInputStream(stream.toByteArray());
         ObjectInputStream objectInputStream = new ObjectInputStream(temp);
-        MapDataBase sendBase = (MapDataBase)objectInputStream.readObject();
+        MapDataBase<String> sendBase = (MapDataBase<String>)objectInputStream.readObject();
         assertTrue(sendBase.containsMap("a clash of kings"));
         assertTrue(sendBase.containsMap("test"));
-        WorldMap worldMap = sendBase.getMap("a clash of kings");
+        WorldMap<String> worldMap = sendBase.getMap("a clash of kings");
         Territory kingdom_of_the_north = worldMap.getTerritory("kingdom of the north");
         Territory kingdom_of_the_rock = worldMap.getTerritory("kingdom of the rock");
         assertTrue(kingdom_of_the_north.getNeigh().contains(kingdom_of_the_rock));
@@ -78,6 +79,8 @@ public class RoomControllerTest {
         assertEquals(errorMsg,"The map name you select is invalid");
         String errorMsg2 = (String)objectInputStream.readObject();
         assertEquals(errorMsg,"The map name you select is invalid");
+        assertEquals(SUCCESSFUL, (String)objectInputStream.readObject());
+        objectInputStream.readObject(); // this is for player initial message
         assertThrows(EOFException.class,()->{String res = (String)objectInputStream.readObject();});
     }
     @Test
@@ -141,11 +144,14 @@ public class RoomControllerTest {
         ObjectInputStream objectInputStream = new ObjectInputStream(temp);
         objectInputStream.readObject();
         objectInputStream.readObject();
+        objectInputStream.readObject();
+        objectInputStream.readObject();
         String msg1 = (String)objectInputStream.readObject();
         assertEquals(msg1,"Your initialization is invalid");
 
         temp = new ByteArrayInputStream(stream2.toByteArray());
         objectInputStream = new ObjectInputStream(temp);
+        objectInputStream.readObject();
         objectInputStream.readObject();
         String msg2 = (String)objectInputStream.readObject();
         assertEquals(msg2,"Your initialization is invalid");

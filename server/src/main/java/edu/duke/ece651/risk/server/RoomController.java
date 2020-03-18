@@ -64,7 +64,7 @@ public class RoomController {
                 this.map = mapDataBase.getMap(mapName);
                 break;
             }else {
-                firstPlayer.send("Unrecognized map, try again.");
+                firstPlayer.send("The map name you select is invalid");
             }
         }
         firstPlayer.send(SUCCESSFUL);
