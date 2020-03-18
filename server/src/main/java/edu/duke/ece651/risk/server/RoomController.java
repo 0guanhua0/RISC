@@ -106,31 +106,12 @@ public class RoomController {
             //tell client the most recent situation
             player.send(map);
             while (true){
-                Map<String, List<Action>> actionMap = (Map<String, List<Action>>) player.recv();
-                boolean isValid = true;
-                //try to check whether information is valid
-                for (String actionName : actionMap.keySet()) {
-                    List<Action> actions = actionMap.get(actionName);
-                    for (int j = 0; j < actions.size(); j++) {
-                        Action action = actions.get(j);
-                        if (!action.isValid(map)){
-                            isValid = false;
-                            break;
-                        }
-                    }
-                    if (!isValid) break;
-                }
+                Action action = (Action) player.recv();
                 //act accordingly based on whether the input actions are valid or not
-                if (isValid){//if valid, update the state of the world
-                    for (String actionName : actionMap.keySet()) {
-                        List<Action> actions = actionMap.get(actionName);
-                        for (Action action : actions) {
-                            action.perform(map);
-                        }
-                    }
-                    break;
-                }else{//if
-                    player.send("Your actions are invalid");
+                if (action.isValid(map)){//if valid, update the state of the world
+                    action.perform(map);
+                }else{//other wise ask user to resend the information
+                    player.send("Your action is invalid");
                 }
             }
         }
