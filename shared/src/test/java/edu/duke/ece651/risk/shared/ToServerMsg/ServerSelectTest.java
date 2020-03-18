@@ -70,4 +70,17 @@ class ServerSelectTest {
         assertEquals(serverSelect.getAllName().size(),2);
 
     }
+
+    @Test
+    void getUnitsNum() {
+        MapDataBase<String> mapDataBase = new MapDataBase<>();
+        WorldMap<String> worldMap = mapDataBase.getMap("a clash of kings");
+        Map<String,Integer> chosen = new HashMap<>();
+        //here we have 2 territories and 6 units
+        chosen.put("kingdom of the reach",3);
+        chosen.put("kingdom of the rock",3);
+        ServerSelect serverSelect = new ServerSelect(chosen);
+        assertEquals(3,serverSelect.getUnitsNum("kingdom of the reach"));
+        assertThrows(IllegalArgumentException.class,()->{serverSelect.getUnitsNum("not");});
+    }
 }

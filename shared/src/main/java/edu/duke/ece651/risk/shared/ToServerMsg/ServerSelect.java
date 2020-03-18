@@ -22,6 +22,7 @@ public class ServerSelect implements Serializable {
         this.chosen = chosen;
     }
 
+    //this method returns number of units inside a territory
     public int getUnitsNum(String terrName){
         if (!chosen.containsKey(terrName)){
             throw new IllegalArgumentException("Input key doesn't exist ");

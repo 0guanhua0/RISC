@@ -81,7 +81,7 @@ public class MapDataBase<T extends Serializable> implements Serializable {
 
     }
     public boolean containsMap(String inputName){
-        if (null==inputName||inputName.isEmpty()){
+        if (null==inputName){
             return false;
         }else{
             String mapName = inputName.toLowerCase();

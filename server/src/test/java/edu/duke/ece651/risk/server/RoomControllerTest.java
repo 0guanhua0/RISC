@@ -219,7 +219,7 @@ public class RoomControllerTest {
         t4.addNUnits(4);
         t5.addNUnits(2);
 
-        roomController.playSingleRoundGame(1);
+        roomController.playSingleRoundGame();
 
         assertEquals(roomController.players.get(0).getTerrNum(),4);
         assertEquals(roomController.players.get(1).getTerrNum(),2);

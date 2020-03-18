@@ -59,7 +59,7 @@ class TerritoryV1Test {
         assert (test.units.isEmpty());
         test.addNUnits(10);
         assert (10==test.getUnitsNum());
-
+        assertThrows(IllegalArgumentException.class, ()-> test.lossNUnits(-1));
         assertThrows(IllegalArgumentException.class, ()-> test.lossNUnits(11));
         assertEquals(10, test.getUnitsNum());
         for (Unit unit : test.units) {

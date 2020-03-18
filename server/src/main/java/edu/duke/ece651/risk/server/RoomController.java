@@ -100,28 +100,28 @@ public class RoomController {
         }
     }
 
-    void playSingleRoundGame(int round) throws IOException, ClassNotFoundException {
-        int i = 1;
+    //used to play a single round of game
+    void playSingleRoundGame() throws IOException, ClassNotFoundException {
         for (Player<String> player : players) {
+            //tell client the most recent situation
+            player.send(map);
             while (true){
-                //inform client that new round of game begins
-                player.send(""+round);
                 Map<String, List<Action>> actionMap = (Map<String, List<Action>>) player.recv();
                 boolean isValid = true;
+                //try to check whether information is valid
                 for (String actionName : actionMap.keySet()) {
                     List<Action> actions = actionMap.get(actionName);
                     for (int j = 0; j < actions.size(); j++) {
                         Action action = actions.get(j);
                         if (!action.isValid(map)){
-                            //inform client that previous input has failed
-                            player.send("Invalid "+j);
                             isValid = false;
                             break;
                         }
                     }
                     if (!isValid) break;
                 }
-                if (isValid){
+                //act accordingly based on whether the input actions are valid or not
+                if (isValid){//if valid, update the state of the world
                     for (String actionName : actionMap.keySet()) {
                         List<Action> actions = actionMap.get(actionName);
                         for (Action action : actions) {
@@ -129,12 +129,14 @@ public class RoomController {
                         }
                     }
                     break;
+                }else{//if
+                    player.send("Your actions are invalid");
                 }
             }
         }
     }
 
-    //return -1 when no wins
+    //return -1 when no wins, otherwise return the id of winner
     int getWinnerId(){
         int res = -1;
         int targetNum = map.getTerriNum();
@@ -159,21 +161,19 @@ public class RoomController {
         //tell all players that we want to end this game
         for (Player<String> player : players) {
             if (player.getId()!=winnerId){
-                player.send("Game has finished, Player"+winnerId+" is the winner!");
+                player.send(winnerId);
             }else{
-                player.send("Game has finished, you are the winner!");
+                player.send("you wins");
             }
         }
     }
 
 //    //the logic for the whole game
 //    void runGame() throws IOException, ClassNotFoundException {
-//        int round = 0;
 //        startGame();
 //        int winnerId = -1;
 //        while(winnerId<=0) {
-//            round++;
-//            playSingleRoundGame(round);
+//            playSingleRoundGame();
 //            winnerId = getWinnerId();
 //        }
 //        endGame(winnerId);
