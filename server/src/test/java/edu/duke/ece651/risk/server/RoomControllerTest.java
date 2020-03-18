@@ -15,7 +15,7 @@ import java.io.*;
 import java.net.Socket;
 import java.util.*;
 
-import static edu.duke.ece651.risk.shared.Constant.SUCCESSFUL;
+import static edu.duke.ece651.risk.shared.Constant.*;
 import static edu.duke.ece651.risk.shared.Mock.readAllStringFromObjectStream;
 import static edu.duke.ece651.risk.shared.Mock.setupMockInput;
 import static org.junit.jupiter.api.Assertions.*;
@@ -76,9 +76,9 @@ public class RoomControllerTest {
         Territory kingdom_of_the_rock = worldMap.getTerritory("kingdom of the rock");
         assertTrue(kingdom_of_the_north.getNeigh().contains(kingdom_of_the_rock));
         String errorMsg = (String)objectInputStream.readObject();
-        assertEquals(errorMsg,"The map name you select is invalid");
+        assertEquals(errorMsg,SELECT_MAP_ERROR);
         String errorMsg2 = (String)objectInputStream.readObject();
-        assertEquals(errorMsg,"The map name you select is invalid");
+        assertEquals(errorMsg,SELECT_MAP_ERROR);
         assertEquals(SUCCESSFUL, (String)objectInputStream.readObject());
         objectInputStream.readObject(); // this is for player initial message
         assertThrows(EOFException.class,()->{String res = (String)objectInputStream.readObject();});
@@ -147,16 +147,16 @@ public class RoomControllerTest {
         objectInputStream.readObject();
         objectInputStream.readObject();
         String msg1 = (String)objectInputStream.readObject();
-        assertEquals(msg1,"Your initialization is invalid");
+        assertEquals(msg1,SELECT_TERR_ERROR);
 
         temp = new ByteArrayInputStream(stream2.toByteArray());
         objectInputStream = new ObjectInputStream(temp);
         objectInputStream.readObject();
         objectInputStream.readObject();
         String msg2 = (String)objectInputStream.readObject();
-        assertEquals(msg2,"Your initialization is invalid");
+        assertEquals(msg2,SELECT_TERR_ERROR);
         String msg3 = (String)objectInputStream.readObject();
-        assertEquals(msg3,"Your initialization is invalid");
+        assertEquals(msg3,SELECT_TERR_ERROR);
 
 
     }
@@ -179,7 +179,7 @@ public class RoomControllerTest {
         MoveAction a31 = new MoveAction("kingdom of the reach", "the storm kingdom", 2, 1);
 
         //build the room
-        Player<String> player1 = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList("a clash of kings",a01,"invalid",a11,a12,"Done"))), new ByteArrayOutputStream());
+        Player<String> player1 = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList("a clash of kings",a01,"invalid",1,a11,a12,"Done"))), new ByteArrayOutputStream());
         Player<String> player2 = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList(a21,"invalid",a31,"Done"))), new ByteArrayOutputStream());
         RoomController roomController = new RoomController(0, player1, mapDataBase);
         roomController.addPlayer(player2);
@@ -277,7 +277,7 @@ public class RoomControllerTest {
         s1.readObject();
         s1.readObject();
         s1.readObject();
-        assertEquals((String)s1.readObject(),"you wins");
+        assertEquals((String)s1.readObject(),YOU_WINS);
         s2.readObject();
         assertEquals((Integer)s2.readObject(),1);
     }

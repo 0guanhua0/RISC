@@ -11,14 +11,13 @@ import edu.duke.ece651.risk.shared.player.Player;
 import java.io.IOException;
 import java.util.*;
 
-import static edu.duke.ece651.risk.shared.Constant.SUCCESSFUL;
+import static edu.duke.ece651.risk.shared.Constant.*;
 
 //TODO for every method that have networking, take client losing connection into consideration
 //TODO for every method that have networking, handle some exceptions rather than just throwing it
 public class RoomController {
     //TODO maybe change that in the future version? like a beginner to choose that?
     //this variable represents how many units on average we have for a single territory
-    private static final int unitsPerTerr = 5;
     int roomID;
     // all players in current room
     List<Player<String>> players;
@@ -50,7 +49,7 @@ public class RoomController {
         player.sendPlayerInfo();
         if (players.size() == colorList.size()){
             //TODO run the whole game
-//            System.out.println("run this game");
+            System.out.println("run this game");
             //this.runGame();
         }
     }
@@ -64,7 +63,7 @@ public class RoomController {
                 this.map = mapDataBase.getMap(mapName);
                 break;
             }else {
-                firstPlayer.send("The map name you select is invalid");
+                firstPlayer.send(SELECT_MAP_ERROR);
             }
         }
         firstPlayer.send(SUCCESSFUL);
@@ -79,11 +78,11 @@ public class RoomController {
         assert(0==terriNum%playerNum);
         int terrPerUsr = terriNum/playerNum;
         //the variable below is the total number of units that a single player can choose
-        int totalUnits = unitsPerTerr *terrPerUsr;
+        int totalUnits = UNITS_PER_TERR *terrPerUsr;
         HashSet<String> occupied = new HashSet<>();
         for (Player<String> player : players) {
             //get the current list of occupied territories
-            ClientSelect clientSelect = new ClientSelect(terrPerUsr, unitsPerTerr,occupied);
+            ClientSelect clientSelect = new ClientSelect(terrPerUsr, UNITS_PER_TERR,occupied);
             //tell user to select client
             player.send(clientSelect);
             while (true){
@@ -99,7 +98,7 @@ public class RoomController {
                     }
                     break;
                 }else{
-                    player.send("Your initialization is invalid");
+                    player.send(SELECT_TERR_ERROR);
                 }
             }
         }
@@ -118,7 +117,7 @@ public class RoomController {
                     if (action.isValid(map)){//if valid, update the state of the world
                         action.perform(map);
                     }else{//other wise ask user to resend the information
-                        player.send("Your action is invalid");
+                        player.send(INVALID_ACTION);
                     }
                 }else if (recvRes instanceof String && ((String)recvRes).equals("Done")){
                     break;
@@ -155,7 +154,7 @@ public class RoomController {
             if (player.getId()!=winnerId){
                 player.send(winnerId);
             }else{
-                player.send("you wins");
+                player.send(YOU_WINS);
             }
         }
     }
