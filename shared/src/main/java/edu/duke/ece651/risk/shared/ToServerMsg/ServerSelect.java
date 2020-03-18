@@ -22,8 +22,22 @@ public class ServerSelect implements Serializable {
         this.chosen = chosen;
     }
 
+    //this method returns number of units inside a territory
+    public int getUnitsNum(String terrName){
+        if (!chosen.containsKey(terrName)){
+            throw new IllegalArgumentException("Input key doesn't exist ");
+        }
+        return chosen.get(terrName);
+    }
 
-    public boolean isValid(WorldMap<?> worldMap,int validNum){
+    public Set<String> getAllName(){
+        return chosen.keySet();
+    }
+
+    public boolean isValid(WorldMap<?> worldMap,int validUnitsNum,int validTerrNum){
+        if (chosen.size()!=validTerrNum){
+            return false;
+        }
         int totalNum = 0;
         for (String territory : chosen.keySet()) {
             if (!worldMap.hasFreeTerritory(territory)||chosen.get(territory)<=0){
@@ -31,12 +45,12 @@ public class ServerSelect implements Serializable {
             }
             totalNum += chosen.get(territory);
         }
-        return totalNum==validNum;
+        return totalNum==validUnitsNum;
     }
 
 
-    public void perform(WorldMap<?> worldMap, int validNum, Player<?> player) throws IllegalArgumentException {
-        if (!this.isValid(worldMap,validNum)){
+    public void perform(WorldMap<?> worldMap, int validUnitsNum,int validTerrNum, Player<?> player) throws IllegalArgumentException {
+        if (!this.isValid(worldMap,validUnitsNum,validTerrNum)){
             throw new IllegalArgumentException("This is not a valid input");
         }
         for (String terrName : chosen.keySet()) {

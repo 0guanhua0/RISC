@@ -9,8 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class MoveActionTest {
 
@@ -73,7 +72,7 @@ class MoveActionTest {
         MoveAction a4 = new MoveAction("kingdom of the rock", "kingdom of the reach", 1, 1);
         assert (!a4.isValid(worldMap));
 
-        //test invalid move units
+        //test invalid move  units
         MoveAction a5 = new MoveAction("kingdom of the north", "kingdom of mountain and vale", 1, 2);
         assert (!a5.isValid(worldMap));
         MoveAction a51 = new MoveAction("kingdom of the rock", "kingdom of mountain and vale", 1, 1);
@@ -82,6 +81,11 @@ class MoveActionTest {
         //test move between units that this player has no control over
         MoveAction a6 = new MoveAction("kingdom of the north", "kingdom of mountain and vale", 2, 1);
         assert (!a6.isValid(worldMap));
+
+        //test move between negative units
+        MoveAction a7 = new MoveAction("kingdom of the north", "kingdom of mountain and vale", 1, -1);
+        assertFalse(a7.isValid(worldMap));
+
 
     }
 
@@ -149,4 +153,7 @@ class MoveActionTest {
 //        assert(!a0.equals(a2));
     }
 
+    @Test
+    void testEquals1() {
+    }
 }
