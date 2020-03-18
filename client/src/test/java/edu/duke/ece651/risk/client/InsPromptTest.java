@@ -27,7 +27,7 @@ class InsPromptTest {
 
     @Test
     void Info() {
-        String str1 = "You are the A player, what would you like to do?\n" +
+        String str1 = "You are the Green player, what would you like to do?\n" +
                 " (M)ove\n" +
                 " (A)ttack\n" +
                 " (D)one\n" +
@@ -38,7 +38,10 @@ class InsPromptTest {
         String str4 = "input destination territory\n";
         String str5 = "input unit number\n";
 
-        InsPrompt.actInfo("A");
+        Player<String> player = new Player<>();
+        player.playerColor = "Green";
+
+        InsPrompt.actInfo(player);
         assertEquals(str1, outContent.toString());
         outContent.reset();
 

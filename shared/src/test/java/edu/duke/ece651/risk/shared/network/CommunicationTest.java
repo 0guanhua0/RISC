@@ -4,18 +4,21 @@ import edu.duke.ece651.risk.shared.action.Action;
 import edu.duke.ece651.risk.shared.action.MoveAction;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.map.WorldMap;
+import edu.duke.ece651.risk.shared.player.Player;
+import edu.duke.ece651.risk.shared.player.PlayerV1;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import static edu.duke.ece651.risk.shared.Mock.recv;
-import static edu.duke.ece651.risk.shared.Mock.send;
+import static edu.duke.ece651.risk.shared.Constant.ACTION_ATTACK;
+import static edu.duke.ece651.risk.shared.Constant.ACTION_MOVE;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class CommunicationTest {
@@ -41,8 +44,12 @@ public class CommunicationTest {
     @Test
     public void testAccept() throws IOException {
         new Thread(() -> {
-            Socket socket = server.accept();
-            assertNotNull(socket);
+            try {
+                Socket socket = server.accept();
+                assertNotNull(socket);
+                new ObjectOutputStream(socket.getOutputStream());
+            } catch (IOException ignored) {
+            }
         }).start();
         new Client("localhost", PORT);
     }
@@ -64,8 +71,10 @@ public class CommunicationTest {
                 Socket socket = server.accept();
                 assertNotNull(socket);
 
-                assertEquals(msgCTS, recv(socket.getInputStream()));
-                send(socket.getOutputStream(), msgSTC);
+                Player<String> player = new PlayerV1<>(socket.getInputStream(), socket.getOutputStream());
+
+                assertEquals(msgCTS, player.recv());
+                player.send(msgSTC);
             }catch (IOException | ClassNotFoundException ignored){
             }
         }).start();
@@ -83,15 +92,17 @@ public class CommunicationTest {
 
         moveActions.add(new MoveAction("A", "B", 1, 1));
 
-        actions.put("move", moveActions);
-        actions.put("attack", attackActions);
+        actions.put(ACTION_MOVE, moveActions);
+        actions.put(ACTION_ATTACK, attackActions);
 
         new Thread(() -> {
             try {
                 Socket socket = server.accept();
                 assertNotNull(socket);
 
-                send(socket.getOutputStream(), actions);
+                Player<String> player = new PlayerV1<>(socket.getInputStream(), socket.getOutputStream());
+
+                player.send(actions);
             }catch (IOException ignored){
             }
         }).start();
@@ -100,7 +111,8 @@ public class CommunicationTest {
         client.init("127.0.0.1", PORT);
         HashMap<?, List<Action>> actionsRec = (HashMap<?, List<Action>>) client.recv();
         assertEquals(actions.size(), actionsRec.size());
-        assertEquals(actions.get("move").size(), actionsRec.get("move").size());
+        assertEquals(actions.get(ACTION_MOVE).size(), actionsRec.get(ACTION_MOVE).size());
+        assertEquals(actions.get(ACTION_ATTACK).size(), actionsRec.get(ACTION_ATTACK).size());
     }
 
     @Test
@@ -116,8 +128,6 @@ public class CommunicationTest {
                 objectOutputStream.writeObject(map);
                 objectOutputStream.flush();
 
-                socket.shutdownOutput();
-                send(socket.getOutputStream(), "hello");
             }catch (IOException ignored){
             }
         }).start();

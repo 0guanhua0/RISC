@@ -30,6 +30,10 @@ public class Player<T>{
         return playerId;
     }
 
+    public T getPlayerColor() {
+        return playerColor;
+    }
+
     public void init(String json){
         JSONObject jsonObject = new JSONObject(json);
         this.playerId = jsonObject.getInt(PLAYER_ID);

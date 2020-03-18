@@ -30,6 +30,10 @@ public class GameServerTest {
         new Thread(()->{
             Socket socket = gameServer.server.accept();
             assertNotNull(socket);
+            try {
+                new PlayerV1<>(socket.getInputStream(), socket.getOutputStream());
+            } catch (IOException ignored) {
+            }
         }).start();
         Client client = new Client();
         client.init("127.0.0.1", 8000);
@@ -97,7 +101,10 @@ public class GameServerTest {
         assertEquals(1, gameServer.rooms.size());
         gameServer.handleIncomeRequest(socket2);
         assertEquals(1, gameServer.rooms.size());
-        assertEquals("Welcome to the fancy RISK game!!!" + SUCCESSFUL, readAllStringFromObjectStream(outputStream));
+        assertEquals(
+                "Welcome to the fancy RISK game!!!" + SUCCESSFUL + "{\"playerColor\":\"blue\",\"playerID\":2}",
+                readAllStringFromObjectStream(outputStream)
+        );
         assertEquals(2,gameServer.rooms.get(0).players.size());
         assertEquals(0,gameServer.rooms.get(0).roomID);
 
@@ -111,7 +118,10 @@ public class GameServerTest {
         assertEquals(1, gameServer.rooms.size());
         gameServer.handleIncomeRequest(socket3);
         assertEquals(1, gameServer.rooms.size());
-        assertEquals("Welcome to the fancy RISK game!!!" + SUCCESSFUL, readAllStringFromObjectStream(outputStream));
+        assertEquals(
+                "Welcome to the fancy RISK game!!!" + SUCCESSFUL + "{\"playerColor\":\"black\",\"playerID\":3}",
+                readAllStringFromObjectStream(outputStream)
+        );
         assertEquals(3,gameServer.rooms.get(0).players.size());
         assertEquals(0,gameServer.rooms.get(0).roomID);
     }

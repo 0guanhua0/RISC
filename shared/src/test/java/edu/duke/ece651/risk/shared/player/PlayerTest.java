@@ -96,4 +96,15 @@ class PlayerTest {
         player.send(str1);
         assertEquals(str1, readAllStringFromObjectStream(outputStream));
     }
+
+    @Test
+    void testSendInfo() throws IOException, ClassNotFoundException {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        Player<String> player = new PlayerV1<>("Green", 1, setupMockInput(new ArrayList<>(Arrays.asList())), outputStream);
+        player.sendPlayerInfo();
+        assertEquals(
+                "{\"playerColor\":\"Green\",\"playerID\":1}",
+                readAllStringFromObjectStream(outputStream)
+        );
+    }
 }

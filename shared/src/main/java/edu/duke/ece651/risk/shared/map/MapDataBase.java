@@ -12,7 +12,7 @@ import java.util.*;
 
 // TODO: read from input files rather than hardcoding here
 // TODO: do we really need T here? since we hard code the map, we already know the type
-public class MapDataBase<T extends Serializable> {
+public class MapDataBase<T extends Serializable> implements Serializable{
     Map<String, WorldMap<T>> mapHub;
     public MapDataBase(){
         mapHub = new HashMap<>();
@@ -95,7 +95,7 @@ public class MapDataBase<T extends Serializable> {
         String mapName = inputName.toLowerCase();
         return mapHub.get(mapName);
     }
-    public List<WorldMap<T>> getAllMaps(){
-        return new ArrayList<>(mapHub.values());
+    public Map<String, WorldMap<T>> getAllMaps(){
+        return mapHub;
     }
 }

@@ -8,6 +8,8 @@ import edu.duke.ece651.risk.shared.player.Player;
 import java.io.IOException;
 import java.util.*;
 
+import static edu.duke.ece651.risk.shared.Constant.SUCCESSFUL;
+
 //TODO for every method that have networking, take client losing connection into consideration
 //TODO for every method that have networking, handle some exceptions rather than just throwing it
 public class RoomController {
@@ -48,15 +50,18 @@ public class RoomController {
 
     void askForMap(MapDataBase<String> mapDataBase) throws IOException, ClassNotFoundException {
         Player<String> firstPlayer = players.get(0);
+        firstPlayer.send(mapDataBase);
         while(true){
             firstPlayer.send("Please select the map you want");
             String mapName = (String) firstPlayer.recv();
             if (mapDataBase.containsMap(mapName)){
                 this.map = mapDataBase.getMap(mapName);
                 break;
+            }else {
+                firstPlayer.send("Unrecognized map, try again.");
             }
         }
-        firstPlayer.send("You have successfully built a room");
+        firstPlayer.send(SUCCESSFUL);
     }
 
     //call this method to let each player choose  territories they want

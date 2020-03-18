@@ -30,27 +30,4 @@ public class Mock {
         }
         return stringBuilder.toString();
     }
-
-    /**
-     * Send the data to the output stream
-     * @param out output stream
-     * @param object data to be sent
-     * @throws IOException probably because the stream is already closed
-     */
-    public static void send(OutputStream out, Object object) throws IOException {
-        ObjectOutputStream objectOutputStream = new ObjectOutputStream(out);
-        objectOutputStream.writeObject(object);
-        objectOutputStream.flush();
-    }
-
-    /**
-     * This function will receive an object from target stream.
-     * @param in input stream
-     * @return received data
-     * @throws IOException probably because the stream is already closed
-     * @throws ClassNotFoundException probably because receive some illegal data
-     */
-    public static Object recv(InputStream in) throws IOException, ClassNotFoundException {
-        return new ObjectInputStream(in).readObject();
-    }
 }

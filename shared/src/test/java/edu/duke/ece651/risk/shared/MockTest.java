@@ -26,7 +26,7 @@ public class MockTest {
     public void testReadAllStringFromObjectStream() throws IOException, ClassNotFoundException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(out);
-        for (Object o : new ArrayList<>(Arrays.asList("1", "2", "3"))){
+        for (Object o : new ArrayList<>(Arrays.asList("1", "2", new ArrayList<>(), "3"))){
             objectOutputStream.writeObject(o);
         }
         objectOutputStream.flush();

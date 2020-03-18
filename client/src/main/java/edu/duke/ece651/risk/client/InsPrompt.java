@@ -4,6 +4,7 @@ import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * store system instruction
@@ -24,14 +25,21 @@ class InsPrompt {
         System.out.println("Which one do you want to join?");
     }
 
-    public static void insShowMaps(MapDataBase<String> maps){
-        for (WorldMap<String> map : maps.getAllMaps()){
-            SceneCLI.showMap(map);
+    public static void insShowMaps(Map<String, WorldMap<String>> maps){
+        for (String mapName : maps.keySet()){
+            SceneCLI.showMap(maps.get(mapName));
         }
     }
 
-    public static void actInfo(String player) {
-        System.out.println( "You are the " + player + " player, what would you like to do?\n" +
+    public static void insShowMapOption(Map<Integer, String> options){
+        System.out.println("Which map do you want to play?");
+        for (int i = 1; i <= options.size(); i++){
+            System.out.println(i + ". " + options.get(i));
+        }
+    }
+
+    public static void actInfo(Player<String> player) {
+        System.out.println( "You are the " + player.getPlayerColor() + " player, what would you like to do?\n" +
                 " (M)ove\n" +
                 " (A)ttack\n" +
                 " (D)one\n" +

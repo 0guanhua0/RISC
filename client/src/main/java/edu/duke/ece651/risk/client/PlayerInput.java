@@ -1,6 +1,7 @@
 package edu.duke.ece651.risk.client;
 
 import edu.duke.ece651.risk.shared.Constant;
+import edu.duke.ece651.risk.shared.action.Action;
 import edu.duke.ece651.risk.shared.action.AttackAction;
 import edu.duke.ece651.risk.shared.action.MoveAction;
 
@@ -18,26 +19,26 @@ public class PlayerInput {
      * Q(uit)
      * @param scanner scanner
      * @param player interacting user
-     * @param actList action list
-     * @return false when user want ot quit the game
      */
-    public static boolean read(Scanner scanner, Player<String> player, ActionList actList) {
+    public static Action readValidAction(Scanner scanner, Player<String> player) {
         while (true) {
-            InsPrompt.actInfo(player.getPlayerName());
-            //read
+            InsPrompt.actInfo(player);
+            //readAction
             String str = scanner.nextLine().toUpperCase();
             System.out.println(str);
             //D: done
             switch (str) {
                 case "D":
-                    return true;
+                    // TODO: here we may need a DoneAction to indicate is done
+                    return null;
                 //M/A
                 case "A":
                 case "M":
-                    readAction(scanner, player.getPlayerID(), str, actList);
+                    Action action = readAction(scanner, player.getPlayerID(), str);
+                    if (action != null){
+                        return action;
+                    }
                     break;
-                case "Q":
-                    return false;
                 default:
                     System.out.println("invalid input");
                     break;
@@ -46,36 +47,29 @@ public class PlayerInput {
     }
 
     /**
-     * read player action
+     * readAction player action
      * @param scanner scanner
      * @param playerId player id
      * @param currAct curr action
-     * @param actionList list store aciton
      */
-    public static void readAction(Scanner scanner, int playerId, String currAct, ActionList actionList) {
+    public static Action readAction(Scanner scanner, int playerId, String currAct) {
         InsPrompt.srcInfo();
         String src = scanner.nextLine().toUpperCase();
         InsPrompt.dstInfo();
         String dst = scanner.nextLine().toUpperCase();
 
-        //read unit
+        //readAction unit
         InsPrompt.unitInfo();
         String unit = scanner.nextLine();
 
         if(!Format.isNumeric(unit)) {
             System.out.println("invalid unit number");
-            return;
+            return null;
         }
         int unitNum  = Integer.parseInt(unit);
-        switch (currAct) {
-            case "A":
-                AttackAction a = new AttackAction(src, dst, playerId, unitNum);
-                actionList.addAction(Constant.ACTION_ATTACK, a);
-                break;
-            case "M":
-                MoveAction m = new MoveAction(src, dst, playerId, unitNum);
-                actionList.addAction(Constant.ACTION_MOVE, m);
-                break;
-        }
+
+        return currAct.equals("A") ?
+                new AttackAction(src, dst, playerId, unitNum) :
+                new MoveAction(src, dst, playerId, unitNum);
     }
 }
