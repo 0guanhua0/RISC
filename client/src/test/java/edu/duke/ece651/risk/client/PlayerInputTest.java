@@ -11,33 +11,28 @@ import java.util.Scanner;
 
 import static edu.duke.ece651.risk.shared.Constant.ACTION_ATTACK;
 import static edu.duke.ece651.risk.shared.Constant.ACTION_MOVE;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class PlayerInputTest {
-    static Player player = new Player();
+    static Player<String> player = new Player<>();
 
     @Test
-    void read() {
-        ActionList actions = new ActionList();
-
-        assertTrue(actions.getActions().get(ACTION_MOVE).isEmpty());
-        assertTrue(actions.getActions().get(ACTION_ATTACK).isEmpty());
-        PlayerInput.read(new Scanner("D\n"), player, actions);
-        assertTrue(actions.getActions().get(ACTION_MOVE).isEmpty());
-        assertTrue(actions.getActions().get(ACTION_ATTACK).isEmpty());
+    void readValidAction() {
+        assertNull(PlayerInput.readValidAction(new Scanner("D\n"), player));
+        assertNull(PlayerInput.readValidAction(new Scanner("A\na\nb\nc\nD\n"), player));
 
         // invalid + attack(a->b, 10) + move(c->d, 5) + done
-        String str = "c\n" + "a\na\nb\n10\n" + "m\nc\nd\n5\n" + "d\n";
-        PlayerInput.read(new Scanner(str), player, actions);
+        Action action1 = PlayerInput.readValidAction(new Scanner("c\n" + "a\na\nb\n10\nd\n"), player);
+        assertTrue(action1 instanceof AttackAction);
 
         AttackAction a1 = new AttackAction("A", "B", 0, 10);
+        assert (a1.equals(action1));
 
-        Action action0 = actions.getActions().get(Constant.ACTION_ATTACK).get(0);
-        assert (action0.equals(a1));
+        Action action2 = PlayerInput.readValidAction(new Scanner("c\n" + "m\nc\nd\n5\nd\n"), player);
+        assertTrue(action2 instanceof MoveAction);
 
-        String s2 = "K\nD\n";
-        Scanner sc2 = new Scanner(s2);
-        PlayerInput.read(sc2, player, actions);
+        MoveAction a2 = new MoveAction("C", "D", 0, 5);
+        assert (a2.equals(action2));
     }
 
 
@@ -47,29 +42,22 @@ class PlayerInputTest {
 
         String s0 = "A\nB\nA\n";
         Scanner sc0 = new Scanner(s0);
-        PlayerInput.readAction(sc0, 0, "A", aL);
+        assertNull(PlayerInput.readAction(sc0, 0, "A"));
 
         String s1 = "A\nB\n10\n";
         Scanner sc1 = new Scanner(s1);
-        PlayerInput.readAction(sc1, 0, "A", aL);
+        Action action1 = PlayerInput.readAction(sc1, 0, "A");
         AttackAction a1 = new AttackAction("A", "B", 0, 10);
 
-        List<Action> actionList = aL.getActions().get(Constant.ACTION_ATTACK);
-        Action action0 = actionList.get(0);
-        assert (action0.equals(a1));
+        assertEquals(action1, a1);
 
 
         String s2 = "A\nB\n10\n";
         Scanner sc2 = new Scanner(s2);
-        PlayerInput.readAction(sc2, 0, "M", aL);
+        Action action2 = PlayerInput.readAction(sc2, 0, "M");
 
         MoveAction m1 = new MoveAction("A", "B", 0, 10);
-        actionList = aL.getActions().get(ACTION_MOVE);
-        Action action1 = actionList.get(0);
 
-        assert (action1.equals(m1));
-
-
-
+        assertEquals(action2, m1);
     }
 }

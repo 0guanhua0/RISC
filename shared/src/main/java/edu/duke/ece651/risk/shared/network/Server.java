@@ -15,8 +15,7 @@ public class Server {
      * @throws IOException if creation of the ServerSocket fails(likely due to the port being unavailable).
      */
     public Server() throws IOException {
-        serverSocket = new ServerSocket(12345);
-        serverSocket.setSoTimeout(1000);
+        this(12345);
     }
 
     /**
@@ -26,6 +25,7 @@ public class Server {
      */
     public Server(int portNum) throws IOException {
         serverSocket = new ServerSocket(portNum);
+        serverSocket.setSoTimeout(1000);
     }
 
     /**
@@ -39,28 +39,4 @@ public class Server {
             return null;
         }
     }
-
-    /**
-     * Send the data to the output stream
-     * @param out output stream
-     * @param object data to be sent
-     * @throws IOException probably because the stream is already closed
-     */
-    public static void send(OutputStream out, Object object) throws IOException {
-        ObjectOutputStream objectOutputStream = new ObjectOutputStream(out);
-        objectOutputStream.writeObject(object);
-        objectOutputStream.flush();
-    }
-
-    /**
-     * This function will receive an object from target stream.
-     * @param in input stream
-     * @return received data
-     * @throws IOException probably because the stream is already closed
-     * @throws ClassNotFoundException probably because receive some illegal data
-     */
-    public static Object recv(InputStream in) throws IOException, ClassNotFoundException {
-        return new ObjectInputStream(in).readObject();
-    }
-
 }

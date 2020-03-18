@@ -17,12 +17,13 @@ public class Mock {
     public static String readAllStringFromObjectStream(ByteArrayOutputStream out) throws IOException, ClassNotFoundException {
         ObjectInputStream stream = new ObjectInputStream(new ByteArrayInputStream(out.toByteArray()));
         StringBuilder stringBuilder = new StringBuilder();
-        String object = "";
         try {
             while(true){
                 // keep reading until throws an exception
-                object = (String) stream.readObject();
-                stringBuilder.append(object);
+                Object object = stream.readObject();
+                if (object instanceof String){
+                    stringBuilder.append(object);
+                }
             }
         }catch (EOFException ignored){
 

@@ -12,6 +12,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import static edu.duke.ece651.risk.shared.Constant.SUCCESSFUL;
 import static edu.duke.ece651.risk.shared.Mock.readAllStringFromObjectStream;
 import static edu.duke.ece651.risk.shared.Mock.setupMockInput;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,6 +30,10 @@ public class GameServerTest {
         new Thread(()->{
             Socket socket = gameServer.server.accept();
             assertNotNull(socket);
+            try {
+                new PlayerV1<>(socket.getInputStream(), socket.getOutputStream());
+            } catch (IOException ignored) {
+            }
         }).start();
         Client client = new Client();
         client.init("127.0.0.1", 8000);
@@ -83,7 +88,6 @@ public class GameServerTest {
         assertEquals(1,gameServer.rooms.get(0).players.size());
         assertEquals(0,gameServer.rooms.get(0).roomID);
 
-
         //prepare for the second player who joins in this room
         outputStream.reset();
         Socket socket2 = mock(Socket.class);
@@ -94,7 +98,10 @@ public class GameServerTest {
         assertEquals(1, gameServer.rooms.size());
         gameServer.handleIncomeRequest(socket2);
         assertEquals(1, gameServer.rooms.size());
-        assertEquals("Welcome to the fancy RISK game!!!", readAllStringFromObjectStream(outputStream));
+        assertEquals(
+                "Welcome to the fancy RISK game!!!" + SUCCESSFUL + "{\"playerColor\":\"blue\",\"playerID\":2}",
+                readAllStringFromObjectStream(outputStream)
+        );
         assertEquals(2,gameServer.rooms.get(0).players.size());
         assertEquals(0,gameServer.rooms.get(0).roomID);
 
@@ -108,7 +115,10 @@ public class GameServerTest {
         assertEquals(1, gameServer.rooms.size());
         gameServer.handleIncomeRequest(socket3);
         assertEquals(1, gameServer.rooms.size());
-        assertEquals("Welcome to the fancy RISK game!!!", readAllStringFromObjectStream(outputStream));
+        assertEquals(
+                "Welcome to the fancy RISK game!!!" + SUCCESSFUL + "{\"playerColor\":\"black\",\"playerID\":3}",
+                readAllStringFromObjectStream(outputStream)
+        );
         assertEquals(3,gameServer.rooms.get(0).players.size());
         assertEquals(0,gameServer.rooms.get(0).roomID);
     }
@@ -122,7 +132,7 @@ public class GameServerTest {
         GameServer gameServer = new GameServer(null);
         gameServer.rooms.put(roomID, new RoomController(roomID, player1, new MapDataBase<String>()));
         assertEquals(roomID, gameServer.askValidRoomNum(player2));
-        assertEquals("Invalid choice, try again".repeat(2), readAllStringFromObjectStream(outputStream));
+        assertEquals("Invalid choice, try again.".repeat(2) + SUCCESSFUL, readAllStringFromObjectStream(outputStream));
     }
     
     @Test
