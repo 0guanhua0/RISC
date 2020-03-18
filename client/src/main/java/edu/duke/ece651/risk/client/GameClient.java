@@ -32,13 +32,8 @@ public class GameClient {
     }
 
     public void run(Scanner scanner) throws IOException, ClassNotFoundException {
-        System.out.println("start initial the game");
         initGame(scanner);
-        System.out.println("finish initial the game");
-        System.out.println("start playing the game");
         playGame(scanner);
-        System.out.println("finish playing the game");
-        System.out.println("end game");
         endGame();
     }
 
