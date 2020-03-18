@@ -111,15 +111,21 @@ public class RoomController {
             //tell client the most recent situation
             player.send(map);
             while (true){
-                Action action = (Action) player.recv();
-                //act accordingly based on whether the input actions are valid or not
-                if (action.isValid(map)){//if valid, update the state of the world
-                    action.perform(map);
-                }else{//other wise ask user to resend the information
-                    player.send("Your action is invalid");
-                }
+                Object recvRes = player.recv();
+                if (recvRes instanceof Action){
+                    Action action = (Action) recvRes;
+                    //act accordingly based on whether the input actions are valid or not
+                    if (action.isValid(map)){//if valid, update the state of the world
+                        action.perform(map);
+                    }else{//other wise ask user to resend the information
+                        player.send("Your action is invalid");
+                    }
+                }else if (recvRes instanceof String && ((String)recvRes).equals("Done")){
+                    break;
+                }//note that here I  just ignore invalid input
             }
         }
+        //TODO try to update the ownership of territories which are attacked by other players
     }
 
     //return -1 when no wins, otherwise return the id of winner
