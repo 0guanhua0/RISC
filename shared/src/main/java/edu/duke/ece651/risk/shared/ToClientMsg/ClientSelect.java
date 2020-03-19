@@ -1,7 +1,10 @@
 package edu.duke.ece651.risk.shared.ToClientMsg;
 
+import edu.duke.ece651.risk.shared.map.Territory;
+import edu.duke.ece651.risk.shared.map.WorldMap;
+
 import java.io.Serializable;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @program: risk
@@ -10,14 +13,46 @@ import java.util.Set;
  * @create: 2020-03-16 17:17
  **/
 public class ClientSelect implements Serializable {
-    int terrNum;
-    int unitsNum;
-    Set<String> occupied;
+    int unitsTotal;
+    WorldMap<String> map;
+    List<Set<String>> groups;
 
+    public ClientSelect(int unitsTotal, int terrPerUser, WorldMap<String> map){
+        this.unitsTotal = unitsTotal;
+        this.map = map;
+        generateGroups(terrPerUser);
+    }
 
-    public ClientSelect(int terrNum, int unitsNum, Set<String> occupied) {
-        this.terrNum = terrNum;
-        this.unitsNum = unitsNum;
-        this.occupied = occupied;
+    public int getUnitsTotal() {
+        return unitsTotal;
+    }
+
+    public WorldMap<String> getMap() {
+        return map;
+    }
+
+    public List<Set<String>> getGroups() {
+        return groups;
+    }
+
+    // TODO: maybe we can put this function into MapDataBase(hardcode the group)
+    // TODO: maybe we want a more elegant way to group territory
+    void generateGroups(int terrPerUser){
+        Map<String, Territory> territories = map.getAtlas();
+
+        int groupSize = territories.size() / terrPerUser;
+        groups = new ArrayList<>(groupSize);
+        for (int i = 0; i < groupSize; i++){
+            groups.add(new HashSet<>());
+        }
+
+        int i = 0;
+        int groupCnt = groups.size();
+
+        for (String name : territories.keySet()){
+            groups.get(i % groupCnt).add(name);
+            i++;
+        }
+        System.out.println(groups);
     }
 }

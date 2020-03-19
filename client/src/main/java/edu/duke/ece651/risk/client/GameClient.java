@@ -1,6 +1,7 @@
 package edu.duke.ece651.risk.client;
 
 import edu.duke.ece651.risk.shared.ToClientMsg.ClientSelect;
+import edu.duke.ece651.risk.shared.ToServerMsg.ServerSelect;
 import edu.duke.ece651.risk.shared.action.Action;
 import edu.duke.ece651.risk.shared.action.AttackAction;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
@@ -11,13 +12,11 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 import java.util.stream.Stream;
 
 import static edu.duke.ece651.risk.client.InsPrompt.*;
+import static edu.duke.ece651.risk.client.PlayerInput.readValidInt;
 import static edu.duke.ece651.risk.shared.Constant.*;
 
 /**
@@ -202,7 +201,47 @@ public class GameClient {
     }
 
     void selectTerritory(Scanner scanner) throws IOException, ClassNotFoundException {
-//        ClientSelect select = (ClientSelect) client.recv();
+        ClientSelect select = (ClientSelect) client.recv();
+        while (true){
+            Map<String, Integer> selection = new HashMap<>();
+
+            // display the map
+            SceneCLI.showMap(select.getMap());
+            // display the territory group
+            List<Set<String>> terrGroup = select.getGroups();
+            SceneCLI.showTerritoryGroup(terrGroup);
+
+            System.out.println("Which group of territories you want to choose?");
+            int index = readValidInt(scanner, 1, terrGroup.size()) - 1;
+            List<String> groupChosen = new ArrayList<>(terrGroup.get(index));
+            // initialize the result
+            for (String name : groupChosen){
+                selection.put(name, 0);
+            }
+
+            System.out.println("Start assigning units");
+            int totalUnits = select.getUnitsTotal();
+            while (totalUnits > 0){
+                System.out.println(String.format("\nTerritories you have(%d units left):", totalUnits));
+                for (int i = 0; i < groupChosen.size(); i++){
+                    System.out.println(String.format("%d. %s", i + 1, groupChosen.get(i)));
+                }
+                System.out.println("Please input the index of territory");
+                int tIndex = readValidInt(scanner, 1, groupChosen.size()) - 1;
+                String name = groupChosen.get(tIndex);
+                System.out.println(String.format("How many units you want to put in \"%s\"(%d units left)", name, totalUnits));
+                int units= readValidInt(scanner, 1, totalUnits);
+                int oldCnt = selection.get(name);
+                selection.replace(name, oldCnt + units);
+                totalUnits -= units;
+            }
+
+            ServerSelect serverSelect = new ServerSelect(selection);
+            client.send(serverSelect);
+            if (checkResult()){
+                break;
+            }
+        }
     }
 
     /**

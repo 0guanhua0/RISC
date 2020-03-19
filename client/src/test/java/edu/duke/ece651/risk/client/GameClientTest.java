@@ -1,6 +1,6 @@
 package edu.duke.ece651.risk.client;
 
-import edu.duke.ece651.risk.shared.action.Action;
+import edu.duke.ece651.risk.shared.ToClientMsg.ClientSelect;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.risk.shared.network.Client;
@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import static edu.duke.ece651.risk.shared.Constant.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class GameClientTest {
@@ -35,12 +35,20 @@ public class GameClientTest {
     static final String PLAYER_COLOR = "Green";
     static final int PLAYER_ID = 1;
 
+    // mock data
+    static String mapName = "a clash of kings";
+    static MapDataBase<String> mapDB = new MapDataBase<>();
+    static WorldMap<String> map = mapDB.getMap(mapName);
+    static ClientSelect clientSelect = new ClientSelect(
+            10,
+            2,
+            new MapDataBase<String>().getMap(mapName)
+    );
+
     @BeforeAll
     static void beforeAll() {
         // mock data to be sent
         List<Integer> fakeRooms = new ArrayList<>(Arrays.asList(0, 1, 2, 3));
-        MapDataBase<String> mapDB = new MapDataBase<>();
-        WorldMap<String> map = mapDB.getMap("test");
 
         outContent = new ByteArrayOutputStream();
         // setup "game server" at hte beginning
@@ -73,6 +81,9 @@ public class GameClientTest {
                     player.sendPlayerInfo();
 
                     /* =============== stage 2(choose territory) =============== */
+                    player.send(clientSelect);
+                    player.recv();
+                    player.send(SUCCESSFUL);
 
                     /* =============== stage 3(playing the game) =============== */
                     player.send(map);
@@ -120,23 +131,24 @@ public class GameClientTest {
     @Test
     public void testRun() throws IOException, ClassNotFoundException {
         // j, 3 --- join room 3
+        // 1, 1, 10 --- select territory group 1, assign all 10 units to territory 1
         // a --- attack
         // a, b, 10 --- from a to b, 10 units
         // d --- done
-        String input = "j\n3\n" + "a\na\nb\n10\nd\n";
+        String input = "j\n3\n" + "1\n1\n10\n" + "a\na\nb\n10\nd\n";
         GameClient gameClient = new GameClient();
         gameClient.run(new Scanner(input));
     }
     
     @Test
     public void testPlayGame() throws IOException, ClassNotFoundException {
-        WorldMap<String> map = new MapDataBase<String>().getMap("test");
-
         Client client = mock(Client.class);
         when(client.recv())
-                .thenReturn(map)
-                .thenReturn(SUCCESSFUL) // action valid
-                .thenReturn(SUCCESSFUL)
+                .thenReturn(clientSelect) // select territory & assign units
+                .thenReturn(SUCCESSFUL) // selection valid
+                .thenReturn(map)        // round info, map
+                .thenReturn(SUCCESSFUL) // action1 valid
+                .thenReturn(SUCCESSFUL) // action2 valid
                 .thenReturn("attack 1") // send out the attack result
                 .thenReturn("attack 2")
                 .thenReturn(ROUND_OVER) // round over
@@ -144,11 +156,13 @@ public class GameClientTest {
 
         GameClient gameClient = new GameClient();
         gameClient.client = client;
+        // 1 --- territory group
+        // 1, 5; 2, 5 --- assign 5 units to territory 1, 5 units to territory 2
         // r --- invalid action
         // a --- attack action(a, b, 10)
         // m --- move action(c, d, 5)
         // d --- done
-        gameClient.playGame(new Scanner("r\n" + "a\na\nb\n10\n" + "m\nc\nd\n5\nd\n"));
+        gameClient.playGame(new Scanner("1\n1\n5\n2\n5\n" + "r\n" + "a\na\nb\n10\n" + "m\nc\nd\n5\nd\n"));
     }
     
     @Test
@@ -188,6 +202,61 @@ public class GameClientTest {
         // 1 --- valid map number(but to test the error message, client will receive an error at the first time)
         // 1 --- valid map number(also client will receive successful)
         gameClient.chooseMap(new Scanner("0\n1\n1\n"));
+
+        verify(client, times(3)).recv();
+    }
+
+    @Test
+    public void testCheckResult() throws IOException, ClassNotFoundException {
+        Client client = mock(Client.class);
+        when(client.recv())
+                .thenReturn("Invalid choice, try again.")
+                .thenReturn(SUCCESSFUL);
+
+        GameClient gameClient = new GameClient();
+        gameClient.client = client;
+
+        assertFalse(gameClient.checkResult());
+        assertTrue(gameClient.checkResult());
+    }
+
+    @Test
+    public void testSelectTerritory() throws IOException, ClassNotFoundException {
+
+        Client client = mock(Client.class);
+        when(client.recv())
+                .thenReturn(clientSelect)
+                .thenReturn(SELECT_TERR_ERROR)
+                .thenReturn(SUCCESSFUL);
+
+        GameClient gameClient = new GameClient();
+        gameClient.client = client;
+        // 3, 1, 10 --- select group 3, assign all 10 units to territory 1
+        // then receive error message at the first time
+        // 0, 4, 3 --- choose territory group(both 0 & 4 are invalid)
+        // 1, 3 --- assign 3 units to the first territory
+        // 2, 10, 5 --- assign 5 units to the second territory(10 is invalid)
+        // 1, 2 --- assign 2 more units to the first territory
+        gameClient.selectTerritory(new Scanner("3\n1\n10\n" + "0\n4\n3\n" + "1\n3\n" + "2\n10\n5\n" + "1\n2\n"));
+
+        verify(client, times(3)).recv();
+    }
+
+    @Test
+    public void testReceiveAttackResult() throws IOException, ClassNotFoundException {
+        Client client = mock(Client.class);
+        when(client.recv())
+                .thenReturn("attack 1")
+                .thenReturn("attack 2")
+                .thenReturn("attack 3")
+                .thenReturn("attack 4")
+                .thenReturn(ROUND_OVER);
+
+        GameClient gameClient = new GameClient();
+        gameClient.client = client;
+        gameClient.receiveAttackResult();
+
+        verify(client, times(5)).recv();
     }
     
     @Test
@@ -200,8 +269,8 @@ public class GameClientTest {
     
     @Test
     public void testMain() throws IOException, ClassNotFoundException {
-        // user input: invalid + attack(a->b, 10) + move(c->d, 5) + done
-        String input = "c\n1\n" + "a\na\nb\n10\n" + "m\nc\nd\n5\n" + "d\n";
+        // user input: invalid + select territory & assign units + attack(a->b, 10) + move(c->d, 5) + done
+        String input = "c\n1\n" + "1\n1\n6\n2\n4\n" + "a\na\nb\n10\n" + "m\nc\nd\n5\n" + "d\n";
         System.setIn(new ByteArrayInputStream(input.getBytes()));
         GameClient.main(null);
     }
