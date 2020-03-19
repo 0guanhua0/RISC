@@ -2,6 +2,7 @@ package edu.duke.ece651.risk.client;
 
 import edu.duke.ece651.risk.shared.ToClientMsg.ClientSelect;
 import edu.duke.ece651.risk.shared.action.Action;
+import edu.duke.ece651.risk.shared.action.AttackAction;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.risk.shared.network.Client;
@@ -65,8 +66,9 @@ public class GameClient {
     void playGame(Scanner scanner) throws IOException, ClassNotFoundException {
         selectTerritory(scanner);
 
+        String result = "";
         int round = 1;
-        while (true){
+        while (!result.equals(GAME_OVER)){
             showMsg("====== Round " + round + " ======");
             // receive the latest world map
             WorldMap<String> worldMap = (WorldMap<String>) client.recv();
@@ -74,22 +76,24 @@ public class GameClient {
             SceneCLI.showMap(worldMap);
             InsPrompt.selfInfo(player.getPlayerName());
 
-            Action action = PlayerInput.readValidAction(scanner, player);
-
-            if (action != null){
-                // send actions
-                client.send(action);
-            }else {
-                // action == null, represent done
-                client.send(ACTION_DONE);
-                // after submit all actions, wait for the server to publish attack result
-                receiveAttackResult();
-                // receive game result in the end of each round
-                String result = (String) client.recv();
-                if (result.equals(GAME_OVER)){
+            // keep asking action until user specify done
+            while (true){
+                Action action = PlayerInput.readValidAction(scanner, player);
+                if (action != null){
+                    client.send(action);
+                    // receive successful or error message
+                    checkResult();
+                }else {
                     break;
                 }
             }
+
+            // action == null, represent done
+            client.send(ACTION_DONE);
+            // after submit all actions, wait for the server to publish attack result
+            receiveAttackResult();
+            // receive game result in the end of each round
+            result = (String) client.recv();
         }
     }
 
@@ -198,7 +202,7 @@ public class GameClient {
     }
 
     void selectTerritory(Scanner scanner) throws IOException, ClassNotFoundException {
-        ClientSelect select = (ClientSelect) client.recv();
+//        ClientSelect select = (ClientSelect) client.recv();
     }
 
     /**
@@ -208,8 +212,7 @@ public class GameClient {
     void receiveAttackResult() throws IOException, ClassNotFoundException {
         while (true){
             String result = (String) client.recv();
-            // TODO: we might want to use constant value here
-            if (result.equals("OVER")){
+            if (result.equals(ROUND_OVER)){
                 break;
             }else {
                 showMsg(result);

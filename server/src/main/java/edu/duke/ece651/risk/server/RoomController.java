@@ -116,6 +116,7 @@ public class RoomController {
                     //act accordingly based on whether the input actions are valid or not
                     if (action.isValid(map)){//if valid, update the state of the world
                         action.perform(map);
+                        player.send(SUCCESSFUL);
                     }else{//other wise ask user to resend the information
                         player.send(INVALID_ACTION);
                     }
@@ -126,7 +127,26 @@ public class RoomController {
                 }
             }
         }
-        //TODO try to update the ownership of territories which are attacked by other players
+        // TODO: try to update the ownership of territories which are attacked by other players
+        // after execute all actions, tell the player to enter next round
+        sendAll(ROUND_OVER);
+
+        // TODO: we need to notify all player the game result, continue or game over
+//        if(getWinnerId() == -1){
+//            sendAll("continue");
+//        }else {
+//            sendAll(GAME_OVER);
+//        }
+    }
+
+    /**
+     * This function will send the data to all players in current room
+     * @param data data to be sent
+     */
+    void sendAll(Object data) throws IOException {
+        for (Player<String> player : players){
+            player.send(data);
+        }
     }
 
     //return -1 when no wins, otherwise return the id of winner

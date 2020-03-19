@@ -171,16 +171,14 @@ public class RoomControllerTest {
         MoveAction a11 = new MoveAction("kingdom of the north", "kingdom of mountain and vale", 1, 1);
         MoveAction a12 = new MoveAction("kingdom of mountain and vale", "kingdom of the rock",1, 1);
 
-
-
         //invalid move actions(under initial map) for player2
         MoveAction a21 = new MoveAction("the storm kingdom","kingdom of the reach",  2, 0);
         //valid move actions(under initial map) for player2
         MoveAction a31 = new MoveAction("kingdom of the reach", "the storm kingdom", 2, 1);
 
         //build the room
-        Player<String> player1 = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList("a clash of kings",a01,"invalid",1,a11,a12,"Done"))), new ByteArrayOutputStream());
-        Player<String> player2 = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList(a21,"invalid",a31,"Done"))), new ByteArrayOutputStream());
+        Player<String> player1 = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList("a clash of kings",a01,"invalid",1,a11,a12,ACTION_DONE))), new ByteArrayOutputStream());
+        Player<String> player2 = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList(a21,"invalid",a31,ACTION_DONE))), new ByteArrayOutputStream());
         RoomController roomController = new RoomController(0, player1, mapDataBase);
         roomController.addPlayer(player2);
         //let each player choose some territories they want
