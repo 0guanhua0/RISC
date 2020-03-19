@@ -15,7 +15,7 @@ import java.io.*;
 import java.net.Socket;
 import java.util.*;
 
-import static edu.duke.ece651.risk.shared.Constant.SUCCESSFUL;
+import static edu.duke.ece651.risk.shared.Constant.*;
 import static edu.duke.ece651.risk.shared.Mock.readAllStringFromObjectStream;
 import static edu.duke.ece651.risk.shared.Mock.setupMockInput;
 import static org.junit.jupiter.api.Assertions.*;
@@ -76,9 +76,9 @@ public class RoomControllerTest {
         Territory kingdom_of_the_rock = worldMap.getTerritory("kingdom of the rock");
         assertTrue(kingdom_of_the_north.getNeigh().contains(kingdom_of_the_rock));
         String errorMsg = (String)objectInputStream.readObject();
-        assertEquals(errorMsg,"The map name you select is invalid");
+        assertEquals(errorMsg,SELECT_MAP_ERROR);
         String errorMsg2 = (String)objectInputStream.readObject();
-        assertEquals(errorMsg,"The map name you select is invalid");
+        assertEquals(errorMsg,SELECT_MAP_ERROR);
         assertEquals(SUCCESSFUL, (String)objectInputStream.readObject());
         objectInputStream.readObject(); // this is for player initial message
         assertThrows(EOFException.class,()->{String res = (String)objectInputStream.readObject();});
@@ -147,16 +147,16 @@ public class RoomControllerTest {
         objectInputStream.readObject();
         objectInputStream.readObject();
         String msg1 = (String)objectInputStream.readObject();
-        assertEquals(msg1,"Your initialization is invalid");
+        assertEquals(msg1,SELECT_TERR_ERROR);
 
         temp = new ByteArrayInputStream(stream2.toByteArray());
         objectInputStream = new ObjectInputStream(temp);
         objectInputStream.readObject();
         objectInputStream.readObject();
         String msg2 = (String)objectInputStream.readObject();
-        assertEquals(msg2,"Your initialization is invalid");
+        assertEquals(msg2,SELECT_TERR_ERROR);
         String msg3 = (String)objectInputStream.readObject();
-        assertEquals(msg3,"Your initialization is invalid");
+        assertEquals(msg3,SELECT_TERR_ERROR);
 
 
     }
@@ -165,39 +165,24 @@ public class RoomControllerTest {
     void testPlaySingleRoundGame() throws IOException, ClassNotFoundException {
         //set up the game
         MapDataBase<String> mapDataBase = new MapDataBase<>();
-        //a map of invalid move actions(under initial map) for player1
-        Map<String, List<Action>> actionMap0 = new HashMap<>();
-        MoveAction a01 = new MoveAction("kingdom of the north", "kingdom of mountain and vale", 1, 1);
-        MoveAction a02 = new MoveAction("kingdom of the north", "principality of dorne", 1, 1);
-        actionMap0.put("move", Arrays.asList(a01,a02));
-        actionMap0.put("attack", new ArrayList<Action>());
-
-        //a map of valid move actions(under initial map) for player1
-        Map<String, List<Action>> actionMap1 = new HashMap<>();
+        //invalid move actions(under initial map) for player1
+        MoveAction a01 = new MoveAction("kingdom of the north", "principality of dorne", 1, 1);
+        //valid move actions(under initial map) for player1
         MoveAction a11 = new MoveAction("kingdom of the north", "kingdom of mountain and vale", 1, 1);
         MoveAction a12 = new MoveAction("kingdom of mountain and vale", "kingdom of the rock",1, 1);
 
-        actionMap1.put("move", Arrays.asList(a11,a12));
-        actionMap1.put("attack", new ArrayList<Action>());
 
-        //a map of invalid move actions(under initial map) for player2
-        Map<String, List<Action>> actionMap2 = new HashMap<>();
+
+        //invalid move actions(under initial map) for player2
         MoveAction a21 = new MoveAction("the storm kingdom","kingdom of the reach",  2, 0);
-        MoveAction a22 = new MoveAction("the storm kingdom","kingdom of the reach",  2, 4);
-        actionMap2.put("move", Arrays.asList(a21,a22));
-        actionMap2.put("attack", new ArrayList<Action>());
-
-        //a map of valid move actions(under initial map) for player2
-        Map<String, List<Action>> actionMap3 = new HashMap<>();
+        //valid move actions(under initial map) for player2
         MoveAction a31 = new MoveAction("kingdom of the reach", "the storm kingdom", 2, 1);
-        actionMap3.put("move", Arrays.asList(a31));
-        actionMap3.put("attack", new ArrayList<Action>());
 
-        Player<String> player1 = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList("a clash of kings", actionMap0, actionMap1))), new ByteArrayOutputStream());
-        Player<String> player2 = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList(actionMap2, actionMap3))), new ByteArrayOutputStream());
+        //build the room
+        Player<String> player1 = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList("a clash of kings",a01,"invalid",1,a11,a12,"Done"))), new ByteArrayOutputStream());
+        Player<String> player2 = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList(a21,"invalid",a31,"Done"))), new ByteArrayOutputStream());
         RoomController roomController = new RoomController(0, player1, mapDataBase);
         roomController.addPlayer(player2);
-
         //let each player choose some territories they want
         WorldMap<String> curMap = mapDataBase.getMap("a clash of kings");
         Territory t1 = curMap.getTerritory("kingdom of the north");
@@ -207,13 +192,13 @@ public class RoomControllerTest {
         Territory t5 = curMap.getTerritory("the storm kingdom");
         Territory t6 = curMap.getTerritory("principality of dorne");
 
-        roomController.players.get(0).addTerritory(t1);
-        roomController.players.get(0).addTerritory(t2);
-        roomController.players.get(0).addTerritory(t3);
-        roomController.players.get(0).addTerritory(t6);
+        roomController.players.get(0).addTerritory(t1);//kingdom of the north
+        roomController.players.get(0).addTerritory(t2);//kingdom of mountain and vale
+        roomController.players.get(0).addTerritory(t3);//kingdom of the rock
+        roomController.players.get(0).addTerritory(t6);//principality of dorne
 
-        roomController.players.get(1).addTerritory(t4);
-        roomController.players.get(1).addTerritory(t5);
+        roomController.players.get(1).addTerritory(t4);//kingdom of the reach
+        roomController.players.get(1).addTerritory(t5);//the storm kingdom
 
         //assign some units to each territory, 6 units for each player
         //player 1
@@ -234,6 +219,7 @@ public class RoomControllerTest {
         assertEquals(t3.getUnitsNum(),2);
         assertEquals(t4.getUnitsNum(),3);
         assertEquals(t5.getUnitsNum(),3);
+        assertEquals(t6.getUnitsNum(),1);
     }
 
     @Test
@@ -285,12 +271,14 @@ public class RoomControllerTest {
         RoomController roomController = new RoomController(0, player1, new MapDataBase<>());
         roomController.addPlayer(player2);
         assertThrows(IllegalArgumentException.class,()->{roomController.endGame(-1);});
-
         roomController.endGame(1);
+        ObjectInputStream s1 = new ObjectInputStream(new ByteArrayInputStream(p1OutStream.toByteArray()));
+        ObjectInputStream s2 = new ObjectInputStream(new ByteArrayInputStream(p2OutStream.toByteArray()));
+        s1.readObject();
+        s1.readObject();
+        s1.readObject();
+        assertEquals((String)s1.readObject(),YOU_WINS);
+        s2.readObject();
+        assertEquals((Integer)s2.readObject(),1);
     }
-    @Test
-    public void testRunGame() {
-
-    }
-
 }
