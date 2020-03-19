@@ -6,6 +6,7 @@ import edu.duke.ece651.risk.shared.action.Action;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.WorldMap;
+import edu.duke.ece651.risk.shared.network.Client;
 import edu.duke.ece651.risk.shared.player.Player;
 
 import java.io.IOException;
@@ -71,6 +72,7 @@ public class RoomController {
 
     //TODO maybe changing this method to a multi-thread version in the future?
     //call this method to let each player choose  territories they want
+    // TODO: maybe change the function name to select territory, current name is a bit confusing
     void startGame() throws IOException, IllegalArgumentException, ClassNotFoundException {
         int terriNum = map.getTerriNum();
         int playerNum = players.size();
@@ -79,10 +81,11 @@ public class RoomController {
         int terrPerUsr = terriNum/playerNum;
         //the variable below is the total number of units that a single player can choose
         int totalUnits = UNITS_PER_TERR *terrPerUsr;
-        HashSet<String> occupied = new HashSet<>();
+//        HashSet<String> occupied = new HashSet<>();
         for (Player<String> player : players) {
             //get the current list of occupied territories
-            ClientSelect clientSelect = new ClientSelect(terrPerUsr, UNITS_PER_TERR,occupied);
+//            ClientSelect clientSelect = new ClientSelect(terrPerUsr, UNITS_PER_TERR,occupied);
+            ClientSelect clientSelect = new ClientSelect(totalUnits, terrPerUsr, map);
             //tell user to select client
             player.send(clientSelect);
             while (true){
@@ -91,7 +94,7 @@ public class RoomController {
                 if(serverSelect.isValid(map,totalUnits,terrPerUsr)){
                     //if valid, update the map
                     for (String terrName : serverSelect.getAllName()) {
-                        occupied.add(terrName);
+//                        occupied.add(terrName);
                         Territory territory = map.getTerritory(terrName);
                         territory.addNUnits(serverSelect.getUnitsNum(terrName));
                         player.addTerritory(territory);

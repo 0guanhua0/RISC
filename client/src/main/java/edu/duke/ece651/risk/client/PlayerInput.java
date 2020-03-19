@@ -72,4 +72,24 @@ public class PlayerInput {
                 new AttackAction(src, dst, playerId, unitNum) :
                 new MoveAction(src, dst, playerId, unitNum);
     }
+
+    /**
+     * This function will ask user to input a valid int number.
+     * @param scanner scanner
+     * @param min the min value of input number, inclusive
+     * @param max the max value of input number, inclusive
+     * @return the number use input
+     */
+    public static int readValidInt(Scanner scanner, int min, int max){
+        while (true){
+            String num = scanner.nextLine();
+            if (Format.isNumeric(num)){
+                int n = Integer.parseInt(num);
+                if (n >= min && n <= max){
+                    return n;
+                }
+            }
+            System.out.println("Invalid option, try again.");
+        }
+    }
 }

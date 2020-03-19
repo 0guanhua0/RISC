@@ -60,4 +60,14 @@ class PlayerInputTest {
 
         assertEquals(action2, m1);
     }
+
+    @Test
+    void testReadValidInt(){
+        assertEquals(5,
+                PlayerInput.readValidInt(
+                        new Scanner("abc\n0\n11\n5"),
+                        1,
+                        10)
+        );
+    }
 }
