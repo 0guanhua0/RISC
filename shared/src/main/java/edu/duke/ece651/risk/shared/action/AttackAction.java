@@ -75,7 +75,7 @@ public class AttackAction implements Action, Serializable {
         Territory dst = worldMap.getTerritory(this.dest);
 
         //dst has less unit
-        if (dst.getUnitsNum() < this.unitsNum ) {
+        if (dst.getUnitsNum() <= this.unitsNum ) {
             int newUnit = this.unitsNum - dst.getUnitsNum();
 
             //switch owner & reset unit
@@ -95,7 +95,7 @@ public class AttackAction implements Action, Serializable {
     public boolean equals(Object obj) {
         if (obj instanceof AttackAction) {
             AttackAction attackAction = (AttackAction) obj;
-            return attackAction.src.equals(this.src) && attackAction.dest.equals(this.dest);
+            return attackAction.src.equals(this.src) && attackAction.dest.equals(this.dest) && attackAction.unitsNum == this.unitsNum && attackAction.player_id == this.player_id;
         }
         return false;
     }
