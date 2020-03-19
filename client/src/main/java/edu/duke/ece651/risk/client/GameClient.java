@@ -75,13 +75,20 @@ public class GameClient {
             InsPrompt.selfInfo(player.getPlayerName());
 
             Action action = PlayerInput.readValidAction(scanner, player);
-            // send actions
-            client.send(action);
 
-            // receive result in the end of each round
-            String result = (String) client.recv();
-            if (result.equals(GAME_OVER)){
-                break;
+            if (action != null){
+                // send actions
+                client.send(action);
+            }else {
+                // action == null, represent done
+                client.send("Done");
+                // after submit all actions, wait for the server to publish attack result
+                receiveAttackResult();
+                // receive game result in the end of each round
+                String result = (String) client.recv();
+                if (result.equals(GAME_OVER)){
+                    break;
+                }
             }
         }
     }
@@ -90,7 +97,7 @@ public class GameClient {
      * End game, probable only need to receive and print out the game result.
      */
     void endGame(){
-
+        // TODO: receive & print the game result
     }
 
     /** ====== helper function ====== **/
@@ -191,6 +198,22 @@ public class GameClient {
 
     void selectTerritory(Scanner scanner) {
 
+    }
+
+    /**
+     * Since the requirement require send the result of each attack action to *all* players,
+     * we use a while loop to keep receiving all results until OVER
+     */
+    void receiveAttackResult() throws IOException, ClassNotFoundException {
+        while (true){
+            String result = (String) client.recv();
+            // TODO: we might want to use constant value here
+            if (result.equals("OVER")){
+                break;
+            }else {
+                showMsg(result);
+            }
+        }
     }
 
     String readConfigFile() throws IOException {

@@ -6,10 +6,12 @@
  */
 plugins {
     id 'com.bmuschko.clover' version '2.2.3'
+    id 'application'
 }
 
 subprojects{
     apply plugin: "java"
+    apply plugin: "application"
     apply plugin: "com.bmuschko.clover"
 
     repositories {
