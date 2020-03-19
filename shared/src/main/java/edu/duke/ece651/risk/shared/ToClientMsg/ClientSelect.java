@@ -36,6 +36,7 @@ public class ClientSelect implements Serializable {
     }
 
     // TODO: maybe we can put this function into MapDataBase(hardcode the group)
+    // TODO: maybe we want a more elegant way to group territory
     void generateGroups(int terrPerUser){
         Map<String, Territory> territories = map.getAtlas();
 
@@ -47,6 +48,7 @@ public class ClientSelect implements Serializable {
 
         int i = 0;
         int groupCnt = groups.size();
+
         for (String name : territories.keySet()){
             groups.get(i % groupCnt).add(name);
             i++;
