@@ -1,5 +1,6 @@
 package edu.duke.ece651.risk.client;
 
+import edu.duke.ece651.risk.shared.action.Action;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.risk.shared.network.Client;
@@ -22,8 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
-import static edu.duke.ece651.risk.shared.Constant.GAME_OVER;
-import static edu.duke.ece651.risk.shared.Constant.SUCCESSFUL;
+import static edu.duke.ece651.risk.shared.Constant.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -76,10 +76,25 @@ public class GameClientTest {
 
                     /* =============== stage 3(playing the game) =============== */
                     player.send(map);
-                    player.recv(); // receive the action list
+                    // interact with player to ask all actions
+                    while (true){
+                        Object object = player.recv(); // receive the action list
+                        if (object instanceof String){
+                            // action done
+                            break;
+                        }else {
+                            // ask for next action
+                            player.send(SUCCESSFUL);
+                        }
+                    }
+                    /// perform action and send out the result of each attack action
+                    player.send("attack 1");
+                    player.send(ROUND_OVER); // next round
+
                     player.send(GAME_OVER); // game over
 
                     /* =============== stage 4(game end) =============== */
+                    player.send("you win");
                 }
             } catch (IOException | ClassNotFoundException ignored) {
             }
@@ -104,7 +119,7 @@ public class GameClientTest {
 
     @Test
     public void testRun() throws IOException, ClassNotFoundException {
-        // j, 10 --- join room 10
+        // j, 3 --- join room 3
         // a --- attack
         // a, b, 10 --- from a to b, 10 units
         // d --- done
@@ -120,13 +135,20 @@ public class GameClientTest {
         Client client = mock(Client.class);
         when(client.recv())
                 .thenReturn(map)
-                .thenReturn("continue")
-                .thenReturn(map)
-                .thenReturn(GAME_OVER);
+                .thenReturn(SUCCESSFUL) // action valid
+                .thenReturn(SUCCESSFUL)
+                .thenReturn("attack 1") // send out the attack result
+                .thenReturn("attack 2")
+                .thenReturn(ROUND_OVER) // round over
+                .thenReturn(GAME_OVER); // game over
 
         GameClient gameClient = new GameClient();
         gameClient.client = client;
-        gameClient.playGame(new Scanner("r\n" + "a\na\nb\n10\nd\n" + "m\nc\nd\n5\nd\n"));
+        // r --- invalid action
+        // a --- attack action(a, b, 10)
+        // m --- move action(c, d, 5)
+        // d --- done
+        gameClient.playGame(new Scanner("r\n" + "a\na\nb\n10\n" + "m\nc\nd\n5\nd\n"));
     }
     
     @Test
@@ -178,8 +200,8 @@ public class GameClientTest {
     
     @Test
     public void testMain() throws IOException, ClassNotFoundException {
-        // user input: invalid + attack(a->b, 10) + move(c->d, 5) + done + quit
-        String input = "c\n1\n" + "a\na\nb\n10\n" + "m\nc\nd\n5\n" + "d\n" + "q\n";
+        // user input: invalid + attack(a->b, 10) + move(c->d, 5) + done
+        String input = "c\n1\n" + "a\na\nb\n10\n" + "m\nc\nd\n5\n" + "d\n";
         System.setIn(new ByteArrayInputStream(input.getBytes()));
         GameClient.main(null);
     }

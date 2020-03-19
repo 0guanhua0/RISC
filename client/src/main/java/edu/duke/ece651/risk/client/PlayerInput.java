@@ -16,9 +16,9 @@ public class PlayerInput {
      * D(one)
      * A(ttack)
      * M(ove)
-     * Q(uit)
      * @param scanner scanner
      * @param player interacting user
+     * @return Action object, null represent Done
      */
     public static Action readValidAction(Scanner scanner, Player<String> player) {
         while (true) {
