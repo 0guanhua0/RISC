@@ -1,5 +1,6 @@
 package edu.duke.ece651.risk.client;
 
+import edu.duke.ece651.risk.shared.ToClientMsg.ClientSelect;
 import edu.duke.ece651.risk.shared.action.Action;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.map.WorldMap;
@@ -16,8 +17,7 @@ import java.util.Scanner;
 import java.util.stream.Stream;
 
 import static edu.duke.ece651.risk.client.InsPrompt.*;
-import static edu.duke.ece651.risk.shared.Constant.GAME_OVER;
-import static edu.duke.ece651.risk.shared.Constant.SUCCESSFUL;
+import static edu.duke.ece651.risk.shared.Constant.*;
 
 /**
  * main class for player
@@ -81,7 +81,7 @@ public class GameClient {
                 client.send(action);
             }else {
                 // action == null, represent done
-                client.send("Done");
+                client.send(ACTION_DONE);
                 // after submit all actions, wait for the server to publish attack result
                 receiveAttackResult();
                 // receive game result in the end of each round
@@ -96,8 +96,9 @@ public class GameClient {
     /**
      * End game, probable only need to receive and print out the game result.
      */
-    void endGame(){
+    void endGame() throws IOException, ClassNotFoundException {
         // TODO: receive & print the game result
+        showMsg((String) client.recv());
     }
 
     /** ====== helper function ====== **/
@@ -196,8 +197,8 @@ public class GameClient {
         }
     }
 
-    void selectTerritory(Scanner scanner) {
-
+    void selectTerritory(Scanner scanner) throws IOException, ClassNotFoundException {
+        ClientSelect select = (ClientSelect) client.recv();
     }
 
     /**

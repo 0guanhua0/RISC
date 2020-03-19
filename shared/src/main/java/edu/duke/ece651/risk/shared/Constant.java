@@ -7,6 +7,7 @@ package edu.duke.ece651.risk.shared;
 public class Constant {
     public static final String ACTION_MOVE = "moveAction";
     public static final String ACTION_ATTACK = "attackAction";
+    public static final String ACTION_DONE = "doneAction";
 
     public static final String SUCCESSFUL = "successful";
     public static final String GAME_OVER = "gameOver";

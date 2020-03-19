@@ -119,7 +119,7 @@ public class RoomController {
                     }else{//other wise ask user to resend the information
                         player.send(INVALID_ACTION);
                     }
-                }else if (recvRes instanceof String && ((String)recvRes).equals("Done")){
+                }else if (recvRes instanceof String && ((String)recvRes).equals(ACTION_DONE)){
                     break;
                 }else {
                     player.send(INVALID_ACTION);
@@ -154,6 +154,8 @@ public class RoomController {
         //tell all players that we want to end this game
         for (Player<String> player : players) {
             if (player.getId()!=winnerId){
+                // TODO: here we may want to send a string, e.g. Winner is Green Player.
+                // TODO: probably we may want to have a mapping between player id and player color(just for convenience)
                 player.send(winnerId);
             }else{
                 player.send(YOU_WINS);
