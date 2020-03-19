@@ -5,6 +5,10 @@ import edu.duke.ece651.risk.shared.Server;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class Client{
     public static void main (String[] args) throws IOException, InterruptedException {
@@ -21,12 +25,18 @@ public class Client{
         Thread.sleep(500);
         Instruction instruction = new Instruction0() ;
         Display display = new Display0();
-
+        /*
+        Set<String> s = new HashSet<String>();
+        s.add("Mikdemia");
+        s.add("Elantris");
+        terr.put("Narnia",s);
+        Map<String, Set<String>> terr= new HashMap<String, Set<String>>();
+        */
         instruction.selfInfo("A");
-        display.showMap();
+//        display.showMap();
         instruction.actInfo("A");
 
-        String tmp= new String("hello from client");
+        String tmp= "hello from client";
 
         edu.duke.ece651.risk.shared.Client c = new edu.duke.ece651.risk.shared.Client();
         c.init("127.0.0.1", port);
