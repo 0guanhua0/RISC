@@ -27,6 +27,7 @@ class DisplayTest {
         terr.put("Narnia",adjTerr);
         String a = dis.showMap(terr);
         //System.out.println(a);
+        //When i print, the output is correct, but while using assert I am getting an error of a '>'
 //        assertEquals("45 units in Narnia(next to: Elantris, Midkemia, )", a);
 
     }
