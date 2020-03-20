@@ -4,6 +4,7 @@ import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 
 import java.io.Serializable;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class AttackAction implements Action, Serializable {
     String src;
@@ -49,11 +50,18 @@ public class AttackAction implements Action, Serializable {
             return false;
         }
 
+        //validate connection between connection
+        if (!src.hasPathTo(dst)) {
+            return false;
+        }
+
+
         return true;
     }
 
+
     /**
-     * following function perform the actual attack update
+     * following function perform single attack update, add update to territory map
      *
      * @param worldMap
      * @return true, if valid
@@ -65,31 +73,55 @@ public class AttackAction implements Action, Serializable {
             throw new IllegalArgumentException("Invalid attack action!");
         }
 
-        //perform actual action
-
         //reduce src unit num
         Territory src = worldMap.getTerritory(this.src);
         src.lossNUnits(this.unitsNum);
 
+        //add move to dst
+        Territory dst = worldMap.getTerritory(this.dest);
+
+        dst.addMove(this);
+
+        return true;
+    }
+
+    public boolean performSingleAttack(WorldMap<?> worldMap) {
+        //validate
+        if (!isValid(worldMap)) {
+            throw new IllegalArgumentException("Invalid attack action!");
+        }
+
+        //perform actual action
+
+        Territory src = worldMap.getTerritory(this.src);
+
         //check dst will change owner or not
         Territory dst = worldMap.getTerritory(this.dest);
 
-        //dst has less unit
-        if (dst.getUnitsNum() <= this.unitsNum ) {
-            int newUnit = this.unitsNum - dst.getUnitsNum();
+        //perform attack action
+        while (src.getUnitsNum() > 0 && dst.getUnitsNum() > 0) {
+            if (random(0, 20)) {
+                src.lossNUnits(1);
+            } else {
+                dst.lossNUnits(1);
+            }
+        }
 
+        //check which player occupy
+
+        //TODO: store combat result
+        //check which player occupy
+        //attacker has more unit, then change owner
+        if (this.unitsNum > 0) {
             //switch owner & reset unit
             dst.setOwner(this.player_id);
-            dst.lossNUnits(dst.getUnitsNum());
-            dst.addNUnits(newUnit);
+            dst.addNUnits(this.unitsNum);
         }
 
-        //dst has more/equal unit
-        else {
-            dst.lossNUnits(this.unitsNum);
-        }
         return true;
     }
+
+
 
     @Override
     public boolean equals(Object obj) {
@@ -98,5 +130,13 @@ public class AttackAction implements Action, Serializable {
             return attackAction.src.equals(this.src) && attackAction.dest.equals(this.dest) && attackAction.unitsNum == this.unitsNum && attackAction.player_id == this.player_id;
         }
         return false;
+    }
+
+    //random number decide attack
+    public boolean random(int min, int max) {
+        int ran1 = ThreadLocalRandom.current().nextInt(min, max + 1);
+        int ran2 = ThreadLocalRandom.current().nextInt(min, max + 1);
+
+        return ran1 < ran2;
     }
 }

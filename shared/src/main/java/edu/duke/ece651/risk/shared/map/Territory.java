@@ -1,9 +1,11 @@
 package edu.duke.ece651.risk.shared.map;
 
+import edu.duke.ece651.risk.shared.action.Action;
+import edu.duke.ece651.risk.shared.action.AttackAction;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public abstract class Territory implements Serializable {
@@ -11,6 +13,7 @@ public abstract class Territory implements Serializable {
     Set<Territory> neigh;
     //class to represent current status of this territory
     TStatus status;
+    ArrayList<Action> move;
 
     public Territory(String name) {
         this.neigh = new HashSet<>();
@@ -78,5 +81,30 @@ public abstract class Territory implements Serializable {
     public abstract void addNUnits(int num) throws IllegalArgumentException;
 
     public abstract void lossNUnits(int num);
+
+    public void addMove(Action action) {
+        this.move.add(action);
+    }
+
+    public void rmMove(Action action) {
+        this.move.remove(action);
+    }
+
+
+    /**
+     * called at the end of round, to update all combat info
+     */
+    public void performMove(WorldMap<?> worldMap) {
+        //iterate through list
+        for (Action a : move) {
+            if (a instanceof AttackAction) {
+                ((AttackAction) a).performSingleAttack(worldMap);
+                this.rmMove(a);
+            }
+
+        }
+
+
+    }
 
 }
