@@ -50,7 +50,7 @@ public class AttackAction implements Action, Serializable {
             return false;
         }
 
-        //validate connection between connection
+        //validate connection
         if (!src.hasPathTo(dst)) {
             return false;
         }
@@ -92,16 +92,13 @@ public class AttackAction implements Action, Serializable {
         }
 
         //perform actual action
-
-        Territory src = worldMap.getTerritory(this.src);
-
         //check dst will change owner or not
         Territory dst = worldMap.getTerritory(this.dest);
 
         //perform attack action
-        while (src.getUnitsNum() > 0 && dst.getUnitsNum() > 0) {
+        while (unitsNum > 0 && dst.getUnitsNum() > 0) {
             if (random(0, 20)) {
-                src.lossNUnits(1);
+                unitsNum--;
             } else {
                 dst.lossNUnits(1);
             }
@@ -120,7 +117,6 @@ public class AttackAction implements Action, Serializable {
 
         return true;
     }
-
 
 
     @Override
