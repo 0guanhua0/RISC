@@ -47,9 +47,9 @@ class AttackActionTest {
         storm.addNUnits(2);
         reach.addNUnits(2);
 
-        //test normal attack
+        //invalid: not connected
         AttackAction a0 = new AttackAction("kingdom of the north", "the storm kingdom", 1, 1);
-        assertTrue(a0.isValid(worldMap));
+        assertFalse(a0.isValid(worldMap));
 
         //invalid unit
         AttackAction a1 = new AttackAction("kingdom of the north", "the storm kingdom", 1, 0);
@@ -67,6 +67,9 @@ class AttackActionTest {
         AttackAction a4 = new AttackAction("kingdom of the north", "kingdom of mountain and vale", 1, 1);
         assertFalse(a4.isValid(worldMap));
 
+        //valid
+        AttackAction a5 = new AttackAction("kingdom of the reach","kingdom of the rock",  2, 1);
+        assertTrue(a5.isValid(worldMap));
 
 
 
