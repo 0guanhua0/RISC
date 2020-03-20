@@ -5,7 +5,6 @@ import edu.duke.ece651.risk.shared.map.WorldMap;
 
 import java.io.Serializable;
 import java.util.Set;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class AttackAction implements Action, Serializable {
     String src;
@@ -81,44 +80,11 @@ public class AttackAction implements Action, Serializable {
 
         //add move to dst
         Territory dst = worldMap.getTerritory(this.dest);
-
-        dst.addMove(this);
-
-        return true;
-    }
-
-    public boolean performSingleAttack(WorldMap<?> worldMap) {
-        //validate
-        if (!isValid(worldMap)) {
-            throw new IllegalArgumentException("Invalid attack action!");
-        }
-
-        //perform actual action
-        //check dst will change owner or not
-        Territory dst = worldMap.getTerritory(this.dest);
-
-        //perform attack action
-        while (unitsNum > 0 && dst.getUnitsNum() > 0) {
-            if (random(0, 20)) {
-                unitsNum--;
-            } else {
-                dst.lossNUnits(1);
-            }
-        }
-
-        //check which player occupy
-
-        //TODO: store combat result
-        //check which player occupy
-        //attacker has more unit, then change owner
-        if (this.unitsNum > 0) {
-            //switch owner & reset unit
-            dst.setOwner(this.player_id);
-            dst.addNUnits(this.unitsNum);
-        }
+        dst.addAttack(player_id, unitsNum);
 
         return true;
     }
+
 
 
     @Override
@@ -130,11 +96,5 @@ public class AttackAction implements Action, Serializable {
         return false;
     }
 
-    //random number decide attack
-    public boolean random(int min, int max) {
-        int ran1 = ThreadLocalRandom.current().nextInt(min, max + 1);
-        int ran2 = ThreadLocalRandom.current().nextInt(min, max + 1);
 
-        return ran1 < ran2;
-    }
 }

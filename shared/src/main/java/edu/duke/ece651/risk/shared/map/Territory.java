@@ -1,39 +1,41 @@
 package edu.duke.ece651.risk.shared.map;
 
-import edu.duke.ece651.risk.shared.action.Action;
-import edu.duke.ece651.risk.shared.action.AttackAction;
-
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class Territory implements Serializable {
 
     Set<Territory> neigh;
     //class to represent current status of this territory
     TStatus status;
-    ArrayList<Action> move;
+    HashMap<Integer, Integer> attackAct;
 
     public Territory(String name) {
         this.neigh = new HashSet<>();
         this.status = new TStatus(name);
+        this.attackAct = new HashMap<>();
     }
 
     //get the owner id of corresponding territory
-    public int getOwner(){
+    public int getOwner() {
         return status.getOwnerId();
     }
+
     //assign this territory to corresponding user
-    public void setOwner(int id){
+    public void setOwner(int id) {
         status.setIsFree(false);
         status.setOwnerId(id);
     }
+
     //get all adjacent territories
     public Set<Territory> getNeigh() {
         return neigh;
     }
-    public void setNeigh(Set<Territory> neigh){
+
+    public void setNeigh(Set<Territory> neigh) {
         this.neigh = neigh;
     }
 
@@ -41,39 +43,41 @@ public abstract class Territory implements Serializable {
         return status.getName();
     }
 
-    public boolean isFree(){
+    public boolean isFree() {
         return status.isFree();
     }
 
-    public void setIsFree(boolean isFree){
+    public void setIsFree(boolean isFree) {
         status.setIsFree(isFree);
         status.setOwnerId(0);
     }
+
     //helper function to check if two territories are adjacent to each other
-    private boolean DFSHelper(Territory current, Territory target,Set<Territory> visited){
-        if (visited.contains(current)||current.getOwner()!=this.getOwner()){
+    private boolean DFSHelper(Territory current, Territory target, Set<Territory> visited) {
+        if (visited.contains(current) || current.getOwner() != this.getOwner()) {
             return false;
-        }else if(current==target){
+        } else if (current == target) {
             return true;
-        }else{
+        } else {
             visited.add(current);
             for (Territory neigh : current.getNeigh()) {
-                if (DFSHelper(neigh,target,visited)){
+                if (DFSHelper(neigh, target, visited)) {
                     return true;
                 }
             }
             return false;
         }
     }
+
     //return true only when there is path from current territory to the target territory,
     //and all territories along the path should under the control of owner of current territory
     //TODO test the correctness of this method
-    public boolean hasPathTo(Territory target){
-        if (this==target||target.getOwner()!=this.getOwner()) {//a territory is not adjacent to itself
+    public boolean hasPathTo(Territory target) {
+        if (this == target || target.getOwner() != this.getOwner()) {//a territory is not adjacent to itself
             return false;
         }
         Set<Territory> visited = new HashSet<>();
-        return DFSHelper(this,target,visited);
+        return DFSHelper(this, target, visited);
     }
 
     public abstract int getUnitsNum();
@@ -82,12 +86,13 @@ public abstract class Territory implements Serializable {
 
     public abstract void lossNUnits(int num);
 
-    public void addMove(Action action) {
-        this.move.add(action);
-    }
-
-    public void rmMove(Action action) {
-        this.move.remove(action);
+    public void addAttack(int playerId, int unitNum) {
+        if (attackAct.containsKey(playerId)) {
+            int newNum = attackAct.get(playerId) + unitNum;
+            attackAct.put(playerId, newNum);
+        } else {
+            attackAct.put(playerId, unitNum);
+        }
     }
 
 
@@ -96,15 +101,44 @@ public abstract class Territory implements Serializable {
      */
     public void performMove(WorldMap<?> worldMap) {
         //iterate through list
-        for (Action a : move) {
-            if (a instanceof AttackAction) {
-                ((AttackAction) a).performSingleAttack(worldMap);
-                this.rmMove(a);
+        for (Integer a : attackAct.keySet()) {
+            //perform attack action
+            //TODO: store combat result
+            Integer unitsNum = attackAct.get(a);
+            while (unitsNum > 0 && this.getUnitsNum() > 0) {
+                if (random(0, 20)) {
+                    unitsNum--;
+                } else {
+                    this.lossNUnits(1);
+                }
+            }
+
+            //update the owner only if attacker has remain
+            if (unitsNum > 0) {
+                setOwner(a);
+                addNUnits(unitsNum);
             }
 
         }
 
+        //clean up attackMap
+        attackAct.clear();
 
     }
 
+
+    /**
+     * random dice
+     *
+     * @param min lower bound
+     * @param max upeer bound
+     * @return
+     */
+    //random number decide attack
+    public boolean random(int min, int max) {
+        int ran1 = ThreadLocalRandom.current().nextInt(min, max + 1);
+        int ran2 = ThreadLocalRandom.current().nextInt(min, max + 1);
+
+        return ran1 < ran2;
+    }
 }
