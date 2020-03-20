@@ -166,7 +166,7 @@ class TerritoryV1Test {
         north.addNUnits(2);
         vale.addNUnits(2);
         rock.addNUnits(1);
-        dorne.addNUnits(1);
+        dorne.addNUnits(3);
         //player2
         storm.addNUnits(2);
         reach.addNUnits(2);
@@ -198,6 +198,13 @@ class TerritoryV1Test {
 
         assertEquals(2, rock.getOwner());
         assertEquals(2, rock.getUnitsNum());
+
+        //non-deterministic
+        AttackAction a21 = new AttackAction("the storm kingdom","principality of dorne",  2, 2);
+        assertTrue(a21.perform(worldMap));
+        vale.performMove();
+        dorne.performMove();
+        assertEquals(2, storm.getOwner());
 
 
     }
