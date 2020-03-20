@@ -1,6 +1,7 @@
 package edu.duke.ece651.risk.client;
 
 import edu.duke.ece651.risk.shared.ToClientMsg.ClientSelect;
+import edu.duke.ece651.risk.shared.ToClientMsg.RoundInfo;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.risk.shared.network.Client;
@@ -44,11 +45,35 @@ public class GameClientTest {
             2,
             new MapDataBase<String>().getMap(mapName)
     );
+    static List<Player<String>> players = new ArrayList<>();
 
     @BeforeAll
-    static void beforeAll() {
+    static void beforeAll() throws IOException {
+        String t1 = "the storm kingdom";
+        String t2 = "kingdom of the reach";
+        String t3 = "kingdom of the rock";
+        String t4 = "kingdom of mountain and vale";
+        String t5 = "kingdom of the north";
+        String t6 = "principality of dorne";
+        map.getTerritory(t1).addNUnits(1);
+        map.getTerritory(t2).addNUnits(2);
+        map.getTerritory(t3).addNUnits(3);
+        map.getTerritory(t4).addNUnits(4);
+        map.getTerritory(t5).addNUnits(5);
+        map.getTerritory(t6).addNUnits(6);
+
+        map.getTerritory(t1).setOwner(1);
+        map.getTerritory(t2).setOwner(1);
+        map.getTerritory(t3).setOwner(2);
+        map.getTerritory(t4).setOwner(2);
+        map.getTerritory(t5).setOwner(3);
+        map.getTerritory(t6).setOwner(3);
+
         // mock data to be sent
         List<Integer> fakeRooms = new ArrayList<>(Arrays.asList(0, 1, 2, 3));
+        players.add(new PlayerV1<>("Green", 1));
+        players.add(new PlayerV1<>("Blue", 2));
+        players.add(new PlayerV1<>("Red", 3));
 
         outContent = new ByteArrayOutputStream();
         // setup "game server" at hte beginning
@@ -86,7 +111,7 @@ public class GameClientTest {
                     player.send(SUCCESSFUL);
 
                     /* =============== stage 3(playing the game) =============== */
-                    player.send(map);
+                    player.send(new RoundInfo(map, players));
                     // interact with player to ask all actions
                     while (true){
                         Object object = player.recv(); // receive the action list
@@ -146,7 +171,7 @@ public class GameClientTest {
         when(client.recv())
                 .thenReturn(clientSelect) // select territory & assign units
                 .thenReturn(SUCCESSFUL) // selection valid
-                .thenReturn(map)        // round info, map
+                .thenReturn(new RoundInfo(map, players))        // round info, map
                 .thenReturn(SUCCESSFUL) // action1 valid
                 .thenReturn(SUCCESSFUL) // action2 valid
                 .thenReturn("attack 1") // send out the attack result

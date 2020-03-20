@@ -16,7 +16,7 @@ import java.io.Serializable;
 public class TStatus implements Serializable {
 
     //player id of the owner of corresponding territory, 0 to represent this territory is currently free
-    private int ownerId;
+    int ownerId;
     //name of corresponding territory
     String name;
     //show whether this territory is free or not
@@ -33,6 +33,10 @@ public class TStatus implements Serializable {
     }
     public int getOwnerId() {
         return ownerId;
+    }
+
+    public void setOwner(int ownerId){
+        this.ownerId = ownerId;
     }
 
 
