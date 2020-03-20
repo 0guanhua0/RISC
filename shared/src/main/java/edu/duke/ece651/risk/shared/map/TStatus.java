@@ -35,11 +35,6 @@ public class TStatus implements Serializable {
         return ownerId;
     }
 
-    public void setOwner(int ownerId){
-        this.ownerId = ownerId;
-    }
-
-
     public void setIsFree(boolean free) {
         isFree = free;
     }
