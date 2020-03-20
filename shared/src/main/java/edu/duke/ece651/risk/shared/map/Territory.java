@@ -99,7 +99,7 @@ public abstract class Territory implements Serializable {
     /**
      * called at the end of round, to update all combat info
      */
-    public void performMove(WorldMap<?> worldMap) {
+    public void performMove() {
         //iterate through list
         for (Integer a : attackAct.keySet()) {
             //perform attack action
