@@ -86,7 +86,6 @@ public class AttackAction implements Action, Serializable {
     }
 
 
-
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof AttackAction) {
@@ -95,6 +94,5 @@ public class AttackAction implements Action, Serializable {
         }
         return false;
     }
-
 
 }

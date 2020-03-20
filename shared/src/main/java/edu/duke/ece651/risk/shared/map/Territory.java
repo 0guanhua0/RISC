@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class Territory implements Serializable {
 
@@ -86,45 +85,13 @@ public abstract class Territory implements Serializable {
 
     public abstract void lossNUnits(int num);
 
-    public void addAttack(int playerId, int unitNum) {
-        if (attackAct.containsKey(playerId)) {
-            int newNum = attackAct.get(playerId) + unitNum;
-            attackAct.put(playerId, newNum);
-        } else {
-            attackAct.put(playerId, unitNum);
-        }
-    }
+    public abstract void addAttack(int playerId, int unitNum);
 
 
     /**
      * called at the end of round, to update all combat info
      */
-    public void performMove() {
-        //iterate through list
-        for (Integer a : attackAct.keySet()) {
-            //perform attack action
-            //TODO: store combat result
-            Integer unitsNum = attackAct.get(a);
-            while (unitsNum > 0 && this.getUnitsNum() > 0) {
-                if (random(0, 20)) {
-                    unitsNum--;
-                } else {
-                    this.lossNUnits(1);
-                }
-            }
-
-            //update the owner only if attacker has remain
-            if (unitsNum > 0) {
-                setOwner(a);
-                addNUnits(unitsNum);
-            }
-
-        }
-
-        //clean up attackMap
-        attackAct.clear();
-
-    }
+    public abstract void performMove();
 
 
     /**
@@ -135,10 +102,5 @@ public abstract class Territory implements Serializable {
      * @return
      */
     //random number decide attack
-    public boolean random(int min, int max) {
-        int ran1 = ThreadLocalRandom.current().nextInt(min, max + 1);
-        int ran2 = ThreadLocalRandom.current().nextInt(min, max + 1);
-
-        return ran1 < ran2;
-    }
+    public abstract boolean random(int min, int max);
 }
