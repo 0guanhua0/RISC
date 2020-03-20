@@ -4,6 +4,7 @@ import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 
 import java.io.Serializable;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class AttackAction implements Action, Serializable {
@@ -51,7 +52,8 @@ public class AttackAction implements Action, Serializable {
         }
 
         //validate connection
-        if (!src.hasPathTo(dst)) {
+        Set<Territory> neighbour = src.getNeigh();
+        if (!neighbour.contains(dst)) {
             return false;
         }
 
