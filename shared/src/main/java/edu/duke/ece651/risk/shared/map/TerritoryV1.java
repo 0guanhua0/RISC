@@ -1,7 +1,11 @@
 package edu.duke.ece651.risk.shared.map;
 
+import edu.duke.ece651.risk.shared.action.AttackResult;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
+
 /**
  * @program: risk-Map
  * @description:
@@ -37,6 +41,81 @@ public class TerritoryV1 extends Territory{
 
     public int getUnitsNum(){
         return units.size();
+    }
+
+    public void addAttack(int playerId, int unitNum) {
+        if (attackAct.containsKey(playerId)) {
+            int newNum = attackAct.get(playerId) + unitNum;
+            attackAct.replace(playerId, newNum);
+        } else {
+            attackAct.put(playerId, unitNum);
+        }
+    }
+
+    /**
+     * called at the end of round, to update all combat info
+     * will return string to tell who wins
+     */
+    public List<AttackResult> performAttackMove() {
+        //store the whole result of combat
+        ArrayList<AttackResult> attackResults = new ArrayList<>();
+        //iterate through list
+        for (Integer a : attackAct.keySet()) {
+            //perform attack action
+            Integer unitsNum = attackAct.get(a);
+
+            //store attack result info
+            int attackerId = a;
+            int defenderID = this.getOwner();
+            String tName = this.getName();
+            Boolean aRes = true;
+            //the start of the fight
+            while (unitsNum > 0 && this.getUnitsNum() > 0) {
+                if (random(0, 20)) {
+                    unitsNum--;
+                } else {
+                    this.lossNUnits(1);
+                }
+            }
+
+            //update the owner only if attacker has remain
+            if (unitsNum > 0) {
+                setOwner(a);
+                addNUnits(unitsNum);
+            }
+
+            //add win results
+            if (unitsNum > 0) {
+                aRes = true;
+            }
+            else {
+                aRes = false;
+            }
+            AttackResult r = new AttackResult(attackerId, defenderID, tName, aRes);
+            attackResults.add(r);
+
+        }
+
+        //clean up attackMap
+        attackAct.clear();
+
+        return attackResults;
+    }
+
+
+    /**
+     * random boolean, simulate the dice, return true indicate p 1 wins
+     *
+     * @param min lower bound
+     * @param max upeer bound
+     * @return
+     */
+    //random number decide attack
+    public boolean random(int min, int max) {
+        int ran1 = ThreadLocalRandom.current().nextInt(min, max + 1);
+        int ran2 = ThreadLocalRandom.current().nextInt(min, max + 1);
+
+        return ran1 < ran2;
     }
 
 }

@@ -4,6 +4,7 @@ import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 
 import java.io.Serializable;
+import java.util.Set;
 
 public class AttackAction implements Action, Serializable {
     String src;
@@ -49,11 +50,19 @@ public class AttackAction implements Action, Serializable {
             return false;
         }
 
+        //validate connection
+        Set<Territory> neighbour = src.getNeigh();
+        if (!neighbour.contains(dst)) {
+            return false;
+        }
+
+
         return true;
     }
 
+
     /**
-     * following function perform the actual attack update
+     * following function perform single attack update, add update to territory map
      *
      * @param worldMap
      * @return true, if valid
@@ -65,29 +74,13 @@ public class AttackAction implements Action, Serializable {
             throw new IllegalArgumentException("Invalid attack action!");
         }
 
-        //perform actual action
-
         //reduce src unit num
         Territory src = worldMap.getTerritory(this.src);
         src.lossNUnits(this.unitsNum);
-
-        //check dst will change owner or not
+        //add move to dst
         Territory dst = worldMap.getTerritory(this.dest);
+        dst.addAttack(player_id, unitsNum);
 
-        //dst has less unit
-        if (dst.getUnitsNum() <= this.unitsNum ) {
-            int newUnit = this.unitsNum - dst.getUnitsNum();
-
-            //switch owner & reset unit
-            dst.setOwner(this.player_id);
-            dst.lossNUnits(dst.getUnitsNum());
-            dst.addNUnits(newUnit);
-        }
-
-        //dst has more/equal unit
-        else {
-            dst.lossNUnits(this.unitsNum);
-        }
         return true;
     }
 

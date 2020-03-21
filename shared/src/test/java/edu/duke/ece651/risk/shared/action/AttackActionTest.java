@@ -47,9 +47,9 @@ class AttackActionTest {
         storm.addNUnits(2);
         reach.addNUnits(2);
 
-        //test normal attack
+        //invalid: not connected
         AttackAction a0 = new AttackAction("kingdom of the north", "the storm kingdom", 1, 1);
-        assertTrue(a0.isValid(worldMap));
+        assertFalse(a0.isValid(worldMap));
 
         //invalid unit
         AttackAction a1 = new AttackAction("kingdom of the north", "the storm kingdom", 1, 0);
@@ -67,6 +67,9 @@ class AttackActionTest {
         AttackAction a4 = new AttackAction("kingdom of the north", "kingdom of mountain and vale", 1, 1);
         assertFalse(a4.isValid(worldMap));
 
+        //valid
+        AttackAction a5 = new AttackAction("kingdom of the reach","kingdom of the rock",  2, 1);
+        assertTrue(a5.isValid(worldMap));
 
 
 
@@ -107,21 +110,12 @@ class AttackActionTest {
 
 
         //normal attack
-        AttackAction a0 = new AttackAction("kingdom of the north", "the storm kingdom", 1, 1);
+        AttackAction a0 = new AttackAction("kingdom of the reach","kingdom of the rock",  2, 1);
         assertTrue(a0.perform(worldMap));
 
-        assertEquals(2, worldMap.getTerritory(a0.dest).getOwner());
-        assertEquals(1, worldMap.getTerritory(a0.dest).getUnitsNum());
-
-        //combo move
-        AttackAction a1 = new AttackAction("kingdom of mountain and vale", "kingdom of the reach", 1, 2);
-        a1.perform(worldMap);
-        assertEquals(1, worldMap.getTerritory(a1.dest).getOwner());
-        assertEquals(0, worldMap.getTerritory(a1.dest).getUnitsNum());
-
         //abnormal attack
-        AttackAction a4 = new AttackAction("kingdom of the north", "kingdom of mountain and vale", 2, 4);
-        assertThrows(IllegalArgumentException.class, ()->a4.perform(worldMap));
+        AttackAction a1 = new AttackAction("kingdom of the north", "kingdom of mountain and vale", 2, 4);
+        assertThrows(IllegalArgumentException.class, ()->a1.perform(worldMap));
     }
 
     @Test

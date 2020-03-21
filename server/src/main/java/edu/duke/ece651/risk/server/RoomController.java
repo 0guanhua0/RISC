@@ -7,11 +7,11 @@ import edu.duke.ece651.risk.shared.action.Action;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.WorldMap;
-import edu.duke.ece651.risk.shared.network.Client;
 import edu.duke.ece651.risk.shared.player.Player;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import static edu.duke.ece651.risk.shared.Constant.*;
 
@@ -133,6 +133,38 @@ public class RoomController {
             }
         }
         // TODO: try to update the ownership of territories which are attacked by other players
+        //iterate all territory, perform the attack action, then send result
+
+        /*
+        Map<String, Territory> territoryMap = map.getAtlas();
+        for (String k : territoryMap.keySet()) {
+            Territory t = territoryMap.get(k);
+            List<AttackResult> attackResultList =  t.performAttackMove();
+
+            StringBuilder sb = new StringBuilder();
+            //change all player id in list to player name
+            for (AttackResult aR : attackResultList) {
+                String attackName = players.get(aR.getAttackerID()).getColor();
+                String deffendName = players.get(aR.getDefenderID()).getColor();
+                sb.append(attackName + " attacks " + deffendName);
+
+                sb.append(" 's territory " + aR.getTerritory());
+
+                if (aR.isAttackerwin()) {
+                    sb.append("attacker wins");
+                }
+                else {
+                    sb.append("attacker fails");
+                }
+
+            }
+
+            sendAll(sb.toString());
+        }
+
+         */
+
+
         // after execute all actions, tell the player to enter next round
         sendAll(ROUND_OVER);
 
