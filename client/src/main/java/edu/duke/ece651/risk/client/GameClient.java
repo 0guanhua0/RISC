@@ -1,6 +1,7 @@
 package edu.duke.ece651.risk.client;
 
 import edu.duke.ece651.risk.shared.ToClientMsg.ClientSelect;
+import edu.duke.ece651.risk.shared.ToClientMsg.RoundInfo;
 import edu.duke.ece651.risk.shared.ToServerMsg.ServerSelect;
 import edu.duke.ece651.risk.shared.action.Action;
 import edu.duke.ece651.risk.shared.action.AttackAction;
@@ -68,11 +69,12 @@ public class GameClient {
         String result = "";
         int round = 1;
         while (!result.equals(GAME_OVER)){
-            showMsg("====== Round " + round + " ======");
-            // receive the latest world map
-            WorldMap<String> worldMap = (WorldMap<String>) client.recv();
+            // receive the round info
+            RoundInfo roundInfo = (RoundInfo) client.recv();
 
-            SceneCLI.showMap(worldMap);
+            showMsg("====== Round " + round + " ======");
+
+            SceneCLI.showMap(roundInfo.getMap(), roundInfo.getIdToColor());
             InsPrompt.selfInfo(player.getPlayerName());
 
             // keep asking action until user specify done
