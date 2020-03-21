@@ -145,9 +145,11 @@ public class RoomController {
             StringBuilder sb = new StringBuilder();
             //change all player id in list to player name
             for (AttackResult aR : attackResultList) {
-                sb.append(aR.getAttackerID() + " attacks " + aR.getDefenderID());
+                String attackName = players.get(aR.getAttackerID()).getColor();
+                String deffendName = players.get(aR.getDefenderID()).getColor();
+                sb.append(attackName + " attacks " + deffendName);
 
-                sb.append(" 's territory" + aR.getTerritory());
+                sb.append(" 's territory " + aR.getTerritory());
 
                 if (aR.isAttackerwin()) {
                     sb.append("attacker wins");
