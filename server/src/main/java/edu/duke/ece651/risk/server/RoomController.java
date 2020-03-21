@@ -6,11 +6,11 @@ import edu.duke.ece651.risk.shared.action.Action;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.WorldMap;
-import edu.duke.ece651.risk.shared.network.Client;
 import edu.duke.ece651.risk.shared.player.Player;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import static edu.duke.ece651.risk.shared.Constant.*;
 
@@ -131,6 +131,16 @@ public class RoomController {
             }
         }
         // TODO: try to update the ownership of territories which are attacked by other players
+        //iterate all territory, perform the attack action, then send result
+        /*
+        Map<String, Territory> territoryMap = map.getAtlas();
+        for (String k : territoryMap.keySet()) {
+            Territory t = territoryMap.get(k);
+            String result =  t.performAttackMove();
+            sendAll(result);
+        }
+
+         */
         // after execute all actions, tell the player to enter next round
         sendAll(ROUND_OVER);
 
