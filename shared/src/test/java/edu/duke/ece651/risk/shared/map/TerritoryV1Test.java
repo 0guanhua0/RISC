@@ -1,13 +1,17 @@
 package edu.duke.ece651.risk.shared.map;
 
 import edu.duke.ece651.risk.shared.action.AttackAction;
+import edu.duke.ece651.risk.shared.action.AttackResult;
 import edu.duke.ece651.risk.shared.player.Player;
 import edu.duke.ece651.risk.shared.player.PlayerV1;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
+
 class TerritoryV1Test {
 
 
@@ -15,7 +19,7 @@ class TerritoryV1Test {
     void getOwner() {
         TerritoryV1 stormKindom = new TerritoryV1("The Storm Kindom");
         stormKindom.setOwner(3);
-        assert (3==stormKindom.getOwner());
+        assert (3 == stormKindom.getOwner());
         assert (!stormKindom.isFree());
         assertEquals("The Storm Kindom", stormKindom.getName());
     }
@@ -25,7 +29,7 @@ class TerritoryV1Test {
         TerritoryV1 stormKindom = new TerritoryV1("The Storm Kindom");
         TerritoryV1 n1 = new TerritoryV1("n1");
         TerritoryV1 n2 = new TerritoryV1("n2");
-        HashSet<Territory> neigh = new HashSet<>(){{
+        HashSet<Territory> neigh = new HashSet<>() {{
             add(n1);
             add(n2);
         }};
@@ -39,7 +43,7 @@ class TerritoryV1Test {
         TerritoryV1 stormKindom = new TerritoryV1("The Storm Kindom");
         assert (stormKindom.isFree());
         stormKindom.setOwner(3);
-        assert (3==stormKindom.getOwner() && !stormKindom.isFree());
+        assert (3 == stormKindom.getOwner() && !stormKindom.isFree());
     }
 
     @Test
@@ -47,11 +51,11 @@ class TerritoryV1Test {
         TerritoryV1 test = new TerritoryV1("test");
         assert (test.units.isEmpty());
         test.addNUnits(10);
-        assert (10==test.getUnitsNum());
+        assert (10 == test.getUnitsNum());
         for (Unit unit : test.units) {
             assertEquals("soldier", unit.name);
         }
-        assertThrows(IllegalArgumentException.class, ()->test.addNUnits(-1));
+        assertThrows(IllegalArgumentException.class, () -> test.addNUnits(-1));
     }
 
     @Test
@@ -59,25 +63,25 @@ class TerritoryV1Test {
         TerritoryV1 test = new TerritoryV1("test");
         assert (test.units.isEmpty());
         test.addNUnits(10);
-        assert (10==test.getUnitsNum());
-        assertThrows(IllegalArgumentException.class, ()-> test.lossNUnits(-1));
-        assertThrows(IllegalArgumentException.class, ()-> test.lossNUnits(11));
+        assert (10 == test.getUnitsNum());
+        assertThrows(IllegalArgumentException.class, () -> test.lossNUnits(-1));
+        assertThrows(IllegalArgumentException.class, () -> test.lossNUnits(11));
         assertEquals(10, test.getUnitsNum());
         for (Unit unit : test.units) {
             assertEquals("soldier", unit.name);
         }
 
         test.lossNUnits(5);
-        assert (5==test.getUnitsNum());
+        assert (5 == test.getUnitsNum());
         for (Unit unit : test.units) {
             assertEquals("soldier", unit.name);
         }
         test.lossNUnits(5);
-        assert (0==test.getUnitsNum());
+        assert (0 == test.getUnitsNum());
     }
 
     @Test
-    void setStatus(){
+    void setStatus() {
         TerritoryV1 territoryV1 = new TerritoryV1("test");
         assert (territoryV1.isFree());
         territoryV1.setOwner(3);
@@ -87,17 +91,17 @@ class TerritoryV1Test {
     }
 
     @Test
-    void getNeigh(){
+    void getNeigh() {
         TerritoryV1 stormKindom = new TerritoryV1("The Storm Kindom");
         TerritoryV1 n1 = new TerritoryV1("n1");
         TerritoryV1 n2 = new TerritoryV1("n2");
-        HashSet<Territory> neigh = new HashSet<>(){{
+        HashSet<Territory> neigh = new HashSet<>() {{
             add(n1);
             add(n2);
         }};
         stormKindom.setNeigh(neigh);
         assertTrue(stormKindom.getNeigh().contains(n1));
-        assertTrue (stormKindom.getNeigh().contains(n2));
+        assertTrue(stormKindom.getNeigh().contains(n2));
     }
 
     @Test
@@ -112,7 +116,7 @@ class TerritoryV1Test {
         Territory north = worldMap.getTerritory("kingdom of the north");
         Territory dorne = worldMap.getTerritory("principality of dorne");
         //two players join this game
-        Player<String> p1 = new PlayerV1<>("Red",1);
+        Player<String> p1 = new PlayerV1<>("Red", 1);
         Player<String> p2 = new PlayerV1<>("Blue", 2);
         //assign some territories to each player
         p1.addTerritory(north);
@@ -150,7 +154,7 @@ class TerritoryV1Test {
         Territory north = worldMap.getTerritory("kingdom of the north");
         Territory dorne = worldMap.getTerritory("principality of dorne");
         //two players join this game
-        Player<String> p1 = new PlayerV1<>("Red",1);
+        Player<String> p1 = new PlayerV1<>("Red", 1);
         Player<String> p2 = new PlayerV1<>("Blue", 2);
         //assign some territories to each player
         //player1
@@ -172,7 +176,6 @@ class TerritoryV1Test {
         reach.addNUnits(2);
 
 
-
         //player 1 multiple place attack
 
         AttackAction a10 = new AttackAction("kingdom of the rock", "kingdom of the reach", 1, 1);
@@ -182,38 +185,34 @@ class TerritoryV1Test {
 
 
         //player 2 attack to empty territory
-        AttackAction a20 = new AttackAction("kingdom of the reach","kingdom of the rock",  2, 2);
+        AttackAction a20 = new AttackAction("kingdom of the reach", "kingdom of the rock", 2, 2);
         assertTrue(a20.perform(worldMap));
 
 
-
         //perform
-        String r0= rock.performAttackMove();
-        assertEquals("player 2 attacks player + 1's kingdom of the rock\n" +
-                "attacker wins\n", r0);
-        System.out.println(r0);
-        String r1 =  dorne.performAttackMove();
-        System.out.println(r1);
-        assertEquals("", r1);
 
-        String r2 =  reach.performAttackMove();
-        System.out.println(r2);
-        assertEquals("player 1 attacks player + 2's kingdom of the reach\n" +
-                "attacker wins\n", r2);
+        List<AttackResult> resultList0 = reach.performAttackMove();
+        AttackResult r = new AttackResult(1, 2, "kingdom of the reach", true);
+
+        AttackResult r0 = resultList0.get(0);
+        assertEquals(r0.getAttackerID(), r.getAttackerID());
+        assertEquals(r0.getDefenderID(), r.getDefenderID());
+        assertEquals(r0.getTerritory(), r.getTerritory());
+        assertEquals(r0.isAttackerwin(), r.isAttackerwin());
 
         //check result
         assertEquals(1, reach.getOwner());
         assertEquals(2, reach.getUnitsNum());
 
+        rock.performAttackMove();
         assertEquals(2, rock.getOwner());
         assertEquals(2, rock.getUnitsNum());
 
         //non-deterministic
-        AttackAction a21 = new AttackAction("the storm kingdom","principality of dorne",  2, 2);
+        AttackAction a21 = new AttackAction("the storm kingdom", "principality of dorne", 2, 2);
         assertTrue(a21.perform(worldMap));
 
-        String r3 = dorne.performAttackMove();
-        System.out.println(r3);
+        List<AttackResult> r3 = dorne.performAttackMove();
         assertEquals(2, storm.getOwner());
 
 
