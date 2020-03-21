@@ -1,6 +1,7 @@
 package edu.duke.ece651.risk.server;
 
 import edu.duke.ece651.risk.shared.ToClientMsg.ClientSelect;
+import edu.duke.ece651.risk.shared.ToClientMsg.RoundInfo;
 import edu.duke.ece651.risk.shared.ToServerMsg.ServerSelect;
 import edu.duke.ece651.risk.shared.action.Action;
 import edu.duke.ece651.risk.shared.action.AttackResult;
@@ -113,7 +114,8 @@ public class RoomController {
     void playSingleRoundGame() throws IOException, ClassNotFoundException {
         for (Player<String> player : players) {
             //tell client the most recent situation
-            player.send(map);
+            // TOdO: we may also want ot tell the client round number
+            player.send(new RoundInfo(map, players));
             while (true){
                 Object recvRes = player.recv();
                 if (recvRes instanceof Action){
