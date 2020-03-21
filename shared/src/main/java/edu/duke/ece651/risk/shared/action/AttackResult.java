@@ -3,14 +3,14 @@ package edu.duke.ece651.risk.shared.action;
 /**
  * record the result of attack
  */
-public class Attackresult {
+public class AttackResult {
     int attackerID;
     int defenderID;
     String territory;
     boolean attackerwin;
 
 
-    public Attackresult(int attackerID, int defenderID, String territory, boolean attackerwin) {
+    public AttackResult(int attackerID, int defenderID, String territory, boolean attackerwin) {
         this.attackerID = attackerID;
         this.defenderID = defenderID;
         this.territory = territory;

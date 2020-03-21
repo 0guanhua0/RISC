@@ -4,12 +4,11 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class AttackresultTest {
-
+class AttackResultTest {
 
     @Test
-    void testAll() {
-        Attackresult r = new Attackresult(0, 1, "storm", true);
+    void getAttackerID() {
+        AttackResult r = new AttackResult(0, 1, "storm", true);
 
         assertEquals(r.getAttackerID(), 0);
         assertEquals(1, r.getDefenderID());

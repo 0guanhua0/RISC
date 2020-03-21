@@ -1,5 +1,7 @@
 package edu.duke.ece651.risk.shared.map;
 
+import edu.duke.ece651.risk.shared.action.AttackResult;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -57,11 +59,17 @@ public class TerritoryV1 extends Territory{
     public String performAttackMove() {
         //store the whole result of combat
         StringBuilder sb = new StringBuilder();
+        ArrayList<AttackResult> attackResults = new ArrayList<>();
         //iterate through list
         for (Integer a : attackAct.keySet()) {
             //perform attack action
             Integer unitsNum = attackAct.get(a);
 
+            //store attack result info
+            int attackerId = a;
+            int defenderID = this.getOwner();
+            String tName = this.getName();
+            Boolean aRes = true;
             //the start of the fight
             sb.append("player " + a + " attacks player + "  + this.getOwner()  +"'s " + this.getName() + "\n");
             while (unitsNum > 0 && this.getUnitsNum() > 0) {
@@ -80,11 +88,15 @@ public class TerritoryV1 extends Territory{
 
             //add winner
             if (unitsNum > 0) {
+                aRes = true;
                 sb.append("attacker wins\n");
             }
             else {
+                aRes = false;
                 sb.append("attacker fails\n");
             }
+            AttackResult r = new AttackResult(attackerId, defenderID, tName, aRes);
+            attackResults.add(r);
 
         }
 
