@@ -77,14 +77,12 @@ public class AttackAction implements Action, Serializable {
         //reduce src unit num
         Territory src = worldMap.getTerritory(this.src);
         src.lossNUnits(this.unitsNum);
-
         //add move to dst
         Territory dst = worldMap.getTerritory(this.dest);
         dst.addAttack(player_id, unitsNum);
 
         return true;
     }
-
 
     @Override
     public boolean equals(Object obj) {
@@ -94,5 +92,4 @@ public class AttackAction implements Action, Serializable {
         }
         return false;
     }
-
 }

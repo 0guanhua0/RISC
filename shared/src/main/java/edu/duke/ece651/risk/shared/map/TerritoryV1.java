@@ -44,7 +44,7 @@ public class TerritoryV1 extends Territory{
     public void addAttack(int playerId, int unitNum) {
         if (attackAct.containsKey(playerId)) {
             int newNum = attackAct.get(playerId) + unitNum;
-            attackAct.put(playerId, newNum);
+            attackAct.replace(playerId, newNum);
         } else {
             attackAct.put(playerId, unitNum);
         }
@@ -53,7 +53,7 @@ public class TerritoryV1 extends Territory{
     /**
      * called at the end of round, to update all combat info
      */
-    public void performMove() {
+    public void performAttackMove() {
         //iterate through list
         for (Integer a : attackAct.keySet()) {
             //perform attack action
@@ -82,7 +82,7 @@ public class TerritoryV1 extends Territory{
 
 
     /**
-     * random dice
+     * random boolean, simulate the dice, return true indicate p 1 wins
      *
      * @param min lower bound
      * @param max upeer bound

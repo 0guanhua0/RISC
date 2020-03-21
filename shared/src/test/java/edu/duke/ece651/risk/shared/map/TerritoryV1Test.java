@@ -188,9 +188,9 @@ class TerritoryV1Test {
 
 
         //perform
-        rock.performMove();
-        dorne.performMove();
-        reach.performMove();
+        rock.performAttackMove();
+        dorne.performAttackMove();
+        reach.performAttackMove();
 
         //check result
         assertEquals(1, reach.getOwner());
@@ -202,8 +202,8 @@ class TerritoryV1Test {
         //non-deterministic
         AttackAction a21 = new AttackAction("the storm kingdom","principality of dorne",  2, 2);
         assertTrue(a21.perform(worldMap));
-        vale.performMove();
-        dorne.performMove();
+        vale.performAttackMove();
+        dorne.performAttackMove();
         assertEquals(2, storm.getOwner());
 
 
