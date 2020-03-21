@@ -63,7 +63,7 @@ public class TerritoryV1 extends Territory{
             Integer unitsNum = attackAct.get(a);
 
             //the start of the fight
-            sb.append("player A is attack player B's " + this.getName() + "\n");
+            sb.append("player " + a + " attacks player + "  + this.getOwner()  +"'s " + this.getName() + "\n");
             while (unitsNum > 0 && this.getUnitsNum() > 0) {
                 if (random(0, 20)) {
                     unitsNum--;
