@@ -56,9 +56,8 @@ public class TerritoryV1 extends Territory{
      * called at the end of round, to update all combat info
      * will return string to tell who wins
      */
-    public String performAttackMove() {
+    public List<AttackResult> performAttackMove() {
         //store the whole result of combat
-        StringBuilder sb = new StringBuilder();
         ArrayList<AttackResult> attackResults = new ArrayList<>();
         //iterate through list
         for (Integer a : attackAct.keySet()) {
@@ -71,7 +70,6 @@ public class TerritoryV1 extends Territory{
             String tName = this.getName();
             Boolean aRes = true;
             //the start of the fight
-            sb.append("player " + a + " attacks player + "  + this.getOwner()  +"'s " + this.getName() + "\n");
             while (unitsNum > 0 && this.getUnitsNum() > 0) {
                 if (random(0, 20)) {
                     unitsNum--;
@@ -86,14 +84,12 @@ public class TerritoryV1 extends Territory{
                 addNUnits(unitsNum);
             }
 
-            //add winner
+            //add win results
             if (unitsNum > 0) {
                 aRes = true;
-                sb.append("attacker wins\n");
             }
             else {
                 aRes = false;
-                sb.append("attacker fails\n");
             }
             AttackResult r = new AttackResult(attackerId, defenderID, tName, aRes);
             attackResults.add(r);
@@ -103,7 +99,7 @@ public class TerritoryV1 extends Territory{
         //clean up attackMap
         attackAct.clear();
 
-        return sb.toString();
+        return attackResults;
     }
 
 

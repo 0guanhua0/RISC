@@ -1,8 +1,11 @@
 package edu.duke.ece651.risk.shared.map;
 
+import edu.duke.ece651.risk.shared.action.AttackResult;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public abstract class Territory implements Serializable {
@@ -91,7 +94,7 @@ public abstract class Territory implements Serializable {
     /**
      * called at the end of round, to update all combat info
      */
-    public abstract String performAttackMove();
+    public abstract List<AttackResult> performAttackMove();
 
 
     /**
