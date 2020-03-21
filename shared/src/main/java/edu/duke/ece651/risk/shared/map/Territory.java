@@ -91,7 +91,7 @@ public abstract class Territory implements Serializable {
     /**
      * called at the end of round, to update all combat info
      */
-    public abstract void performAttackMove();
+    public abstract String performAttackMove();
 
 
     /**
