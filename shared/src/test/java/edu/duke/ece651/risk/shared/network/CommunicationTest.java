@@ -1,8 +1,10 @@
 package edu.duke.ece651.risk.shared.network;
 
+import edu.duke.ece651.risk.shared.ToClientMsg.RoundInfo;
 import edu.duke.ece651.risk.shared.action.Action;
 import edu.duke.ece651.risk.shared.action.MoveAction;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
+import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.risk.shared.player.Player;
 import edu.duke.ece651.risk.shared.player.PlayerV1;
@@ -16,6 +18,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static edu.duke.ece651.risk.shared.Constant.ACTION_ATTACK;
 import static edu.duke.ece651.risk.shared.Constant.ACTION_MOVE;
@@ -137,6 +140,57 @@ public class CommunicationTest {
         WorldMap<?> map1 = (WorldMap<?>) client.recv();
 
         assertEquals(map.getAtlas().size(), map1.getAtlas().size());
+    }
+
+    @Test
+    public void testSendRoundInfo() throws IOException, InterruptedException, ClassNotFoundException {
+        WorldMap<String> map = new MapDataBase<String>().getMap("a clash of kings");
+        String t1 = "the storm kingdom";
+        String t2 = "kingdom of the reach";
+        String t3 = "kingdom of the rock";
+        String t4 = "kingdom of mountain and vale";
+        String t5 = "kingdom of the north";
+        String t6 = "principality of dorne";
+        map.getAtlas().get(t1).setOwner(1);
+        map.getAtlas().get(t2).setOwner(1);
+        map.getAtlas().get(t3).setOwner(1);
+        map.getAtlas().get(t4).setOwner(2);
+        map.getAtlas().get(t5).setOwner(2);
+        map.getAtlas().get(t6).setOwner(2);
+
+        Map<Integer, String> idToColor = new HashMap<>();
+        idToColor.put(1, "green");
+        idToColor.put(2, "red");
+
+        RoundInfo roundInfo = new RoundInfo(1, map, idToColor);
+
+        new Thread(() -> {
+            try {
+                Socket socket = server.accept();
+                assertNotNull(socket);
+
+                ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+                objectOutputStream.writeObject(roundInfo);
+                objectOutputStream.flush();
+
+            }catch (IOException ignored){
+            }
+        }).start();
+        Thread.sleep(500);
+        Client client = new Client();
+        client.init("127.0.0.1", PORT);
+        RoundInfo round1 = (RoundInfo) client.recv();
+
+        WorldMap<String> recMap = round1.getMap();
+        assertEquals(1, recMap.getAtlas().get(t1).getOwner());
+        assertEquals(1, recMap.getAtlas().get(t2).getOwner());
+        assertEquals(1, recMap.getAtlas().get(t3).getOwner());
+
+        assertEquals(2, recMap.getAtlas().get(t4).getOwner());
+        assertEquals(2, recMap.getAtlas().get(t5).getOwner());
+        assertEquals(2, recMap.getAtlas().get(t6).getOwner());
+
+        assertEquals(map.getAtlas().size(), recMap.getAtlas().size());
     }
 
     @Test

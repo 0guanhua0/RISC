@@ -25,11 +25,9 @@ public class PlayerInput {
             InsPrompt.actInfo(player);
             //readAction
             String str = scanner.nextLine().toUpperCase();
-            System.out.println(str);
             //D: done
             switch (str) {
                 case "D":
-                    // TODO: here we may need a DoneAction to indicate is done
                     return null;
                 //M/A
                 case "A":

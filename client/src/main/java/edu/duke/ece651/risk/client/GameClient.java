@@ -5,6 +5,7 @@ import edu.duke.ece651.risk.shared.ToClientMsg.RoundInfo;
 import edu.duke.ece651.risk.shared.ToServerMsg.ServerSelect;
 import edu.duke.ece651.risk.shared.action.Action;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
+import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.risk.shared.network.Client;
 import org.json.JSONObject;
@@ -58,6 +59,8 @@ public class GameClient {
         }
         // initialize the player info
         initPlayer();
+        // server will send back a wait info
+        showMsg((String) client.recv());
     }
 
     /**
@@ -65,7 +68,6 @@ public class GameClient {
      */
     void playGame(Scanner scanner) throws IOException, ClassNotFoundException {
         selectTerritory(scanner);
-
         String result = "";
         while (!result.equals(GAME_OVER)){
             // receive the round info

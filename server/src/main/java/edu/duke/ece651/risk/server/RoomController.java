@@ -11,10 +11,7 @@ import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.risk.shared.player.Player;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static edu.duke.ece651.risk.shared.Constant.*;
 
@@ -61,8 +58,11 @@ public class RoomController {
         player.setColor(colorList.get(0));
         player.sendPlayerInfo();
 
+        player.send(String.format("Please wait other players to join th game(need %d, joined %d)", colorList.size(), players.size()));
+
         idToName = new HashMap<>();
         idToName.put(player.getId(), player.getColor());
+
     }
 
     /**
@@ -71,7 +71,8 @@ public class RoomController {
      * @param player new player
      * @throws IOException probably because of stream close
      */
-    void addPlayer(Player<String> player) throws IOException {
+    void addPlayer(Player<String> player) throws IOException, ClassNotFoundException {
+        // TODO: in evolution 2, we need to check whether this player is already in room
         players.add(player);
 
         List<String> colorList = map.getColorList();
@@ -83,13 +84,10 @@ public class RoomController {
 
         // check whether has enough player to start the game
         if (players.size() == colorList.size()){
-            // open a new thread to run the game
-            new Thread(()-> {
-                try {
-                    runGame();
-                } catch (IOException | ClassNotFoundException ignored) {
-                }
-            }).start();
+            player.send("You are the last player, game will start now.");
+            runGame();
+        }else {
+            player.send(String.format("Please wait other players to join th game(need %d, joined %d)", colorList.size(), players.size()));
         }
     }
 
@@ -99,7 +97,7 @@ public class RoomController {
         while(true){
             String mapName = (String) firstPlayer.recv();
             if (mapDataBase.containsMap(mapName)){
-                this.map = mapDataBase.getMap(mapName);
+                map = new MapDataBase<String>().getMap(mapName);
                 break;
             }else {
                 firstPlayer.send(SELECT_MAP_ERROR);
@@ -121,9 +119,10 @@ public class RoomController {
         // select territory
         for (Player<String> player : players) {
             //get the current list of occupied territories
-            ClientSelect clientSelect = new ClientSelect(totalUnits, terrPerUsr, map);
+            ClientSelect clientSelect = new ClientSelect(totalUnits, terrPerUsr, map.getName());
             //tell user to select client
             player.send(clientSelect);
+
             while (true){
                 ServerSelect serverSelect = (ServerSelect)player.recv();
                 //check if the selection is valid or not
@@ -134,6 +133,7 @@ public class RoomController {
                         territory.addNUnits(serverSelect.getUnitsNum(terrName));
                         player.addTerritory(territory);
                     }
+                    player.send(SUCCESSFUL);
                     break;
                 }else{
                     player.send(SELECT_TERR_ERROR);
@@ -148,6 +148,7 @@ public class RoomController {
             // 1. latest WorldMap
             // 2. mapping between id and color
             // 3. round number
+
             player.send(new RoundInfo(roundNum, map, idToName));
             while (true){
                 Object recvRes = player.recv();
@@ -273,6 +274,7 @@ public class RoomController {
 
     void runGame() throws IOException, ClassNotFoundException {
         selectTerritory();
+
         int roundNum = 1;
         while(winnerID < 0) {
             playSingleRound(roundNum);

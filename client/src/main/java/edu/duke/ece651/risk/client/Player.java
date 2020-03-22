@@ -14,7 +14,7 @@ public class Player<T>{
     T playerColor;
 
     public Player(){
-        playerId = 0;
+        playerId = -1;
         playerName = "";
     }
 

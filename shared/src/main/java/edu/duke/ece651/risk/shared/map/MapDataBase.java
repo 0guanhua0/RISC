@@ -66,6 +66,7 @@ public class MapDataBase<T extends Serializable> implements Serializable{
         atlas1.put(t7,s7);
         List<String> colorList = new ArrayList<>(Arrays.asList("red","blue"));
         WorldMap<T> worldMap1 = new WorldMap(atlas1,colorList);
+        worldMap1.setName(name1);
         mapHub.put(name1,worldMap1);
 
 
@@ -77,6 +78,7 @@ public class MapDataBase<T extends Serializable> implements Serializable{
         atlas2.put(testName2, new HashSet<>(){{ add(testName1);add(testName3);}});
         atlas2.put(testName3, new HashSet<>(){{ add(testName2); }});
         WorldMap<T> worldMap2 = new WorldMap(atlas2,Arrays.asList("red","blue","black"));
+        worldMap2.setName("test");
         mapHub.put("test",worldMap2);
 
     }

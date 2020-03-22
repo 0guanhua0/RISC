@@ -40,7 +40,7 @@ public class GameClientTest {
     static ClientSelect clientSelect = new ClientSelect(
             10,
             2,
-            new MapDataBase<String>().getMap(mapName)
+            mapName
     );
     static Map<Integer, String> idToColor = new HashMap<>();
 

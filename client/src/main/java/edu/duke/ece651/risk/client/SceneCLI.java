@@ -29,6 +29,7 @@ class SceneCLI implements Scene {
     public static void showMap(WorldMap<String> map, Map<Integer, String> idToColor) {
         // group the territory by owner id
         Map<Integer, List<Territory>> playerTerritory = new HashMap<>();
+        playerTerritory.put(0, new ArrayList<>());
         // initialize the territory group
         for (Integer id : idToColor.keySet()){
             playerTerritory.put(id, new ArrayList<>());
@@ -39,7 +40,11 @@ class SceneCLI implements Scene {
         }
         // print out
         for (Map.Entry<Integer, List<Territory>> entry : playerTerritory.entrySet()){
-            System.out.println(String.format("%s player:", idToColor.get(entry.getKey())));
+            if (entry.getKey() != 0){
+                System.out.println(String.format("%s player:", idToColor.get(entry.getKey())));
+            }else {
+                System.out.println("free territory:");
+            }
             System.out.println("--".repeat(8));
             for (Territory t : entry.getValue()){
                 showTerritory(t);
