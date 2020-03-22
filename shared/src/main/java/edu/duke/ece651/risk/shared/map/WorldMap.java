@@ -16,6 +16,7 @@ public class WorldMap<T extends Serializable> implements Serializable {
     String name;
     Map<String, Territory> atlas;
     List<T> colorList;
+
     //key is the set of names of territory, value is there are currently selected or not
     Map<Set<String>, Boolean> groups;
 
@@ -113,6 +114,18 @@ public class WorldMap<T extends Serializable> implements Serializable {
     public boolean hasFreeTerritory(String input) {
         String name = input.toLowerCase();
         return atlas.containsKey(name) && atlas.get(name).isFree();
+    }
+
+    public Map<Set<String>, Boolean> getGroups() {
+        return groups;
+    }
+
+
+    public Boolean hasFreeGroup(Set<String> names){
+        return this.groups.containsKey(names) && (false==this.groups.get(names));
+    }
+    public void useGroup(Set<String> name){
+        this.groups.put(name,true);
     }
 
 }

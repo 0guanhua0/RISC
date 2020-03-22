@@ -215,6 +215,16 @@ public class GameClient {
 
             System.out.println("Which group of territories you want to choose?");
             int index = readValidInt(scanner, 1, terrGroup.size()) - 1;
+
+            //connect with server to check if the this group is available
+            client.send(terrGroup.get(index));
+            String response = (String)client.recv();
+            if (!response.equals(SUCCESSFUL)){
+                System.out.println(SELECT_GROUP_ERROR);
+                continue;
+            }
+
+            //confirm choosing this groups and move on
             List<String> groupChosen = new ArrayList<>(terrGroup.get(index));
             // initialize the result
             for (String name : groupChosen){
