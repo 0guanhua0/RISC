@@ -1,5 +1,6 @@
 package edu.duke.ece651.risk.shared.ToClientMsg;
 
+import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 
@@ -17,9 +18,10 @@ public class ClientSelect implements Serializable {
     WorldMap<String> map;
     List<Set<String>> groups;
 
-    public ClientSelect(int unitsTotal, int terrPerUser, WorldMap<String> map){
+    public ClientSelect(int unitsTotal, int terrPerUser, String mapName){
         this.unitsTotal = unitsTotal;
-        this.map = map;
+        this.map = new MapDataBase<String>().getMap(mapName);
+//        this.map = map;
         generateGroups(terrPerUser);
     }
 

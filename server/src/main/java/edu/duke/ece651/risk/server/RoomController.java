@@ -106,7 +106,7 @@ public class RoomController {
         firstPlayer.send(SUCCESSFUL);
     }
 
-    //TODO maybe changing this method to a multi-thread version in the future?
+    // TODO maybe changing this method to a multi-thread version in the future?
     void selectTerritory() throws IOException, IllegalArgumentException, ClassNotFoundException {
         int terriNum = map.getTerriNum();
         int playerNum = players.size();
@@ -143,13 +143,13 @@ public class RoomController {
     }
 
     void playSingleRound(int roundNum) throws IOException, ClassNotFoundException {
+        RoundInfo roundInfo = new RoundInfo(roundNum, map, idToName);
         for (Player<String> player : players) {
             // tell client the round info
             // 1. latest WorldMap
             // 2. mapping between id and color
             // 3. round number
-
-            player.send(new RoundInfo(roundNum, map, idToName));
+            player.send(roundInfo);
             while (true){
                 Object recvRes = player.recv();
                 if (recvRes instanceof Action){

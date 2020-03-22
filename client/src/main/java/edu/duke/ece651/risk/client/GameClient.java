@@ -103,7 +103,6 @@ public class GameClient {
      * End game, probable only need to receive and print out the game result.
      */
     void endGame() throws IOException, ClassNotFoundException {
-        // TODO: receive & print the game result
         showMsg((String) client.recv());
     }
 
