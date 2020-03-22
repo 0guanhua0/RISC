@@ -21,10 +21,20 @@ class WorldMapTest {
             put("b", new HashSet<>());
             put("c", new HashSet<>());
         }};
+        Map<Set<String>,Boolean> groups = new HashMap<>(){{
+            put(new HashSet<>(Arrays.asList("a")),false);
+            put(new HashSet<>(Arrays.asList("b")),false);
+            put(new HashSet<>(Arrays.asList("c")),false);
+        }};
+
         List<String> colorList = new ArrayList<>(Arrays.asList("red","blue"));
-        assertThrows(IllegalArgumentException.class,()->{new WorldMap<>(map,colorList);});
+        assertThrows(IllegalArgumentException.class,()->{new WorldMap<>(map,colorList,groups);});
+
         List<String> colorList2 = new ArrayList<>(Arrays.asList("red","blue","pink","yellow"));
-        assertThrows(IllegalArgumentException.class,()->{new WorldMap<>(map,colorList2);});
+        assertThrows(IllegalArgumentException.class,()->{new WorldMap<>(map,colorList2,groups);});
+
+
+
 
 
         MapDataBase<String> mapDataBase = new MapDataBase<>();
