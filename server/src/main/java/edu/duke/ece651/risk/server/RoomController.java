@@ -62,7 +62,6 @@ public class RoomController {
 
         idToName = new HashMap<>();
         idToName.put(player.getId(), player.getColor());
-
     }
 
     /**
@@ -85,7 +84,13 @@ public class RoomController {
         // check whether has enough player to start the game
         if (players.size() == colorList.size()){
             player.send("You are the last player, game will start now.");
-            runGame();
+            new Thread(() -> {
+                try {
+                    runGame();
+                } catch (IOException | ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }).start();
         }else {
             player.send(String.format("Please wait other players to join th game(need %d, joined %d)", colorList.size(), players.size()));
         }
@@ -264,7 +269,6 @@ public class RoomController {
     }
 
     void endGame() throws IOException {
-        System.out.println("Winner ID: " + winnerID);
         if (!idToName.containsKey(winnerID)){
             throw new IllegalArgumentException("Player doesn't exist.");
         }
@@ -282,6 +286,10 @@ public class RoomController {
         for (Territory territory : map.getAtlas().values()){
             territory.addNUnits(1);
         }
+    }
+
+    boolean hasFinished(){
+        return winnerID != -1;
     }
 
     void runGame() throws IOException, ClassNotFoundException {

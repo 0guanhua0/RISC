@@ -1,5 +1,6 @@
 package edu.duke.ece651.risk.client;
 
+import edu.duke.ece651.risk.shared.Room;
 import edu.duke.ece651.risk.shared.ToClientMsg.ClientSelect;
 import edu.duke.ece651.risk.shared.ToClientMsg.RoundInfo;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
@@ -72,7 +73,12 @@ public class GameClientTest {
         map.getTerritory(t6).setOwner(3);
 
         // mock data to be sent
-        List<Integer> fakeRooms = new ArrayList<>(Arrays.asList(0, 1, 2, 3));
+        List<Room> fakeRooms = new ArrayList<>(Arrays.asList(
+                new Room(0, "room0"),
+                new Room(1, "room1"),
+                new Room(2, "room2"),
+                new Room(3, "room3")
+                ));
         idToColor.put(1, "Green");
         idToColor.put(2, "Blue");
         idToColor.put(3, "Red");
@@ -198,13 +204,26 @@ public class GameClientTest {
     }
     
     @Test
-    public void testEndGame() { 
-        
+    public void testEndGame() throws IOException, ClassNotFoundException {
+        String win = "you win";
+        Client client = mock(Client.class);
+        when(client.recv())
+                .thenReturn(win);
+
+        GameClient gameClient = new GameClient();
+        gameClient.client = client;
+
+        gameClient.endGame();
+        assertEquals(win + "\n", outContent.toString());
     }
 
     @Test
     public void testChooseRoom() throws IOException, ClassNotFoundException {
-        List<Integer> rooms = new ArrayList<>(Arrays.asList(1, 2, 3));
+        List<Room> rooms = new ArrayList<>(Arrays.asList(
+                new Room(1, "room1"),
+                new Room(2, "room2"),
+                new Room(3, "room3")
+        ));
         Client client = mock(Client.class);
         when(client.recv())
                 .thenReturn(rooms)
@@ -215,9 +234,10 @@ public class GameClientTest {
         gameClient.client = client;
         // a --- invalid choice
         // j, 10 --- valid action choice but invalid room number
+        // j, a --- valid action choice but invalid room number
         // c --- valid choice but client will receive a error(for testing purpose)
         // j, 1 --- valid action choice and valid room number
-        gameClient.chooseRoom(new Scanner("a\nj\n10\nc\nj\n1\n"));
+        gameClient.chooseRoom(new Scanner("a\nj\n10\nj\na\nc\nj\n1\n"));
     }
 
     @Test
