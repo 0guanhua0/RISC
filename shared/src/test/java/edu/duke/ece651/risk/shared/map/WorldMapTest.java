@@ -2,6 +2,7 @@ package edu.duke.ece651.risk.shared.map;
 
 import org.junit.jupiter.api.Test;
 
+import java.io.Serializable;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -102,4 +103,32 @@ class WorldMapTest {
         assertTrue(myMap.colorList.contains("blue"));
 
     }
+
+    @Test
+    void testGroup() {
+        MapDataBase<Serializable> mapDataBase = new MapDataBase<>();
+        WorldMap<Serializable> worldMap = mapDataBase.getMap("a clash of kings");
+        assertTrue(worldMap.hasFreeGroup(new HashSet<String>(Arrays.asList(
+                "kingdom of mountain and vale",
+                "kingdom of the north",
+                "the storm kingdom"
+        ))));
+        assertFalse(worldMap.hasFreeGroup(new HashSet<String>(Arrays.asList(
+                "kingdom of mountain and vale",
+                "kingdom of the north",
+                "he storm kingdom"
+        ))));
+        worldMap.useGroup(new HashSet<String>(Arrays.asList(
+                "kingdom of mountain and vale",
+                "kingdom of the north",
+                "the storm kingdom"
+        )));
+        assertFalse(worldMap.hasFreeGroup(new HashSet<String>(Arrays.asList(
+                "kingdom of mountain and vale",
+                "kingdom of the north",
+                "the storm kingdom"
+        ))));
+    }
+
+
 }

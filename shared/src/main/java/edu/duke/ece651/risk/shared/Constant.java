@@ -21,6 +21,7 @@ public class Constant {
     public static final String SELECT_MAP_ERROR = "The map name you select is invalid";
     public static final String SELECT_TERR_ERROR = "The territories you select is invalid";
 
+
     public static final String INVALID_ACTION = "Your action is invalid";
     public static final String YOU_WINS = "Congratulation, you win!!!";
 

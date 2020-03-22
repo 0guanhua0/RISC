@@ -221,6 +221,7 @@ public class GameClient {
             String response = (String)client.recv();
             if (!response.equals(SUCCESSFUL)){
                 System.out.println(SELECT_GROUP_ERROR);
+                System.out.println();
                 continue;
             }
 
