@@ -30,7 +30,8 @@ public class RoundInfo implements Serializable {
     public int getRoundNum() {
         return roundNum;
     }
-    //TODO have a better way to deep copy a map
+
+    //TODO have a better way to deep copy a map and put it into WorldMap class
     void copyMap(WorldMap<String> oldMap){
         this.map = new MapDataBase<String>().getMap(oldMap.getName());
         for (Territory t : oldMap.getAtlas().values()){

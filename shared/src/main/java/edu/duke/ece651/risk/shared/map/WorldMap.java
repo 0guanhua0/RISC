@@ -17,29 +17,31 @@ public class WorldMap<T extends Serializable> implements Serializable {
     Map<String, Territory> atlas;
     List<T> colorList;
     //key is the set of names of territory, value is there are currently selected or not
-    Map<Set<String>,Boolean> groups;
-    public WorldMap(){
+    Map<Set<String>, Boolean> groups;
+
+    public WorldMap() {
         this.atlas = new HashMap<>();
         this.colorList = new ArrayList<>();
     }
-    public WorldMap(Map<String,Set<String>> adjaList, List<T> colorList,Map<Set<String>,Boolean> groups) throws IllegalArgumentException {
+
+    public WorldMap(Map<String, Set<String>> adjaList, List<T> colorList, Map<Set<String>, Boolean> groups) throws IllegalArgumentException {
 
         //check legality of groups
         Set<String> allName = new HashSet<>();
         for (Set<String> nameSet : groups.keySet()) {
-            for (String  name : nameSet) {
-                assert (adjaList.containsKey(name)||!allName.contains(name));
+            for (String name : nameSet) {
+                assert (adjaList.containsKey(name) || !allName.contains(name));
                 allName.add(name);
             }
         }
-        assert (allName.size()==adjaList.size());
+        assert (allName.size() == adjaList.size());
         this.groups = groups;
 
         int playerNum = colorList.size();
         int terriNum = adjaList.size();
-        if (playerNum>terriNum){
+        if (playerNum > terriNum) {
             throw new IllegalArgumentException("The number of players can't be larger than the number of territories");
-        }else if(0!=terriNum%playerNum){
+        } else if (0 != terriNum % playerNum) {
             throw new IllegalArgumentException("This is unfair to the last player!");
         }
 
@@ -49,7 +51,7 @@ public class WorldMap<T extends Serializable> implements Serializable {
         for (Map.Entry<String, Set<String>> entry : adjaList.entrySet()) {
             String terriName = entry.getKey();
             Territory territory = new TerritoryV1(terriName);
-            atlas.put(terriName,territory);
+            atlas.put(terriName, territory);
         }
         //connect them to each other
         for (Map.Entry<String, Set<String>> entry : adjaList.entrySet()) {
@@ -64,8 +66,8 @@ public class WorldMap<T extends Serializable> implements Serializable {
         }
 
 
-
     }
+
     public String getName() {
         return name;
     }
@@ -74,40 +76,44 @@ public class WorldMap<T extends Serializable> implements Serializable {
         this.name = name;
     }
 
-    public void setAtlas(Map<String, Territory> map){
+    public void setAtlas(Map<String, Territory> map) {
         this.atlas = map;
     }
+
     public void setColorList(List<T> colorList) {
         this.colorList = colorList;
     }
+
     public List<T> getColorList() {
         return colorList;
     }
+
     public Map<String, Territory> getAtlas() {
         return atlas;
     }
 
-    public boolean hasTerritory(String input){
+    public boolean hasTerritory(String input) {
         String name = input.toLowerCase();
         return atlas.containsKey(name);
     }
 
-    public Territory getTerritory(String input){
-        if (!hasTerritory(input)){
+    public Territory getTerritory(String input) {
+        if (!hasTerritory(input)) {
             throw new IllegalArgumentException("No such territory inside the map");
         }
         String name = input.toLowerCase();
         return atlas.get(name);
     }
 
-    public int getTerriNum(){
+    public int getTerriNum() {
         return atlas.size();
     }
+
     //if there is no territory with such name or this territory is currently occupied,return false
-    public boolean hasFreeTerritory(String input){
+    public boolean hasFreeTerritory(String input) {
         String name = input.toLowerCase();
         return atlas.containsKey(name) && atlas.get(name).isFree();
     }
 
-    // TODO: have better implement equals here
 }
+
