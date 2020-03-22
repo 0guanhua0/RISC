@@ -1,0 +1,4 @@
+{
+    "attackSeed": 12,
+    "defendSeed": 16
+}

@@ -72,10 +72,10 @@ class MoveActionTest {
         MoveAction a4 = new MoveAction("kingdom of the rock", "kingdom of the reach", 1, 1);
         assert (!a4.isValid(worldMap));
 
-        //test invalid move  units
-        MoveAction a5 = new MoveAction("kingdom of the north", "kingdom of mountain and vale", 1, 2);
+        //test invalid move units(large than the units src territory has)
+        MoveAction a5 = new MoveAction("kingdom of the north", "kingdom of mountain and vale", 1, 3);
         assert (!a5.isValid(worldMap));
-        MoveAction a51 = new MoveAction("kingdom of the rock", "kingdom of mountain and vale", 1, 1);
+        MoveAction a51 = new MoveAction("kingdom of the rock", "kingdom of mountain and vale", 1, 2);
         assert (!a51.isValid(worldMap));
 
         //test move between units that this player has no control over

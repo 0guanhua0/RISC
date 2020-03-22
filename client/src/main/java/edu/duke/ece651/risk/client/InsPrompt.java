@@ -26,8 +26,11 @@ class InsPrompt {
     }
 
     public static void insShowMaps(Map<String, WorldMap<String>> maps){
+        int cnt = 1;
         for (String mapName : maps.keySet()){
+            System.out.println(String.format("%d. %s", cnt, mapName));
             SceneCLI.showMap(maps.get(mapName));
+            cnt++;
         }
     }
 
@@ -42,8 +45,7 @@ class InsPrompt {
         System.out.println( "You are the " + player.getPlayerColor() + " player, what would you like to do?\n" +
                 " (M)ove\n" +
                 " (A)ttack\n" +
-                " (D)one\n" +
-                " (Q)uit");
+                " (D)one");
     }
 
 

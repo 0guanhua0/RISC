@@ -19,10 +19,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 import static edu.duke.ece651.risk.shared.Constant.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -43,12 +40,12 @@ public class GameClientTest {
     static ClientSelect clientSelect = new ClientSelect(
             10,
             2,
-            new MapDataBase<String>().getMap(mapName)
+            mapName
     );
-    static List<Player<String>> players = new ArrayList<>();
+    static Map<Integer, String> idToColor = new HashMap<>();
 
     @BeforeAll
-    static void beforeAll() throws IOException {
+    static void beforeAll() {
         String t1 = "the storm kingdom";
         String t2 = "kingdom of the reach";
         String t3 = "kingdom of the rock";
@@ -71,9 +68,9 @@ public class GameClientTest {
 
         // mock data to be sent
         List<Integer> fakeRooms = new ArrayList<>(Arrays.asList(0, 1, 2, 3));
-        players.add(new PlayerV1<>("Green", 1));
-        players.add(new PlayerV1<>("Blue", 2));
-        players.add(new PlayerV1<>("Red", 3));
+        idToColor.put(1, "Green");
+        idToColor.put(2, "Blue");
+        idToColor.put(3, "Red");
 
         outContent = new ByteArrayOutputStream();
         // setup "game server" at hte beginning
@@ -104,6 +101,8 @@ public class GameClientTest {
                     }
                     // 4) send initial message
                     player.sendPlayerInfo();
+                    // 5) send wait info
+                    player.send("Please wait");
 
                     /* =============== stage 2(choose territory) =============== */
                     player.send(clientSelect);
@@ -111,7 +110,7 @@ public class GameClientTest {
                     player.send(SUCCESSFUL);
 
                     /* =============== stage 3(playing the game) =============== */
-                    player.send(new RoundInfo(map, players));
+                    player.send(new RoundInfo(1, map, idToColor));
                     // interact with player to ask all actions
                     while (true){
                         Object object = player.recv(); // receive the action list
@@ -123,7 +122,7 @@ public class GameClientTest {
                             player.send(SUCCESSFUL);
                         }
                     }
-                    /// perform action and send out the result of each attack action
+                    // perform action and send out the result of each attack action
                     player.send("attack 1");
                     player.send(ROUND_OVER); // next round
 
@@ -171,7 +170,7 @@ public class GameClientTest {
         when(client.recv())
                 .thenReturn(clientSelect) // select territory & assign units
                 .thenReturn(SUCCESSFUL) // selection valid
-                .thenReturn(new RoundInfo(map, players))        // round info, map
+                .thenReturn(new RoundInfo(1, map, idToColor))  // round info, map
                 .thenReturn(SUCCESSFUL) // action1 valid
                 .thenReturn(SUCCESSFUL) // action2 valid
                 .thenReturn("attack 1") // send out the attack result
@@ -282,14 +281,6 @@ public class GameClientTest {
         gameClient.receiveAttackResult();
 
         verify(client, times(5)).recv();
-    }
-    
-    @Test
-    public void testReadConfigFile() throws IOException {
-        GameClient gameClient = new GameClient();
-        JSONObject jsonObject = new JSONObject(gameClient.readConfigFile());
-        assertEquals("localhost", jsonObject.getString("host"));
-        assertEquals(12345, jsonObject.getInt("port"));
     }
     
     @Test

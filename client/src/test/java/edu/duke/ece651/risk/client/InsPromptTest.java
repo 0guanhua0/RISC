@@ -30,8 +30,7 @@ class InsPromptTest {
         String str1 = "You are the Green player, what would you like to do?\n" +
                 " (M)ove\n" +
                 " (A)ttack\n" +
-                " (D)one\n" +
-                " (Q)uit\n";
+                " (D)one\n";
         String str2 = "A player:\n" +
                 "-------------\n";
         String str3 = "input source territory\n";

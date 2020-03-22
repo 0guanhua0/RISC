@@ -1,9 +1,5 @@
 package edu.duke.ece651.risk.shared.map;
 
-import com.google.gson.Gson;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.io.Serializable;
 import java.util.*;
 
@@ -17,13 +13,14 @@ import java.util.*;
 
 //TODO take generic and serializable into consideration
 public class WorldMap<T extends Serializable> implements Serializable {
+    String name;
     Map<String, Territory> atlas;
     List<T> colorList;
     public WorldMap(){
         this.atlas = new HashMap<>();
         this.colorList = new ArrayList<>();
     }
-    public WorldMap(Map<String,Set<String>> adjaList,List<T> colorList){
+    public WorldMap(Map<String,Set<String>> adjaList, List<T> colorList){
         int playerNum = colorList.size();
         int terriNum = adjaList.size();
         if (playerNum>terriNum){
@@ -52,6 +49,15 @@ public class WorldMap<T extends Serializable> implements Serializable {
             curTerri.setNeigh(neigh);
         }
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public void setAtlas(Map<String, Territory> map){
         this.atlas = map;
     }
