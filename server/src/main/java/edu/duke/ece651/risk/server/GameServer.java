@@ -82,9 +82,6 @@ public class GameServer {
      * @return room number/ID, e.g. -1(or any negative number) stands for a new room, > 0 stands for an existing room
      */
     int askValidRoomNum(Player<?> player) throws IOException {
-        // TODO: send out the room list info(for now just send the id)
-//        List<Integer> roomInfo = new ArrayList<>(rooms.size());
-//        roomInfo.addAll(rooms.keySet());
         player.send(getRoomList());
 
         while (true){

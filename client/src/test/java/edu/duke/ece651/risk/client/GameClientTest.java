@@ -226,9 +226,10 @@ public class GameClientTest {
         gameClient.client = client;
         // a --- invalid choice
         // j, 10 --- valid action choice but invalid room number
+        // j, a --- valid action choice but invalid room number
         // c --- valid choice but client will receive a error(for testing purpose)
         // j, 1 --- valid action choice and valid room number
-        gameClient.chooseRoom(new Scanner("a\nj\n10\nc\nj\n1\n"));
+        gameClient.chooseRoom(new Scanner("a\nj\n10\nj\na\nc\nj\n1\n"));
     }
 
     @Test
