@@ -12,6 +12,8 @@ import edu.duke.ece651.risk.shared.player.Player;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
 
 import static edu.duke.ece651.risk.shared.Constant.*;
 
@@ -70,7 +72,7 @@ public class RoomController {
      * @param player new player
      * @throws IOException probably because of stream close
      */
-    void addPlayer(Player<String> player) throws IOException, ClassNotFoundException {
+    void addPlayer(Player<String> player) throws IOException {
         // TODO: in evolution 2, we need to check whether this player is already in room
         players.add(player);
 
@@ -87,8 +89,7 @@ public class RoomController {
             new Thread(() -> {
                 try {
                     runGame();
-                } catch (IOException | ClassNotFoundException e) {
-                    e.printStackTrace();
+                } catch (Exception ignored) {
                 }
             }).start();
         }else {
@@ -147,33 +148,17 @@ public class RoomController {
         }
     }
 
-    void playSingleRound(int roundNum) throws IOException, ClassNotFoundException {
+    void playSingleRound(int roundNum) throws IOException{
         RoundInfo roundInfo = new RoundInfo(roundNum, map, idToName);
+        CyclicBarrier barrier = new CyclicBarrier(players.size() + 1); // + 1 for main thread
+
         for (Player<String> player : players) {
-            // tell client the round info
-            // 1. latest WorldMap
-            // 2. mapping between id and color
-            // 3. round number
-            player.send(roundInfo);
-            while (true){
-                Object recvRes = player.recv();
-                if (recvRes instanceof Action){
-                    Action action = (Action) recvRes;
-                    //act accordingly based on whether the input actions are valid or not
-                    if (action.isValid(map)){
-                        //if valid, update the state of the world
-                        action.perform(map);
-                        player.send(SUCCESSFUL);
-                    }else{
-                        //otherwise ask user to resend the information
-                        player.send(INVALID_ACTION);
-                    }
-                }else if (recvRes instanceof String && recvRes.equals(ACTION_DONE)){
-                    break;
-                }else {
-                    player.send(INVALID_ACTION);
-                }
-            }
+            new PlayerThread(player, roundInfo, map, barrier).start();
+        }
+
+        try {
+            barrier.await();
+        }catch (InterruptedException | BrokenBarrierException ignored) {
         }
         // resolve all combats and send out the result
         resolveCombats();

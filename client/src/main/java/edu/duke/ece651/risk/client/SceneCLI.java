@@ -38,7 +38,7 @@ class SceneCLI implements Scene {
         for (Territory territory : map.getAtlas().values()){
             playerTerritory.get(territory.getOwner()).add(territory);
         }
-        // print out
+
         for (Map.Entry<Integer, List<Territory>> entry : playerTerritory.entrySet()){
             if (entry.getKey() != 0){
                 System.out.println(String.format("%s player:", idToColor.get(entry.getKey())));

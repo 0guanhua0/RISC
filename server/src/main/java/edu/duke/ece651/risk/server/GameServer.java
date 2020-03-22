@@ -65,14 +65,16 @@ public class GameServer {
         player.send(helloInfo);
 
         int choice = askValidRoomNum(player);
-        if (choice < 0){
-            // create a new room
-            int roomID = rooms.size();
-            //TODO here I create a MapDataBase object for every room, a more efficient approach would be using deep copy to build a new object of WorldMap after this user choose the WorldMap she wants
-            rooms.put(roomID, new RoomController(roomID, player, new MapDataBase<>()));
-        }else {
-            // join an existing room
-            rooms.get(choice).addPlayer(player);
+        synchronized (this) {
+            if (choice < 0){
+                // create a new room
+                int roomID = rooms.size();
+                //TODO here I create a MapDataBase object for every room, a more efficient approach would be using deep copy to build a new object of WorldMap after this user choose the WorldMap she wants
+                rooms.put(roomID, new RoomController(roomID, player, new MapDataBase<>()));
+            }else {
+                // join an existing room
+                rooms.get(choice).addPlayer(player);
+            }
         }
     }
 

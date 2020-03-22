@@ -93,6 +93,8 @@ public class GameClient {
 
             // action == null, represent done
             client.send(ACTION_DONE);
+            showMsg("Please wait other players to finish their actions.");
+            showMsg("Attack results: ");
             // after submit all actions, wait for the server to publish attack result
             receiveAttackResult();
             // receive game result in the end of each round
