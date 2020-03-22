@@ -55,6 +55,5 @@ public class ClientSelect implements Serializable {
             groups.get(i % groupCnt).add(name);
             i++;
         }
-        System.out.println(groups);
     }
 }

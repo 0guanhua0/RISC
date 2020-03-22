@@ -113,7 +113,6 @@ public abstract class Player<T> {
         jsonObject.put(PLAYER_ID, id);
         jsonObject.put(PLAYER_COLOR, color);
         send(jsonObject.toString());
-        System.out.println(jsonObject.toString());
     }
 
     public int getTerrNum(){

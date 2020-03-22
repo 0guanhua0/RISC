@@ -1,5 +1,6 @@
 package edu.duke.ece651.risk.client;
 
+import edu.duke.ece651.risk.shared.Room;
 import edu.duke.ece651.risk.shared.ToClientMsg.ClientSelect;
 import edu.duke.ece651.risk.shared.ToClientMsg.RoundInfo;
 import edu.duke.ece651.risk.shared.ToServerMsg.ServerSelect;
@@ -125,7 +126,7 @@ public class GameClient {
      */
     boolean chooseRoom(Scanner scanner) throws IOException, ClassNotFoundException {
         boolean isNewRoom;
-        List<Integer> roomInfo = (List<Integer>) client.recv();
+        List<Room> roomInfo = (List<Room>) client.recv();
         while (true){
             insAskRoomOption();
             String roomChoice = scanner.nextLine().toLowerCase();
@@ -135,7 +136,7 @@ public class GameClient {
                 insShowRooms(roomInfo);
                 // ask for room number
                 String roomNum = scanner.nextLine();
-                if (Format.isNumeric(roomNum) && roomInfo.contains(Integer.parseInt(roomNum))){
+                if (isValidRoom(roomInfo, roomNum)){
                     client.send(roomNum);
                 }else {
                     insInvalidOption();
@@ -153,6 +154,19 @@ public class GameClient {
                 return isNewRoom;
             }
         }
+    }
+
+    boolean isValidRoom(List<Room> rooms, String roomNum){
+        if (!Format.isNumeric(roomNum)){
+            return false;
+        }
+        int id = Integer.parseInt(roomNum);
+        for (Room room : rooms){
+            if (room.getRoomID() == id){
+                return true;
+            }
+        }
+        return false;
     }
 
     void chooseMap(Scanner scanner) throws IOException, ClassNotFoundException {
