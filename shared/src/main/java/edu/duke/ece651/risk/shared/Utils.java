@@ -16,20 +16,20 @@ public class Utils {
         stream.close();
         return contentBuilder.toString();
     }
-    //TODO test the correctness of this method
-    public static <T extends Serializable> T clone(T obj) throws IOException, ClassNotFoundException {
-        T cloneObj = null;
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ObjectOutputStream obs = new ObjectOutputStream(out);
-        obs.writeObject(obj);
-        obs.close();
-
-        ByteArrayInputStream ios = new ByteArrayInputStream(out.toByteArray());
-        ObjectInputStream ois = new ObjectInputStream(ios);
-
-        cloneObj = (T) ois.readObject();
-        ois.close();
-
-        return cloneObj;
-    }
+//    //TODO test the correctness of this method
+//    public static <T extends Serializable> T clone(T obj) throws IOException, ClassNotFoundException {
+//        T cloneObj = null;
+//        ByteArrayOutputStream out = new ByteArrayOutputStream();
+//        ObjectOutputStream obs = new ObjectOutputStream(out);
+//        obs.writeObject(obj);
+//        obs.close();
+//
+//        ByteArrayInputStream ios = new ByteArrayInputStream(out.toByteArray());
+//        ObjectInputStream ois = new ObjectInputStream(ios);
+//
+//        cloneObj = (T) ois.readObject();
+//        ois.close();
+//
+//        return cloneObj;
+//    }
 }
