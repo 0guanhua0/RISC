@@ -29,7 +29,7 @@ class WorldMapTest {
 
         MapDataBase<String> mapDataBase = new MapDataBase<>();
         WorldMap<String> worldMap = mapDataBase.getMap("A clash of Kings");
-        //test getTerritory
+        //test getTerritoryName
         Territory territory1 = worldMap.getTerritory(t1);
         Territory territory2 = worldMap.getTerritory(t2);
         Territory territory3 = worldMap.getTerritory(t3);

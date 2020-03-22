@@ -1,10 +1,12 @@
 package edu.duke.ece651.risk.shared.map;
 
+import edu.duke.ece651.risk.shared.action.Army;
 import edu.duke.ece651.risk.shared.action.AttackResult;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.Random;
 
 /**
  * @program: risk-Map
@@ -31,7 +33,7 @@ public class TerritoryV1 extends Territory{
         }
     }
     public void lossNUnits(int num) throws IllegalArgumentException{
-        if (num>units.size()||num<0){
+        if (num > units.size() || num < 0){
             throw new IllegalArgumentException("Invalid input number");
         }
         for (int i = 0; i < num; i++) {
@@ -43,79 +45,54 @@ public class TerritoryV1 extends Territory{
         return units.size();
     }
 
-    public void addAttack(int playerId, int unitNum) {
+    public void addAttack(int playerId, Army army) {
         if (attackAct.containsKey(playerId)) {
-            int newNum = attackAct.get(playerId) + unitNum;
-            attackAct.replace(playerId, newNum);
+            attackAct.get(playerId).add(army);
         } else {
-            attackAct.put(playerId, unitNum);
+            attackAct.put(playerId, new ArrayList<>(Collections.singletonList(army)));
         }
     }
 
     /**
-     * called at the end of round, to update all combat info
-     * will return string to tell who wins
+     * This function will resolve one combat.
+     * @param attackerID attacker id
+     * @param armies all the armies the attacker send(from different territories)
+     * @param diceAttack 20 side dice for attacker
+     * @param diceDefend 20 side dice for defender
+     * @return combat result
      */
-    public List<AttackResult> performAttackMove() {
-        //store the whole result of combat
-        ArrayList<AttackResult> attackResults = new ArrayList<>();
-        //iterate through list
-        for (Integer a : attackAct.keySet()) {
-            //perform attack action
-            Integer unitsNum = attackAct.get(a);
+    AttackResult resolveCombat(int attackerID, List<Army> armies, Random diceAttack, Random diceDefend){
+        // the attack info
+        int defenderID = getOwner();
+        List<String> srcNames = new ArrayList<>();
+        int attackUnits = 0;
+        String destName = getName();
 
-            //store attack result info
-            int attackerId = a;
-            int defenderID = this.getOwner();
-            String tName = this.getName();
-            Boolean aRes = true;
-            //the start of the fight
-            while (unitsNum > 0 && this.getUnitsNum() > 0) {
-                if (random(0, 20)) {
-                    unitsNum--;
-                } else {
-                    this.lossNUnits(1);
-                }
-            }
-
-            //update the owner only if attacker has remain
-            if (unitsNum > 0) {
-                setOwner(a);
-                addNUnits(unitsNum);
-            }
-
-            //add win results
-            if (unitsNum > 0) {
-                aRes = true;
-            }
-            else {
-                aRes = false;
-            }
-            AttackResult r = new AttackResult(attackerId, defenderID, tName, aRes);
-            attackResults.add(r);
-
+        for (Army army : armies){
+            attackUnits += army.getUnitNums();
+            srcNames.add(army.getSrc());
         }
 
-        //clean up attackMap
-        attackAct.clear();
+        // start combat
+        while (attackUnits > 0 && this.getUnitsNum() > 0) {
+            int i1 = diceAttack.nextInt(20); // attacker dice
+            int i2 = diceDefend.nextInt(20); // defender dice
 
-        return attackResults;
+            // the one with lower roll loss one unit(tie, defender win)
+            if (i1 <= i2) {
+                attackUnits--;
+            } else {
+                this.lossNUnits(1);
+            }
+        }
+
+        // update the ownership only if attacker has units left
+        if (attackUnits > 0) {
+            setOwner(attackerID);
+            // left units will remain in this territory
+            addNUnits(attackUnits);
+        }
+
+        return new AttackResult(attackerID, defenderID, srcNames, destName, attackUnits > 0);
     }
-
-
-    /**
-     * random boolean, simulate the dice, return true indicate p 1 wins
-     *
-     * @param min lower bound
-     * @param max upeer bound
-     * @return
-     */
-    //random number decide attack
-    public boolean random(int min, int max) {
-        int ran1 = ThreadLocalRandom.current().nextInt(min, max + 1);
-        int ran2 = ThreadLocalRandom.current().nextInt(min, max + 1);
-
-        return ran1 < ran2;
-    }
-
 }

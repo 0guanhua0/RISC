@@ -1,19 +1,22 @@
 package edu.duke.ece651.risk.shared.map;
 
+import edu.duke.ece651.risk.shared.action.Army;
 import edu.duke.ece651.risk.shared.action.AttackResult;
+import org.json.JSONObject;
 
+import java.io.IOException;
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+
+import static edu.duke.ece651.risk.shared.Utils.readFileToString;
 
 public abstract class Territory implements Serializable {
 
     Set<Territory> neigh;
     //class to represent current status of this territory
     TStatus status;
-    HashMap<Integer, Integer> attackAct;
+
+    HashMap<Integer, List<Army>> attackAct;
 
     public Territory(String name) {
         this.neigh = new HashSet<>();
@@ -82,28 +85,35 @@ public abstract class Territory implements Serializable {
         return DFSHelper(this, target, visited);
     }
 
+    /**
+     * This function will resolve all combats happen in current territory.
+     * @return list of combat result
+     */
+    public List<AttackResult> resolveCombats() throws IOException{
+        JSONObject jsonObject = new JSONObject(readFileToString("../config_file/random_seed_config.txt"));
+        Random diceAttack = new Random(jsonObject.getInt("attackSeed"));
+        Random diceDefend = new Random(jsonObject.getInt("defendSeed"));
+
+        // store the whole result of combat
+        ArrayList<AttackResult> attackResults = new ArrayList<>();
+        // iterate through attack list
+        for (Map.Entry<Integer, List<Army>> entry : attackAct.entrySet()) {
+            attackResults.add(resolveCombat(entry.getKey(), entry.getValue(), diceAttack, diceDefend));
+        }
+
+        // clean up attackMap
+        attackAct.clear();
+
+        return attackResults;
+    }
+
     public abstract int getUnitsNum();
 
     public abstract void addNUnits(int num) throws IllegalArgumentException;
 
     public abstract void lossNUnits(int num);
 
-    public abstract void addAttack(int playerId, int unitNum);
+    public abstract void addAttack(int playerId, Army army);
 
-
-    /**
-     * called at the end of round, to update all combat info
-     */
-    public abstract List<AttackResult> performAttackMove();
-
-
-    /**
-     * random dice
-     *
-     * @param min lower bound
-     * @param max upeer bound
-     * @return
-     */
-    //random number decide attack
-    public abstract boolean random(int min, int max);
+    abstract AttackResult resolveCombat(int attackerID, List<Army> armies, Random diceAttack, Random diceDefend);
 }

@@ -4,6 +4,7 @@ import edu.duke.ece651.risk.shared.ToClientMsg.ClientSelect;
 import edu.duke.ece651.risk.shared.ToClientMsg.RoundInfo;
 import edu.duke.ece651.risk.shared.ToServerMsg.ServerSelect;
 import edu.duke.ece651.risk.shared.action.Action;
+import edu.duke.ece651.risk.shared.action.AttackResult;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.WorldMap;
@@ -11,7 +12,9 @@ import edu.duke.ece651.risk.shared.player.Player;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static edu.duke.ece651.risk.shared.Constant.*;
 
@@ -25,34 +28,68 @@ public class RoomController {
     List<Player<String>> players;
     // the map this room is playing
     WorldMap<String> map;
+    // the mapping between player id and player name(for now, use the color)
+    Map<Integer, String> idToName;
+    // winner ID, mainly for testing purpose
+    int winnerID;
 
-
-    //constructor: let the starter start the whole game
+    /**
+     * The constructor, initialize the whole game(room.
+     * @param roomID roomID for this room
+     * @param player the "beginner", the player create this room
+     * @param mapDataBase all map we have
+     * @throws IOException probably because of stream close
+     * @throws IllegalArgumentException probably because of invalid roomID(should be positive)
+     * @throws ClassNotFoundException probably because of not follow the protocol
+     */
     public RoomController(int roomID, Player<String> player, MapDataBase<String> mapDataBase) throws IOException, IllegalArgumentException, ClassNotFoundException {
-        if (roomID<0){
+        if (roomID < 0){
             throw new IllegalArgumentException("Invalid value of Room Id");
         }
         this.roomID = roomID;
-        this.players = new ArrayList<>();
-        player.setId(players.size() + 1);
-        this.players.add(player);
+        this.winnerID = -1;
+
+        players = new ArrayList<>();
+        players.add(player);
+        player.setId(players.size());
+
+        // let the beginner determine the map
         askForMap(mapDataBase);
+
         List<String> colorList = map.getColorList();
-        players.get(0).setColor(colorList.get(0));
+        // assign the color
+        player.setColor(colorList.get(0));
         player.sendPlayerInfo();
+
+        idToName = new HashMap<>();
+        idToName.put(player.getId(), player.getColor());
     }
 
-    //call this method to add a new player into this room
+    /**
+     * call this method to add a new player into this room
+     * after the last player enter the room, game will begin automatically
+     * @param player new player
+     * @throws IOException probably because of stream close
+     */
     void addPlayer(Player<String> player) throws IOException {
-        List<String> colorList = map.getColorList();
-        player.setId(players.size() + 1);
-        player.setColor(colorList.get(players.size()));
         players.add(player);
+
+        List<String> colorList = map.getColorList();
+        player.setId(players.size());
+        player.setColor(colorList.get(players.size() - 1));
         player.sendPlayerInfo();
+
+        idToName.put(player.getId(), player.getColor());
+
+        // check whether has enough player to start the game
         if (players.size() == colorList.size()){
-            //TODO run the whole game
-            System.out.println("run this game");
-            //this.runGame();
+            // open a new thread to run the game
+            new Thread(()-> {
+                try {
+                    runGame();
+                } catch (IOException | ClassNotFoundException ignored) {
+                }
+            }).start();
         }
     }
 
@@ -72,30 +109,27 @@ public class RoomController {
     }
 
     //TODO maybe changing this method to a multi-thread version in the future?
-    //call this method to let each player choose  territories they want
-    // TODO: maybe change the function name to select territory, current name is a bit confusing
-    void startGame() throws IOException, IllegalArgumentException, ClassNotFoundException {
+    void selectTerritory() throws IOException, IllegalArgumentException, ClassNotFoundException {
         int terriNum = map.getTerriNum();
         int playerNum = players.size();
         //the variable below is the number of territories that a single player can choose
-        assert(0==terriNum%playerNum);
-        int terrPerUsr = terriNum/playerNum;
+        assert(0 == terriNum % playerNum);
+        int terrPerUsr = terriNum / playerNum;
         //the variable below is the total number of units that a single player can choose
-        int totalUnits = UNITS_PER_TERR *terrPerUsr;
-//        HashSet<String> occupied = new HashSet<>();
+        int totalUnits = UNITS_PER_TERR * terrPerUsr;
+
+        // select territory
         for (Player<String> player : players) {
             //get the current list of occupied territories
-//            ClientSelect clientSelect = new ClientSelect(terrPerUsr, UNITS_PER_TERR,occupied);
             ClientSelect clientSelect = new ClientSelect(totalUnits, terrPerUsr, map);
             //tell user to select client
             player.send(clientSelect);
             while (true){
                 ServerSelect serverSelect = (ServerSelect)player.recv();
                 //check if the selection is valid or not
-                if(serverSelect.isValid(map,totalUnits,terrPerUsr)){
+                if(serverSelect.isValid(map, totalUnits, terrPerUsr)){
                     //if valid, update the map
                     for (String terrName : serverSelect.getAllName()) {
-//                        occupied.add(terrName);
                         Territory territory = map.getTerritory(terrName);
                         territory.addNUnits(serverSelect.getUnitsNum(terrName));
                         player.addTerritory(territory);
@@ -108,72 +142,35 @@ public class RoomController {
         }
     }
 
-    //used to play a single round of game
-    void playSingleRoundGame() throws IOException, ClassNotFoundException {
+    void playSingleRound(int roundNum) throws IOException, ClassNotFoundException {
         for (Player<String> player : players) {
-            //tell client the most recent situation
-            // TOdO: we may also want ot tell the client round number
-            player.send(new RoundInfo(map, players));
+            // tell client the round info
+            // 1. latest WorldMap
+            // 2. mapping between id and color
+            // 3. round number
+            player.send(new RoundInfo(roundNum, map, idToName));
             while (true){
                 Object recvRes = player.recv();
                 if (recvRes instanceof Action){
                     Action action = (Action) recvRes;
                     //act accordingly based on whether the input actions are valid or not
-                    if (action.isValid(map)){//if valid, update the state of the world
+                    if (action.isValid(map)){
+                        //if valid, update the state of the world
                         action.perform(map);
                         player.send(SUCCESSFUL);
-                    }else{//other wise ask user to resend the information
+                    }else{
+                        //otherwise ask user to resend the information
                         player.send(INVALID_ACTION);
                     }
-                }else if (recvRes instanceof String && ((String)recvRes).equals(ACTION_DONE)){
+                }else if (recvRes instanceof String && recvRes.equals(ACTION_DONE)){
                     break;
                 }else {
                     player.send(INVALID_ACTION);
                 }
             }
         }
-        // TODO: try to update the ownership of territories which are attacked by other players
-        //iterate all territory, perform the attack action, then send result
-
-        /*
-        Map<String, Territory> territoryMap = map.getAtlas();
-        for (String k : territoryMap.keySet()) {
-            Territory t = territoryMap.get(k);
-            List<AttackResult> attackResultList =  t.performAttackMove();
-
-            StringBuilder sb = new StringBuilder();
-            //change all player id in list to player name
-            for (AttackResult aR : attackResultList) {
-                String attackName = players.get(aR.getAttackerID()).getColor();
-                String deffendName = players.get(aR.getDefenderID()).getColor();
-                sb.append(attackName + " attacks " + deffendName);
-
-                sb.append(" 's territory " + aR.getTerritory());
-
-                if (aR.isAttackerwin()) {
-                    sb.append("attacker wins");
-                }
-                else {
-                    sb.append("attacker fails");
-                }
-
-            }
-
-            sendAll(sb.toString());
-        }
-
-         */
-
-
-        // after execute all actions, tell the player to enter next round
-        sendAll(ROUND_OVER);
-
-        // TODO: we need to notify all player the game result, continue or game over
-//        if(getWinnerId() == -1){
-//            sendAll("continue");
-//        }else {
-//            sendAll(GAME_OVER);
-//        }
+        // resolve all combats and send out the result
+        resolveCombats();
     }
 
     /**
@@ -186,48 +183,113 @@ public class RoomController {
         }
     }
 
-    //return -1 when no wins, otherwise return the id of winner
-    int getWinnerId(){
-        int res = -1;
+    /**
+     * This function should be called at the end of each round, will resolve all combats happen in all territories.
+     * @throws IOException probably because of stream closed
+     */
+    void resolveCombats() throws IOException {
+        Map<String, Territory> territoryMap = map.getAtlas();
+        for (Territory t : territoryMap.values()) {
+            // calculate the attack result
+            List<AttackResult> attackResultList = t.resolveCombats();
+
+            // generate attack result message based on AttackResult object
+            for (AttackResult aR : attackResultList) {
+                StringBuilder sb = new StringBuilder();
+
+                Player<String> pAttack = players.get(aR.getAttackerID() - 1);
+                Player<String> pDefend = players.get(aR.getDefenderID() - 1);
+
+                Territory destTerritory = map.getAtlas().get(aR.getDestTerritory());
+                List<Territory> srcTerritories = new ArrayList<>();
+                for (String name : aR.getSrcTerritories()){
+                    srcTerritories.add(map.getAtlas().get(name));
+                }
+
+                // attack info
+                sb.append(pAttack.getColor()).append(" attacks ").append(pDefend.getColor());
+                sb.append(" 's territory ").append(destTerritory.getName());
+
+                // change ownership of territory
+                if (aR.isAttackerWin()) {
+                    sb.append(" ---> attacker wins");
+                    // attacker wins, win the destination territory
+                    pDefend.loseTerritory(destTerritory);
+                    pAttack.addTerritory(destTerritory);
+                }
+                else {
+                    sb.append(" ---> attacker loses");
+                    // attacker loses, lose all territories involved in combat
+                    for (Territory territory : srcTerritories){
+                        pAttack.loseTerritory(territory);
+                        pDefend.addTerritory(territory);
+                    }
+                }
+
+                // send the result of each attack action to all players
+                sendAll(sb.toString());
+            }
+        }
+    }
+
+    /**
+     * check whether there is a winner
+     */
+    void checkWinner(){
         int targetNum = map.getTerriNum();
         int totalNum = 0;
         for (Player<String> player : players) {
             int curNum = player.getTerrNum();
             totalNum += curNum;
-            if (totalNum>targetNum){
+            if (totalNum > targetNum){
                 throw new IllegalStateException("Illegal State of current world");
             }
-            if (curNum==targetNum){
-                res =  player.getId();
+            if (curNum == targetNum){
+                winnerID =  player.getId();
             }
         }
-        return res;
     }
 
-    void endGame(int winnerId) throws IOException {
-        if (winnerId<=0){
-            throw new IllegalArgumentException("winner id must be positive");
+    void endGame() throws IOException {
+        System.out.println("Winner ID: " + winnerID);
+        if (!idToName.containsKey(winnerID)){
+            throw new IllegalArgumentException("Player doesn't exist.");
         }
-        //tell all players that we want to end this game
+        String winnerName = idToName.get(winnerID);
         for (Player<String> player : players) {
-            if (player.getId()!=winnerId){
-                // TODO: here we may want to send a string, e.g. Winner is Green Player.
-                // TODO: probably we may want to have a mapping between player id and player color(just for convenience)
-                player.send(winnerId);
+            if (player.getId() != winnerID){
+                player.send(String.format("Winner is the %s player.", winnerName));
             }else{
                 player.send(YOU_WINS);
             }
         }
     }
 
-//    //the logic for the whole game
-//    void runGame() throws IOException, ClassNotFoundException {
-//        startGame();
-//        int winnerId = -1;
-//        while(winnerId<=0) {
-//            playSingleRoundGame();
-//            winnerId = getWinnerId();
-//        }
-//        endGame(winnerId);
-//    }
+    void addNewUnits(){
+        for (Territory territory : map.getAtlas().values()){
+            territory.addNUnits(1);
+        }
+    }
+
+    void runGame() throws IOException, ClassNotFoundException {
+        selectTerritory();
+        int roundNum = 1;
+        while(winnerID < 0) {
+            playSingleRound(roundNum);
+            // after execute all actions, tell the player to enter next round
+            sendAll(ROUND_OVER);
+            // check the game result
+            checkWinner();
+            if(winnerID == -1){
+                sendAll("continue");
+            }else {
+                sendAll(GAME_OVER);
+                continue;
+            }
+            roundNum ++;
+            // add one units to all territory
+            addNewUnits();
+        }
+        endGame();
+    }
 }

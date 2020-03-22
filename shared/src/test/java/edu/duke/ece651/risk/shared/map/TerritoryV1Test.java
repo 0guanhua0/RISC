@@ -7,6 +7,8 @@ import edu.duke.ece651.risk.shared.player.PlayerV1;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
@@ -143,7 +145,7 @@ class TerritoryV1Test {
     }
 
     @Test
-    void performMove() throws IOException {
+    void testResolveCombat() throws IOException {
         MapDataBase<String> mapDataBase = new MapDataBase<>();
         //prepare the world
         WorldMap<String> worldMap = mapDataBase.getMap("a clash of kings");
@@ -169,52 +171,45 @@ class TerritoryV1Test {
         //player 1
         north.addNUnits(2);
         vale.addNUnits(2);
-        rock.addNUnits(1);
-        dorne.addNUnits(3);
+        rock.addNUnits(10);
+        dorne.addNUnits(5);
         //player2
-        storm.addNUnits(2);
-        reach.addNUnits(2);
+        storm.addNUnits(10);
+        reach.addNUnits(10);
 
-
-        //player 1 multiple place attack
-
-        AttackAction a10 = new AttackAction("kingdom of the rock", "kingdom of the reach", 1, 1);
-        AttackAction a11 = new AttackAction("principality of dorne", "kingdom of the reach", 1, 1);
+        //player 1 multiple place attack(10 + 5)
+        AttackAction a10 = new AttackAction("kingdom of the rock", "kingdom of the reach", 1, 10);
+        AttackAction a11 = new AttackAction("principality of dorne", "kingdom of the reach", 1, 5);
+        AttackAction a12 = new AttackAction("kingdom of mountain and vale", "the storm kingdom", 1, 1);
         assertTrue(a10.perform(worldMap));
         assertTrue(a11.perform(worldMap));
-
+        assertTrue(a12.perform(worldMap));
 
         //player 2 attack to empty territory
         AttackAction a20 = new AttackAction("kingdom of the reach", "kingdom of the rock", 2, 2);
         assertTrue(a20.perform(worldMap));
 
-
         //perform
-
-        List<AttackResult> resultList0 = reach.performAttackMove();
-        AttackResult r = new AttackResult(1, 2, "kingdom of the reach", true);
+        List<AttackResult> resultList0 = reach.resolveCombats();
+        // attacker: 10 + 5, defender 10
+        AttackResult r = new AttackResult(1, 2, new ArrayList<>(Arrays.asList("kingdom of the rock")), "kingdom of the reach", true);
 
         AttackResult r0 = resultList0.get(0);
         assertEquals(r0.getAttackerID(), r.getAttackerID());
         assertEquals(r0.getDefenderID(), r.getDefenderID());
-        assertEquals(r0.getTerritory(), r.getTerritory());
-        assertEquals(r0.isAttackerwin(), r.isAttackerwin());
+        assertEquals(r0.getDestTerritory(), r.getDestTerritory());
+        assertEquals(r0.isAttackerWin(), r.isAttackerWin());
 
         //check result
         assertEquals(1, reach.getOwner());
-        assertEquals(2, reach.getUnitsNum());
+        assertEquals(8, reach.getUnitsNum());
 
-        rock.performAttackMove();
+        rock.resolveCombats();
         assertEquals(2, rock.getOwner());
         assertEquals(2, rock.getUnitsNum());
 
-        //non-deterministic
-        AttackAction a21 = new AttackAction("the storm kingdom", "principality of dorne", 2, 2);
-        assertTrue(a21.perform(worldMap));
-
-        List<AttackResult> r3 = dorne.performAttackMove();
-        assertEquals(2, storm.getOwner());
-
+        // lose
+        assertFalse(storm.resolveCombats().get(0).isAttackerWin());
 
     }
 

@@ -4,7 +4,6 @@ import edu.duke.ece651.risk.shared.ToClientMsg.ClientSelect;
 import edu.duke.ece651.risk.shared.ToClientMsg.RoundInfo;
 import edu.duke.ece651.risk.shared.ToServerMsg.ServerSelect;
 import edu.duke.ece651.risk.shared.action.Action;
-import edu.duke.ece651.risk.shared.action.AttackAction;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.risk.shared.network.Client;
@@ -19,6 +18,7 @@ import java.util.stream.Stream;
 import static edu.duke.ece651.risk.client.InsPrompt.*;
 import static edu.duke.ece651.risk.client.PlayerInput.readValidInt;
 import static edu.duke.ece651.risk.shared.Constant.*;
+import static edu.duke.ece651.risk.shared.Utils.readFileToString;
 
 /**
  * main class for player
@@ -45,7 +45,7 @@ public class GameClient {
      * 3) receive the initial message about player info from game server
      */
     void initGame(Scanner scanner) throws IOException, ClassNotFoundException {
-        JSONObject config = new JSONObject(readConfigFile());
+        JSONObject config = new JSONObject(readFileToString("../config_file/client_config.txt"));
         client = new Client(config.getString("host"), config.getInt("port"));
         // receive hello message
         String hello = (String) client.recv();
@@ -67,14 +67,13 @@ public class GameClient {
         selectTerritory(scanner);
 
         String result = "";
-        int round = 1;
         while (!result.equals(GAME_OVER)){
             // receive the round info
             RoundInfo roundInfo = (RoundInfo) client.recv();
 
-            showMsg("====== Round " + round + " ======");
+            showMsg("====== Round " + roundInfo.getRoundNum() + " ======");
 
-            SceneCLI.showMap(roundInfo.getMap(), roundInfo.getIdToColor());
+            SceneCLI.showMap(roundInfo.getMap(), roundInfo.getIdToName());
             InsPrompt.selfInfo(player.getPlayerName());
 
             // keep asking action until user specify done
@@ -259,15 +258,6 @@ public class GameClient {
                 showMsg(result);
             }
         }
-    }
-
-    String readConfigFile() throws IOException {
-        StringBuilder contentBuilder = new StringBuilder();
-
-        Stream<String> stream = Files.lines(Paths.get("./config_file/config.txt"));
-        stream.forEach(s -> contentBuilder.append(s).append("\n"));
-        stream.close();
-        return contentBuilder.toString();
     }
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {

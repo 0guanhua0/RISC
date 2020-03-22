@@ -11,6 +11,7 @@ public class MoveAction implements Action, Serializable {
     String dest;
     int playerId;
     int unitsNum;
+
     public MoveAction(String src, String dest,
                       int playerId, int unitsNum) {
         this.src = src;
@@ -23,16 +24,16 @@ public class MoveAction implements Action, Serializable {
     @Override
     public boolean isValid(WorldMap<?> map) {
         //check if two input names are valid
-        if (!map.hasTerritory(src)||!map.hasTerritory(dest)){
+        if (!map.hasTerritory(src) || !map.hasTerritory(dest)){
             return false;
         }
         Territory srcNode = map.getTerritory(src);
         Territory destNode = map.getTerritory(dest);
-        if (srcNode.getOwner()!=playerId){
+        if (srcNode.getOwner() != playerId){
             return false;
         }else if (!srcNode.hasPathTo(destNode)){
             return false;
-        }else if (srcNode.getUnitsNum()<=unitsNum||unitsNum<0){
+        }else if (srcNode.getUnitsNum() < unitsNum || unitsNum < 0){
             return false;
         }else{
             return true;

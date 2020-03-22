@@ -11,14 +11,14 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class RoundInfoTest {
 
     static WorldMap<String> map = new MapDataBase<String>().getMap("a clash of kings");
-    static List<Player<String>> players = new ArrayList<>();
+    static Map<Integer, String> players = new HashMap<>();
     static RoundInfo roundInfo;
 
     @BeforeAll
@@ -43,11 +43,11 @@ public class RoundInfoTest {
         map.getTerritory(t5).setOwner(3);
         map.getTerritory(t6).setOwner(3);
 
-        players.add(new PlayerV1<>("Green", 1));
-        players.add(new PlayerV1<>("Blue", 2));
-        players.add(new PlayerV1<>("Red", 3));
+        players.put(1, "Green");
+        players.put(2, "Blue");
+        players.put(3, "Red");
 
-        roundInfo = new RoundInfo(map, players);
+        roundInfo = new RoundInfo(1, map, players);
     }
 
     @Test
@@ -57,10 +57,11 @@ public class RoundInfoTest {
     
     @Test
     public void testGetIdToColor() {
-        assertEquals(3, roundInfo.getIdToColor().size());
-        assertEquals("Green", roundInfo.getIdToColor().get(1));
-        assertEquals("Blue", roundInfo.getIdToColor().get(2));
-        assertEquals("Red", roundInfo.getIdToColor().get(3));
+        assertEquals(1, roundInfo.getRoundNum());
+        assertEquals(3, roundInfo.getIdToName().size());
+        assertEquals("Green", roundInfo.getIdToName().get(1));
+        assertEquals("Blue", roundInfo.getIdToName().get(2));
+        assertEquals("Red", roundInfo.getIdToName().get(3));
     }
     
 
