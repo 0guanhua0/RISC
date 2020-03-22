@@ -53,7 +53,6 @@ class SceneCLITest {
         territory3.setOwner(2);
         territory4.setOwner(2);
         territory5.setOwner(3);
-        territory6.setOwner(3);
 
         idToColor = new HashMap<>();
         idToColor.put(1, "Green");

@@ -26,13 +26,13 @@ class PlayerInputTest {
         assertTrue(action1 instanceof AttackAction);
 
         AttackAction a1 = new AttackAction("A", "B", 0, 10);
-        assert (a1.equals(action1));
+        assertEquals(a1, action1);
 
         Action action2 = PlayerInput.readValidAction(new Scanner("c\n" + "m\nc\nd\n5\nd\n"), player);
         assertTrue(action2 instanceof MoveAction);
 
         MoveAction a2 = new MoveAction("C", "D", 0, 5);
-        assert (a2.equals(action2));
+        assertEquals(a2, action2);
     }
 
 

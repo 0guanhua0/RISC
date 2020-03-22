@@ -10,8 +10,6 @@ import java.util.*;
  * @author: Chengda Wu (cw402)
  * @create: 2020-03-08 20:49
  **/
-
-//TODO take generic and serializable into consideration
 public class WorldMap<T extends Serializable> implements Serializable {
     String name;
     Map<String, Territory> atlas;
@@ -72,6 +70,10 @@ public class WorldMap<T extends Serializable> implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getPlayerNums(){
+        return colorList.size();
     }
 
     public void setAtlas(Map<String, Territory> map){
