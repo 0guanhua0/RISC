@@ -30,16 +30,11 @@ class WorldMapTest {
         List<String> colorList = new ArrayList<>(Arrays.asList("red","blue"));
         assertThrows(IllegalArgumentException.class,()->{new WorldMap<>(map,colorList,groups);});
 
-        Map<Set<String>,Boolean> groups2 = new HashMap<>(){{
-            put(new HashSet<>(Arrays.asList("red")),false);
-            put(new HashSet<>(Arrays.asList("blue")),false);
-            put(new HashSet<>(Arrays.asList("pink")),false);
-            put(new HashSet<>(Arrays.asList("yellow")),false);
-
-        }};
-
         List<String> colorList2 = new ArrayList<>(Arrays.asList("red","blue","pink","yellow"));
-        assertThrows(IllegalArgumentException.class,()->{new WorldMap<>(map,colorList2,groups2);});
+        assertThrows(IllegalArgumentException.class,()->{new WorldMap<>(map,colorList2,groups);});
+
+
+
 
 
         MapDataBase<String> mapDataBase = new MapDataBase<>();

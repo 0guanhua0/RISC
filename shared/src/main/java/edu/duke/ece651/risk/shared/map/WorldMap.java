@@ -28,15 +28,11 @@ public class WorldMap<T extends Serializable> implements Serializable {
         Set<String> allName = new HashSet<>();
         for (Set<String> nameSet : groups.keySet()) {
             for (String  name : nameSet) {
-                if (!adjaList.containsKey(name)||allName.contains(name)){
-                    throw new IllegalArgumentException("Invalid input groups");
-                }
+                assert (adjaList.containsKey(name)||!allName.contains(name));
+                allName.add(name);
             }
-            allName.addAll(nameSet);
         }
-        if (allName.size()!=adjaList.size()){
-            throw new IllegalArgumentException("Invalid input groups");
-        }
+        assert (allName.size()==adjaList.size());
         this.groups = groups;
 
         int playerNum = colorList.size();
