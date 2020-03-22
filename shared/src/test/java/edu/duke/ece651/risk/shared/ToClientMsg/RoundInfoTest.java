@@ -52,7 +52,7 @@ public class RoundInfoTest {
 
     @Test
     public void testGetMap() { 
-        assertEquals(map, roundInfo.getMap());
+        assertEquals(map.getAtlas().size(), roundInfo.getMap().getAtlas().size());
     }
     
     @Test

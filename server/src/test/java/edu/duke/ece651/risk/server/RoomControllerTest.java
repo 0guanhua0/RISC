@@ -32,7 +32,7 @@ public class RoomControllerTest {
         assertEquals(roomController.players.size(),1);
         assertEquals(roomController.players.get(0).getId(),1);
         assertEquals(roomController.players.get(0).getColor(),"red");
-        assertEquals(roomController.map,mapDataBase.getMap("a clash of kings"));
+        assertEquals(roomController.map.getAtlas().size(), mapDataBase.getMap("a clash of kings").getAtlas().size());
     }
 
     @Test
@@ -42,13 +42,17 @@ public class RoomControllerTest {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         Player<String> player = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList("test"))), stream);
         RoomController roomController = new RoomController(0, player, mapDataBase);
-        roomController.addPlayer(new PlayerV1<>(setupMockInput(new ArrayList<>()), new ByteArrayOutputStream()));
-        roomController.addPlayer(new PlayerV1<>(setupMockInput(new ArrayList<>()), new ByteArrayOutputStream()));
+        try {
+            roomController.addPlayer(new PlayerV1<>(setupMockInput(new ArrayList<>()), new ByteArrayOutputStream()));
+            roomController.addPlayer(new PlayerV1<>(setupMockInput(new ArrayList<>()), new ByteArrayOutputStream()));
+        }catch (EOFException ignored){
+            // we only want to test if we can add
+        }
         assertEquals(roomController.players.size(),3);
         assertEquals(roomController.players.get(0).getColor(),"red");
         assertEquals(roomController.players.get(1).getColor(),"blue");
         assertEquals(roomController.players.get(2).getColor(),"black");
-        assertEquals(roomController.players.size(),roomController.map.getColorList().size());
+        assertEquals(roomController.players.size(), roomController.map.getColorList().size());
     }
 
     @Test
@@ -79,6 +83,7 @@ public class RoomControllerTest {
         assertEquals(errorMsg,SELECT_MAP_ERROR);
         assertEquals(SUCCESSFUL, (String)objectInputStream.readObject());
         objectInputStream.readObject(); // this is for player initial message
+        objectInputStream.readObject(); // this is for wait info
         assertThrows(EOFException.class,()->{String res = (String)objectInputStream.readObject();});
     }
 
@@ -146,6 +151,7 @@ public class RoomControllerTest {
         objectInputStream.readObject(); // mapDataBase
         objectInputStream.readObject(); // successful
         objectInputStream.readObject(); // player info
+        objectInputStream.readObject(); // wait info
         objectInputStream.readObject(); // client select
         assertEquals(SELECT_TERR_ERROR, objectInputStream.readObject());
 
@@ -257,7 +263,11 @@ public class RoomControllerTest {
         MapDataBase<String> mapDataBase = new MapDataBase<>();
         WorldMap<String> curMap = mapDataBase.getMap("a clash of kings");
         RoomController roomController = new RoomController(0, player, mapDataBase);
-        roomController.addPlayer(new PlayerV1<>(setupMockInput(new ArrayList<>()), new ByteArrayOutputStream()));
+        try {
+            roomController.addPlayer(new PlayerV1<>(setupMockInput(new ArrayList<>()), new ByteArrayOutputStream()));
+        }catch (EOFException ignored){
+
+        }
         Territory t1 = curMap.getTerritory("kingdom of the north");
         Territory t2 = curMap.getTerritory("kingdom of mountain and vale");
         Territory t3 = curMap.getTerritory("kingdom of the rock");
@@ -312,6 +322,7 @@ public class RoomControllerTest {
         s1.readObject(); // mapDataBase
         s1.readObject(); // successful
         s1.readObject(); // player info
+        s1.readObject(); // wait info
         assertEquals(YOU_WINS, s1.readObject());
         assertEquals("Winner is the red player.", s2.readObject());
     }

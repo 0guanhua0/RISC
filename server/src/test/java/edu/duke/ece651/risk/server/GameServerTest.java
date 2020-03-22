@@ -85,8 +85,8 @@ public class GameServerTest {
         assertEquals(0, gameServer.rooms.size());
         gameServer.handleIncomeRequest(socket1);
         assertEquals(1, gameServer.rooms.size());
-        assertEquals(1,gameServer.rooms.get(0).players.size());
-        assertEquals(0,gameServer.rooms.get(0).roomID);
+        assertEquals(1, gameServer.rooms.get(0).players.size());
+        assertEquals(0, gameServer.rooms.get(0).roomID);
 
         //prepare for the second player who joins in this room
         outputStream.reset();
@@ -99,11 +99,11 @@ public class GameServerTest {
         gameServer.handleIncomeRequest(socket2);
         assertEquals(1, gameServer.rooms.size());
         assertEquals(
-                "Welcome to the fancy RISK game!!!" + SUCCESSFUL + "{\"playerColor\":\"blue\",\"playerID\":2}",
+                "Welcome to the fancy RISK game!!!" + SUCCESSFUL + "{\"playerColor\":\"blue\",\"playerID\":2}" + "Please wait other players to join th game(need 3, joined 2)",
                 readAllStringFromObjectStream(outputStream)
         );
-        assertEquals(2,gameServer.rooms.get(0).players.size());
-        assertEquals(0,gameServer.rooms.get(0).roomID);
+        assertEquals(2, gameServer.rooms.get(0).players.size());
+        assertEquals(0, gameServer.rooms.get(0).roomID);
 
         //prepare for the third player who joins in this room
         outputStream.reset();
@@ -111,16 +111,16 @@ public class GameServerTest {
         when(socket3.getInputStream())
                 .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList("0", "0"))));
         when(socket3.getOutputStream()).thenReturn(outputStream);
-        //handle the request for third player
+        // handle the request for third player
         assertEquals(1, gameServer.rooms.size());
-        gameServer.handleIncomeRequest(socket3);
+        try {
+            gameServer.handleIncomeRequest(socket3);
+        }catch (EOFException ignored){
+            // here we only want to test addPlayer function, don't test the selectTerritory or others
+        }
         assertEquals(1, gameServer.rooms.size());
-        assertEquals(
-                "Welcome to the fancy RISK game!!!" + SUCCESSFUL + "{\"playerColor\":\"black\",\"playerID\":3}",
-                readAllStringFromObjectStream(outputStream)
-        );
-        assertEquals(3,gameServer.rooms.get(0).players.size());
-        assertEquals(0,gameServer.rooms.get(0).roomID);
+        assertEquals(3, gameServer.rooms.get(0).players.size());
+        assertEquals(0, gameServer.rooms.get(0).roomID);
     }
     
     @Test
