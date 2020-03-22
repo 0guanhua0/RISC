@@ -128,7 +128,6 @@ public class RoomController {
             ClientSelect clientSelect = new ClientSelect(totalUnits, terrPerUsr, map.getName());
             //tell user to select client
             player.send(clientSelect);
-
             while (true){
                 ServerSelect serverSelect = (ServerSelect)player.recv();
                 //check if the selection is valid or not

@@ -14,11 +14,25 @@ public class WorldMap<T extends Serializable> implements Serializable {
     String name;
     Map<String, Territory> atlas;
     List<T> colorList;
+    //key is the set of names of territory, value is there are currently selected or not
+    Map<Set<String>,Boolean> groups;
     public WorldMap(){
         this.atlas = new HashMap<>();
         this.colorList = new ArrayList<>();
     }
-    public WorldMap(Map<String,Set<String>> adjaList, List<T> colorList){
+    public WorldMap(Map<String,Set<String>> adjaList, List<T> colorList,Map<Set<String>,Boolean> groups) throws IllegalArgumentException {
+
+        //check legality of groups
+        Set<String> allName = new HashSet<>();
+        for (Set<String> nameSet : groups.keySet()) {
+            for (String  name : nameSet) {
+                assert (adjaList.containsKey(name)||!allName.contains(name));
+                allName.add(name);
+            }
+        }
+        assert (allName.size()==adjaList.size());
+        this.groups = groups;
+
         int playerNum = colorList.size();
         int terriNum = adjaList.size();
         if (playerNum>terriNum){
@@ -46,8 +60,10 @@ public class WorldMap<T extends Serializable> implements Serializable {
             }
             curTerri.setNeigh(neigh);
         }
-    }
 
+
+
+    }
     public String getName() {
         return name;
     }

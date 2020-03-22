@@ -25,18 +25,18 @@ public class MapDataBase<T extends Serializable> implements Serializable{
         String t2 = "kingdom of the reach";
         String t3 = "kingdom of the rock";
         String t4 = "kingdom of mountain and vale";
+        String t5 = "principality of dorne";
         String t6 = "kingdom of the north";
-        String t7 = "principality of dorne";
         Set<String> s1 = new HashSet<>(){{
             add(t3);
             add(t2);
-            add(t7);
+            add(t5);
         }};
         atlas1.put(t1,s1);
         Set<String> s2 = new HashSet<>(){{
             add(t3);
             add(t1);
-            add(t7);
+            add(t5);
         }};
         atlas1.put(t2,s2);
         Set<String> s3 = new HashSet<>(){{
@@ -63,21 +63,44 @@ public class MapDataBase<T extends Serializable> implements Serializable{
             add(t1);
         }};
 
-        atlas1.put(t7,s7);
+        atlas1.put(t5,s7);
         List<String> colorList = new ArrayList<>(Arrays.asList("red","blue"));
-        WorldMap<T> worldMap1 = new WorldMap(atlas1,colorList);
+
+        Map<Set<String>,Boolean> groups = new HashMap<>();
+        Set<String> group1 = new HashSet<>(){{
+            add(t6);
+            add(t4);
+            add(t3);
+        }};
+        Set<String> group2 = new HashSet<>(){{
+            add(t1);
+            add(t2);
+            add(t5);
+        }};
+        groups.put(group1,false);
+        groups.put(group2,false);
+
+        WorldMap<T> worldMap1 = new WorldMap(atlas1,colorList,groups);
         worldMap1.setName(name1);
         mapHub.put(name1,worldMap1);
 
-
+        /*
+        the second map
+         */
         String testName1 = "t1";
         String testName2 = "t2";
-        String testName3 = "t3";
+        String testName3 = "t7";
         Map<String,Set<String>> atlas2 = new HashMap<>();
         atlas2.put(testName1, new HashSet<>(){{ add(testName2); }});
         atlas2.put(testName2, new HashSet<>(){{ add(testName1);add(testName3);}});
         atlas2.put(testName3, new HashSet<>(){{ add(testName2); }});
-        WorldMap<T> worldMap2 = new WorldMap(atlas2,Arrays.asList("red","blue","black"));
+
+        Map<Set<String>,Boolean> groups2 = new HashMap<>();
+        groups2.put(new HashSet<>(Arrays.asList(testName1)),false);
+        groups2.put(new HashSet<>(Arrays.asList(testName2)),false);
+        groups2.put(new HashSet<>(Arrays.asList(testName3)),false);
+
+        WorldMap<T> worldMap2 = new WorldMap(atlas2,Arrays.asList("red","blue","black"),groups2);
         worldMap2.setName("test");
         mapHub.put("test",worldMap2);
 
