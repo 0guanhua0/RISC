@@ -45,7 +45,7 @@ public class GameClientTest {
     static Map<Integer, String> idToColor = new HashMap<>();
 
     @BeforeAll
-    static void beforeAll() throws IOException {
+    static void beforeAll() {
         String t1 = "the storm kingdom";
         String t2 = "kingdom of the reach";
         String t3 = "kingdom of the rock";
@@ -101,6 +101,8 @@ public class GameClientTest {
                     }
                     // 4) send initial message
                     player.sendPlayerInfo();
+                    // 5) send wait info
+                    player.send("Please wait");
 
                     /* =============== stage 2(choose territory) =============== */
                     player.send(clientSelect);
@@ -120,7 +122,7 @@ public class GameClientTest {
                             player.send(SUCCESSFUL);
                         }
                     }
-                    /// perform action and send out the result of each attack action
+                    // perform action and send out the result of each attack action
                     player.send("attack 1");
                     player.send(ROUND_OVER); // next round
 

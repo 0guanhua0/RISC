@@ -97,7 +97,7 @@ public class RoomController {
         while(true){
             String mapName = (String) firstPlayer.recv();
             if (mapDataBase.containsMap(mapName)){
-                map = new MapDataBase<String>().getMap(mapName);
+                map = mapDataBase.getMap(mapName);
                 break;
             }else {
                 firstPlayer.send(SELECT_MAP_ERROR);
