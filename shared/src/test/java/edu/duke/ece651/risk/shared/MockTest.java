@@ -32,11 +32,5 @@ public class MockTest {
         objectOutputStream.flush();
         assertEquals("123", readAllStringFromObjectStream(out));
     }
-    
-    @Test
-    public void testMain() { 
-        
-    }
-    
 
 } 

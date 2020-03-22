@@ -29,7 +29,9 @@ class InsPrompt {
     public static void insShowMaps(Map<String, WorldMap<String>> maps){
         int cnt = 1;
         for (String mapName : maps.keySet()){
-            System.out.println(String.format("%d. %s", cnt, mapName));
+            System.out.println(String.format(
+                    "%d. %s(support %d players)",
+                    cnt, mapName, maps.get(mapName).getPlayerNums()));
             SceneCLI.showMap(maps.get(mapName));
             cnt++;
         }

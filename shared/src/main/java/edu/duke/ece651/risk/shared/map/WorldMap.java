@@ -56,6 +56,10 @@ public class WorldMap<T extends Serializable> implements Serializable {
         this.name = name;
     }
 
+    public int getPlayerNums(){
+        return colorList.size();
+    }
+
     public void setAtlas(Map<String, Territory> map){
         this.atlas = map;
     }
