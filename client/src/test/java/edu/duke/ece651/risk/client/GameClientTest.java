@@ -37,6 +37,11 @@ public class GameClientTest {
     static String mapName = "a clash of kings";
     static MapDataBase<String> mapDB = new MapDataBase<>();
     static WorldMap<String> map = mapDB.getMap(mapName);
+//    static Set<String> groups = new HashSet<>(){
+//        {
+//            add();
+//        }
+//    };
     static ClientSelect clientSelect = new ClientSelect(
             10,
             2,
@@ -160,6 +165,7 @@ public class GameClientTest {
         // a, b, 10 --- from a to b, 10 units
         // d --- done
         String input = "j\n3\n" + "1\n1\n10\n" + "a\na\nb\n10\nd\n";
+
         GameClient gameClient = new GameClient();
         gameClient.run(new Scanner(input));
     }
@@ -169,7 +175,8 @@ public class GameClientTest {
         Client client = mock(Client.class);
         when(client.recv())
                 .thenReturn(clientSelect) // select territory & assign units
-                .thenReturn(SUCCESSFUL) // selection valid
+                .thenReturn(SUCCESSFUL)//select group valid
+                .thenReturn(SUCCESSFUL) // assign units valid
                 .thenReturn(new RoundInfo(1, map, idToColor))  // round info, map
                 .thenReturn(SUCCESSFUL) // action1 valid
                 .thenReturn(SUCCESSFUL) // action2 valid
