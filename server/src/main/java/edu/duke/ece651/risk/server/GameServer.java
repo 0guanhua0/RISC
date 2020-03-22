@@ -1,19 +1,15 @@
 package edu.duke.ece651.risk.server;
 
-import edu.duke.ece651.risk.shared.ToClientMsg.RoundInfo;
+import edu.duke.ece651.risk.shared.Room;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
-import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.risk.shared.network.Server;
 import edu.duke.ece651.risk.shared.player.Player;
 import edu.duke.ece651.risk.shared.player.PlayerV1;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.Socket;
 import java.security.InvalidKeyException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
@@ -86,10 +82,7 @@ public class GameServer {
      * @return room number/ID, e.g. -1(or any negative number) stands for a new room, > 0 stands for an existing room
      */
     int askValidRoomNum(Player<?> player) throws IOException {
-        // TODO: send out the room list info(for now just send the id)
-        List<Integer> roomInfo = new ArrayList<>(rooms.size());
-        roomInfo.addAll(rooms.keySet());
-        player.send(roomInfo);
+        player.send(getRoomList());
 
         while (true){
             try {
@@ -105,6 +98,30 @@ public class GameServer {
                 player.send("Invalid choice, try again.");
             }
         }
+    }
+
+    /**
+     * This function will return the current running room list.
+     * @return List of room object
+     */
+    List<Room> getRoomList(){
+        // clear any finished room
+        List<Integer> finishedRoom = new ArrayList<>();
+        List<Room> roomList = new ArrayList<>();
+
+        for (RoomController room : rooms.values()){
+            if (room.hasFinished()){
+                finishedRoom.add(room.roomID);
+            }else {
+                roomList.add(new Room(room.roomID, ""));
+            }
+        }
+
+        for (int id : finishedRoom){
+            rooms.remove(id, rooms.get(id));
+        }
+
+        return roomList;
     }
 
     public static void main(String[] args) throws IOException {

@@ -1,6 +1,7 @@
 package edu.duke.ece651.risk.server;
 
 import edu.duke.ece651.risk.shared.map.MapDataBase;
+import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.risk.shared.network.Client;
 import edu.duke.ece651.risk.shared.network.Server;
 import edu.duke.ece651.risk.shared.player.Player;
@@ -134,7 +135,35 @@ public class GameServerTest {
         assertEquals(roomID, gameServer.askValidRoomNum(player2));
         assertEquals("Invalid choice, try again.".repeat(2) + SUCCESSFUL, readAllStringFromObjectStream(outputStream));
     }
-    
+
+    @Test
+    public void testGetRoomList() throws IOException, ClassNotFoundException {
+        Player<String> player = new PlayerV1<>(
+                setupMockInput(
+                        new ArrayList<>(Arrays.asList(
+                                "a clash of kings",
+                                "a clash of kings",
+                                "a clash of kings"
+                        ))), new ByteArrayOutputStream());
+
+        RoomController room1 = new RoomController(1, player, new MapDataBase<>());
+        RoomController room2 = new RoomController(2, player, new MapDataBase<>());
+        RoomController room3 = new RoomController(3, player, new MapDataBase<>());
+
+        room1.winnerID = 1;
+
+        Server server = mock(Server.class);
+        GameServer gameServer = new GameServer(server);
+
+        gameServer.rooms.put(room1.roomID, room1);
+        gameServer.rooms.put(room2.roomID, room2);
+        gameServer.rooms.put(room3.roomID, room3);
+
+        assertEquals(3, gameServer.rooms.size());
+        assertEquals(2, gameServer.getRoomList().size());
+        assertEquals(2, gameServer.rooms.size());
+    }
+
     @Test
     public void testMain() throws IOException, InterruptedException, ClassNotFoundException {
         Thread th = new Thread(()->{
@@ -156,6 +185,5 @@ public class GameServerTest {
         th.interrupt();
         th.join();
     }
-    
 
 } 
