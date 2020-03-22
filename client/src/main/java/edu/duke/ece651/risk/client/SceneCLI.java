@@ -38,13 +38,19 @@ class SceneCLI implements Scene {
         for (Territory territory : map.getAtlas().values()){
             playerTerritory.get(territory.getOwner()).add(territory);
         }
-        // print out
-        for (Map.Entry<Integer, List<Territory>> entry : playerTerritory.entrySet()){
-            if (entry.getKey() != 0){
-                System.out.println(String.format("%s player:", idToColor.get(entry.getKey())));
-            }else {
-                System.out.println("free territory:");
+
+        // show free territory(useless in evolution 1)
+        if (!playerTerritory.get(0).isEmpty()){
+            System.out.println("free territory:");
+            System.out.println("--".repeat(8));
+            for (Territory t : playerTerritory.get(0)){
+                showTerritory(t);
             }
+            System.out.println();
+        }
+
+        for (Map.Entry<Integer, List<Territory>> entry : playerTerritory.entrySet()){
+            System.out.println(String.format("%s player:", idToColor.get(entry.getKey())));
             System.out.println("--".repeat(8));
             for (Territory t : entry.getValue()){
                 showTerritory(t);

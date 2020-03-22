@@ -14,8 +14,8 @@ public class MoveAction implements Action, Serializable {
 
     public MoveAction(String src, String dest,
                       int playerId, int unitsNum) {
-        this.src = src;
-        this.dest = dest;
+        this.src = src.toLowerCase();
+        this.dest = dest.toLowerCase();
         this.playerId = playerId;
         this.unitsNum = unitsNum;
     }
@@ -33,7 +33,7 @@ public class MoveAction implements Action, Serializable {
             return false;
         }else if (!srcNode.hasPathTo(destNode)){
             return false;
-        }else if (srcNode.getUnitsNum() < unitsNum || unitsNum < 0){
+        }else if (srcNode.getUnitsNum() < unitsNum || unitsNum <= 0){
             return false;
         }else{
             return true;

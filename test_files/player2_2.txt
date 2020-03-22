@@ -1,0 +1,47 @@
+j
+3
+j
+0
+2
+1
+4
+2
+5
+3
+6
+m
+kingdom of mountain and vale
+kingdom of the north
+5
+d
+m
+kingdom of the north
+kingdom of the rock
+5
+m
+kingdom of mountain and vale
+kingdom of the rock
+2
+d
+m
+kingdom of the north
+principality of dorne
+1
+m
+kingdom of mountain and vale
+principality of dorne
+1
+a
+principality of dorne
+kingdom of the reach
+9
+a
+kingdom of the rock
+kingdom of the reach
+5
+the storm kingd
+a
+the storm kingdom
+kingdom of the reach
+1
+d

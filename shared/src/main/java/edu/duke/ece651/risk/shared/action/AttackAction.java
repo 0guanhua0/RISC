@@ -12,8 +12,8 @@ public class AttackAction implements Action, Serializable {
     int unitsNum;
 
     public AttackAction(String src, String dest, int playerId, int unitsNum) {
-        this.src = src;
-        this.dest = dest;
+        this.src = src.toLowerCase();
+        this.dest = dest.toLowerCase();
         this.playerId = playerId;
         this.unitsNum = unitsNum;
     }
@@ -42,8 +42,8 @@ public class AttackAction implements Action, Serializable {
         if (src.getUnitsNum() < this.unitsNum) {
             return false;
         }
-        //validate dst owns by opponent
 
+        //validate dst owns by opponent
         Territory dst = worldMap.getTerritory(this.dest);
         if (dst.getOwner() == this.playerId) {
             return false;

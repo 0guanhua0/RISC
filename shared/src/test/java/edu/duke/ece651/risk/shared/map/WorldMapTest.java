@@ -71,7 +71,7 @@ class WorldMapTest {
         assert (!worldMap.hasFreeTerritory("The Storm Kingdom"));
         assert (!worldMap.hasFreeTerritory("Kingdom"));
 
-
+        assertEquals(2, worldMap.getPlayerNums());
     }
 
 

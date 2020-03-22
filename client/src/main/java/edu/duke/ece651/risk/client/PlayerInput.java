@@ -52,9 +52,9 @@ public class PlayerInput {
      */
     public static Action readAction(Scanner scanner, int playerId, String currAct) {
         InsPrompt.srcInfo();
-        String src = scanner.nextLine().toUpperCase();
+        String src = scanner.nextLine().toLowerCase();
         InsPrompt.dstInfo();
-        String dst = scanner.nextLine().toUpperCase();
+        String dst = scanner.nextLine().toLowerCase();
 
         //readAction unit
         InsPrompt.unitInfo();

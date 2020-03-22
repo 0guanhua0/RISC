@@ -171,19 +171,21 @@ public class RoomControllerTest {
     void testPlaySingleRound() throws IOException, ClassNotFoundException {
         // set up the game
         MapDataBase<String> mapDataBase = new MapDataBase<>();
-        // invalid move actions(under initial map) for player1
+        // invalid move actions(under initial map) for player1 --- don't has path
         MoveAction a01 = new MoveAction("kingdom of the north", "principality of dorne", 1, 1);
         // valid move actions(under initial map) for player1
         MoveAction a11 = new MoveAction("kingdom of the north", "kingdom of mountain and vale", 1, 1);
         MoveAction a12 = new MoveAction("kingdom of mountain and vale", "kingdom of the rock",1, 1);
 
-        // invalid move actions(under initial map) for player2
+        // invalid move actions(under initial map) for player2 --- move 0 makes no sense
         MoveAction a21 = new MoveAction("the storm kingdom","kingdom of the reach",  2, 0);
         // valid move actions(under initial map) for player2
         MoveAction a31 = new MoveAction("kingdom of the reach", "the storm kingdom", 2, 1);
 
-        // valid for player1, invalid for player 2
-        AttackAction a41 = new AttackAction("principality of dorne", "kingdom of the reach", 1, 2);
+        // valid action for player1
+        AttackAction a41 = new AttackAction("principality of dorne", "kingdom of the reach", 1, 1);
+        // invalid action for player2 (territory doesn't belong to he)
+        AttackAction a42 = new AttackAction("principality of dorne", "kingdom of the reach", 2, 1);
 
         //build the room
         Player<String> player1 = new PlayerV1<>(
@@ -211,7 +213,7 @@ public class RoomControllerTest {
                                         "invalid",
                                         a31,
                                         ACTION_DONE,
-                                        a41,
+                                        a42,
                                         ACTION_DONE
                                 ))), new ByteArrayOutputStream());
 
@@ -241,7 +243,7 @@ public class RoomControllerTest {
         t3.addNUnits(1);
         t6.addNUnits(3);
         //player 2
-        t4.addNUnits(4);
+        t4.addNUnits(5);
         t5.addNUnits(2);
 
         roomController.playSingleRound(1);
@@ -251,12 +253,12 @@ public class RoomControllerTest {
         assertEquals(t1.getUnitsNum(),2);
         assertEquals(t2.getUnitsNum(),2);
         assertEquals(t3.getUnitsNum(),2);
-        assertEquals(t4.getUnitsNum(),3);
+        assertEquals(t4.getUnitsNum(),4); // reach
         assertEquals(t5.getUnitsNum(),3);
-        assertEquals(t6.getUnitsNum(),3);
+        assertEquals(t6.getUnitsNum(),3); // dorne
 
         roomController.playSingleRound(2);
-        // attack will lose
+        // attacker will lose
         assertEquals(3, roomController.players.get(0).getTerrNum());
         assertEquals(3, roomController.players.get(1).getTerrNum());
     }

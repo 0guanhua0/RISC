@@ -22,8 +22,6 @@ public abstract class Player<T> {
 
     T color;
     int id;
-    // TODO: not sure whether this will cause deadlock in real situation
-    // if it caused, consider change it to InputStream
     ObjectInputStream in;
     ObjectOutputStream out;
     Set<Territory> territories;
@@ -87,7 +85,7 @@ public abstract class Player<T> {
 
     public void loseTerritory(Territory territory) throws IllegalArgumentException{
         if(!territories.contains(territory)){
-            throw new IllegalArgumentException("there territory doesn't belong to this user!");
+            throw new IllegalArgumentException("the territory doesn't belong to this user!");
         }
         territories.remove(territory);
         territory.setIsFree(true);
