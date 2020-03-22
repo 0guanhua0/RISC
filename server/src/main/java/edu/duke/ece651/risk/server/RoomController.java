@@ -139,7 +139,6 @@ public class RoomController {
                     player.send(SELECT_GROUP_ERROR);
                 }
             }
-
             //check if assign units is valid or not
             while (true){
                 ServerSelect serverSelect = (ServerSelect)player.recv();

@@ -117,6 +117,9 @@ public class GameClientTest {
 
                     /* =============== stage 2(choose territory) =============== */
                     player.send(clientSelect);
+                    //confirm the correctness of group
+                    player.recv();
+                    player.send(SUCCESSFUL);
                     //confirm the correctness of each territory
                     player.recv();
                     player.send(SUCCESSFUL);
@@ -278,20 +281,21 @@ public class GameClientTest {
         Client client = mock(Client.class);
         when(client.recv())
                 .thenReturn(clientSelect)
-                .thenReturn(SELECT_TERR_ERROR)
+                .thenReturn(SELECT_GROUP_ERROR)
+                .thenReturn(SUCCESSFUL)
                 .thenReturn(SUCCESSFUL);
 
         GameClient gameClient = new GameClient();
         gameClient.client = client;
-        // 3, 1, 10 --- select group 3, assign all 10 units to territory 1
-        // then receive error message at the first time
-        // 0, 4, 3 --- choose territory group(both 0 & 4 are invalid)
+        // 2 --- select the second group
+        // then receive error message at the first time(assume this group has been chosen)
+        // 1 --- choose territory group(assume the first group is valid)
         // 1, 3 --- assign 3 units to the first territory
         // 2, 10, 5 --- assign 5 units to the second territory(10 is invalid)
         // 1, 2 --- assign 2 more units to the first territory
-        gameClient.selectTerritory(new Scanner("3\n1\n10\n" + "0\n4\n3\n" + "1\n3\n" + "2\n10\n5\n" + "1\n2\n"));
+        gameClient.selectTerritory(new Scanner("2\n" + "1\n" + "1\n3\n" + "2\n10\n5\n" + "1\n2\n"));
 
-        verify(client, times(3)).recv();
+        verify(client, times(4)).recv();
     }
 
     @Test
