@@ -166,7 +166,6 @@ public class GameClient {
             numMap.put(num, name);
             num++;
         }
-
         insShowMaps(allMaps);
 
         while (true){

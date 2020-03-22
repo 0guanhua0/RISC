@@ -111,6 +111,7 @@ public class GameClientTest {
 
                     /* =============== stage 2(choose territory) =============== */
                     player.send(clientSelect);
+                    //confirm the correctness of each territory
                     player.recv();
                     player.send(SUCCESSFUL);
 
