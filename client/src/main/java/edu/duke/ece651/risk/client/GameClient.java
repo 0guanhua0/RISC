@@ -68,7 +68,9 @@ public class GameClient {
         String result = "";
         while (!result.equals(GAME_OVER)){
             // receive the round info
+            System.out.println("wait round");
             RoundInfo roundInfo = (RoundInfo) client.recv();
+            System.out.println("receive round");
 
             showMsg("====== Round " + roundInfo.getRoundNum() + " ======");
 
@@ -162,6 +164,8 @@ public class GameClient {
             numMap.put(num, name);
             num++;
         }
+
+        showMsg("Please specify a WorldMap for this room");
         insShowMaps(allMaps);
 
         while (true){
@@ -191,18 +195,17 @@ public class GameClient {
 
         List<String> groupChosen;
         Map<String, Integer> selection = new HashMap<>();
-        //select the correct group name
-        while(true){
-            // display the map
-            SceneCLI.showMap(select.getMap());
-            // display the territory group
-            List<Set<String>> terrGroup = select.getGroups();
-            SceneCLI.showTerritoryGroup(terrGroup);
 
+        // display the map
+        SceneCLI.showMap(select.getMap());
+        // display the territory group
+        List<Set<String>> terrGroup = select.getGroups();
+        SceneCLI.showTerritoryGroup(terrGroup);
+        while(true){
             System.out.println("Which group of territories you want to choose?");
             int index = readValidInt(scanner, 1, terrGroup.size()) - 1;
 
-            //connect with server to check if the this group is available
+            // check if the this group is available
             client.send(terrGroup.get(index));
             String response = (String)client.recv();
             if (!response.equals(SUCCESSFUL)){
@@ -214,7 +217,7 @@ public class GameClient {
                 break;
             }
         }
-        //assign units to corresponding group of territories
+        // assign units to corresponding group of territories
         while (true){
             // initialize the result
             for (String name : groupChosen){
@@ -242,6 +245,7 @@ public class GameClient {
                 break;
             }
         }
+        showMsg("Finish assigning units, please wait for the other player.");
     }
 
     /**

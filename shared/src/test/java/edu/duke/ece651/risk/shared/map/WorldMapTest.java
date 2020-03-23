@@ -49,6 +49,7 @@ class WorldMapTest {
         Territory territory7 = worldMap.getTerritory(t7);
 
         assertEquals(6, worldMap.getTerriNum());
+        assertEquals(3, worldMap.getTerrPerPlayer());
 
         assertEquals("the storm kingdom", territory1.status.getName());
         Set<Territory> neigh = territory1.getNeigh();

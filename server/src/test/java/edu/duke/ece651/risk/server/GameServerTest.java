@@ -151,7 +151,7 @@ public class GameServerTest {
         RoomController room3 = new RoomController(3, player, new MapDataBase<>()); // finish
 
         room2.players.add(new PlayerV1<>("Green", 1));
-        room3.winnerID = 1;
+        room3.gameInfo.winnerID = 1;
 
         Server server = mock(Server.class);
         GameServer gameServer = new GameServer(server);
