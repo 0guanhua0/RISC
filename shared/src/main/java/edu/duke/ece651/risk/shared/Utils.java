@@ -31,8 +31,10 @@ public class Utils {
     }
     public static List<String> readColorConfig(String fileName) throws IOException{
         List<String> res = new ArrayList<>();
-        try(Stream<String> stream = Files.lines(Paths.get(fileName))) {
-            stream.forEach(s -> res.add(s));
+        try(Scanner scanner = new Scanner(new File(fileName))) {
+            while (scanner.hasNextLine()){
+                res.add(scanner.nextLine());
+            }
         }
         return res;
     }

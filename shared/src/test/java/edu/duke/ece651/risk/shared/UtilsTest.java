@@ -25,7 +25,7 @@ public class UtilsTest {
         JSONObject jsonObject = new JSONObject(Utils.readFileToString("../config_file/client_config.txt"));
         assertEquals("localhost", jsonObject.getString("host"));
         assertEquals(12345, jsonObject.getInt("port"));
-        assertThrows(IOException.class,()->{Utils.readNeighConfig(dir+"fake.txt");});
+        assertThrows(IOException.class,()->{Utils.readFileToString("fake.txt");});
 
     }
     @Test
@@ -80,8 +80,7 @@ public class UtilsTest {
         List<String> colorList = new ArrayList<>(Arrays.asList("red","blue"));
         List<String> strings = Utils.readColorConfig(dir+"color.txt");
         assertEquals(colorList,strings);
-        assertThrows(IOException.class,()->{Utils.readNeighConfig(dir+"fake.txt");});
-
+        assertThrows(IOException.class,()->{Utils.readColorConfig(dir+"fake.txt");});
     }
 
 
@@ -102,7 +101,7 @@ public class UtilsTest {
         groups.put(group2,false);
         Map<Set<String>, Boolean> setBooleanMap = Utils.readGroupConfig(dir+"group.txt");
         assertEquals(setBooleanMap,groups);
-        assertThrows(IOException.class,()->{Utils.readNeighConfig(dir+"fake.txt");});
+        assertThrows(IOException.class,()->{Utils.readGroupConfig(dir+"fake.txt");});
 
     }
 }
