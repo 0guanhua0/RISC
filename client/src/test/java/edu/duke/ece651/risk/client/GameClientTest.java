@@ -41,25 +41,18 @@ public class GameClientTest {
     static WorldMap<String> map;
 
     static ClientSelect clientSelect;
-
-    static {
-        try {
-            clientSelect = new ClientSelect(
-                    10,
-                    2,
-                    mapName
-            );
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
+    
     static Map<Integer, String> idToColor = new HashMap<>();
 
     @BeforeAll
     static void beforeAll() throws IOException {
         mapDB = new MapDataBase<>();
         map = mapDB.getMap(mapName);
+        clientSelect = new ClientSelect(
+                10,
+                2,
+                mapName
+        );
         String t1 = "the storm kingdom";
         String t2 = "kingdom of the reach";
         String t3 = "kingdom of the rock";
