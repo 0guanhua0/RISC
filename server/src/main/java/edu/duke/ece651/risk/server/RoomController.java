@@ -29,7 +29,9 @@ public class RoomController {
     // the mapping between player id and player name(for now, use the color)
     Map<Integer, String> idToName;
     // winner ID, mainly for testing purpose
-    int winnerID;
+//    int winnerID;
+
+    GameInfo gameInfo;
 
     /**
      * The constructor, initialize the whole game(room.
@@ -45,7 +47,8 @@ public class RoomController {
             throw new IllegalArgumentException("Invalid value of Room Id");
         }
         this.roomID = roomID;
-        this.winnerID = -1;
+        gameInfo = new GameInfo(-1, 1);
+//        this.winnerID = -1;
 
         players = new ArrayList<>();
         players.add(player);
@@ -92,7 +95,8 @@ public class RoomController {
                         runGame();
                     } catch (Exception ignored) {
                         // any bad thing happen, we simply mark this room as finished
-                        winnerID = 0;
+                        gameInfo.setWinner(0);
+//                        winnerID = 0;
                     }
                 }).start();
             }else {
@@ -250,18 +254,18 @@ public class RoomController {
                 throw new IllegalStateException("Illegal State of current world");
             }
             if (curNum == targetNum){
-                winnerID =  player.getId();
+                gameInfo.setWinner(player.getId());
             }
         }
     }
 
     void endGame() throws IOException {
-        if (!idToName.containsKey(winnerID)){
+        if (!idToName.containsKey(gameInfo.winnerID)){
             throw new IllegalArgumentException("Player doesn't exist.");
         }
-        String winnerName = idToName.get(winnerID);
+        String winnerName = idToName.get(gameInfo.winnerID);
         for (Player<String> player : players) {
-            if (player.getId() != winnerID){
+            if (player.getId() != gameInfo.winnerID){
                 player.send(String.format("Winner is the %s player.", winnerName));
             }else{
                 player.send(YOU_WINS);
@@ -276,30 +280,86 @@ public class RoomController {
     }
 
     boolean hasFinished(){
-        return winnerID != -1;
+        return gameInfo.hasFinished();
     }
 
     boolean hasStarted() {
         return players.size() == map.getColorList().size();
     }
 
-    void runGame() throws IOException, ClassNotFoundException {
+    void runGame123() throws IOException, ClassNotFoundException {
         selectTerritory();
 
         int roundNum = 1;
-        while(winnerID < 0) {
+        while(!gameInfo.hasFinished()) {
             playSingleRound(roundNum);
             // after execute all actions, tell the player to enter next round
             sendAll(ROUND_OVER);
             // check the game result
             checkWinner();
-            if(winnerID == -1){
+            if(gameInfo.winnerID == -1){
                 sendAll("continue");
             }else {
                 sendAll(GAME_OVER);
                 continue;
             }
             roundNum ++;
+            // add one units to all territory
+            addNewUnits();
+        }
+        endGame();
+    }
+
+    void runGame() throws IOException, ClassNotFoundException {
+        gameInfo = new GameInfo(-1, 1);
+        int roundNum = 1;
+//        RoundInfo roundInfo = new RoundInfo(roundNum, map, idToName);
+        CyclicBarrier barrier = new CyclicBarrier(players.size() + 1); // + 1 for main thread
+
+        for (Player<String> player : players) {
+            new PlayerAllThread(player, map, idToName, gameInfo, barrier).start();
+        }
+        try {
+            barrier.await(); // wait for selecting territory
+        }catch (InterruptedException | BrokenBarrierException ignored) {
+        }
+
+        System.out.println("start playing");
+
+        while(true) {
+            try {
+                System.out.println("main thread start wait 1");
+                barrier.await(); // wait for all player to ready start a round
+                System.out.println("main thread end wait 1");
+            }catch (InterruptedException | BrokenBarrierException ignored) {
+                System.out.println(ignored.toString());
+            }
+
+//            roundInfo = new RoundInfo(roundNum, map, idToName);
+
+            try {
+                System.out.println("main thread start wait 2");
+                barrier.await(); // wait for all player to finish one round
+                System.out.println("main thread end wait 2");
+            }catch (InterruptedException | BrokenBarrierException ignored) {
+                System.out.println(ignored.toString());
+            }
+
+            resolveCombats();
+
+            // after execute all actions, tell the player to enter next round
+            sendAll(ROUND_OVER);
+            // check the game result
+            checkWinner();
+            if(!gameInfo.hasFinished()){
+                sendAll("continue");
+            }else {
+                sendAll(GAME_OVER);
+                break;
+            }
+            gameInfo.nextRound();
+            roundNum ++;
+//            result.roundNum++;
             // add one units to all territory
             addNewUnits();
         }

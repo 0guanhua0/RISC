@@ -290,21 +290,21 @@ public class RoomControllerTest {
         player1.addTerritory(t4);
         player1.addTerritory(t5);
         player1.addTerritory(t6);
-        roomController.winnerID = -1;
+        roomController.gameInfo.winnerID = -1;
         roomController.checkWinner();
-        assertEquals(roomController.winnerID,1);
+        assertEquals(roomController.gameInfo.winnerID,1);
 
         player1.loseTerritory(t1);
         player2.addTerritory(t1);
-        roomController.winnerID = -1;
+        roomController.gameInfo.winnerID = -1;
         roomController.checkWinner();
-        assertEquals(roomController.winnerID,-1);
+        assertEquals(roomController.gameInfo.winnerID,-1);
 
         player2.loseTerritory(t1);
         player1.addTerritory(t1);
-        roomController.winnerID = -1;
+        roomController.gameInfo.winnerID = -1;
         roomController.checkWinner();
-        assertEquals(roomController.winnerID,1);
+        assertEquals(roomController.gameInfo.winnerID,1);
 
         Territory test = new TerritoryV1("some name");
         player1.addTerritory(test);
@@ -322,7 +322,7 @@ public class RoomControllerTest {
         RoomController roomController = new RoomController(0, player1, new MapDataBase<>());
         roomController.players.add(player2);
         assertThrows(IllegalArgumentException.class, roomController::endGame);
-        roomController.winnerID = 1;
+        roomController.gameInfo.winnerID = 1;
         roomController.endGame();
         ObjectInputStream s1 = new ObjectInputStream(new ByteArrayInputStream(p1OutStream.toByteArray()));
         ObjectInputStream s2 = new ObjectInputStream(new ByteArrayInputStream(p2OutStream.toByteArray()));
