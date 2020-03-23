@@ -108,6 +108,11 @@ public class WorldMap<T extends Serializable> implements Serializable {
     public int getTerriNum(){
         return atlas.size();
     }
+
+    public int getTerrPerPlayer(){
+        return atlas.size() / colorList.size();
+    }
+
     //if there is no territory with such name or this territory is currently occupied,return false
     public boolean hasFreeTerritory(String input){
         String name = input.toLowerCase();
@@ -120,7 +125,7 @@ public class WorldMap<T extends Serializable> implements Serializable {
 
 
     public Boolean hasFreeGroup(Set<String> names){
-        return this.groups.containsKey(names) && (false==this.groups.get(names));
+        return this.groups.containsKey(names) && (!this.groups.get(names));
     }
     public void useGroup(Set<String> name){
         this.groups.replace(name,true);
