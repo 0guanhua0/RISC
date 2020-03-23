@@ -1,0 +1,4 @@
+it's a ring, just as follows:
+a-b-c-d
+|     |
+h-g-f-e
