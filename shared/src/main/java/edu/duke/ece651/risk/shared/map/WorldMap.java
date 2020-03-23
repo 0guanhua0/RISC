@@ -125,7 +125,7 @@ public class WorldMap<T extends Serializable> implements Serializable {
 
 
     public Boolean hasFreeGroup(Set<String> names){
-        return this.groups.containsKey(names) && (false==this.groups.get(names));
+        return this.groups.containsKey(names) && (!this.groups.get(names));
     }
     public void useGroup(Set<String> name){
         this.groups.replace(name,true);

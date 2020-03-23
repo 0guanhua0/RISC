@@ -1,8 +1,5 @@
 package edu.duke.ece651.risk.server;
 
-import edu.duke.ece651.risk.shared.ToClientMsg.ClientSelect;
-import edu.duke.ece651.risk.shared.ToClientMsg.RoundInfo;
-import edu.duke.ece651.risk.shared.ToServerMsg.ServerSelect;
 import edu.duke.ece651.risk.shared.action.AttackResult;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.map.Territory;
@@ -19,18 +16,12 @@ import static edu.duke.ece651.risk.shared.Constant.*;
 //TODO for every method that have networking, take client losing connection into consideration
 //TODO for every method that have networking, handle some exceptions rather than just throwing it
 public class RoomController {
-    //TODO maybe change that in the future version? like a beginner to choose that?
-    //this variable represents how many units on average we have for a single territory
     int roomID;
     // all players in current room
     List<Player<String>> players;
     // the map this room is playing
     WorldMap<String> map;
-    // the mapping between player id and player name(for now, use the color)
-    Map<Integer, String> idToName;
-    // winner ID, mainly for testing purpose
-//    int winnerID;
-
+    // some basic info we need for a game(e.g. winnerID, roundNum)
     GameInfo gameInfo;
 
     /**
@@ -47,8 +38,6 @@ public class RoomController {
             throw new IllegalArgumentException("Invalid value of Room Id");
         }
         this.roomID = roomID;
-        gameInfo = new GameInfo(-1, 1);
-//        this.winnerID = -1;
 
         players = new ArrayList<>();
         players.add(player);
@@ -64,8 +53,8 @@ public class RoomController {
 
         player.send(String.format("Please wait other players to join th game(need %d, joined %d)", colorList.size(), players.size()));
 
-        idToName = new HashMap<>();
-        idToName.put(player.getId(), player.getColor());
+        gameInfo = new GameInfo(-1, 1);
+        gameInfo.addPlayer(player.getId(), player.getColor());
     }
 
     /**
@@ -85,7 +74,7 @@ public class RoomController {
             player.setColor(colorList.get(players.size() - 1));
             player.sendPlayerInfo();
 
-            idToName.put(player.getId(), player.getColor());
+            gameInfo.addPlayer(player.getId(), player.getColor());
 
             // check whether has enough player to start the game
             if (players.size() == colorList.size()){
@@ -94,9 +83,6 @@ public class RoomController {
                     try {
                         runGame();
                     } catch (Exception ignored) {
-                        // any bad thing happen, we simply mark this room as finished
-                        gameInfo.setWinner(0);
-//                        winnerID = 0;
                     }
                 }).start();
             }else {
@@ -118,68 +104,6 @@ public class RoomController {
             }
         }
         firstPlayer.send(SUCCESSFUL);
-    }
-
-    // TODO maybe changing this method to a multi-thread version in the future?
-    void selectTerritory() throws IOException, IllegalArgumentException, ClassNotFoundException {
-        int terriNum = map.getTerriNum();
-        int playerNum = players.size();
-        //the variable below is the number of territories that a single player can choose
-        assert(0 == terriNum % playerNum);
-        int terrPerUsr = terriNum / playerNum;
-        //the variable below is the total number of units that a single player can choose
-        int totalUnits = UNITS_PER_TERR * terrPerUsr;
-
-        // select territory
-        for (Player<String> player : players) {
-            //get the current list of occupied territories
-            ClientSelect clientSelect = new ClientSelect(totalUnits, terrPerUsr, map.getName());
-            //tell user to select client
-            player.send(clientSelect);
-
-            //check if groups of territories are valid or not
-            while(true){
-                Set<String> recv = (HashSet<String>)player.recv();
-                if (map.hasFreeGroup(recv)){
-                    player.send(SUCCESSFUL);
-                    this.map.useGroup(recv);
-                    break;
-                }else {
-                    player.send(SELECT_GROUP_ERROR);
-                }
-            }
-            //check if assign units is valid or not
-            while (true){
-                ServerSelect serverSelect = (ServerSelect)player.recv();
-                if(serverSelect.isValid(map, totalUnits, terrPerUsr)){
-                    //if valid, update the map
-                    for (String terrName : serverSelect.getAllName()) {
-                        Territory territory = map.getTerritory(terrName);
-                        territory.addNUnits(serverSelect.getUnitsNum(terrName));
-                        player.addTerritory(territory);
-                    }
-                    player.send(SUCCESSFUL);
-                    break;
-                }else{
-                    player.send(SELECT_TERR_ERROR);
-                }
-            }
-        }
-    }
-
-    void playSingleRound(int roundNum) throws IOException{
-        RoundInfo roundInfo = new RoundInfo(roundNum, map, idToName);
-        CyclicBarrier barrier = new CyclicBarrier(players.size() + 1); // + 1 for main thread
-
-        for (Player<String> player : players) {
-            new PlayerThread(player, roundInfo, map, barrier).start();
-        }
-        try {
-            barrier.await();
-        }catch (InterruptedException | BrokenBarrierException ignored) {
-        }
-        // resolve all combats and send out the result
-        resolveCombats();
     }
 
     /**
@@ -260,12 +184,9 @@ public class RoomController {
     }
 
     void endGame() throws IOException {
-        if (!idToName.containsKey(gameInfo.winnerID)){
-            throw new IllegalArgumentException("Player doesn't exist.");
-        }
-        String winnerName = idToName.get(gameInfo.winnerID);
+        String winnerName = gameInfo.getWinnerName();
         for (Player<String> player : players) {
-            if (player.getId() != gameInfo.winnerID){
+            if (player.getId() != gameInfo.getWinnerID()){
                 player.send(String.format("Winner is the %s player.", winnerName));
             }else{
                 player.send(YOU_WINS);
@@ -287,63 +208,23 @@ public class RoomController {
         return players.size() == map.getColorList().size();
     }
 
-    void runGame123() throws IOException, ClassNotFoundException {
-        selectTerritory();
-
-        int roundNum = 1;
-        while(!gameInfo.hasFinished()) {
-            playSingleRound(roundNum);
-            // after execute all actions, tell the player to enter next round
-            sendAll(ROUND_OVER);
-            // check the game result
-            checkWinner();
-            if(gameInfo.winnerID == -1){
-                sendAll("continue");
-            }else {
-                sendAll(GAME_OVER);
-                continue;
-            }
-            roundNum ++;
-            // add one units to all territory
-            addNewUnits();
-        }
-        endGame();
-    }
-
-    void runGame() throws IOException, ClassNotFoundException {
-        gameInfo = new GameInfo(-1, 1);
-        int roundNum = 1;
-//        RoundInfo roundInfo = new RoundInfo(roundNum, map, idToName);
+    void runGame() throws IOException {
         CyclicBarrier barrier = new CyclicBarrier(players.size() + 1); // + 1 for main thread
 
         for (Player<String> player : players) {
-            new PlayerAllThread(player, map, idToName, gameInfo, barrier).start();
+            new PlayerThread(player, map, gameInfo, barrier).start();
         }
-        try {
-            barrier.await(); // wait for selecting territory
-        }catch (InterruptedException | BrokenBarrierException ignored) {
-        }
+        // wait for selecting territory
+        barrierWait(barrier);
 
         System.out.println("start playing");
 
         while(true) {
-            try {
-                System.out.println("main thread start wait 1");
-                barrier.await(); // wait for all player to ready start a round
-                System.out.println("main thread end wait 1");
-            }catch (InterruptedException | BrokenBarrierException ignored) {
-                System.out.println(ignored.toString());
-            }
+            // wait for all player to ready start a round(give main thread some time to process round result)
+            barrierWait(barrier);
 
-//            roundInfo = new RoundInfo(roundNum, map, idToName);
-
-            try {
-                System.out.println("main thread start wait 2");
-                barrier.await(); // wait for all player to finish one round
-                System.out.println("main thread end wait 2");
-            }catch (InterruptedException | BrokenBarrierException ignored) {
-                System.out.println(ignored.toString());
-            }
+            // wait for all player to finish one round
+            barrierWait(barrier);
 
             resolveCombats();
 
@@ -358,11 +239,16 @@ public class RoomController {
                 break;
             }
             gameInfo.nextRound();
-            roundNum ++;
-//            result.roundNum++;
             // add one units to all territory
             addNewUnits();
         }
         endGame();
+    }
+
+    void barrierWait(CyclicBarrier barrier){
+        try {
+            barrier.await();
+        }catch (InterruptedException | BrokenBarrierException ignored) {
+        }
     }
 }
