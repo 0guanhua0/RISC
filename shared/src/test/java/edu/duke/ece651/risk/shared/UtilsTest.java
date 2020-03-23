@@ -25,9 +25,12 @@ public class UtilsTest {
         JSONObject jsonObject = new JSONObject(Utils.readFileToString("../config_file/client_config.txt"));
         assertEquals("localhost", jsonObject.getString("host"));
         assertEquals(12345, jsonObject.getInt("port"));
+        assertThrows(IOException.class,()->{Utils.readNeighConfig(dir+"fake.txt");});
+
     }
     @Test
     public void testReadNeighConfig() throws  IOException{
+
         Map<String, Set<String>> atlas1 = new HashMap<>();
         Set<String> s1 = new HashSet<>(){{
             add(t3);
@@ -67,6 +70,8 @@ public class UtilsTest {
         atlas1.put(t6,s6);
         Map<String,Set<String>> testAtlas = Utils.readNeighConfig(dir+"neigh.txt");
         assertEquals(atlas1,testAtlas);
+
+        assertThrows(IOException.class,()->{Utils.readNeighConfig(dir+"fake.txt");});
     }
 
 
@@ -75,6 +80,8 @@ public class UtilsTest {
         List<String> colorList = new ArrayList<>(Arrays.asList("red","blue"));
         List<String> strings = Utils.readColorConfig(dir+"color.txt");
         assertEquals(colorList,strings);
+        assertThrows(IOException.class,()->{Utils.readNeighConfig(dir+"fake.txt");});
+
     }
 
 
@@ -95,5 +102,7 @@ public class UtilsTest {
         groups.put(group2,false);
         Map<Set<String>, Boolean> setBooleanMap = Utils.readGroupConfig(dir+"group.txt");
         assertEquals(setBooleanMap,groups);
+        assertThrows(IOException.class,()->{Utils.readNeighConfig(dir+"fake.txt");});
+
     }
 }

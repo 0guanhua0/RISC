@@ -47,11 +47,7 @@ public class GameClientTest {
     }
 
     static WorldMap<String> map = mapDB.getMap(mapName);
-//    static Set<String> groups = new HashSet<>(){
-//        {
-//            add();
-//        }
-//    };
+
     static ClientSelect clientSelect;
 
     static {
