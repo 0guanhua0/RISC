@@ -17,7 +17,6 @@ import java.util.*;
  **/
 
 //TODO: do we really need T here? since we hard code the map, we already know the type
-//TODO put the name of map inside constructor
 public class MapDataBase<T extends Serializable> implements Serializable{
     Map<String, WorldMap<T>> mapHub;
     private String baseDirStr = "../config_file/MapDB_config/";
