@@ -166,7 +166,6 @@ public class RoomController {
         for (Player<String> player : players) {
             new PlayerThread(player, roundInfo, map, barrier).start();
         }
-
         try {
             barrier.await();
         }catch (InterruptedException | BrokenBarrierException ignored) {

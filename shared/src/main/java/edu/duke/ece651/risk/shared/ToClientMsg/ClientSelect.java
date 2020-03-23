@@ -33,13 +33,12 @@ public class ClientSelect implements Serializable {
     }
 
     //only return groups whose value is false
-    //TODO note that since the current map is not the map in the real game with real state, current return value of the method below should incorporate all groups
     public List<Set<String>> getGroups() {
         List<Set<String>> groups = new ArrayList<>();
         for (Map.Entry<Set<String>, Boolean> entry : map.getGroups().entrySet()) {
-            if (!entry.getValue()){
-                groups.add(entry.getKey());
-            }
+            //if (!entry.getValue()){
+            groups.add(entry.getKey());
+            //}
         }
         return groups;
     }
