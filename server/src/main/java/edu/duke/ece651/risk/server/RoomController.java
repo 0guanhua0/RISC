@@ -3,7 +3,6 @@ package edu.duke.ece651.risk.server;
 import edu.duke.ece651.risk.shared.ToClientMsg.ClientSelect;
 import edu.duke.ece651.risk.shared.ToClientMsg.RoundInfo;
 import edu.duke.ece651.risk.shared.ToServerMsg.ServerSelect;
-import edu.duke.ece651.risk.shared.action.Action;
 import edu.duke.ece651.risk.shared.action.AttackResult;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.map.Territory;
@@ -11,7 +10,10 @@ import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.risk.shared.player.Player;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 
@@ -74,26 +76,29 @@ public class RoomController {
      */
     void addPlayer(Player<String> player) throws IOException {
         // TODO: in evolution 2, we need to check whether this player is already in room
-        players.add(player);
+        // only accept new player if the game is not start yet
+        if(players.size() < map.getColorList().size()){
+            players.add(player);
 
-        List<String> colorList = map.getColorList();
-        player.setId(players.size());
-        player.setColor(colorList.get(players.size() - 1));
-        player.sendPlayerInfo();
+            List<String> colorList = map.getColorList();
+            player.setId(players.size());
+            player.setColor(colorList.get(players.size() - 1));
+            player.sendPlayerInfo();
 
-        idToName.put(player.getId(), player.getColor());
+            idToName.put(player.getId(), player.getColor());
 
-        // check whether has enough player to start the game
-        if (players.size() == colorList.size()){
-            player.send("You are the last player, game will start now.");
-            new Thread(() -> {
-                try {
-                    runGame();
-                } catch (Exception ignored) {
-                }
-            }).start();
-        }else {
-            player.send(String.format("Please wait other players to join th game(need %d, joined %d)", colorList.size(), players.size()));
+            // check whether has enough player to start the game
+            if (players.size() == colorList.size()){
+                player.send("You are the last player, game will start now.");
+                new Thread(() -> {
+                    try {
+                        runGame();
+                    } catch (Exception ignored) {
+                    }
+                }).start();
+            }else {
+                player.send(String.format("Please wait other players to join th game(need %d, joined %d)", colorList.size(), players.size()));
+            }
         }
     }
 
@@ -262,6 +267,10 @@ public class RoomController {
 
     boolean hasFinished(){
         return winnerID != -1;
+    }
+
+    boolean hasStarted() {
+        return players.size() == map.getColorList().size();
     }
 
     void runGame() throws IOException, ClassNotFoundException {

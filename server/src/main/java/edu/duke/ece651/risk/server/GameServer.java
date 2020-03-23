@@ -115,7 +115,9 @@ public class GameServer {
             if (room.hasFinished()){
                 finishedRoom.add(room.roomID);
             }else {
-                roomList.add(new Room(room.roomID, ""));
+                if (!room.hasStarted()){
+                    roomList.add(new Room(room.roomID, ""));
+                }
             }
         }
 

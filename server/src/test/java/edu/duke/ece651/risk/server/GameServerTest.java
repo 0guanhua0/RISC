@@ -146,11 +146,12 @@ public class GameServerTest {
                                 "a clash of kings"
                         ))), new ByteArrayOutputStream());
 
-        RoomController room1 = new RoomController(1, player, new MapDataBase<>());
-        RoomController room2 = new RoomController(2, player, new MapDataBase<>());
-        RoomController room3 = new RoomController(3, player, new MapDataBase<>());
+        RoomController room1 = new RoomController(1, player, new MapDataBase<>()); // waiting
+        RoomController room2 = new RoomController(2, player, new MapDataBase<>()); // running
+        RoomController room3 = new RoomController(3, player, new MapDataBase<>()); // finish
 
-        room1.winnerID = 1;
+        room2.players.add(new PlayerV1<>("Green", 1));
+        room3.winnerID = 1;
 
         Server server = mock(Server.class);
         GameServer gameServer = new GameServer(server);
@@ -160,8 +161,8 @@ public class GameServerTest {
         gameServer.rooms.put(room3.roomID, room3);
 
         assertEquals(3, gameServer.rooms.size());
-        assertEquals(2, gameServer.getRoomList().size());
-        assertEquals(2, gameServer.rooms.size());
+        assertEquals(1, gameServer.getRoomList().size()); // only one room waiting for new player
+        assertEquals(2, gameServer.rooms.size()); // the room finished is removed
     }
 
     @Test

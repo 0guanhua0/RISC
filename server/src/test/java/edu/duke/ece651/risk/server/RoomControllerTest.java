@@ -42,12 +42,12 @@ public class RoomControllerTest {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         Player<String> player = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList("test"))), stream);
         RoomController roomController = new RoomController(0, player, mapDataBase);
-        try {
-            roomController.addPlayer(new PlayerV1<>(setupMockInput(new ArrayList<>()), new ByteArrayOutputStream()));
-            roomController.addPlayer(new PlayerV1<>(setupMockInput(new ArrayList<>()), new ByteArrayOutputStream()));
-        }catch (EOFException ignored){
-            // we only want to test if we can add
-        }
+        roomController.addPlayer(new PlayerV1<>(setupMockInput(new ArrayList<>()), new ByteArrayOutputStream()));
+        roomController.addPlayer(new PlayerV1<>(setupMockInput(new ArrayList<>()), new ByteArrayOutputStream()));
+        // already have enough players, will not add
+        roomController.addPlayer(new PlayerV1<>(setupMockInput(new ArrayList<>()), new ByteArrayOutputStream()));
+        roomController.addPlayer(new PlayerV1<>(setupMockInput(new ArrayList<>()), new ByteArrayOutputStream()));
+
         assertEquals(roomController.players.size(),3);
         assertEquals(roomController.players.get(0).getColor(),"red");
         assertEquals(roomController.players.get(1).getColor(),"blue");

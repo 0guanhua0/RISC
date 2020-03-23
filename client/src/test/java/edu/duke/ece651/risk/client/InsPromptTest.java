@@ -1,11 +1,15 @@
 package edu.duke.ece651.risk.client;
 
+import edu.duke.ece651.risk.shared.map.Territory;
+import edu.duke.ece651.risk.shared.map.TerritoryV1;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -33,9 +37,22 @@ class InsPromptTest {
                 " (D)one\n";
         String str2 = "A player:\n" +
                 "-------------\n";
-        String str3 = "input source territory\n";
-        String str4 = "input destination territory\n";
+        String str3 = "1. t1\n" +
+                "2. t2\n" +
+                "3. t3\n" +
+                "input source territory(by index): \n";
+        String str4 = "1. t1\n" +
+                "2. t2\n" +
+                "3. t3\n" +
+                "input destination territory(by index): \n";
         String str5 = "input unit number\n";
+        Map<Integer, Territory> tOwn = new HashMap<>();
+        Territory t1 = new TerritoryV1("t1");
+        Territory t2 = new TerritoryV1("t2");
+        Territory t3 = new TerritoryV1("t3");
+        tOwn.put(1, t1);
+        tOwn.put(2, t2);
+        tOwn.put(3, t3);
 
         Player<String> player = new Player<>();
         player.playerColor = "Green";
@@ -48,11 +65,11 @@ class InsPromptTest {
         assertEquals(str2, outContent.toString());
         outContent.reset();
 
-        InsPrompt.srcInfo();
+        InsPrompt.srcInfo(tOwn);
         assertEquals(str3, outContent.toString());
         outContent.reset();
 
-        InsPrompt.dstInfo();
+        InsPrompt.dstInfo(tOwn);
         assertEquals(str4, outContent.toString());
         outContent.reset();
 

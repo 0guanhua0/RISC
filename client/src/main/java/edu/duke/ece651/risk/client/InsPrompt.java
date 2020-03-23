@@ -2,6 +2,7 @@ package edu.duke.ece651.risk.client;
 
 import edu.duke.ece651.risk.shared.Room;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
+import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 
 import java.util.List;
@@ -51,19 +52,24 @@ class InsPrompt {
                 " (D)one");
     }
 
-
     public static void selfInfo(String player) {
         System.out.println(player + " player:");
         System.out.println("-------------");
 
     }
 
-    public static void srcInfo() {
-        System.out.println("input source territory");
+    public static void srcInfo(Map<Integer, Territory> territories) {
+        for (Map.Entry<Integer, Territory> entry : territories.entrySet()){
+            System.out.println(String.format("%d. %s", entry.getKey(), entry.getValue().getName()));
+        }
+        System.out.println("input source territory(by index): ");
     }
 
-    public static void dstInfo() {
-        System.out.println("input destination territory");
+    public static void dstInfo(Map<Integer, Territory> territories) {
+        for (Map.Entry<Integer, Territory> entry : territories.entrySet()){
+            System.out.println(String.format("%d. %s", entry.getKey(), entry.getValue().getName()));
+        }
+        System.out.println("input destination territory(by index): ");
     }
 
     public static void unitInfo() {
