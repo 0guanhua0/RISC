@@ -16,11 +16,11 @@ import java.util.*;
  * @create: 2020-03-09 10:20
  **/
 
-// TODO: do we really need T here? since we hard code the map, we already know the type
-    //TODO put the name of map inside constructor
+//TODO: do we really need T here? since we hard code the map, we already know the type
+//TODO put the name of map inside constructor
 public class MapDataBase<T extends Serializable> implements Serializable{
     Map<String, WorldMap<T>> mapHub;
-    private static final String baseDirStr = "config_file/MapDB_config/";
+    private String baseDirStr = "../config_file/MapDB_config/";
 
 
     public MapDataBase() throws IOException {
@@ -34,11 +34,8 @@ public class MapDataBase<T extends Serializable> implements Serializable{
             String neighPath = Paths.get(baseDirStr,mapName, "neigh.txt").toString();
 
             Map<String,Set<String>> atlas = Utils.readNeighConfig(neighPath);
-            System.out.println(atlas);
             List<String> colorList = Utils.readColorConfig(colorPath);
-            System.out.println(colorList);
             Map<Set<String>,Boolean> groups = Utils.readGroupConfig(groupPath);
-            System.out.println(groups);
             WorldMap<T> worldMap = new WorldMap(atlas,colorList,groups);
             worldMap.setName(mapName);
             mapHub.put(mapName,worldMap);
@@ -61,9 +58,5 @@ public class MapDataBase<T extends Serializable> implements Serializable{
     }
     public Map<String, WorldMap<T>> getAllMaps(){
         return mapHub;
-    }
-
-    public static void main(String[] args) throws IOException {
-        MapDataBase<?> mapDataBase = new MapDataBase<>();
     }
 }

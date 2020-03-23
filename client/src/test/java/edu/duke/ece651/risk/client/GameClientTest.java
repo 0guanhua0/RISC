@@ -36,18 +36,36 @@ public class GameClientTest {
 
     // mock data
     static String mapName = "a clash of kings";
-    static MapDataBase<String> mapDB = new MapDataBase<>();
+    static MapDataBase<String> mapDB;
+
+    static {
+        try {
+            mapDB = new MapDataBase<>();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     static WorldMap<String> map = mapDB.getMap(mapName);
 //    static Set<String> groups = new HashSet<>(){
 //        {
 //            add();
 //        }
 //    };
-    static ClientSelect clientSelect = new ClientSelect(
-            10,
-            2,
-            mapName
-    );
+    static ClientSelect clientSelect;
+
+    static {
+        try {
+            clientSelect = new ClientSelect(
+                    10,
+                    2,
+                    mapName
+            );
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     static Map<Integer, String> idToColor = new HashMap<>();
 
     @BeforeAll

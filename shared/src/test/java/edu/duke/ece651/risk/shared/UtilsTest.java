@@ -18,7 +18,7 @@ public class UtilsTest {
     private static String t6 = "kingdom of the north";
 
 
-    private static String dir = "../config_file/MapDB_config/a clash of kings";
+    private static String dir = "../config_file/MapDB_config/a clash of kings/";
 
     @Test
     public void testReadFileToString() throws IOException {
