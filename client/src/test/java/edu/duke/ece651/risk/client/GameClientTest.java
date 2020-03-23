@@ -38,15 +38,7 @@ public class GameClientTest {
     static String mapName = "a clash of kings";
     static MapDataBase<String> mapDB;
 
-    static {
-        try {
-            mapDB = new MapDataBase<>();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    static WorldMap<String> map = mapDB.getMap(mapName);
+    static WorldMap<String> map;
 
     static ClientSelect clientSelect;
 
@@ -65,7 +57,9 @@ public class GameClientTest {
     static Map<Integer, String> idToColor = new HashMap<>();
 
     @BeforeAll
-    static void beforeAll() {
+    static void beforeAll() throws IOException {
+        mapDB = new MapDataBase<>();
+        map = mapDB.getMap(mapName);
         String t1 = "the storm kingdom";
         String t2 = "kingdom of the reach";
         String t3 = "kingdom of the rock";

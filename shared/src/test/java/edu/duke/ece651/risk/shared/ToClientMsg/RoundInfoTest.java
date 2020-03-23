@@ -19,19 +19,14 @@ public class RoundInfoTest {
 
     static WorldMap<String> map;
 
-    static {
-        try {
-            map = new MapDataBase<String>().getMap("a clash of kings");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+
 
     static Map<Integer, String> players = new HashMap<>();
     static RoundInfo roundInfo;
 
     @BeforeAll
     static void beforeAll() throws IOException {
+        map = new MapDataBase<String>().getMap("a clash of kings");
         String t1 = "the storm kingdom";
         String t2 = "kingdom of the reach";
         String t3 = "kingdom of the rock";
