@@ -16,6 +16,10 @@ public class UtilsTest {
     private static String t4 = "kingdom of mountain and vale";
     private static String t5 = "principality of dorne";
     private static String t6 = "kingdom of the north";
+
+
+    private static String dir = "../config_file/MapDB_config/a clash of kings";
+
     @Test
     public void testReadFileToString() throws IOException {
         JSONObject jsonObject = new JSONObject(Utils.readFileToString("../config_file/client_config.txt"));
@@ -61,7 +65,7 @@ public class UtilsTest {
             add(t4);
         }};
         atlas1.put(t6,s6);
-        Map<String,Set<String>> testAtlas = Utils.readNeighConfig("../config_file/MapDB_config/a clash of kings/neigh.txt");
+        Map<String,Set<String>> testAtlas = Utils.readNeighConfig(dir+"neigh.txt");
         assertEquals(atlas1,testAtlas);
     }
 
@@ -69,13 +73,27 @@ public class UtilsTest {
     @Test
     void readColorConfig() throws IOException {
         List<String> colorList = new ArrayList<>(Arrays.asList("red","blue"));
-        List<String> strings = Utils.readColorConfig("../config_file/MapDB_config/a clash of kings/color.txt");
+        List<String> strings = Utils.readColorConfig(dir+"color.txt");
         assertEquals(colorList,strings);
     }
 
 
     @Test
-    void readGroupConfig() {
-        
+    void readGroupConfig() throws IOException {
+        Map<Set<String>,Boolean> groups = new HashMap<>();
+        Set<String> group1 = new HashSet<>(){{
+            add(t6);
+            add(t4);
+            add(t1);
+        }};
+        Set<String> group2 = new HashSet<>(){{
+            add(t2);
+            add(t3);
+            add(t5);
+        }};
+        groups.put(group1,false);
+        groups.put(group2,false);
+        Map<Set<String>, Boolean> setBooleanMap = Utils.readGroupConfig(dir+"group.txt");
+        assertEquals(setBooleanMap,groups);
     }
 }
