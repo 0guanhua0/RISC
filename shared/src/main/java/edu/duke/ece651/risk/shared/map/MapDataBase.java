@@ -70,11 +70,11 @@ public class MapDataBase<T extends Serializable> implements Serializable{
         Set<String> group1 = new HashSet<>(){{
             add(t6);
             add(t4);
-            add(t3);
+            add(t1);
         }};
         Set<String> group2 = new HashSet<>(){{
-            add(t1);
             add(t2);
+            add(t3);
             add(t5);
         }};
         groups.put(group1,false);

@@ -128,9 +128,21 @@ public class RoomController {
             ClientSelect clientSelect = new ClientSelect(totalUnits, terrPerUsr, map.getName());
             //tell user to select client
             player.send(clientSelect);
+
+            //check if groups of territories are valid or not
+            while(true){
+                Set<String> recv = (HashSet<String>)player.recv();
+                if (map.hasFreeGroup(recv)){
+                    player.send(SUCCESSFUL);
+                    this.map.useGroup(recv);
+                    break;
+                }else {
+                    player.send(SELECT_GROUP_ERROR);
+                }
+            }
+            //check if assign units is valid or not
             while (true){
                 ServerSelect serverSelect = (ServerSelect)player.recv();
-                //check if the selection is valid or not
                 if(serverSelect.isValid(map, totalUnits, terrPerUsr)){
                     //if valid, update the map
                     for (String terrName : serverSelect.getAllName()) {
@@ -154,7 +166,6 @@ public class RoomController {
         for (Player<String> player : players) {
             new PlayerThread(player, roundInfo, map, barrier).start();
         }
-
         try {
             barrier.await();
         }catch (InterruptedException | BrokenBarrierException ignored) {

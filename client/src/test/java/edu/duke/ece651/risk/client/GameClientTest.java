@@ -38,6 +38,11 @@ public class GameClientTest {
     static String mapName = "a clash of kings";
     static MapDataBase<String> mapDB = new MapDataBase<>();
     static WorldMap<String> map = mapDB.getMap(mapName);
+//    static Set<String> groups = new HashSet<>(){
+//        {
+//            add();
+//        }
+//    };
     static ClientSelect clientSelect = new ClientSelect(
             10,
             2,
@@ -112,6 +117,10 @@ public class GameClientTest {
 
                     /* =============== stage 2(choose territory) =============== */
                     player.send(clientSelect);
+                    //confirm the correctness of group
+                    player.recv();
+                    player.send(SUCCESSFUL);
+                    //confirm the correctness of each territory
                     player.recv();
                     player.send(SUCCESSFUL);
 
@@ -166,6 +175,7 @@ public class GameClientTest {
         // a, b, 10 --- from a to b, 10 units
         // d --- done
         String input = "j\n3\n" + "1\n1\n10\n" + "a\na\nb\n10\nd\n";
+
         GameClient gameClient = new GameClient();
         gameClient.run(new Scanner(input));
     }
@@ -175,7 +185,8 @@ public class GameClientTest {
         Client client = mock(Client.class);
         when(client.recv())
                 .thenReturn(clientSelect) // select territory & assign units
-                .thenReturn(SUCCESSFUL) // selection valid
+                .thenReturn(SUCCESSFUL)//select group valid
+                .thenReturn(SUCCESSFUL) // assign units valid
                 .thenReturn(new RoundInfo(1, map, idToColor))  // round info, map
                 .thenReturn(SUCCESSFUL) // action1 valid
                 .thenReturn(SUCCESSFUL) // action2 valid
@@ -270,20 +281,32 @@ public class GameClientTest {
         Client client = mock(Client.class);
         when(client.recv())
                 .thenReturn(clientSelect)
+                .thenReturn(SELECT_GROUP_ERROR)
+                .thenReturn(SUCCESSFUL)
                 .thenReturn(SELECT_TERR_ERROR)
                 .thenReturn(SUCCESSFUL);
 
         GameClient gameClient = new GameClient();
         gameClient.client = client;
-        // 3, 1, 10 --- select group 3, assign all 10 units to territory 1
-        // then receive error message at the first time
-        // 0, 4, 3 --- choose territory group(both 0 & 4 are invalid)
+        // 2 --- select the second group, wrong group
+        // 1 --- choose territory group(assume the first group is valid)
+
+        // 1, 3 --- assign 3 units to the first territory
+        // 2, 10, 5 --- assign 5 units to the second territory(10 is invalid)
+        // 1, 1 --- assign 2 more units to the first territory
+
+
+        // 1 --- choose territory group(assume the first group is valid)
         // 1, 3 --- assign 3 units to the first territory
         // 2, 10, 5 --- assign 5 units to the second territory(10 is invalid)
         // 1, 2 --- assign 2 more units to the first territory
-        gameClient.selectTerritory(new Scanner("3\n1\n10\n" + "0\n4\n3\n" + "1\n3\n" + "2\n10\n5\n" + "1\n2\n"));
 
-        verify(client, times(3)).recv();
+
+        gameClient.selectTerritory(new Scanner("2\n" + "1\n" +
+                "1\n4\n" + "2\n10\n5\n" + "1\n1\n"+
+                "1\n3\n" + "2\n10\n5\n" + "3\n2\n"));
+
+        verify(client, times(5)).recv();
     }
 
     @Test

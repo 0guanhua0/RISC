@@ -93,6 +93,13 @@ public class RoomControllerTest {
         ByteArrayOutputStream stream1 = new ByteArrayOutputStream();
         ByteArrayOutputStream stream2 = new ByteArrayOutputStream();
 
+        //valid select group of objects for p1
+        Set<String> p1Group = new HashSet<>();
+        p1Group.add("kingdom of the north");
+        p1Group.add("kingdom of mountain and vale");
+        p1Group.add("the storm kingdom");
+
+
         // first invalid input objects for p1
         HashMap<String, Integer> p1Chosen1 = new HashMap<>();
         p1Chosen1.put("kingdom of the north", 5);
@@ -105,6 +112,20 @@ public class RoomControllerTest {
         p1Chosen2.put("kingdom of mountain and vale", 5);
         p1Chosen2.put("the storm kingdom", 5);
         ServerSelect s12 = new ServerSelect(p1Chosen2);
+
+
+        //invalid select group of objects for p2
+        Set<String> p2Group = new HashSet<>();
+        p2Group.add("kingdom of the north");
+        p2Group.add("kingdom of mountain and vale");
+        p2Group.add("the storm kingdom");
+
+        //valid select group of objects for p2
+        Set<String> p2Group1 = new HashSet<>();
+        p2Group1.add("kingdom of the rock");
+        p2Group1.add("kingdom of the reach");
+        p2Group1.add("principality of dorne");
+
 
         // first invalid input objects for p2
         HashMap<String, Integer> p2Chosen1  = new HashMap<>();
@@ -128,9 +149,9 @@ public class RoomControllerTest {
         ServerSelect s23 = new ServerSelect(p2Chosen3);
 
         Player<String> player1 = new PlayerV1<>(
-                setupMockInput(new ArrayList<>(Arrays.asList("a clash of kings", s11, s12))), stream1);
+                setupMockInput(new ArrayList<>(Arrays.asList("a clash of kings",p1Group, s11, s12))), stream1);
         Player<String> player2 = new PlayerV1<>("Green", 2,
-                setupMockInput(new ArrayList<>(Arrays.asList(s21, s22, s23))), stream2);
+                setupMockInput(new ArrayList<>(Arrays.asList(p2Group,p2Group1, s21, s22, s23))), stream2);
         RoomController roomController = new RoomController(0, player1, mapDataBase);
         roomController.players.add(player2);
         roomController.selectTerritory();
@@ -144,22 +165,6 @@ public class RoomControllerTest {
                 mapDataBase.getMap("a clash of kings").getTerritory("principality of dorne").getOwner());
         assertEquals(3,
                 mapDataBase.getMap("a clash of kings").getTerritory("principality of dorne").getUnitsNum());
-
-        //test output is correct
-        ByteArrayInputStream temp = new ByteArrayInputStream(stream1.toByteArray());
-        ObjectInputStream objectInputStream = new ObjectInputStream(temp);
-        objectInputStream.readObject(); // mapDataBase
-        objectInputStream.readObject(); // successful
-        objectInputStream.readObject(); // player info
-        objectInputStream.readObject(); // wait info
-        objectInputStream.readObject(); // client select
-        assertEquals(SELECT_TERR_ERROR, objectInputStream.readObject());
-
-        temp = new ByteArrayInputStream(stream2.toByteArray());
-        objectInputStream = new ObjectInputStream(temp);
-        objectInputStream.readObject(); // client select
-        assertEquals(SELECT_TERR_ERROR, objectInputStream.readObject());
-        assertEquals(SELECT_TERR_ERROR, objectInputStream.readObject());
     }
 
     @Test
@@ -331,6 +336,13 @@ public class RoomControllerTest {
 
     @Test
     public void testRunGame() throws IOException, ClassNotFoundException {
+        //valid select group of objects for p1
+        Set<String> p1Group = new HashSet<>();
+        p1Group.add("kingdom of the north");
+        p1Group.add("kingdom of mountain and vale");
+        p1Group.add("the storm kingdom");
+
+
         //valid input objects for p1
         HashMap<String, Integer> p1Chosen1  = new HashMap<>();
         p1Chosen1.put("kingdom of the north", 5);
@@ -338,6 +350,14 @@ public class RoomControllerTest {
         p1Chosen1.put("the storm kingdom", 5);
 
         ServerSelect s1 = new ServerSelect(p1Chosen1);
+
+
+        //valid select group of objects for p2
+        Set<String> p2Group = new HashSet<>();
+        p2Group.add("kingdom of the rock");
+        p2Group.add("kingdom of the reach");
+        p2Group.add("principality of dorne");
+
 
         // valid input objects for p2
         HashMap<String, Integer> p2Chosen1  = new HashMap<>();
@@ -363,6 +383,7 @@ public class RoomControllerTest {
                 setupMockInput(
                         new ArrayList<>(Arrays.asList(
                                 "a clash of kings",
+                                p1Group,
                                 s1,
                                 a11,
                                 a12,
@@ -379,6 +400,7 @@ public class RoomControllerTest {
         Player<String> player2 = new PlayerV1<>(
                 setupMockInput(
                         new ArrayList<>(Arrays.asList(
+                                p2Group,
                                 s2,
                                 ACTION_DONE,
                                 ACTION_DONE

@@ -3,6 +3,7 @@ package edu.duke.ece651.risk.shared.ToClientMsg;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.WorldMap;
+import org.checkerframework.checker.units.qual.A;
 
 import java.io.Serializable;
 import java.util.*;
@@ -16,13 +17,11 @@ import java.util.*;
 public class ClientSelect implements Serializable {
     int unitsTotal;
     WorldMap<String> map;
-    List<Set<String>> groups;
 
     public ClientSelect(int unitsTotal, int terrPerUser, String mapName){
         this.unitsTotal = unitsTotal;
         this.map = new MapDataBase<String>().getMap(mapName);
 //        this.map = map;
-        generateGroups(terrPerUser);
     }
 
     public int getUnitsTotal() {
@@ -33,27 +32,34 @@ public class ClientSelect implements Serializable {
         return map;
     }
 
+    //only return groups whose value is false
     public List<Set<String>> getGroups() {
+        List<Set<String>> groups = new ArrayList<>();
+        for (Map.Entry<Set<String>, Boolean> entry : map.getGroups().entrySet()) {
+            //if (!entry.getValue()){
+            groups.add(entry.getKey());
+            //}
+        }
         return groups;
     }
 
-    // TODO: maybe we can put this function into MapDataBase(hardcode the group)
-    // TODO: maybe we want a more elegant way to group territory
-    void generateGroups(int terrPerUser){
-        Map<String, Territory> territories = map.getAtlas();
 
-        int groupSize = territories.size() / terrPerUser;
-        groups = new ArrayList<>(groupSize);
-        for (int i = 0; i < groupSize; i++){
-            groups.add(new HashSet<>());
-        }
-
-        int i = 0;
-        int groupCnt = groups.size();
-
-        for (String name : territories.keySet()){
-            groups.get(i % groupCnt).add(name);
-            i++;
-        }
-    }
+//    void generateGroups(int terrPerUser){
+//        Map<String, Territory> territories = map.getAtlas();
+//
+//        int groupSize = territories.size() / terrPerUser;
+//        groups = new ArrayList<>(groupSize);
+//        for (int i = 0; i < groupSize; i++){
+//            groups.add(new HashSet<>());
+//        }
+//
+//        int i = 0;
+//        int groupCnt = groups.size();
+//
+//        for (String name : territories.keySet()){
+//            groups.get(i % groupCnt).add(name);
+//            i++;
+//        }
+//        System.out.println(groups);
+//    }
 }
