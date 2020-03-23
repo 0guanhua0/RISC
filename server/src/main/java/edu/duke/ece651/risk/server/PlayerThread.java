@@ -97,26 +97,28 @@ public class PlayerThread extends Thread{
         // 3. round number
         RoundInfo roundInfo = new RoundInfo(gameInfo.getRoundNum(), map, gameInfo.getIdToName());
         player.send(roundInfo);
-        while (true){
-            Object recvRes = player.recv();
-            if (recvRes instanceof Action){
-                Action action = (Action) recvRes;
+        if (player.getTerrNum() > 0){
+            while (true){
+                Object recvRes = player.recv();
+                if (recvRes instanceof Action){
+                    Action action = (Action) recvRes;
 
-                synchronized (this) {
-                    // act accordingly based on whether the input actions are valid or not
-                    if (action.isValid(map)){
-                        // if valid, update the state of the world
-                        action.perform(map);
-                        player.send(SUCCESSFUL);
-                    }else{
-                        // otherwise ask user to resend the information
-                        player.send(INVALID_ACTION);
+                    synchronized (this) {
+                        // act accordingly based on whether the input actions are valid or not
+                        if (action.isValid(map)){
+                            // if valid, update the state of the world
+                            action.perform(map);
+                            player.send(SUCCESSFUL);
+                        }else{
+                            // otherwise ask user to resend the information
+                            player.send(INVALID_ACTION);
+                        }
                     }
+                }else if (recvRes instanceof String && recvRes.equals(ACTION_DONE)){
+                    break;
+                }else {
+                    player.send(INVALID_ACTION);
                 }
-            }else if (recvRes instanceof String && recvRes.equals(ACTION_DONE)){
-                break;
-            }else {
-                player.send(INVALID_ACTION);
             }
         }
         barrier.await();
