@@ -6,16 +6,12 @@ import edu.duke.ece651.risk.shared.ToClientMsg.RoundInfo;
 import edu.duke.ece651.risk.shared.ToServerMsg.ServerSelect;
 import edu.duke.ece651.risk.shared.action.Action;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
-import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.risk.shared.network.Client;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
-import java.util.stream.Stream;
 
 import static edu.duke.ece651.risk.client.InsPrompt.*;
 import static edu.duke.ece651.risk.client.PlayerInput.readValidInt;
@@ -77,11 +73,14 @@ public class GameClient {
             showMsg("====== Round " + roundInfo.getRoundNum() + " ======");
 
             SceneCLI.showMap(roundInfo.getMap(), roundInfo.getIdToName());
-            InsPrompt.selfInfo(player.getPlayerName());
 
             // keep asking action until user specify done
             while (true){
-                Action action = PlayerInput.readValidAction(scanner, player);
+                Action action = PlayerInput.readValidAction(
+                        scanner,
+                        player,
+                        new ArrayList<>(roundInfo.getMap().getAtlas().values())
+                );
                 if (action != null){
                     client.send(action);
                     // receive successful or error message
@@ -110,12 +109,6 @@ public class GameClient {
     }
 
     /** ====== helper function ====== **/
-
-    void initPlayer() throws IOException, ClassNotFoundException {
-        // receive player info
-        String playerInfo = (String) client.recv();
-        player.init(playerInfo);
-    }
 
     /**
      * Interacting with user and server to choose a room.
@@ -158,19 +151,6 @@ public class GameClient {
         }
     }
 
-    boolean isValidRoom(List<Room> rooms, String roomNum){
-        if (!Format.isNumeric(roomNum)){
-            return false;
-        }
-        int id = Integer.parseInt(roomNum);
-        for (Room room : rooms){
-            if (room.getRoomID() == id){
-                return true;
-            }
-        }
-        return false;
-    }
-
     void chooseMap(Scanner scanner) throws IOException, ClassNotFoundException {
         MapDataBase<String> mapDB = (MapDataBase<String>) client.recv();
         Map<String, WorldMap<String>> allMaps = mapDB.getAllMaps();
@@ -200,21 +180,10 @@ public class GameClient {
         }
     }
 
-    /**
-     * This function will receive a result message from server, and will print out the error message if fail
-     * @return true is result is successful
-     * @throws IOException probably because of stream is closed
-     * @throws ClassNotFoundException this exception shout not happen unless you don't follow the protocol we defined
-     */
-    boolean checkResult() throws IOException, ClassNotFoundException {
-        // receive the result of room choosing
-        String result = (String) client.recv();
-        if (result.equals(SUCCESSFUL)){
-            return true;
-        }else {
-            System.out.println(result);
-            return false;
-        }
+    void initPlayer() throws IOException, ClassNotFoundException {
+        // receive player info
+        String playerInfo = (String) client.recv();
+        player.init(playerInfo);
     }
 
     void selectTerritory(Scanner scanner) throws IOException, ClassNotFoundException {
@@ -287,6 +256,36 @@ public class GameClient {
             }else {
                 showMsg(result);
             }
+        }
+    }
+
+    boolean isValidRoom(List<Room> rooms, String roomNum){
+        if (!Format.isNumeric(roomNum)){
+            return false;
+        }
+        int id = Integer.parseInt(roomNum);
+        for (Room room : rooms){
+            if (room.getRoomID() == id){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * This function will receive a result message from server, and will print out the error message if fail
+     * @return true is result is successful
+     * @throws IOException probably because of stream is closed
+     * @throws ClassNotFoundException this exception shout not happen unless you don't follow the protocol we defined
+     */
+    boolean checkResult() throws IOException, ClassNotFoundException {
+        // receive the result of room choosing
+        String result = (String) client.recv();
+        if (result.equals(SUCCESSFUL)){
+            return true;
+        }else {
+            System.out.println(result);
+            return false;
         }
     }
 

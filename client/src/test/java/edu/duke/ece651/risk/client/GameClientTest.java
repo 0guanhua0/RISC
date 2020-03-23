@@ -174,7 +174,7 @@ public class GameClientTest {
         // a --- attack
         // a, b, 10 --- from a to b, 10 units
         // d --- done
-        String input = "j\n3\n" + "1\n1\n10\n" + "a\na\nb\n10\nd\n";
+        String input = "j\n3\n" + "1\n1\n10\n" + "a\n1\n3\n1\nd\n";
 
         GameClient gameClient = new GameClient();
         gameClient.run(new Scanner(input));
@@ -195,15 +195,18 @@ public class GameClientTest {
                 .thenReturn(ROUND_OVER) // round over
                 .thenReturn(GAME_OVER); // game over
 
+        edu.duke.ece651.risk.client.Player<String> player = new edu.duke.ece651.risk.client.Player<>();
+        player.playerId = 1;
         GameClient gameClient = new GameClient();
         gameClient.client = client;
+        gameClient.player = player;
         // 1 --- territory group
         // 1, 5; 2, 5 --- assign 5 units to territory 1, 5 units to territory 2
         // r --- invalid action
         // a --- attack action(a, b, 10)
         // m --- move action(c, d, 5)
         // d --- done
-        gameClient.playGame(new Scanner("1\n1\n5\n2\n5\n" + "r\n" + "a\na\nb\n10\n" + "m\nc\nd\n5\nd\n"));
+        gameClient.playGame(new Scanner("1\n1\n5\n2\n5\n" + "r\n" + "a\n1\n4\n1\n" + "m\n2\n1\n1\nd\n"));
     }
     
     @Test
@@ -329,7 +332,7 @@ public class GameClientTest {
     @Test
     public void testMain() throws IOException, ClassNotFoundException {
         // user input: invalid + select territory & assign units + attack(a->b, 10) + move(c->d, 5) + done
-        String input = "c\n1\n" + "1\n1\n6\n2\n4\n" + "a\na\nb\n10\n" + "m\nc\nd\n5\n" + "d\n";
+        String input = "c\n1\n" + "1\n1\n6\n2\n4\n" + "a\n1\n5\n1\n" + "m\n2\n1\n2\n" + "d\n";
         System.setIn(new ByteArrayInputStream(input.getBytes()));
         GameClient.main(null);
     }
