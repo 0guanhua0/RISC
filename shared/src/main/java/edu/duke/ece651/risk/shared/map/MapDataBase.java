@@ -33,16 +33,16 @@ public class MapDataBase<T extends Serializable> implements Serializable{
             String groupPath = Paths.get(baseDirStr,mapName, "group.txt").toString();
             String neighPath = Paths.get(baseDirStr,mapName, "neigh.txt").toString();
 
-            Map<String,Set<String>> atlas1 = Utils.readNeighConfig(neighPath);
+            Map<String,Set<String>> atlas = Utils.readNeighConfig(neighPath);
+            System.out.println(atlas);
             List<String> colorList = Utils.readColorConfig(colorPath);
+            System.out.println(colorList);
             Map<Set<String>,Boolean> groups = Utils.readGroupConfig(groupPath);
-
-            WorldMap<T> worldMap = new WorldMap(atlas1,colorList,groups);
+            System.out.println(groups);
+            WorldMap<T> worldMap = new WorldMap(atlas,colorList,groups);
             worldMap.setName(mapName);
             mapHub.put(mapName,worldMap);
         }
-
-
     }
     public boolean containsMap(String inputName){
         if (null==inputName){
@@ -61,5 +61,9 @@ public class MapDataBase<T extends Serializable> implements Serializable{
     }
     public Map<String, WorldMap<T>> getAllMaps(){
         return mapHub;
+    }
+
+    public static void main(String[] args) throws IOException {
+        MapDataBase<?> mapDataBase = new MapDataBase<>();
     }
 }
