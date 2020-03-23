@@ -130,5 +130,4 @@ public class WorldMap<T extends Serializable> implements Serializable {
     public void useGroup(Set<String> name){
         this.groups.replace(name,true);
     }
-
 }

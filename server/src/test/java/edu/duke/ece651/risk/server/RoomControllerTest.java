@@ -23,6 +23,7 @@ public class RoomControllerTest {
 
     @Test
     void testConstructor() throws IOException, ClassNotFoundException {
+
         assertThrows(IllegalArgumentException.class,()->{new RoomController(-1,null, new MapDataBase<String>());});
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

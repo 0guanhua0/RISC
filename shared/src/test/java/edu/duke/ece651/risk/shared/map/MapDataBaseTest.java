@@ -2,12 +2,14 @@ package edu.duke.ece651.risk.shared.map;
 
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class MapDataBaseTest {
 
     @Test
-    void containsMap() {
+    void containsMap() throws IOException {
         MapDataBase<String> mapDataBase = new MapDataBase<String>();
         assert (mapDataBase.containsMap("a clash of kings"));
         assert (mapDataBase.containsMap("a Clash of Kings"));
@@ -16,14 +18,14 @@ class MapDataBaseTest {
     }
 
     @Test
-    void getMap() {
+    void getMap() throws IOException {
         MapDataBase<String> mapDataBase = new MapDataBase<String>();
         assertThrows(IllegalArgumentException.class,()->{mapDataBase.getMap("not exist");});
         assertTrue(mapDataBase.containsMap("a clash of kings"));
     }
 
     @Test
-    void testGetAllMap(){
+    void testGetAllMap() throws IOException {
         MapDataBase<String> mapDataBase = new MapDataBase<String>();
         assertTrue(mapDataBase.getAllMaps().containsKey("a clash of kings"));
     }

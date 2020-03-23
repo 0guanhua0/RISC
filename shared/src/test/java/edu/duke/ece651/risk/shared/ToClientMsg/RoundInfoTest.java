@@ -17,12 +17,16 @@ import java.util.Map;
 
 public class RoundInfoTest {
 
-    static WorldMap<String> map = new MapDataBase<String>().getMap("a clash of kings");
+    static WorldMap<String> map;
+
+
+
     static Map<Integer, String> players = new HashMap<>();
     static RoundInfo roundInfo;
 
     @BeforeAll
     static void beforeAll() throws IOException {
+        map = new MapDataBase<String>().getMap("a clash of kings");
         String t1 = "the storm kingdom";
         String t2 = "kingdom of the reach";
         String t3 = "kingdom of the rock";

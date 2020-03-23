@@ -36,22 +36,23 @@ public class GameClientTest {
 
     // mock data
     static String mapName = "a clash of kings";
-    static MapDataBase<String> mapDB = new MapDataBase<>();
-    static WorldMap<String> map = mapDB.getMap(mapName);
-//    static Set<String> groups = new HashSet<>(){
-//        {
-//            add();
-//        }
-//    };
-    static ClientSelect clientSelect = new ClientSelect(
-            10,
-            2,
-            mapName
-    );
+    static MapDataBase<String> mapDB;
+
+    static WorldMap<String> map;
+
+    static ClientSelect clientSelect;
+    
     static Map<Integer, String> idToColor = new HashMap<>();
 
     @BeforeAll
-    static void beforeAll() {
+    static void beforeAll() throws IOException {
+        mapDB = new MapDataBase<>();
+        map = mapDB.getMap(mapName);
+        clientSelect = new ClientSelect(
+                10,
+                2,
+                mapName
+        );
         String t1 = "the storm kingdom";
         String t2 = "kingdom of the reach";
         String t3 = "kingdom of the rock";

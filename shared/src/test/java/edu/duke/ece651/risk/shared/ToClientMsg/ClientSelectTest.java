@@ -6,6 +6,7 @@ import edu.duke.ece651.risk.shared.network.Client;
 import org.apache.commons.math3.fitting.leastsquares.EvaluationRmsChecker;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashSet;
 
@@ -14,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ClientSelectTest {
 
     @Test
-    void testConstructor(){
+    void testConstructor() throws IOException {
         WorldMap<String> map = new MapDataBase<String>().getMap("a clash of kings");
         ClientSelect clientSelect = new ClientSelect(10, 2, map.getName());
 
