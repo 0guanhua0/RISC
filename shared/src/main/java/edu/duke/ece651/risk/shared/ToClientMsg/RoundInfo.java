@@ -4,6 +4,7 @@ import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Map;
 
@@ -13,7 +14,7 @@ public class RoundInfo implements Serializable {
     // for now we use player color to represent player name
     Map<Integer, String> idToName;
 
-    public RoundInfo(int roundNum, WorldMap<String> map, Map<Integer, String> idToName){
+    public RoundInfo(int roundNum, WorldMap<String> map, Map<Integer, String> idToName) throws IOException {
         this.roundNum = roundNum;
         this.idToName = idToName;
         copyMap(map);
@@ -32,7 +33,7 @@ public class RoundInfo implements Serializable {
     }
 
     //TODO have a better way to deep copy a map and put it into WorldMap class
-    void copyMap(WorldMap<String> oldMap){
+    void copyMap(WorldMap<String> oldMap) throws IOException {
         this.map = new MapDataBase<String>().getMap(oldMap.getName());
         for (Territory t : oldMap.getAtlas().values()){
             this.map.getTerritory(t.getName()).setOwner(t.getOwner());

@@ -1,5 +1,8 @@
 package edu.duke.ece651.risk.shared.map;
 
+import edu.duke.ece651.risk.shared.Utils;
+
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
 
@@ -14,7 +17,10 @@ import java.util.*;
 // TODO: do we really need T here? since we hard code the map, we already know the type
 public class MapDataBase<T extends Serializable> implements Serializable{
     Map<String, WorldMap<T>> mapHub;
-    public MapDataBase(){
+
+
+
+    public MapDataBase() throws IOException {
         mapHub = new HashMap<>();
         //the first map--A Clash of Kings
         //the visualization of the worldmap:
@@ -52,18 +58,32 @@ public class MapDataBase<T extends Serializable> implements Serializable{
             add(t1);
         }};
         atlas1.put(t4,s4);
-        /*temporarily delete Iron Islands*/
+
+
+        Set<String> s5 = new HashSet<>(){{
+            add(t2);
+            add(t1);
+        }};
+
+        atlas1.put(t5,s5);
+
+
         Set<String> s6 = new HashSet<>(){{
             add(t3);
             add(t4);
         }};
         atlas1.put(t6,s6);
-        Set<String> s7 = new HashSet<>(){{
-            add(t2);
-            add(t1);
-        }};
 
-        atlas1.put(t5,s7);
+
+        Map<String,Set<String>> testAtlas = Utils.readNeighConfig("config_file/MapDB_config/a clash of kings/neigh.txt");
+        assert(testAtlas.equals(atlas1));
+        System.out.println(testAtlas.equals(atlas1));
+        System.out.println(testAtlas);
+        System.out.println(atlas1);
+
+
+
+
         List<String> colorList = new ArrayList<>(Arrays.asList("red","blue"));
 
         Map<Set<String>,Boolean> groups = new HashMap<>();
@@ -122,5 +142,9 @@ public class MapDataBase<T extends Serializable> implements Serializable{
     }
     public Map<String, WorldMap<T>> getAllMaps(){
         return mapHub;
+    }
+
+    public static void main(String[] args) throws IOException {
+        MapDataBase<String> mapDataBase = new MapDataBase<>();
     }
 }

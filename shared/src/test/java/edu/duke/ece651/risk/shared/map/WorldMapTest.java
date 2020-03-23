@@ -2,6 +2,7 @@ package edu.duke.ece651.risk.shared.map;
 
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
 
@@ -15,7 +16,7 @@ class WorldMapTest {
     private static final String t6 = "Kingdom of the North";
     private static final String t7 = "Principality of Dorne";
     @Test
-    void testWorldMap() {
+    void testWorldMap() throws IOException {
         //test constructor
         Map<String, Set<String>> map = new HashMap<>() {{
             put("a", new HashSet<>());
@@ -76,7 +77,7 @@ class WorldMapTest {
 
 
     @Test
-    void setPlayerColor() {
+    void setPlayerColor() throws IOException {
         MapDataBase<String> mapDataBase = new MapDataBase<String>();
         WorldMap<String> worldMap = mapDataBase.getMap("A clash of Kings");
         Territory territory1 = worldMap.getTerritory(t1);
@@ -105,7 +106,7 @@ class WorldMapTest {
     }
 
     @Test
-    void testGroup() {
+    void testGroup() throws IOException {
         MapDataBase<Serializable> mapDataBase = new MapDataBase<>();
         WorldMap<Serializable> worldMap = mapDataBase.getMap("a clash of kings");
         assertTrue(worldMap.hasFreeGroup(new HashSet<String>(Arrays.asList(
