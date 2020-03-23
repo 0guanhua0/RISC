@@ -123,7 +123,7 @@ public class WorldMap<T extends Serializable> implements Serializable {
         return this.groups.containsKey(names) && (false==this.groups.get(names));
     }
     public void useGroup(Set<String> name){
-        this.groups.put(name,true);
+        this.groups.replace(name,true);
     }
 
 }
