@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ServerSelectTest {
 
     @Test
-    void isValid() {
+    void isValid() throws IOException {
         MapDataBase<String> mapDataBase = new MapDataBase<>();
         WorldMap<String> worldMap = mapDataBase.getMap("a clash of kings");
         Map<String,Integer> chosen = new HashMap<>();
@@ -57,7 +57,7 @@ class ServerSelectTest {
     }
 
     @Test
-    void getAllName() {
+    void getAllName() throws IOException {
         MapDataBase<String> mapDataBase = new MapDataBase<>();
         WorldMap<String> worldMap = mapDataBase.getMap("a clash of kings");
         Map<String,Integer> chosen = new HashMap<>();
@@ -72,7 +72,7 @@ class ServerSelectTest {
     }
 
     @Test
-    void getUnitsNum() {
+    void getUnitsNum() throws IOException {
         MapDataBase<String> mapDataBase = new MapDataBase<>();
         WorldMap<String> worldMap = mapDataBase.getMap("a clash of kings");
         Map<String,Integer> chosen = new HashMap<>();

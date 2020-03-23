@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.util.*;
 
@@ -30,7 +31,7 @@ class SceneCLITest {
     static Map<Integer, String> idToColor;
 
     @BeforeAll
-    static void beforeAll(){
+    static void beforeAll() throws IOException {
         outContent = new ByteArrayOutputStream();
 
         map = new MapDataBase<String>().getMap("a clash of kings");

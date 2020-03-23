@@ -5,6 +5,7 @@ import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 import org.checkerframework.checker.units.qual.A;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
 
@@ -18,7 +19,7 @@ public class ClientSelect implements Serializable {
     int unitsTotal;
     WorldMap<String> map;
 
-    public ClientSelect(int unitsTotal, int terrPerUser, String mapName){
+    public ClientSelect(int unitsTotal, int terrPerUser, String mapName) throws IOException {
         this.unitsTotal = unitsTotal;
         this.map = new MapDataBase<String>().getMap(mapName);
 //        this.map = map;
