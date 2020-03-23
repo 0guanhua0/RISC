@@ -1,0 +1,8 @@
+a: h^b
+b: a^c
+c: b^d
+d: c^e
+e: f^d
+f: e^g
+g: f^h
+h: a^g
