@@ -20,11 +20,6 @@ public class ClientSelectTest {
 
         assertEquals(10, clientSelect.getUnitsTotal());
         assertEquals(map.getTerriNum(), clientSelect.getMap().getTerriNum());
-        assertEquals(3, clientSelect.getGroups().size());
-
-        assertEquals(3, clientSelect.groups.size());
-        assertEquals(2, clientSelect.groups.get(0).size());
-        assertEquals(2, clientSelect.groups.get(1).size());
-        assertEquals(2, clientSelect.groups.get(2).size());
+        assertEquals(2, clientSelect.getGroups().size());
     }
 }

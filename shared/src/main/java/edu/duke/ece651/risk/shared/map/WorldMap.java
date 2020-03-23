@@ -10,6 +10,8 @@ import java.util.*;
  * @author: Chengda Wu (cw402)
  * @create: 2020-03-08 20:49
  **/
+
+//TODO take generic and serializable into consideration
 public class WorldMap<T extends Serializable> implements Serializable {
     String name;
     Map<String, Territory> atlas;
@@ -20,17 +22,18 @@ public class WorldMap<T extends Serializable> implements Serializable {
         this.atlas = new HashMap<>();
         this.colorList = new ArrayList<>();
     }
-    public WorldMap(Map<String,Set<String>> adjaList, List<T> colorList,Map<Set<String>,Boolean> groups) throws IllegalArgumentException {
+
+    public WorldMap(Map<String, Set<String>> adjaList, List<T> colorList, Map<Set<String>, Boolean> groups) throws IllegalArgumentException {
 
         //check legality of groups
         Set<String> allName = new HashSet<>();
         for (Set<String> nameSet : groups.keySet()) {
-            for (String  name : nameSet) {
-                assert (adjaList.containsKey(name)||!allName.contains(name));
+            for (String name : nameSet) {
+                assert (adjaList.containsKey(name) || !allName.contains(name));
                 allName.add(name);
             }
         }
-        assert (allName.size()==adjaList.size());
+        assert (allName.size() == adjaList.size());
         this.groups = groups;
 
         int playerNum = colorList.size();
@@ -111,5 +114,16 @@ public class WorldMap<T extends Serializable> implements Serializable {
         return atlas.containsKey(name) && atlas.get(name).isFree();
     }
 
-    // TODO: have better implement equals here
+    public Map<Set<String>, Boolean> getGroups() {
+        return groups;
+    }
+
+
+    public Boolean hasFreeGroup(Set<String> names){
+        return this.groups.containsKey(names) && (false==this.groups.get(names));
+    }
+    public void useGroup(Set<String> name){
+        this.groups.replace(name,true);
+    }
+
 }

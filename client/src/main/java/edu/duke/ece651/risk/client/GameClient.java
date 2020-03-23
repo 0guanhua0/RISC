@@ -162,7 +162,6 @@ public class GameClient {
             numMap.put(num, name);
             num++;
         }
-
         insShowMaps(allMaps);
 
         while (true){
@@ -189,9 +188,11 @@ public class GameClient {
 
     void selectTerritory(Scanner scanner) throws IOException, ClassNotFoundException {
         ClientSelect select = (ClientSelect) client.recv();
-        while (true){
-            Map<String, Integer> selection = new HashMap<>();
 
+        List<String> groupChosen;
+        Map<String, Integer> selection = new HashMap<>();
+        //select the correct group name
+        while(true){
             // display the map
             SceneCLI.showMap(select.getMap());
             // display the territory group
@@ -200,12 +201,25 @@ public class GameClient {
 
             System.out.println("Which group of territories you want to choose?");
             int index = readValidInt(scanner, 1, terrGroup.size()) - 1;
-            List<String> groupChosen = new ArrayList<>(terrGroup.get(index));
+
+            //connect with server to check if the this group is available
+            client.send(terrGroup.get(index));
+            String response = (String)client.recv();
+            if (!response.equals(SUCCESSFUL)){
+                System.out.println(SELECT_GROUP_ERROR);
+                System.out.println();
+            }else {
+                //confirm choosing this groups and move on
+                groupChosen = new ArrayList<>(terrGroup.get(index));
+                break;
+            }
+        }
+        //assign units to corresponding group of territories
+        while (true){
             // initialize the result
             for (String name : groupChosen){
                 selection.put(name, 0);
             }
-
             System.out.println("Start assigning units");
             int totalUnits = select.getUnitsTotal();
             while (totalUnits > 0){
@@ -222,7 +236,6 @@ public class GameClient {
                 selection.replace(name, oldCnt + units);
                 totalUnits -= units;
             }
-
             ServerSelect serverSelect = new ServerSelect(selection);
             client.send(serverSelect);
             if (checkResult()){
