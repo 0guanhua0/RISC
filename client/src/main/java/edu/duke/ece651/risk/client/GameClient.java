@@ -73,7 +73,6 @@ public class GameClient {
             showMsg("====== Round " + roundInfo.getRoundNum() + " ======");
 
             SceneCLI.showMap(roundInfo.getMap(), roundInfo.getIdToName());
-            InsPrompt.selfInfo(player.getPlayerName());
 
             // keep asking action until user specify done
             while (true){

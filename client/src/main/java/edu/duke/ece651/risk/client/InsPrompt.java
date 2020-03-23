@@ -52,12 +52,6 @@ class InsPrompt {
                 " (D)one");
     }
 
-    public static void selfInfo(String player) {
-        System.out.println(player + " player:");
-        System.out.println("-------------");
-
-    }
-
     public static void srcInfo(Map<Integer, Territory> territories) {
         for (Map.Entry<Integer, Territory> entry : territories.entrySet()){
             System.out.println(String.format("%d. %s", entry.getKey(), entry.getValue().getName()));

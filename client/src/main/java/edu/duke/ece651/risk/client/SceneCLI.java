@@ -50,12 +50,14 @@ class SceneCLI implements Scene {
         }
 
         for (Map.Entry<Integer, List<Territory>> entry : playerTerritory.entrySet()){
-            System.out.println(String.format("%s player:", idToColor.get(entry.getKey())));
-            System.out.println("--".repeat(8));
-            for (Territory t : entry.getValue()){
-                showTerritory(t);
+            if (entry.getKey() != 0){
+                System.out.println(String.format("%s player:", idToColor.get(entry.getKey())));
+                System.out.println("--".repeat(8));
+                for (Territory t : entry.getValue()){
+                    showTerritory(t);
+                }
+                System.out.println();
             }
-            System.out.println();
         }
     }
 

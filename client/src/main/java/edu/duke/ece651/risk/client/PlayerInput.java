@@ -78,7 +78,8 @@ public class PlayerInput {
 
         /* ====== read units info ====== */
         InsPrompt.unitInfo();
-        int unitNum = readValidInt(scanner, 1, territoryOwn.get(srcIndex).getUnitsNum());
+        // we don't know how many units on the territory(maybe has move before), so we assume everything is valid, let the server judge
+        int unitNum = readValidInt(scanner, 1, Integer.MAX_VALUE);
 
         return currAct.equals("A") ?
                 new AttackAction(src, dst, playerId, unitNum) :

@@ -61,10 +61,6 @@ class InsPromptTest {
         assertEquals(str1, outContent.toString());
         outContent.reset();
 
-        InsPrompt.selfInfo("A");
-        assertEquals(str2, outContent.toString());
-        outContent.reset();
-
         InsPrompt.srcInfo(tOwn);
         assertEquals(str3, outContent.toString());
         outContent.reset();
