@@ -217,8 +217,6 @@ public class RoomController {
         // wait for selecting territory
         barrierWait(barrier);
 
-        System.out.println("start playing");
-
         while(true) {
             // wait for all player to ready start a round(give main thread some time to process round result)
             barrierWait(barrier);
