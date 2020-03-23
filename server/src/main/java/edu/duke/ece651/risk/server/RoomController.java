@@ -91,6 +91,8 @@ public class RoomController {
                     try {
                         runGame();
                     } catch (Exception ignored) {
+                        // any bad thing happen, we simply mark this room as finished
+                        winnerID = 0;
                     }
                 }).start();
             }else {
