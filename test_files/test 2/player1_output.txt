@@ -1,0 +1,343 @@
+> Task :shared:compileJava UP-TO-DATE
+> Task :client:compileJava UP-TO-DATE
+> Task :client:processResources NO-SOURCE
+> Task :client:classes UP-TO-DATE
+> Task :shared:processResources NO-SOURCE
+> Task :shared:classes UP-TO-DATE
+> Task :shared:jar UP-TO-DATE
+
+> Task :client:run
+Welcome to the fancy RISK game!!!
+What do you want to do?
+J(oin) an existing room
+C(reate) a new room
+All rooms:
+room 1: 
+Which one do you want to join?
+You are the last player, game will start now.
+0 units in kingdom of the reach (next to: kingdom of the rock, principality of dorne, the storm kingdom)
+0 units in principality of dorne (next to: kingdom of the reach, the storm kingdom)
+0 units in the storm kingdom (next to: kingdom of the rock, kingdom of the reach, principality of dorne)
+0 units in kingdom of the north (next to: kingdom of the rock, kingdom of mountain and vale)
+0 units in kingdom of the rock (next to: kingdom of mountain and vale, the storm kingdom, kingdom of the north, kingdom of the reach)
+0 units in kingdom of mountain and vale (next to: kingdom of the rock, the storm kingdom, kingdom of the north)
+Here is all territory groups you can choose
+1. group1
+kingdom of the rock
+kingdom of the reach
+principality of dorne
+2. group2
+kingdom of the north
+the storm kingdom
+kingdom of mountain and vale
+Which group of territories you want to choose?
+Start assigning units
+
+Territories you have(15 units left):
+1. kingdom of the rock
+2. kingdom of the reach
+3. principality of dorne
+Please input the index of territory
+How many units you want to put in "kingdom of the rock"(15 units left)
+
+Territories you have(10 units left):
+1. kingdom of the rock
+2. kingdom of the reach
+3. principality of dorne
+Please input the index of territory
+How many units you want to put in "kingdom of the reach"(10 units left)
+
+Territories you have(5 units left):
+1. kingdom of the rock
+2. kingdom of the reach
+3. principality of dorne
+Please input the index of territory
+How many units you want to put in "principality of dorne"(5 units left)
+Finish assigning units, please wait for the other player.
+====== Round 1 ======
+red player:
+----------------
+5 units in the storm kingdom (next to: kingdom of the reach, kingdom of the rock, principality of dorne)
+5 units in kingdom of the north (next to: kingdom of the rock, kingdom of mountain and vale)
+5 units in kingdom of mountain and vale (next to: kingdom of the rock, the storm kingdom, kingdom of the north)
+
+blue player:
+----------------
+5 units in kingdom of the reach (next to: kingdom of the rock, principality of dorne, the storm kingdom)
+5 units in principality of dorne (next to: kingdom of the reach, the storm kingdom)
+5 units in kingdom of the rock (next to: the storm kingdom, kingdom of mountain and vale, kingdom of the reach, kingdom of the north)
+
+You are the blue player, what would you like to do?
+ (M)ove
+ (A)ttack
+ (D)one
+1. kingdom of the reach
+2. principality of dorne
+3. kingdom of the rock
+input source territory(by index): 
+1. the storm kingdom
+2. kingdom of the north
+3. kingdom of mountain and vale
+input destination territory(by index): 
+input unit number
+You are the blue player, what would you like to do?
+ (M)ove
+ (A)ttack
+ (D)one
+Please wait other players to finish their actions.
+Attack results: 
+blue attacks red's territory the storm kingdom(from kingdom of the reach) ---> attacker wins
+red attacks blue's territory kingdom of the rock(from the storm kingdom) ---> attacker loses
+====== Round 2 ======
+red player:
+----------------
+6 units in kingdom of the north (next to: kingdom of the rock, kingdom of mountain and vale)
+6 units in kingdom of mountain and vale (next to: the storm kingdom, kingdom of the rock, kingdom of the north)
+
+blue player:
+----------------
+2 units in kingdom of the reach (next to: the storm kingdom, principality of dorne, kingdom of the rock)
+6 units in principality of dorne (next to: the storm kingdom, kingdom of the reach)
+3 units in the storm kingdom (next to: principality of dorne, kingdom of the rock, kingdom of the reach)
+3 units in kingdom of the rock (next to: the storm kingdom, kingdom of the north, kingdom of mountain and vale, kingdom of the reach)
+
+You are the blue player, what would you like to do?
+ (M)ove
+ (A)ttack
+ (D)one
+Please wait other players to finish their actions.
+Attack results: 
+red attacks blue's territory the storm kingdom(from kingdom of mountain and vale) ---> attacker wins
+====== Round 3 ======
+red player:
+----------------
+2 units in the storm kingdom (next to: kingdom of the rock, kingdom of the reach, principality of dorne)
+7 units in kingdom of the north (next to: kingdom of mountain and vale, kingdom of the rock)
+3 units in kingdom of mountain and vale (next to: kingdom of the north, kingdom of the rock, the storm kingdom)
+
+blue player:
+----------------
+3 units in kingdom of the reach (next to: kingdom of the rock, principality of dorne, the storm kingdom)
+7 units in principality of dorne (next to: kingdom of the reach, the storm kingdom)
+4 units in kingdom of the rock (next to: kingdom of the north, kingdom of mountain and vale, the storm kingdom, kingdom of the reach)
+
+You are the blue player, what would you like to do?
+ (M)ove
+ (A)ttack
+ (D)one
+1. kingdom of the reach
+2. principality of dorne
+3. kingdom of the rock
+input source territory(by index): 
+1. the storm kingdom
+2. kingdom of the north
+3. kingdom of mountain and vale
+input destination territory(by index): 
+input unit number
+You are the blue player, what would you like to do?
+ (M)ove
+ (A)ttack
+ (D)one
+Please wait other players to finish their actions.
+Attack results: 
+blue attacks red's territory the storm kingdom(from principality of dorne) ---> attacker wins
+====== Round 4 ======
+red player:
+----------------
+8 units in kingdom of the north (next to: kingdom of the rock, kingdom of mountain and vale)
+4 units in kingdom of mountain and vale (next to: kingdom of the rock, the storm kingdom, kingdom of the north)
+
+blue player:
+----------------
+4 units in kingdom of the reach (next to: principality of dorne, kingdom of the rock, the storm kingdom)
+3 units in principality of dorne (next to: kingdom of the reach, the storm kingdom)
+4 units in the storm kingdom (next to: principality of dorne, kingdom of the reach, kingdom of the rock)
+5 units in kingdom of the rock (next to: the storm kingdom, kingdom of the north, kingdom of the reach, kingdom of mountain and vale)
+
+You are the blue player, what would you like to do?
+ (M)ove
+ (A)ttack
+ (D)one
+1. kingdom of the reach
+2. principality of dorne
+3. the storm kingdom
+4. kingdom of the rock
+input source territory(by index): 
+1. kingdom of the north
+2. kingdom of mountain and vale
+input destination territory(by index): 
+input unit number
+You are the blue player, what would you like to do?
+ (M)ove
+ (A)ttack
+ (D)one
+Please wait other players to finish their actions.
+Attack results: 
+blue attacks red's territory kingdom of the north(from kingdom of the rock) ---> attacker loses
+====== Round 5 ======
+red player:
+----------------
+6 units in kingdom of the north (next to: kingdom of the rock, kingdom of mountain and vale)
+5 units in kingdom of mountain and vale (next to: kingdom of the north, kingdom of the rock, the storm kingdom)
+
+blue player:
+----------------
+5 units in kingdom of the reach (next to: kingdom of the rock, the storm kingdom, principality of dorne)
+4 units in principality of dorne (next to: the storm kingdom, kingdom of the reach)
+5 units in the storm kingdom (next to: kingdom of the rock, kingdom of the reach, principality of dorne)
+2 units in kingdom of the rock (next to: kingdom of the north, the storm kingdom, kingdom of the reach, kingdom of mountain and vale)
+
+You are the blue player, what would you like to do?
+ (M)ove
+ (A)ttack
+ (D)one
+1. kingdom of the reach
+2. principality of dorne
+3. the storm kingdom
+4. kingdom of the rock
+input source territory(by index): 
+1. kingdom of the reach
+2. principality of dorne
+3. the storm kingdom
+4. kingdom of the rock
+input destination territory(by index): 
+input unit number
+You are the blue player, what would you like to do?
+ (M)ove
+ (A)ttack
+ (D)one
+1. kingdom of the reach
+2. principality of dorne
+3. the storm kingdom
+4. kingdom of the rock
+input source territory(by index): 
+1. kingdom of the north
+2. kingdom of mountain and vale
+input destination territory(by index): 
+input unit number
+You are the blue player, what would you like to do?
+ (M)ove
+ (A)ttack
+ (D)one
+Please wait other players to finish their actions.
+Attack results: 
+blue attacks red's territory kingdom of the north(from kingdom of the rock) ---> attacker loses
+====== Round 6 ======
+red player:
+----------------
+5 units in kingdom of the north (next to: kingdom of the rock, kingdom of mountain and vale)
+6 units in kingdom of mountain and vale (next to: kingdom of the rock, kingdom of the north, the storm kingdom)
+
+blue player:
+----------------
+2 units in kingdom of the reach (next to: principality of dorne, kingdom of the rock, the storm kingdom)
+5 units in principality of dorne (next to: kingdom of the reach, the storm kingdom)
+6 units in the storm kingdom (next to: principality of dorne, kingdom of the rock, kingdom of the reach)
+4 units in kingdom of the rock (next to: kingdom of the north, kingdom of the reach, the storm kingdom, kingdom of mountain and vale)
+
+You are the blue player, what would you like to do?
+ (M)ove
+ (A)ttack
+ (D)one
+1. kingdom of the reach
+2. principality of dorne
+3. the storm kingdom
+4. kingdom of the rock
+input source territory(by index): 
+1. kingdom of the reach
+2. principality of dorne
+3. the storm kingdom
+4. kingdom of the rock
+input destination territory(by index): 
+input unit number
+You are the blue player, what would you like to do?
+ (M)ove
+ (A)ttack
+ (D)one
+1. kingdom of the reach
+2. principality of dorne
+3. the storm kingdom
+4. kingdom of the rock
+input source territory(by index): 
+1. kingdom of the reach
+2. principality of dorne
+3. the storm kingdom
+4. kingdom of the rock
+input destination territory(by index): 
+input unit number
+You are the blue player, what would you like to do?
+ (M)ove
+ (A)ttack
+ (D)one
+1. kingdom of the reach
+2. principality of dorne
+3. the storm kingdom
+4. kingdom of the rock
+input source territory(by index): 
+1. kingdom of the north
+2. kingdom of mountain and vale
+input destination territory(by index): 
+input unit number
+You are the blue player, what would you like to do?
+ (M)ove
+ (A)ttack
+ (D)one
+Please wait other players to finish their actions.
+Attack results: 
+blue attacks red's territory kingdom of the north(from kingdom of the rock) ---> attacker wins
+====== Round 7 ======
+red player:
+----------------
+7 units in kingdom of mountain and vale (next to: kingdom of the north, kingdom of the rock, the storm kingdom)
+
+blue player:
+----------------
+1 units in kingdom of the reach (next to: kingdom of the rock, the storm kingdom, principality of dorne)
+6 units in principality of dorne (next to: the storm kingdom, kingdom of the reach)
+2 units in the storm kingdom (next to: kingdom of the rock, principality of dorne, kingdom of the reach)
+2 units in kingdom of the north (next to: kingdom of mountain and vale, kingdom of the rock)
+7 units in kingdom of the rock (next to: kingdom of mountain and vale, the storm kingdom, kingdom of the north, kingdom of the reach)
+
+You are the blue player, what would you like to do?
+ (M)ove
+ (A)ttack
+ (D)one
+1. kingdom of the reach
+2. principality of dorne
+3. the storm kingdom
+4. kingdom of the north
+5. kingdom of the rock
+input source territory(by index): 
+1. kingdom of mountain and vale
+input destination territory(by index): 
+input unit number
+You are the blue player, what would you like to do?
+ (M)ove
+ (A)ttack
+ (D)one
+1. kingdom of the reach
+2. principality of dorne
+3. the storm kingdom
+4. kingdom of the north
+5. kingdom of the rock
+input source territory(by index): 
+1. kingdom of mountain and vale
+input destination territory(by index): 
+input unit number
+You are the blue player, what would you like to do?
+ (M)ove
+ (A)ttack
+ (D)one
+Please wait other players to finish their actions.
+Attack results: 
+blue attacks red's territory kingdom of mountain and vale(from kingdom of the rock, kingdom of the north) ---> attacker wins
+Congratulation, you win!!!
+
+> Task :run-client
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 7.0.
+Use '--warning-mode all' to show the individual deprecation warnings.
+See https://docs.gradle.org/6.1.1/userguide/command_line_interface.html#sec:command_line_warnings
+
+BUILD SUCCESSFUL in 32m 0s
+4 actionable tasks: 1 executed, 3 up-to-date

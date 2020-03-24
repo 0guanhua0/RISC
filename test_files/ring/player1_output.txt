@@ -1,0 +1,537 @@
+> Task :shared:compileJava UP-TO-DATE
+> Task :client:compileJava UP-TO-DATE
+> Task :client:processResources NO-SOURCE
+> Task :client:classes UP-TO-DATE
+> Task :shared:processResources NO-SOURCE
+> Task :shared:classes UP-TO-DATE
+> Task :shared:jar UP-TO-DATE
+
+> Task :client:run
+Welcome to the fancy RISK game!!!
+What do you want to do?
+J(oin) an existing room
+C(reate) a new room
+All rooms:
+room 1: 
+room 3: 
+Which one do you want to join?
+Please wait other players to join th game(need 4, joined 2)
+0 units in a (next to: h, b)
+0 units in b (next to: c, a)
+0 units in c (next to: d, b)
+0 units in d (next to: e, c)
+0 units in e (next to: d, f)
+0 units in f (next to: g, e)
+0 units in g (next to: h, f)
+0 units in h (next to: g, a)
+Here is all territory groups you can choose
+1. group1
+a
+b
+2. group2
+d
+c
+3. group3
+e
+f
+4. group4
+h
+g
+Which group of territories you want to choose?
+Start assigning units
+
+Territories you have(10 units left):
+1. h
+2. g
+Please input the index of territory
+How many units you want to put in "h"(10 units left)
+
+Territories you have(5 units left):
+1. h
+2. g
+Please input the index of territory
+How many units you want to put in "g"(5 units left)
+Finish assigning units, please wait for the other player.
+====== Round 1 ======
+red player:
+----------------
+5 units in e (next to: f, d)
+5 units in f (next to: g, e)
+
+purple player:
+----------------
+5 units in g (next to: f, h)
+5 units in h (next to: g, a)
+
+blue player:
+----------------
+5 units in c (next to: d, b)
+5 units in d (next to: c, e)
+
+black player:
+----------------
+5 units in a (next to: b, h)
+5 units in b (next to: c, a)
+
+You are the purple player, what would you like to do?
+ (M)ove
+ (A)ttack
+ (D)one
+Please wait other players to finish their actions.
+Attack results: 
+black attacks blue's territory c(from b) ---> attacker wins
+====== Round 2 ======
+red player:
+----------------
+6 units in e (next to: f, d)
+6 units in f (next to: g, e)
+
+purple player:
+----------------
+6 units in g (next to: f, h)
+6 units in h (next to: g, a)
+
+blue player:
+----------------
+6 units in d (next to: c, e)
+
+black player:
+----------------
+1 units in a (next to: h, b)
+1 units in b (next to: a, c)
+7 units in c (next to: d, b)
+
+You are the purple player, what would you like to do?
+ (M)ove
+ (A)ttack
+ (D)one
+Please wait other players to finish their actions.
+Attack results: 
+black attacks blue's territory d(from c) ---> attacker loses
+====== Round 3 ======
+red player:
+----------------
+7 units in e (next to: f, d)
+7 units in f (next to: e, g)
+
+purple player:
+----------------
+7 units in g (next to: h, f)
+7 units in h (next to: g, a)
+
+blue player:
+----------------
+2 units in d (next to: e, c)
+
+black player:
+----------------
+2 units in a (next to: h, b)
+2 units in b (next to: c, a)
+2 units in c (next to: d, b)
+
+You are the purple player, what would you like to do?
+ (M)ove
+ (A)ttack
+ (D)one
+Please wait other players to finish their actions.
+Attack results: 
+black attacks blue's territory d(from c) ---> attacker wins
+====== Round 4 ======
+red player:
+----------------
+8 units in e (next to: d, f)
+8 units in f (next to: g, e)
+
+purple player:
+----------------
+8 units in g (next to: h, f)
+8 units in h (next to: g, a)
+
+blue player:
+----------------
+
+black player:
+----------------
+1 units in a (next to: h, b)
+1 units in b (next to: c, a)
+1 units in c (next to: d, b)
+5 units in d (next to: c, e)
+
+You are the purple player, what would you like to do?
+ (M)ove
+ (A)ttack
+ (D)one
+Please wait other players to finish their actions.
+Attack results: 
+black attacks red's territory e(from d) ---> attacker loses
+====== Round 5 ======
+red player:
+----------------
+4 units in e (next to: f, d)
+9 units in f (next to: e, g)
+
+purple player:
+----------------
+9 units in g (next to: f, h)
+9 units in h (next to: g, a)
+
+blue player:
+----------------
+
+black player:
+----------------
+2 units in a (next to: h, b)
+2 units in b (next to: a, c)
+2 units in c (next to: b, d)
+1 units in d (next to: e, c)
+
+You are the purple player, what would you like to do?
+ (M)ove
+ (A)ttack
+ (D)one
+Please wait other players to finish their actions.
+Attack results: 
+black attacks red's territory e(from d) ---> attacker loses
+====== Round 6 ======
+red player:
+----------------
+5 units in e (next to: f, d)
+10 units in f (next to: g, e)
+
+purple player:
+----------------
+10 units in g (next to: f, h)
+10 units in h (next to: g, a)
+
+blue player:
+----------------
+
+black player:
+----------------
+1 units in a (next to: h, b)
+1 units in b (next to: c, a)
+1 units in c (next to: d, b)
+6 units in d (next to: e, c)
+
+You are the purple player, what would you like to do?
+ (M)ove
+ (A)ttack
+ (D)one
+Please wait other players to finish their actions.
+Attack results: 
+black attacks red's territory e(from d) ---> attacker wins
+====== Round 7 ======
+red player:
+----------------
+11 units in f (next to: g, e)
+
+purple player:
+----------------
+11 units in g (next to: h, f)
+11 units in h (next to: g, a)
+
+blue player:
+----------------
+
+black player:
+----------------
+2 units in a (next to: h, b)
+2 units in b (next to: c, a)
+2 units in c (next to: d, b)
+1 units in d (next to: c, e)
+3 units in e (next to: f, d)
+
+You are the purple player, what would you like to do?
+ (M)ove
+ (A)ttack
+ (D)one
+Please wait other players to finish their actions.
+Attack results: 
+black attacks red's territory f(from e) ---> attacker loses
+====== Round 8 ======
+red player:
+----------------
+7 units in f (next to: g, e)
+
+purple player:
+----------------
+12 units in g (next to: h, f)
+12 units in h (next to: a, g)
+
+blue player:
+----------------
+
+black player:
+----------------
+1 units in a (next to: h, b)
+1 units in b (next to: a, c)
+1 units in c (next to: d, b)
+2 units in d (next to: c, e)
+5 units in e (next to: d, f)
+
+You are the purple player, what would you like to do?
+ (M)ove
+ (A)ttack
+ (D)one
+Please wait other players to finish their actions.
+Attack results: 
+black attacks red's territory f(from e) ---> attacker loses
+====== Round 9 ======
+red player:
+----------------
+3 units in f (next to: g, e)
+
+purple player:
+----------------
+13 units in g (next to: f, h)
+13 units in h (next to: a, g)
+
+blue player:
+----------------
+
+black player:
+----------------
+2 units in a (next to: h, b)
+2 units in b (next to: c, a)
+2 units in c (next to: d, b)
+3 units in d (next to: c, e)
+1 units in e (next to: f, d)
+
+You are the purple player, what would you like to do?
+ (M)ove
+ (A)ttack
+ (D)one
+Please wait other players to finish their actions.
+Attack results: 
+black attacks red's territory f(from e) ---> attacker wins
+====== Round 10 ======
+red player:
+----------------
+
+purple player:
+----------------
+14 units in g (next to: h, f)
+14 units in h (next to: a, g)
+
+blue player:
+----------------
+
+black player:
+----------------
+1 units in a (next to: h, b)
+1 units in b (next to: a, c)
+1 units in c (next to: b, d)
+4 units in d (next to: c, e)
+1 units in e (next to: f, d)
+5 units in f (next to: g, e)
+
+You are the purple player, what would you like to do?
+ (M)ove
+ (A)ttack
+ (D)one
+Please wait other players to finish their actions.
+Attack results: 
+====== Round 11 ======
+red player:
+----------------
+
+purple player:
+----------------
+15 units in g (next to: f, h)
+15 units in h (next to: a, g)
+
+blue player:
+----------------
+
+black player:
+----------------
+2 units in a (next to: b, h)
+2 units in b (next to: c, a)
+2 units in c (next to: d, b)
+5 units in d (next to: e, c)
+2 units in e (next to: d, f)
+6 units in f (next to: e, g)
+
+You are the purple player, what would you like to do?
+ (M)ove
+ (A)ttack
+ (D)one
+Please wait other players to finish their actions.
+Attack results: 
+====== Round 12 ======
+red player:
+----------------
+
+purple player:
+----------------
+16 units in g (next to: f, h)
+16 units in h (next to: a, g)
+
+blue player:
+----------------
+
+black player:
+----------------
+3 units in a (next to: b, h)
+3 units in b (next to: c, a)
+3 units in c (next to: b, d)
+6 units in d (next to: c, e)
+3 units in e (next to: f, d)
+7 units in f (next to: e, g)
+
+You are the purple player, what would you like to do?
+ (M)ove
+ (A)ttack
+ (D)one
+Please wait other players to finish their actions.
+Attack results: 
+black attacks purple's territory g(from f) ---> attacker wins
+====== Round 13 ======
+red player:
+----------------
+
+purple player:
+----------------
+17 units in h (next to: g, a)
+
+blue player:
+----------------
+
+black player:
+----------------
+1 units in a (next to: h, b)
+1 units in b (next to: c, a)
+1 units in c (next to: d, b)
+1 units in d (next to: e, c)
+7 units in e (next to: d, f)
+1 units in f (next to: e, g)
+4 units in g (next to: f, h)
+
+You are the purple player, what would you like to do?
+ (M)ove
+ (A)ttack
+ (D)one
+Please wait other players to finish their actions.
+Attack results: 
+black attacks purple's territory h(from g) ---> attacker loses
+====== Round 14 ======
+red player:
+----------------
+
+purple player:
+----------------
+10 units in h (next to: g, a)
+
+blue player:
+----------------
+
+black player:
+----------------
+2 units in a (next to: b, h)
+2 units in b (next to: c, a)
+2 units in c (next to: b, d)
+2 units in d (next to: c, e)
+1 units in e (next to: f, d)
+2 units in f (next to: e, g)
+1 units in g (next to: f, h)
+
+You are the purple player, what would you like to do?
+ (M)ove
+ (A)ttack
+ (D)one
+Please wait other players to finish their actions.
+Attack results: 
+black attacks purple's territory h(from a, g) ---> attacker loses
+====== Round 15 ======
+red player:
+----------------
+
+purple player:
+----------------
+5 units in h (next to: g, a)
+
+blue player:
+----------------
+
+black player:
+----------------
+1 units in a (next to: b, h)
+1 units in b (next to: a, c)
+1 units in c (next to: b, d)
+3 units in d (next to: e, c)
+2 units in e (next to: f, d)
+3 units in f (next to: e, g)
+1 units in g (next to: f, h)
+
+You are the purple player, what would you like to do?
+ (M)ove
+ (A)ttack
+ (D)one
+Please wait other players to finish their actions.
+Attack results: 
+black attacks purple's territory h(from g) ---> attacker loses
+====== Round 16 ======
+red player:
+----------------
+
+purple player:
+----------------
+3 units in h (next to: g, a)
+
+blue player:
+----------------
+
+black player:
+----------------
+2 units in a (next to: b, h)
+2 units in b (next to: c, a)
+2 units in c (next to: d, b)
+1 units in d (next to: c, e)
+3 units in e (next to: d, f)
+1 units in f (next to: e, g)
+4 units in g (next to: f, h)
+
+You are the purple player, what would you like to do?
+ (M)ove
+ (A)ttack
+ (D)one
+Please wait other players to finish their actions.
+Attack results: 
+====== Round 17 ======
+red player:
+----------------
+
+purple player:
+----------------
+4 units in h (next to: g, a)
+
+blue player:
+----------------
+
+black player:
+----------------
+3 units in a (next to: h, b)
+3 units in b (next to: a, c)
+3 units in c (next to: d, b)
+2 units in d (next to: e, c)
+4 units in e (next to: d, f)
+2 units in f (next to: g, e)
+5 units in g (next to: h, f)
+
+You are the purple player, what would you like to do?
+ (M)ove
+ (A)ttack
+ (D)one
+Please wait other players to finish their actions.
+Attack results: 
+black attacks purple's territory h(from g) ---> attacker wins
+Winner is the black player.
+
+> Task :run-client
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 7.0.
+Use '--warning-mode all' to show the individual deprecation warnings.
+See https://docs.gradle.org/6.1.1/userguide/command_line_interface.html#sec:command_line_warnings
+
+BUILD SUCCESSFUL in 23m 13s
+4 actionable tasks: 1 executed, 3 up-to-date
