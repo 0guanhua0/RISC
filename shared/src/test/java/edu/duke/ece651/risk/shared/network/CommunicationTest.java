@@ -196,7 +196,7 @@ public class CommunicationTest {
     @Test
     public void testGetHostByName() throws UnknownHostException {
         Client client = new Client();
-        assertEquals("67.159.88.31", client.getHostByName("vcm-12305.vm.duke.edu"));
+        assertEquals("127.0.0.1", client.getHostByName("localhost"));
         assertThrows(UnknownHostException.class, ()->{client.getHostByName("hello");});
     }
 } 
