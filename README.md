@@ -16,11 +16,8 @@
 ## test files
 In the *test_files* directory, there are several txt files which can represent a whole process of one game.
 * test case 1 --- player2 win
-    * player1_1.txt --- input of player1
-    * player2_1.txt --- input of player2
-* test case 2 --- player2 win
-    * player1_2.txt --- input of player1
-    * player2_2.txt --- input of player2
+    * player1.txt --- input of player1
+    * player2.txt --- input of player2
     
 To run this test files, you need to open three terminals(one for server, two for different players).
 
