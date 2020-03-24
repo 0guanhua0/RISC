@@ -170,8 +170,8 @@ public class RoomControllerTest {
         assertEquals(2, player1.getTerrNum());
         assertEquals(2, player2.getTerrNum());
         roomController.resolveCombats();
-        assertEquals(2, player1.getTerrNum());
-        assertEquals(2, player2.getTerrNum());
+        assertEquals(3, player1.getTerrNum());
+        assertEquals(1, player2.getTerrNum());
     }
 
     @Test

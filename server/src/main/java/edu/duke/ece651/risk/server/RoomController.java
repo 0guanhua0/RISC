@@ -141,7 +141,13 @@ public class RoomController {
 
                 // attack info
                 sb.append(pAttack.getColor()).append(" attacks ").append(pDefend.getColor());
-                sb.append(" 's territory ").append(destTerritory.getName());
+                sb.append("'s territory ").append(destTerritory.getName());
+                sb.append("(from ");
+                for (String name : aR.getSrcTerritories()){
+                    sb.append(name).append(", ");
+                }
+                sb.delete(sb.length() - 2, sb.length());
+                sb.append(")");
 
                 // change ownership of territory
                 if (aR.isAttackerWin()) {
@@ -152,11 +158,6 @@ public class RoomController {
                 }
                 else {
                     sb.append(" ---> attacker loses");
-                    // attacker loses, lose all territories involved in combat
-                    for (Territory territory : srcTerritories){
-                        pAttack.loseTerritory(territory);
-                        pDefend.addTerritory(territory);
-                    }
                 }
 
                 // send the result of each attack action to all players

@@ -68,9 +68,7 @@ public class GameClient {
         String result = "";
         while (!result.equals(GAME_OVER)){
             // receive the round info
-            System.out.println("wait round");
             RoundInfo roundInfo = (RoundInfo) client.recv();
-            System.out.println("receive round");
 
             showMsg("====== Round " + roundInfo.getRoundNum() + " ======");
 
