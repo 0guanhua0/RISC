@@ -31,11 +31,14 @@ public class MapDataBase<T extends Serializable> implements Serializable{
             String colorPath = Paths.get(baseDirStr,mapName, "color.txt").toString();
             String groupPath = Paths.get(baseDirStr,mapName, "group.txt").toString();
             String neighPath = Paths.get(baseDirStr,mapName, "neigh.txt").toString();
+            String sizePath = Paths.get(baseDirStr,mapName, "size.txt").toString();
+
 
             Map<String,Set<String>> atlas = Utils.readNeighConfig(neighPath);
             List<String> colorList = Utils.readColorConfig(colorPath);
             Map<Set<String>,Boolean> groups = Utils.readGroupConfig(groupPath);
-            WorldMap<T> worldMap = new WorldMap(atlas,colorList,groups);
+            Map<String, Integer> size = Utils.readSizeConfig(sizePath);
+            WorldMap<T> worldMap = new WorldMapV2(atlas,colorList,groups,size);
             worldMap.setName(mapName);
             mapHub.put(mapName,worldMap);
         }

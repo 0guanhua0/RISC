@@ -22,7 +22,7 @@ public class WorldMap<T extends Serializable> implements Serializable {
         this.colorList = new ArrayList<>();
     }
 
-    public WorldMap(Map<String, Set<String>> adjaList, List<T> colorList, Map<Set<String>, Boolean> groups) throws IllegalArgumentException {
+    public WorldMap(Map<String, Set<String>> adjaList, List<T> colorList, Map<Set<String>, Boolean> groups){
 
         //check legality of groups
         Set<String> allName = new HashSet<>();
@@ -62,9 +62,6 @@ public class WorldMap<T extends Serializable> implements Serializable {
             }
             curTerri.setNeigh(neigh);
         }
-
-
-
     }
     public String getName() {
         return name;
