@@ -28,15 +28,17 @@ class WorldMapTest {
             put(new HashSet<>(Arrays.asList("b")),false);
             put(new HashSet<>(Arrays.asList("c")),false);
         }};
+        Map<String,Integer> sizes = new HashMap<>(){{
+           put("a",2);
+           put("b",2);
+           put("c",2);
+        }};
 
         List<String> colorList = new ArrayList<>(Arrays.asList("red","blue"));
-        assertThrows(IllegalArgumentException.class,()->{new WorldMap<>(map,colorList,groups);});
+        assertThrows(AssertionError.class,()->{new WorldMapV2<>(map,colorList,groups,sizes);});
 
         List<String> colorList2 = new ArrayList<>(Arrays.asList("red","blue","pink","yellow"));
-        assertThrows(IllegalArgumentException.class,()->{new WorldMap<>(map,colorList2,groups);});
-
-
-
+        assertThrows(AssertionError.class,()->{new WorldMapV2<>(map,colorList2,groups,sizes);});
 
 
         MapDataBase<String> mapDataBase = new MapDataBase<>();
@@ -95,15 +97,6 @@ class WorldMapTest {
         map.put(t4,territory4);
         map.put(t6,territory6);
         map.put(t7,territory7);
-
-        WorldMap<String> myMap = new WorldMap<>();
-        myMap.setAtlas(map);
-        myMap.setColorList(playerColor);
-        assertEquals(myMap.atlas.get(t1),territory1);
-        assertEquals(myMap.atlas.get(t2),territory2);
-        assertTrue(myMap.colorList.contains("red"));
-        assertTrue(myMap.colorList.contains("blue"));
-
     }
 
     @Test
