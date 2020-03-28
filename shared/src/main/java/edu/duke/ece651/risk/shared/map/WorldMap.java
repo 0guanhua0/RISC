@@ -115,6 +115,6 @@ public abstract class WorldMap<T extends Serializable> implements Serializable {
                 }
             }
         }
-        return Integer.MAX_VALUE;
+        throw new IllegalStateException("The design of the map is illegal");
     }
 }

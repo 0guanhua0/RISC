@@ -137,10 +137,32 @@ class WorldMapTest {
         assertEquals(kingMap.getDist(rock,north),3);
         assertEquals(kingMap.getDist(reach,vale),5);
         assertEquals(kingMap.getDist(dorne,rock),6);
+
         WorldMap<String> ringMap = mapDataBase.getMap("ring");
         assertEquals(ringMap.getDist("a","a"),0);
         assertEquals(ringMap.getDist("a","c"),4);
         assertEquals(ringMap.getDist("a","e"),8);
 
+        Map<String, Set<String>> adjaList = new HashMap<>(){{
+            put("a",new HashSet<>());
+            put("b",new HashSet<>());
+        }};
+        List<String> colorList = new ArrayList<>(){{
+            add("red");
+        }};
+        Set<String> set = new HashSet<>(){{
+            add("a");
+            add("b");
+        }};
+        Map<Set<String>, Boolean> groups = new HashMap<>(){{
+            put(set,false);
+        }};
+        Map<String,Integer> sizes = new HashMap<>(){{
+            put("a",0);
+            put("b",0);
+        }};
+
+        WorldMap<String> test = new WorldMapV2(adjaList,colorList,groups,sizes);
+        assertThrows(IllegalStateException.class,()->{test.getDist("a","b");});
     }
 }

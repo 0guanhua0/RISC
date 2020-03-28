@@ -20,6 +20,7 @@ public class WorldMapV2<T extends Serializable> extends WorldMap{
                 assert (adjaList.containsKey(name) || !allName.contains(name));
                 allName.add(name);
             }
+            assert(groups.get(nameSet)==false);
         }
         assert (allName.size() == adjaList.size());
         this.groups = groups;
