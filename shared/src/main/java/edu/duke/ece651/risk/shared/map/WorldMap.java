@@ -76,8 +76,20 @@ public abstract class WorldMap<T extends Serializable> implements Serializable {
         this.groups.replace(name,true);
     }
 
+    /**
+     *
+     * @param srcName: name of the source territory
+     * @param targetName: name of the target territory
+     * @return the distance between this two territories
+     * could be used to check the legality of a move action
+     */
 
-    public int getDist(Territory src, Territory target) {
+    public int getDist(String srcName, String targetName) {
+        if (!this.atlas.containsKey(srcName)||!this.atlas.containsKey(targetName)){
+            throw new IllegalArgumentException("invalid input territories name");
+        }
+        Territory src = this.atlas.get(srcName);
+        Territory target = this.atlas.get(targetName);
 
         //the dist it takes from src territory to key
         Map<Territory,Integer> dist = new HashMap<>();

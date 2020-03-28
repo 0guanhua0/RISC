@@ -127,7 +127,15 @@ class WorldMapTest {
 
 
     @Test
-    void getDist() {
+    void testGetDist() throws IOException {
+        MapDataBase<String> mapDataBase = new MapDataBase<>();
+        WorldMap<String> worldMap = mapDataBase.getMap("a clash of kings");
+
+
+        Territory storm = worldMap.getTerritory("the storm kingdom");
+        Territory reach = worldMap.getTerritory("kingdom of the reach");
+        Territory rock = worldMap.getTerritory("kingdom of the rock");
+        Territory dorne = worldMap.getTerritory("principality of dorne");
 
     }
 }
