@@ -36,6 +36,7 @@ public class UtilsTest {
             add(t3);
             add(t2);
             add(t5);
+            add(t4);
         }};
         atlas1.put(t1,s1);
         Set<String> s2 = new HashSet<>(){{
@@ -109,12 +110,12 @@ public class UtilsTest {
     void readSizeConfig() throws IOException {
         Map<String, Integer> stringIntegerMap = Utils.readSizeConfig(dir + "size.txt");
         Map<String,Integer> map = new HashMap<>(){{
-            put("the storm kingdom",5);
+            put("the storm kingdom",2);
             put("kingdom of the reach",3);
             put("kingdom of the rock",3);
             put("kingdom of mountain and vale",2);
             put("principality of dorne",4);
-            put("kingdom of the north",2);
+            put("kingdom of the north",5);
         }};
         assertEquals(map,stringIntegerMap);
     }

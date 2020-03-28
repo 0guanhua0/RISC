@@ -9,12 +9,12 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class WorldMapTest {
-    private static final String t1 = "The Storm Kingdom";
-    private static final String t2 = "Kingdom of the Reach";
-    private static final String t3 = "Kingdom of the Rock";
-    private static final String t4 = "Kingdom of Mountain and Vale";
-    private static final String t6 = "Kingdom of the North";
-    private static final String t7 = "Principality of Dorne";
+    private static final String storm = "the storm kingdom";
+    private static final String reach = "kingdom of the reach";
+    private static final String rock = "kingdom of the rock";
+    private static final String vale = "kingdom of mountain and vale";
+    private static final String north = "kingdom of the north";
+    private static final String dorne = "principality of dorne";
     @Test
     void testWorldMap() throws IOException {
         //test constructor
@@ -44,19 +44,19 @@ class WorldMapTest {
         MapDataBase<String> mapDataBase = new MapDataBase<>();
         WorldMap<String> worldMap = mapDataBase.getMap("A clash of Kings");
         //test getTerritoryName
-        Territory territory1 = worldMap.getTerritory(t1);
-        Territory territory2 = worldMap.getTerritory(t2);
-        Territory territory3 = worldMap.getTerritory(t3);
-        Territory territory4 = worldMap.getTerritory(t4);
-        Territory territory6 = worldMap.getTerritory(t6);
-        Territory territory7 = worldMap.getTerritory(t7);
+        Territory territory1 = worldMap.getTerritory(storm);
+        Territory territory2 = worldMap.getTerritory(reach);
+        Territory territory3 = worldMap.getTerritory(rock);
+        Territory territory4 = worldMap.getTerritory(vale);
+        Territory territory6 = worldMap.getTerritory(north);
+        Territory territory7 = worldMap.getTerritory(dorne);
 
         assertEquals(6, worldMap.getTerriNum());
         assertEquals(3, worldMap.getTerrPerPlayer());
 
         assertEquals("the storm kingdom", territory1.status.getName());
         Set<Territory> neigh = territory1.getNeigh();
-        assert (3==neigh.size());
+        assert (4==neigh.size());
         assert (neigh.contains(territory2));
         assert (neigh.contains(territory3));
         assert (neigh.contains(territory7));
@@ -83,20 +83,20 @@ class WorldMapTest {
     void setPlayerColor() throws IOException {
         MapDataBase<String> mapDataBase = new MapDataBase<String>();
         WorldMap<String> worldMap = mapDataBase.getMap("A clash of Kings");
-        Territory territory1 = worldMap.getTerritory(t1);
-        Territory territory2 = worldMap.getTerritory(t2);
-        Territory territory3 = worldMap.getTerritory(t3);
-        Territory territory4 = worldMap.getTerritory(t4);
-        Territory territory6 = worldMap.getTerritory(t6);
-        Territory territory7 = worldMap.getTerritory(t7);
+        Territory territory1 = worldMap.getTerritory(storm);
+        Territory territory2 = worldMap.getTerritory(reach);
+        Territory territory3 = worldMap.getTerritory(rock);
+        Territory territory4 = worldMap.getTerritory(vale);
+        Territory territory6 = worldMap.getTerritory(north);
+        Territory territory7 = worldMap.getTerritory(dorne);
         List<String> playerColor = worldMap.getColorList();
         Map<String,Territory> map = new HashMap<>();
-        map.put(t1,territory1);
-        map.put(t2,territory2);
-        map.put(t3,territory3);
-        map.put(t4,territory4);
-        map.put(t6,territory6);
-        map.put(t7,territory7);
+        map.put(storm,territory1);
+        map.put(reach,territory2);
+        map.put(rock,territory3);
+        map.put(vale,territory4);
+        map.put(north,territory6);
+        map.put(dorne,territory7);
     }
 
     @Test
@@ -129,13 +129,18 @@ class WorldMapTest {
     @Test
     void testGetDist() throws IOException {
         MapDataBase<String> mapDataBase = new MapDataBase<>();
-        WorldMap<String> worldMap = mapDataBase.getMap("a clash of kings");
-
-
-        Territory storm = worldMap.getTerritory("the storm kingdom");
-        Territory reach = worldMap.getTerritory("kingdom of the reach");
-        Territory rock = worldMap.getTerritory("kingdom of the rock");
-        Territory dorne = worldMap.getTerritory("principality of dorne");
+        WorldMap<String> kingMap = mapDataBase.getMap("a clash of kings");
+        assertThrows(IllegalArgumentException.class,()->{kingMap.getDist("a", storm);});
+        assertThrows(IllegalArgumentException.class,()->{kingMap.getDist(storm,"a");});
+        assertEquals(kingMap.getDist(storm, storm),0);
+        assertEquals(kingMap.getDist(north,rock),5);
+        assertEquals(kingMap.getDist(rock,north),3);
+        assertEquals(kingMap.getDist(reach,vale),5);
+        assertEquals(kingMap.getDist(dorne,rock),6);
+        WorldMap<String> ringMap = mapDataBase.getMap("ring");
+        assertEquals(ringMap.getDist("a","a"),0);
+        assertEquals(ringMap.getDist("a","c"),4);
+        assertEquals(ringMap.getDist("a","e"),8);
 
     }
 }
