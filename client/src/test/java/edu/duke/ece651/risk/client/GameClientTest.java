@@ -85,7 +85,7 @@ public class GameClientTest {
         idToColor.put(3, "Red");
 
         outContent = new ByteArrayOutputStream();
-        // setup "game server" at hte beginning
+        // setup "game server" at the beginning
         serverThread = new Thread(() -> {
             try {
                 Server server = new Server(12345);
