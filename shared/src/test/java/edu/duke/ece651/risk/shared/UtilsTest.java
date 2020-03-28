@@ -104,4 +104,18 @@ public class UtilsTest {
         assertThrows(IOException.class,()->{Utils.readGroupConfig(dir+"fake.txt");});
 
     }
+
+    @Test
+    void readSizeConfig() throws IOException {
+        Map<String, Integer> stringIntegerMap = Utils.readSizeConfig(dir + "size.txt");
+        Map<String,Integer> map = new HashMap<>(){{
+            put("the storm kingdom",5);
+            put("kingdom of the reach",3);
+            put("kingdom of the rock",3);
+            put("kingdom of mountain and vale",2);
+            put("principality of dorne",4);
+            put("kingdom of the north",2);
+        }};
+        assertEquals(map,stringIntegerMap);
+    }
 }

@@ -116,4 +116,6 @@ public abstract class Territory implements Serializable {
     public abstract void addAttack(int playerId, Army army);
 
     abstract AttackResult resolveCombat(int attackerID, List<Army> armies, Random diceAttack, Random diceDefend);
+
+    abstract int getSize();
 }

@@ -11,7 +11,6 @@ import java.util.*;
  * @create: 2020-03-08 20:49
  **/
 
-//TODO take generic and serializable into consideration
 public class WorldMap<T extends Serializable> implements Serializable {
     String name;
     Map<String, Territory> atlas;
@@ -129,5 +128,35 @@ public class WorldMap<T extends Serializable> implements Serializable {
     }
     public void useGroup(Set<String> name){
         this.groups.replace(name,true);
+    }
+
+
+    public int getDist(Territory src, Territory target) {
+
+        //the dist it takes from src territory to key
+        Map<Territory,Integer> dist = new HashMap<>();
+        //mark a node as visited after polling it of pq
+        Set<Territory> visited = new HashSet<>();
+
+        dist.put(src,0);//we start from src territory, so it takes 0 to go here
+
+        PriorityQueue<Territory> pq = new PriorityQueue<Territory>(Comparator.comparingInt(dist::get));
+        pq.offer(src);
+
+        while(!pq.isEmpty()){
+            Territory curTerr = pq.poll();
+            if (curTerr==target){
+                return dist.get(curTerr);
+            }
+            if(!visited.contains(curTerr)){
+                visited.add(curTerr);
+                int neighDist = curTerr.getSize()+dist.get(curTerr);
+                for(Territory neigh:curTerr.getNeigh()){
+                    dist.put(neigh,Math.min(dist.getOrDefault(neigh,Integer.MAX_VALUE),neighDist));
+                    pq.offer(neigh);
+                }
+            }
+        }
+        return Integer.MAX_VALUE;
     }
 }

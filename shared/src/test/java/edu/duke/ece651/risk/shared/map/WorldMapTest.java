@@ -133,4 +133,8 @@ class WorldMapTest {
     }
 
 
+    @Test
+    void getDist() {
+
+    }
 }
