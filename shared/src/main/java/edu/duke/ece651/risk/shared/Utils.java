@@ -52,6 +52,19 @@ public class Utils {
         return res;
     }
 
+    public static Map<String,Integer> readSizeConfig(String fileName) throws IOException{
+        Map<String,Integer> res = new HashMap<>();
+        try(Scanner scanner = new Scanner(new File(fileName))) {
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                String name = line.split(":")[0].strip();
+                int size = Integer.parseInt(line.split(":")[1].strip());
+                res.put(name,size);
+            }
+        }
+        return res;
+    }
+
 //    //TODO test the correctness of this method
 //    public static <T extends Serializable> T clone(T obj) throws IOException, ClassNotFoundException {
 //        T cloneObj = null;

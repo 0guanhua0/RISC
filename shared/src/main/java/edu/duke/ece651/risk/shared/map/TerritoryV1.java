@@ -95,4 +95,8 @@ public class TerritoryV1 extends Territory{
 
         return new AttackResult(attackerID, defenderID, srcNames, destName, attackUnits > 0);
     }
+
+    public int getSize(){
+        return 0;
+    }
 }
