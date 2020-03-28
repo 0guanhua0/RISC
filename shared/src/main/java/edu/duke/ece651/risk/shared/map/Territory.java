@@ -15,7 +15,6 @@ public abstract class Territory implements Serializable {
     Set<Territory> neigh;
     //class to represent current status of this territory
     TStatus status;
-
     HashMap<Integer, List<Army>> attackAct;
 
     public Territory(String name) {

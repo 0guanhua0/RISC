@@ -11,11 +11,26 @@ import java.util.*;
 public class TerritoryV2 extends TerritoryV1 {
 
     int size;
-    public TerritoryV2(String name,int size){
+    int foodYield;
+
+    int techYield;
+
+    public TerritoryV2(String name, int size, int foodYield, int techYield) {
         super(name);
         this.size = size;
+        this.foodYield = foodYield;
+        this.techYield = techYield;
     }
+
     public int getSize() {
         return size;
+    }
+
+    public int getFoodYield(){
+        return foodYield;
+    }
+
+    public int getTechYield() {
+        return techYield;
     }
 }
