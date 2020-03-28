@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">RiscClient</string>
+    <string name="app_name">Risk</string>
     <string name="login_info">Welcome to the \n fancy RISC Game!!!</string>
     <string name="login_login">Log in</string>
     <string name="login_signup">Sign up</string>
