@@ -28,7 +28,7 @@ public class PlayerV2<T> extends PlayerV1 {
         super(in, out);
         initResource();
     }
-    
+
     @Override
     public void updateResource() {
         for (Object o : territories) {
@@ -55,6 +55,7 @@ public class PlayerV2<T> extends PlayerV1 {
         if (getFoodNum()<foodUse){
             throw new IllegalArgumentException();
         }
+        food.useResource(foodUse);
 
     }
 
@@ -63,6 +64,7 @@ public class PlayerV2<T> extends PlayerV1 {
         if (getTechNum()<techUse){
             throw new IllegalArgumentException();
         }
+        tech.useResource(techUse);
 
     }
 }
