@@ -34,11 +34,22 @@ class WorldMapTest {
            put("c",2);
         }};
 
+        Map<String,Integer> food = new HashMap<>(){{
+            put("a",3);
+            put("b",3);
+            put("c",3);
+        }};
+
+        Map<String,Integer> tech = new HashMap<>(){{
+            put("a",4);
+            put("b",4);
+            put("c",4);
+        }};
         List<String> colorList = new ArrayList<>(Arrays.asList("red","blue"));
-        assertThrows(AssertionError.class,()->{new WorldMapV2<>(map,colorList,groups,sizes);});
+        assertThrows(AssertionError.class,()->{new WorldMapV2<>(map,colorList,groups,sizes,food,tech);});
 
         List<String> colorList2 = new ArrayList<>(Arrays.asList("red","blue","pink","yellow"));
-        assertThrows(AssertionError.class,()->{new WorldMapV2<>(map,colorList2,groups,sizes);});
+        assertThrows(AssertionError.class,()->{new WorldMapV2<>(map,colorList2,groups,sizes,food,tech);});
 
 
         MapDataBase<String> mapDataBase = new MapDataBase<>();
@@ -161,8 +172,14 @@ class WorldMapTest {
             put("a",0);
             put("b",0);
         }};
-
-        WorldMap<String> test = new WorldMapV2(adjaList,colorList,groups,sizes);
+        Map<String,Integer> food = new HashMap<>(){{
+            put("a",0);
+            put("b",0);
+        }};  Map<String,Integer> tech = new HashMap<>(){{
+            put("a",0);
+            put("b",0);
+        }};
+        WorldMap<String> test = new WorldMapV2(adjaList,colorList,groups,sizes,food,tech);
         assertThrows(IllegalStateException.class,()->{test.getDist("a","b");});
     }
 }

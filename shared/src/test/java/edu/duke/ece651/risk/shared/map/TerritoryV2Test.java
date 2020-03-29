@@ -13,6 +13,6 @@ class TerritoryV2Test {
         TerritoryV2 territory = new TerritoryV2("name",3,2,4);
         assertEquals(territory.getSize(),3);
         assertEquals(territory.getFoodYield(),2);
-        assertEquals(territory.getTechYield(),5);
+        assertEquals(territory.getTechYield(),4);
     }
 }
