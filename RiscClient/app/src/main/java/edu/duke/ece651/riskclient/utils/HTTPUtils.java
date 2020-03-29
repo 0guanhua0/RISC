@@ -64,17 +64,19 @@ public class HTTPUtils {
     static void sendAndRec(String str, onResultListener listener) {
         new Thread(() -> {
             try {
-                Socket socket = new Socket(getIP(), PORT);
-                PrintWriter out = new PrintWriter(socket.getOutputStream());
-                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                out.println(str);
-                out.flush();
-                String res = in.readLine();
-                if (res.equals(SUCCESSFUL)){
-                    listener.onSuccessful();
-                }else {
-                    listener.onFailure(res);
-                }
+//                Socket socket = new Socket(getIP(), PORT);
+//                PrintWriter out = new PrintWriter(socket.getOutputStream());
+//                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+//                out.println(str);
+//                out.flush();
+//                String res = in.readLine();
+//                if (res.equals(SUCCESSFUL)){
+//                    listener.onSuccessful();
+//                }else {
+//                    listener.onFailure(res);
+//                }
+                Thread.sleep(100);
+                listener.onSuccessful();
             } catch (Exception e) {
                 Log.e(TAG, e.toString());
                 listener.onFailure("server is not running");
