@@ -31,4 +31,7 @@ public class PlayerV1<T> extends Player<T> {
     public PlayerV1(int id, InputStream in, OutputStream out) throws IOException {
         super(id, in, out);
     }
+
+    @Override
+    public void updateResource() {}
 }

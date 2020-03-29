@@ -12,7 +12,6 @@ public class TerritoryV2 extends TerritoryV1 {
 
     int size;
     int foodYield;
-
     int techYield;
 
     public TerritoryV2(String name, int size, int foodYield, int techYield) {
@@ -26,11 +25,15 @@ public class TerritoryV2 extends TerritoryV1 {
         return size;
     }
 
+    @Override
     public int getFoodYield(){
         return foodYield;
     }
 
+    @Override
     public int getTechYield() {
         return techYield;
     }
+
+
 }

@@ -99,4 +99,14 @@ public class TerritoryV1 extends Territory{
     public int getSize(){
         return 0;
     }
+
+    @Override
+    public int getFoodYield(){
+        return 0;
+    }
+
+    @Override
+    public int getTechYield(){
+        return 0;
+    }
 }

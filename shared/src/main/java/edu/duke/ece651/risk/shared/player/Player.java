@@ -32,6 +32,7 @@ public abstract class Player<T> {
         this.out = new ObjectOutputStream(out);
     }
 
+
     //since only after first player communicating with server and selecting the map
     // can we get the color field for player, so color can't be a input field for first player
     public Player(int id, InputStream in, OutputStream out) throws IllegalArgumentException, IOException {
@@ -116,4 +117,6 @@ public abstract class Player<T> {
     public int getTerrNum(){
         return territories.size();
     }
+
+    public abstract void updateResource();
 }
