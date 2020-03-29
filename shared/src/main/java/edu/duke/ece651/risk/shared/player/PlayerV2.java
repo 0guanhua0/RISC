@@ -28,17 +28,7 @@ public class PlayerV2<T> extends PlayerV1 {
         super(in, out);
         initResource();
     }
-
-    public PlayerV2(T color, int id, InputStream in, OutputStream out) throws IOException {
-        super(color, id, in, out);
-        initResource();
-    }
-
-    public PlayerV2(int id, InputStream in, OutputStream out) throws IOException {
-        super(id, in, out);
-        initResource();
-    }
-
+    
     @Override
     public void updateResource() {
         for (Object o : territories) {
