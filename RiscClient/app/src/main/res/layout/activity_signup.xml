@@ -33,7 +33,7 @@
                 style="@style/Widget.Shrine.TextInputLayout">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_name"
+                    android:id="@+id/et_signup_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="text"
@@ -44,10 +44,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/login_password_hint"
+                app:passwordToggleEnabled="true"
                 style="@style/Widget.Shrine.TextInputLayout">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_password"
+                    android:id="@+id/et_signup_password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textPassword"
