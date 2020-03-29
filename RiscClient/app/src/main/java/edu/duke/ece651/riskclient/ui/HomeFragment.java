@@ -4,12 +4,17 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import edu.duke.ece651.riskclient.Player;
 import edu.duke.ece651.riskclient.R;
+
+import static edu.duke.ece651.riskclient.utils.UIUtils.showToastUI;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -17,8 +22,15 @@ import edu.duke.ece651.riskclient.R;
  * create an instance of this fragment.
  */
 public class HomeFragment extends Fragment {
+    private static final String TAG = "HomeFragment";
+
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_ITEM_PLAYER = "player";
+
+    /**
+     * UI variable
+     */
+    private FloatingActionButton fab;
 
     private Player player;
 
@@ -53,6 +65,15 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home, container, false);
+        View view = inflater.inflate(R.layout.fragment_home, container, false);
+        fab = view.findViewById(R.id.fab);
+        setUpUI();
+        return view;
+    }
+
+    private void setUpUI(){
+        fab.setOnClickListener(v -> {
+            showToastUI(getActivity(), "not implement yet");
+        });
     }
 }

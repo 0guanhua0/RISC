@@ -40,4 +40,9 @@
         <item name="android:textColor">@color/colorPrimary</item>
     </style>
 
+    <style name="Widget.FloatingAciButton" parent="Widget.MaterialComponents.Button">
+        <item name="android:textColor">#ffffff</item>
+        <item name="backgroundTint">?attr/colorPrimary</item>
+    </style>
+
 </resources>

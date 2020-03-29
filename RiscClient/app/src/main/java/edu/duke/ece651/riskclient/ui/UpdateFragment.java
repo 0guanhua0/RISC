@@ -2,11 +2,14 @@ package edu.duke.ece651.riskclient.ui;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import edu.duke.ece651.riskclient.Player;
 import edu.duke.ece651.riskclient.R;
@@ -19,6 +22,8 @@ import edu.duke.ece651.riskclient.R;
 public class UpdateFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_ITEM_PLAYER = "player";
+
+    private TextView tvUserName;
 
     private Player player;
 
@@ -44,6 +49,7 @@ public class UpdateFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (getArguments() != null) {
             player = (Player) getArguments().getSerializable(ARG_ITEM_PLAYER);
         }
@@ -53,6 +59,17 @@ public class UpdateFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_update, container, false);
+        View view = inflater.inflate(R.layout.fragment_update, container, false);
+        tvUserName = view.findViewById(R.id.tv_user_name);
+        setUpUI();
+        return view;
+    }
+
+    private void setUpUI(){
+        if (player != null){
+            tvUserName.setText(player.getName());
+        }else {
+            tvUserName.setText("");
+        }
     }
 }
