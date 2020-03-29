@@ -23,12 +23,15 @@ public class GameServer {
     ThreadPoolExecutor threadPool;
     // list of all rooms(each room represent a running game)
     Map<Integer, RoomController> rooms;
+    // list of connected player
+    Map<Integer, UserInfo> connectedUser;
 
     public GameServer(Server server) {
         this.server = server;
         BlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<>(32);
         this.threadPool = new ThreadPoolExecutor(4, 16, 5, TimeUnit.SECONDS, workQueue);
         this.rooms = new ConcurrentHashMap<>();
+        this.connectedUser = new ConcurrentHashMap<>();
     }
 
     /**
@@ -64,12 +67,24 @@ public class GameServer {
         String helloInfo = "Welcome to the fancy RISK game!!!";
         player.send(helloInfo);
 
-        //ask for user password
+
+        //1 first connection, user not in active list
+        //check user name & password
+        //login / sign up / change password
         while (true) {
             if (askUserInfo(player)) {
                 break;
             }
         }
+
+        //user is in active list
+        //2 connect to room
+
+
+
+        //3 log out, evict connect list
+        //read user name
+
 
         int choice = askValidRoomNum(player);
         synchronized (this) {
@@ -109,6 +124,7 @@ public class GameServer {
         }
     }
 
+    //TODO: add login, sign up, change password
     Boolean askUserInfo(Player<?> player) throws IOException, ClassNotFoundException {
 
         String obj = (String) player.recv();
