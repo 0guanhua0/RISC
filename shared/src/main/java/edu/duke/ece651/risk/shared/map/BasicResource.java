@@ -13,6 +13,10 @@ public class BasicResource {
         this.totalNum = totalNum;
     }
 
+    public BasicResource() {
+        totalNum = 0;
+    }
+
     public void addResource(int addNum){
         this.totalNum += addNum;
     }
