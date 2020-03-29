@@ -50,4 +50,30 @@ public class PlayerV2<T> extends PlayerV1 {
             food.addResource(foodYield);
         }
     }
+
+    @Override
+    public int getFoodNum() {
+        return food.getRemain();
+    }
+
+    @Override
+    public int getTechNum() {
+        return tech.getRemain();
+    }
+
+    @Override
+    public void useFood(int foodUse) {
+        if (getFoodNum()<foodUse){
+            throw new IllegalArgumentException();
+        }
+
+    }
+
+    @Override
+    public void useTech(int techUse) {
+        if (getTechNum()<techUse){
+            throw new IllegalArgumentException();
+        }
+
+    }
 }

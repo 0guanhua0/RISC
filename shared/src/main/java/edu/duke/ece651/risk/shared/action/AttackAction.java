@@ -3,6 +3,7 @@ package edu.duke.ece651.risk.shared.action;
 import edu.duke.ece651.risk.shared.WorldState;
 import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.WorldMap;
+import edu.duke.ece651.risk.shared.player.Player;
 
 import java.io.Serializable;
 
@@ -29,6 +30,8 @@ public class AttackAction implements Action, Serializable {
     @Override
     public boolean isValid(WorldState worldState) {
         WorldMap<String> worldMap = worldState.getMap();
+        Player<String> player = worldState.getPlayer();
+
         //validate src & dst & unit num
         if (!worldMap.hasTerritory(this.src) || !worldMap.hasTerritory(this.dest) || this.unitsNum <= 0) {
             return false;
@@ -50,6 +53,10 @@ public class AttackAction implements Action, Serializable {
         if (dst.getOwner() == this.playerId) {
             return false;
         }
+
+        //validate food storage
+        int foodStorage = player.getFoodNum();
+
 
         //validate connection
         return src.getNeigh().contains(dst);

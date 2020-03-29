@@ -34,4 +34,16 @@ public class PlayerV1<T> extends Player<T> {
 
     @Override
     public void updateResource() {}
+
+    @Override
+    public int getFoodNum() { return 0; }
+
+    @Override
+    public int getTechNum() { return 0; }
+
+    @Override
+    public void useFood(int foodUse) {}
+
+    @Override
+    public void useTech(int techUse) {}
 }

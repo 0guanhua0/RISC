@@ -118,5 +118,18 @@ public abstract class Player<T> {
         return territories.size();
     }
 
+    /**
+     * this method is called to add the resource production of each territory
+     * that they own at the end of the turn.
+     */
     public abstract void updateResource();
+
+    public abstract int getFoodNum();
+
+    public abstract int getTechNum();
+
+    public abstract void useFood(int foodUse);
+
+    public abstract void useTech(int techUse);
+
 }
