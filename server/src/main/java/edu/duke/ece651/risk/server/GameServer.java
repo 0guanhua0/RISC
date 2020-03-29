@@ -1,5 +1,6 @@
 package edu.duke.ece651.risk.server;
 
+import com.google.gson.JsonObject;
 import edu.duke.ece651.risk.shared.Room;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.network.Server;
@@ -37,12 +38,12 @@ public class GameServer {
     /**
      * This will run forever(until the thread is killed), keep listen for new connection and handle it.
      */
-    public void run(){
+    public void run() {
         System.out.println("Game server is running, waiting for new connection...");
-        while (!Thread.currentThread().isInterrupted()){
+        while (!Thread.currentThread().isInterrupted()) {
             Socket socket = server.accept();
-            if (socket != null){
-                threadPool.execute(()-> {
+            if (socket != null) {
+                threadPool.execute(() -> {
                     try {
                         handleIncomeRequest(socket);
                     } catch (IOException | ClassNotFoundException e) {
@@ -58,6 +59,7 @@ public class GameServer {
      * 1. ask the player whether he/she want to start a new room or join an existing room
      * 2. either create a new RoomController or fetch an existing one
      * 3. pass the socket(i.e player) to corresponding "room"
+     *
      * @param socket represent a newly accept player
      */
     void handleIncomeRequest(Socket socket) throws IOException, ClassNotFoundException {
@@ -73,27 +75,19 @@ public class GameServer {
         //login / sign up / change password
         while (true) {
             if (askUserInfo(player)) {
+                player.send("SUCCESSFUL");
                 break;
             }
         }
 
-        //user is in active list
-        //2 connect to room
-
-
-
-        //3 log out, evict connect list
-        //read user name
-
-
         int choice = askValidRoomNum(player);
         synchronized (this) {
-            if (choice < 0){
+            if (choice < 0) {
                 // create a new room
                 int roomID = rooms.size();
                 //TODO here I create a MapDataBase object for every room, a more efficient approach would be using deep copy to build a new object of WorldMap after this user choose the WorldMap she wants
                 rooms.put(roomID, new RoomController(roomID, player, new MapDataBase<>()));
-            }else {
+            } else {
                 // join an existing room
                 rooms.get(choice).addPlayer(player);
             }
@@ -102,22 +96,23 @@ public class GameServer {
 
     /**
      * This function asks the player whether he/she want to start a new room or join an existing room.
+     *
      * @param player player object, handle the communication
      * @return room number/ID, e.g. -1(or any negative number) stands for a new room, > 0 stands for an existing room
      */
     int askValidRoomNum(Player<?> player) throws IOException {
         player.send(getRoomList());
 
-        while (true){
+        while (true) {
             try {
                 String choice = (String) player.recv();
                 int num = Integer.parseInt(choice);
-                if (num >= 0 && !rooms.containsKey(num)){
+                if (num >= 0 && !rooms.containsKey(num)) {
                     throw new InvalidKeyException();
                 }
                 player.send(SUCCESSFUL);
                 return num;
-            }catch (NumberFormatException | NullPointerException | InvalidKeyException | ClassNotFoundException e){
+            } catch (NumberFormatException | NullPointerException | InvalidKeyException | ClassNotFoundException e) {
                 // Number format error
                 player.send("Invalid choice, try again.");
             }
@@ -127,33 +122,86 @@ public class GameServer {
     //TODO: add login, sign up, change password
     Boolean askUserInfo(Player<?> player) throws IOException, ClassNotFoundException {
 
-        String obj = (String) player.recv();
-        //TODO: validate obj
+        JsonObject obj = (JsonObject) player.recv();
 
-        player.send("successful");
-        return true;
+        String userName = obj.get("userName").toString();
+        String passWord = obj.get("passWord").toString();
+        String action = obj.get("action").toString();
+
+        //todo: query SQL to get user id
+        int userId = 0;
+        UserInfo userInfo = new UserInfo();
+
+        //TODO: add to constant
+
+        if (action.equals("login")) {
+            //check db for user id
+            //if db return true if user not in connect list
+            if (!connectedUser.containsKey(userId)) {
+                connectedUser.put(userId, userInfo);
+                return true;
+            } else {
+                player.send("invalid login");
+            }
+
+        }
+
+
+        if (action.equals("signup")) {
+            //check db for user id
+            if (true) {
+                return true;
+
+            } else {
+                player.send("invalid signup");
+            }
+        }
+
+        if (action.equals("change")) {
+            //check db for user id
+            if (true) {
+                return true;
+
+            } else {
+                player.send("invalid change");
+            }
+
+        }
+        //log out
+        if (action.equals("logout")) {
+            if (true) {
+                //if user in current list
+                connectedUser.remove(userId);
+                return true;
+            } else {
+                player.send("invalid logout");
+            }
+        }
+
+        return false;
     }
 
     /**
      * This function will return the current running room list.
+     *
      * @return List of room object
      */
-    List<Room> getRoomList(){
+    List<Room> getRoomList() {
         // clear any finished room
         List<Integer> finishedRoom = new ArrayList<>();
         List<Room> roomList = new ArrayList<>();
 
-        for (RoomController room : rooms.values()){
-            if (room.hasFinished()){
+        for (RoomController room : rooms.values()) {
+            if (room.hasFinished()) {
                 finishedRoom.add(room.roomID);
-            }else {
-                if (!room.hasStarted()){
+            } else {
+                if (!room.hasStarted()) {
                     roomList.add(new Room(room.roomID, ""));
                 }
             }
         }
 
-        for (int id : finishedRoom){
+        for (int id : finishedRoom) {
             rooms.remove(id, rooms.get(id));
         }
 
