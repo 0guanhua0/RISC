@@ -56,7 +56,10 @@ public class AttackAction implements Action, Serializable {
 
         //validate food storage
         int foodStorage = player.getFoodNum();
-
+        //An attack order now costs 1 food per unit attacking.
+        if (foodStorage<unitsNum){
+            return false;
+        }
 
         //validate connection
         return src.getNeigh().contains(dst);
@@ -75,6 +78,12 @@ public class AttackAction implements Action, Serializable {
             throw new IllegalArgumentException("Invalid attack action!");
         }
         WorldMap<String> worldMap = worldState.getMap();
+        Player<String> player = worldState.getPlayer();
+
+        //use some food to finish this attack operation
+        int foodCost = unitsNum;
+        player.useFood(unitsNum);
+
         // reduce src units
         worldMap.getTerritory(src).lossNUnits(unitsNum);
         // add attack units to target territory's attack buffer
