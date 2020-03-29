@@ -78,7 +78,7 @@ public class GameServerTest {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         Socket socket1 = mock(Socket.class);
         when(socket1.getInputStream())
-                .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList("-1", "test"))));
+                .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList("user info", "-1", "test"))));
         when(socket1.getOutputStream()).thenReturn(outputStream);
 
         //handle the request for first player
@@ -100,7 +100,7 @@ public class GameServerTest {
         gameServer.handleIncomeRequest(socket2);
         assertEquals(1, gameServer.rooms.size());
         assertEquals(
-                "Welcome to the fancy RISK game!!!" + SUCCESSFUL + "{\"playerColor\":\"blue\",\"playerID\":2}" + "Please wait other players to join th game(need 3, joined 2)",
+                "Welcome to the fancy RISK game!!!" + SUCCESSFUL.repeat(2) + "{\"playerColor\":\"blue\",\"playerID\":2}" + "Please wait other players to join th game(need 3, joined 2)",
                 readAllStringFromObjectStream(outputStream)
         );
         assertEquals(2, gameServer.rooms.get(0).players.size());
@@ -191,7 +191,7 @@ public class GameServerTest {
     void askUserInfo() throws IOException, ClassNotFoundException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         Player<String> player1 = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList("-1", "test"))), new ByteArrayOutputStream());
-        Player<String> player2 = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList("abc", "10", "0"))), outputStream);
+        Player<String> player2 = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList("successful"))), outputStream);
         int roomID = 0;
         GameServer gameServer = new GameServer(null);
         gameServer.rooms.put(roomID, new RoomController(roomID, player1, new MapDataBase<String>()));
@@ -199,7 +199,7 @@ public class GameServerTest {
 
         //test ask user info
         assertEquals(true, gameServer.askUserInfo(player2));
-        assertEquals("input user info\n", readAllStringFromObjectStream(outputStream));
+        assertEquals("successful", readAllStringFromObjectStream(outputStream));
 
     }
 }

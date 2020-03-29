@@ -109,11 +109,12 @@ public class GameServer {
         }
     }
 
-    Boolean askUserInfo(Player<?> player) throws IOException {
+    Boolean askUserInfo(Player<?> player) throws IOException, ClassNotFoundException {
 
-        player.send("input user info\n");
+        String obj = (String) player.recv();
+        //TODO: validate obj
 
-        player.send(true);
+        player.send("successful");
         return true;
     }
 
