@@ -3,6 +3,7 @@ package edu.duke.ece651.risk.server;
 import edu.duke.ece651.risk.shared.ToClientMsg.ClientSelect;
 import edu.duke.ece651.risk.shared.ToClientMsg.RoundInfo;
 import edu.duke.ece651.risk.shared.ToServerMsg.ServerSelect;
+import edu.duke.ece651.risk.shared.WorldState;
 import edu.duke.ece651.risk.shared.action.Action;
 import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.WorldMap;
@@ -97,17 +98,22 @@ public class PlayerThread extends Thread{
         // 3. round number
         RoundInfo roundInfo = new RoundInfo(gameInfo.getRoundNum(), map, gameInfo.getIdToName());
         player.send(roundInfo);
+
+        //build the current state of game
+        WorldState worldState = new WorldState(this.player, this.map);
+
+
+        //if player hasn't losed yet, let him or her play another round of game
         if (player.getTerrNum() > 0){
             while (true){
                 Object recvRes = player.recv();
                 if (recvRes instanceof Action){
                     Action action = (Action) recvRes;
-
                     synchronized (this) {
                         // act accordingly based on whether the input actions are valid or not
-                        if (action.isValid(map)){
+                        if (action.isValid(worldState)){
                             // if valid, update the state of the world
-                            action.perform(map);
+                            action.perform(worldState);
                             player.send(SUCCESSFUL);
                         }else{
                             // otherwise ask user to resend the information

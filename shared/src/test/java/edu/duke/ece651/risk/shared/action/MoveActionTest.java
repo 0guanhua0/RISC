@@ -1,10 +1,12 @@
 package edu.duke.ece651.risk.shared.action;
 
+import edu.duke.ece651.risk.shared.WorldState;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.risk.shared.player.Player;
 import edu.duke.ece651.risk.shared.player.PlayerV1;
+import edu.duke.ece651.risk.shared.player.PlayerV2;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -53,38 +55,40 @@ class MoveActionTest {
         storm.addNUnits(2);
         reach.addNUnits(2);
 
+        WorldState worldState = new WorldState(null, worldMap);
+
         //test invalid input name
         MoveAction a0 = new MoveAction("king of north", "kingdom of mountain and vale", 1, 1);
-        assert (!a0.isValid(worldMap));
+        assert (!a0.isValid(worldState));
         MoveAction a1 = new MoveAction("kingdom of the north", "king of mountain and vale", 1, 1);
-        assert (!a1.isValid(worldMap));
+        assert (!a1.isValid(worldState));
 
         //test normal move
         MoveAction a2 = new MoveAction("kingdom of the north", "kingdom of mountain and vale", 1, 1);
-        assert(a2.isValid(worldMap));
+        assert(a2.isValid(worldState));
         MoveAction a21 = new MoveAction("kingdom of the reach", "the storm kingdom", 2, 1);
-        assert (a21.isValid(worldMap));
+        assert (a21.isValid(worldState));
 
         //test unexisted path between two territories controlled by the same player
         MoveAction a3 = new MoveAction("kingdom of the north", "principality of dorne", 1, 1);
-        assert (!a3.isValid(worldMap));
+        assert (!a3.isValid(worldState));
         //test move to a territories which the user has no control over
         MoveAction a4 = new MoveAction("kingdom of the rock", "kingdom of the reach", 1, 1);
-        assert (!a4.isValid(worldMap));
+        assert (!a4.isValid(worldState));
 
         //test invalid move units(large than the units src territory has)
         MoveAction a5 = new MoveAction("kingdom of the north", "kingdom of mountain and vale", 1, 3);
-        assert (!a5.isValid(worldMap));
+        assert (!a5.isValid(worldState));
         MoveAction a51 = new MoveAction("kingdom of the rock", "kingdom of mountain and vale", 1, 2);
-        assert (!a51.isValid(worldMap));
+        assert (!a51.isValid(worldState));
 
         //test move between units that this player has no control over
         MoveAction a6 = new MoveAction("kingdom of the north", "kingdom of mountain and vale", 2, 1);
-        assert (!a6.isValid(worldMap));
+        assert (!a6.isValid(worldState));
 
         //test move between negative units
         MoveAction a7 = new MoveAction("kingdom of the north", "kingdom of mountain and vale", 1, -1);
-        assertFalse(a7.isValid(worldMap));
+        assertFalse(a7.isValid(worldState));
 
 
     }
@@ -122,26 +126,29 @@ class MoveActionTest {
         storm.addNUnits(2);
         reach.addNUnits(2);
 
+        WorldState worldState = new WorldState(null, worldMap);
+
+
         assert (north.getUnitsNum()==2&&vale.getUnitsNum()==2);
         MoveAction a0 = new MoveAction("kingdom of the north", "kingdom of mountain and vale", 1, 1);
-        a0.perform(worldMap);
+        a0.perform(worldState);
         assert (north.getUnitsNum()==1&&vale.getUnitsNum()==3);
         MoveAction a1 = new MoveAction("kingdom of mountain and vale","kingdom of the north", 1, 1);
-        a1.perform(worldMap);
+        a1.perform(worldState);
         assert (north.getUnitsNum()==2&&vale.getUnitsNum()==2);
 
         assert (2==reach.getUnitsNum()&&2==storm.getUnitsNum());
         MoveAction a2 = new MoveAction("kingdom of the reach", "the storm kingdom", 2, 1);
-        a2.perform(worldMap);
+        a2.perform(worldState);
         System.out.println(reach.getUnitsNum());
         System.out.println(storm.getUnitsNum());
         assert (1==reach.getUnitsNum()&&3==storm.getUnitsNum());
         MoveAction a3 = new MoveAction("the storm kingdom", "kingdom of the reach", 2, 1);
-        a3.perform(worldMap);
+        a3.perform(worldState);
         assert (2==reach.getUnitsNum()&&2==storm.getUnitsNum());
 
         MoveAction a4 = new MoveAction("kingdom of the north", "kingdom of mountain and vale", 2, 1);
-        assertThrows(IllegalArgumentException.class, ()->a4.perform(worldMap));
+        assertThrows(IllegalArgumentException.class, ()->a4.perform(worldState));
     }
 
     @Test

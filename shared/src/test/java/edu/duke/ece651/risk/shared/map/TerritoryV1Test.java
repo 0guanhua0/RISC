@@ -1,5 +1,6 @@
 package edu.duke.ece651.risk.shared.map;
 
+import edu.duke.ece651.risk.shared.WorldState;
 import edu.duke.ece651.risk.shared.action.AttackAction;
 import edu.duke.ece651.risk.shared.action.AttackResult;
 import edu.duke.ece651.risk.shared.player.Player;
@@ -181,13 +182,16 @@ class TerritoryV1Test {
         AttackAction a10 = new AttackAction("kingdom of the rock", "kingdom of the reach", 1, 10);
         AttackAction a11 = new AttackAction("principality of dorne", "kingdom of the reach", 1, 5);
         AttackAction a12 = new AttackAction("kingdom of mountain and vale", "the storm kingdom", 1, 1);
-        assertTrue(a10.perform(worldMap));
-        assertTrue(a11.perform(worldMap));
-        assertTrue(a12.perform(worldMap));
+
+        WorldState worldState = new WorldState(null, worldMap);
+
+        assertTrue(a10.perform(worldState));
+        assertTrue(a11.perform(worldState));
+        assertTrue(a12.perform(worldState));
 
         //player 2 attack to empty territory
         AttackAction a20 = new AttackAction("kingdom of the reach", "kingdom of the rock", 2, 2);
-        assertTrue(a20.perform(worldMap));
+        assertTrue(a20.perform(worldState));
 
         //perform
         List<AttackResult> resultList0 = reach.resolveCombats();

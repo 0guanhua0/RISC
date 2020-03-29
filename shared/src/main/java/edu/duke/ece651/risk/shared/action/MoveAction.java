@@ -1,16 +1,17 @@
 package edu.duke.ece651.risk.shared.action;
 
+import edu.duke.ece651.risk.shared.WorldState;
 import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 
 import java.io.Serializable;
-import java.util.Objects;
 
 public class MoveAction implements Action, Serializable {
     String src;
     String dest;
     int playerId;
     int unitsNum;
+
 
     public MoveAction(String src, String dest,
                       int playerId, int unitsNum) {
@@ -22,7 +23,8 @@ public class MoveAction implements Action, Serializable {
 
 
     @Override
-    public boolean isValid(WorldMap<?> map) {
+    public boolean isValid(WorldState worldState) {
+        WorldMap<String> map = worldState.getMap();
         //check if two input names are valid
         if (!map.hasTerritory(src) || !map.hasTerritory(dest)){
             return false;
@@ -40,9 +42,10 @@ public class MoveAction implements Action, Serializable {
         }
     }
     @Override
-    public boolean perform(WorldMap<?> map) {
+    public boolean perform(WorldState worldState) {
+        WorldMap<String> map = worldState.getMap();
         //perform the real action
-        if (!isValid(map)){
+        if (!isValid(worldState)){
             throw new IllegalArgumentException("Invalid move action!");
         }
         //update the state of src and target territory
@@ -66,7 +69,5 @@ public class MoveAction implements Action, Serializable {
                     src.equals(that.src) &&
                     dest.equals(that.dest);
         }
-
     }
-
 }

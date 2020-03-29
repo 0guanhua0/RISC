@@ -1,5 +1,6 @@
 package edu.duke.ece651.risk.shared.action;
 
+import edu.duke.ece651.risk.shared.WorldState;
 import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 
@@ -21,12 +22,13 @@ public class AttackAction implements Action, Serializable {
     /**
      * validate the attack move
      *
-     * @param worldMap WorldMap object
+     * @param worldState WorldState object
      * @return true if valid, false if invalid
      */
 
     @Override
-    public boolean isValid(WorldMap<?> worldMap) {
+    public boolean isValid(WorldState worldState) {
+        WorldMap<String> worldMap = worldState.getMap();
         //validate src & dst & unit num
         if (!worldMap.hasTerritory(this.src) || !worldMap.hasTerritory(this.dest) || this.unitsNum <= 0) {
             return false;
@@ -57,15 +59,15 @@ public class AttackAction implements Action, Serializable {
     /**
      * following function perform single attack update, add update to territory map
      *
-     * @param worldMap WorldMap object
+     * @param worldState WorldState object
      * @return true, if valid
      */
     @Override
-    public boolean perform(WorldMap<?> worldMap) {
-        if (!isValid(worldMap)) {
+    public boolean perform(WorldState worldState) {
+        if (!isValid(worldState)) {
             throw new IllegalArgumentException("Invalid attack action!");
         }
-
+        WorldMap<String> worldMap = worldState.getMap();
         // reduce src units
         worldMap.getTerritory(src).lossNUnits(unitsNum);
         // add attack units to target territory's attack buffer
@@ -77,8 +79,8 @@ public class AttackAction implements Action, Serializable {
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof AttackAction) {
-            AttackAction attackAction = (AttackAction) obj;
-            return attackAction.src.equals(this.src) && attackAction.dest.equals(this.dest) && attackAction.unitsNum == this.unitsNum && attackAction.playerId == this.playerId;
+            AttackAction attackAction1 = (AttackAction) obj;
+            return attackAction1.src.equals(this.src) && attackAction1.dest.equals(this.dest) && attackAction1.unitsNum == this.unitsNum && attackAction1.playerId == this.playerId;
         }
         return false;
     }

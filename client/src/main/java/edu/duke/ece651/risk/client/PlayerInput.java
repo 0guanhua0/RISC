@@ -1,6 +1,5 @@
 package edu.duke.ece651.risk.client;
 
-import edu.duke.ece651.risk.shared.Constant;
 import edu.duke.ece651.risk.shared.action.Action;
 import edu.duke.ece651.risk.shared.action.AttackAction;
 import edu.duke.ece651.risk.shared.action.MoveAction;

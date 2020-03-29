@@ -2,14 +2,11 @@ package edu.duke.ece651.risk.server;
 
 import static edu.duke.ece651.risk.shared.Constant.ACTION_DONE;
 import static edu.duke.ece651.risk.shared.Mock.setupMockInput;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import edu.duke.ece651.risk.shared.ToServerMsg.ServerSelect;
-import edu.duke.ece651.risk.shared.action.AttackAction;
 import edu.duke.ece651.risk.shared.action.MoveAction;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
-import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.risk.shared.player.Player;
 import edu.duke.ece651.risk.shared.player.PlayerV1;

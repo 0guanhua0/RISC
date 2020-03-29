@@ -1,13 +1,18 @@
 package edu.duke.ece651.risk.shared.action;
 
+import edu.duke.ece651.risk.shared.WorldState;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.risk.shared.player.Player;
 import edu.duke.ece651.risk.shared.player.PlayerV1;
+import edu.duke.ece651.risk.shared.player.PlayerV2;
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -47,29 +52,31 @@ class AttackActionTest {
         storm.addNUnits(2);
         reach.addNUnits(2);
 
+        WorldState worldState = new WorldState(null, worldMap);
+
         //invalid: not connected
         AttackAction a0 = new AttackAction("kingdom of the north", "the storm kingdom", 1, 1);
-        assertFalse(a0.isValid(worldMap));
+        assertFalse(a0.isValid(worldState));
 
         //invalid unit
         AttackAction a1 = new AttackAction("kingdom of the north", "the storm kingdom", 1, 0);
-        assertFalse(a1.isValid(worldMap));
+        assertFalse(a1.isValid(worldState));
 
         //invalid owner
         AttackAction a2 = new AttackAction("kingdom of the north", "the storm kingdom", 2, 1);
-        assertFalse(a2.isValid(worldMap));
+        assertFalse(a2.isValid(worldState));
 
         //invalid src unit
         AttackAction a3 = new AttackAction("kingdom of the north", "the storm kingdom", 1, 3);
-        assertFalse(a3.isValid(worldMap));
+        assertFalse(a3.isValid(worldState));
 
         //invalid dst
         AttackAction a4 = new AttackAction("kingdom of the north", "kingdom of mountain and vale", 1, 1);
-        assertFalse(a4.isValid(worldMap));
+        assertFalse(a4.isValid(worldState));
 
         //valid
         AttackAction a5 = new AttackAction("kingdom of the reach","kingdom of the rock",  2, 1);
-        assertTrue(a5.isValid(worldMap));
+        assertTrue(a5.isValid(worldState));
 
 
 
@@ -108,14 +115,15 @@ class AttackActionTest {
         storm.addNUnits(2);
         reach.addNUnits(2);
 
+        WorldState worldState = new WorldState(null, worldMap);
 
         //normal attack
         AttackAction a0 = new AttackAction("kingdom of the reach","kingdom of the rock",  2, 1);
-        assertTrue(a0.perform(worldMap));
+        assertTrue(a0.perform(worldState));
 
         //abnormal attack
         AttackAction a1 = new AttackAction("kingdom of the north", "kingdom of mountain and vale", 2, 4);
-        assertThrows(IllegalArgumentException.class, ()->a1.perform(worldMap));
+        assertThrows(IllegalArgumentException.class, ()->a1.perform(worldState));
     }
 
     @Test

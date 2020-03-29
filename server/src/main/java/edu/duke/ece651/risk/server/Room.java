@@ -15,7 +15,7 @@ import static edu.duke.ece651.risk.shared.Constant.*;
 
 //TODO for every method that have networking, take client losing connection into consideration
 //TODO for every method that have networking, handle some exceptions rather than just throwing it
-public class RoomController {
+public class Room {
     int roomID;
     // all players in current room
     List<Player<String>> players;
@@ -33,7 +33,7 @@ public class RoomController {
      * @throws IllegalArgumentException probably because of invalid roomID(should be positive)
      * @throws ClassNotFoundException probably because of not follow the protocol
      */
-    public RoomController(int roomID, Player<String> player, MapDataBase<String> mapDataBase) throws IOException, IllegalArgumentException, ClassNotFoundException {
+    public Room(int roomID, Player<String> player, MapDataBase<String> mapDataBase) throws IOException, IllegalArgumentException, ClassNotFoundException {
         if (roomID < 0){
             throw new IllegalArgumentException("Invalid value of Room Id");
         }
