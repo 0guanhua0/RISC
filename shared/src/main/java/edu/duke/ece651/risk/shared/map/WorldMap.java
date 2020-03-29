@@ -81,15 +81,24 @@ public abstract class WorldMap<T extends Serializable> implements Serializable {
      * @param srcName: name of the source territory
      * @param targetName: name of the target territory
      * @return the distance between this two territories
-     * could be used to check the legality of a move action
+     * this method could be used to check the legality of a move action
+     * note that the distance is defined as minimum path between src and target territory and
+     * the whole minimum should under the control of same user
+     * when there is no such a path, it will throw an exception to report that
      */
 
-    public int getDist(String srcName, String targetName) {
+    public int getMinCtrlDist(String srcName, String targetName) throws IllegalArgumentException{
         if (!this.atlas.containsKey(srcName)||!this.atlas.containsKey(targetName)){
             throw new IllegalArgumentException("invalid input territories name");
         }
         Territory src = this.atlas.get(srcName);
         Territory target = this.atlas.get(targetName);
+
+        int owner = src.getOwner();
+        if (owner!=target.getOwner()){
+            throw new IllegalArgumentException("invalid input territories name");
+        }
+
 
         //the dist it takes from src territory to key
         Map<Territory,Integer> dist = new HashMap<>();
@@ -110,11 +119,14 @@ public abstract class WorldMap<T extends Serializable> implements Serializable {
                 visited.add(curTerr);
                 int neighDist = curTerr.getSize()+dist.get(curTerr);
                 for(Territory neigh:curTerr.getNeigh()){
+                    if (neigh.getOwner()!=owner){
+                        continue;
+                    }
                     dist.put(neigh,Math.min(dist.getOrDefault(neigh,Integer.MAX_VALUE),neighDist));
                     pq.offer(neigh);
                 }
             }
         }
-        throw new IllegalStateException("The design of the map is illegal");
+        throw new IllegalArgumentException("invalid input territories name");
     }
 }

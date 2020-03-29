@@ -141,18 +141,18 @@ class WorldMapTest {
     void testGetDist() throws IOException {
         MapDataBase<String> mapDataBase = new MapDataBase<>();
         WorldMap<String> kingMap = mapDataBase.getMap("a clash of kings");
-        assertThrows(IllegalArgumentException.class,()->{kingMap.getDist("a", storm);});
-        assertThrows(IllegalArgumentException.class,()->{kingMap.getDist(storm,"a");});
-        assertEquals(kingMap.getDist(storm, storm),0);
-        assertEquals(kingMap.getDist(north,rock),5);
-        assertEquals(kingMap.getDist(rock,north),3);
-        assertEquals(kingMap.getDist(reach,vale),5);
-        assertEquals(kingMap.getDist(dorne,rock),6);
+        assertThrows(IllegalArgumentException.class,()->{kingMap.getMinCtrlDist("a", storm);});
+        assertThrows(IllegalArgumentException.class,()->{kingMap.getMinCtrlDist(storm,"a");});
+        assertEquals(kingMap.getMinCtrlDist(storm, storm),0);
+        assertEquals(kingMap.getMinCtrlDist(north,rock),5);
+        assertEquals(kingMap.getMinCtrlDist(rock,north),3);
+        assertEquals(kingMap.getMinCtrlDist(reach,vale),5);
+        assertEquals(kingMap.getMinCtrlDist(dorne,rock),6);
 
         WorldMap<String> ringMap = mapDataBase.getMap("ring");
-        assertEquals(ringMap.getDist("a","a"),0);
-        assertEquals(ringMap.getDist("a","c"),4);
-        assertEquals(ringMap.getDist("a","e"),8);
+        assertEquals(ringMap.getMinCtrlDist("a","a"),0);
+        assertEquals(ringMap.getMinCtrlDist("a","c"),4);
+        assertEquals(ringMap.getMinCtrlDist("a","e"),8);
 
         Map<String, Set<String>> adjaList = new HashMap<>(){{
             put("a",new HashSet<>());
@@ -180,6 +180,6 @@ class WorldMapTest {
             put("b",0);
         }};
         WorldMap<String> test = new WorldMapV2(adjaList,colorList,groups,sizes,food,tech);
-        assertThrows(IllegalStateException.class,()->{test.getDist("a","b");});
+        assertThrows(IllegalArgumentException.class,()->{test.getMinCtrlDist("a","b");});
     }
 }
