@@ -27,6 +27,7 @@ public class Constant {
 
     public static final int UNITS_PER_TERR = 5;
 
-
+    public static final int INITIAL_FOOD_NUM = 50;
+    public static final int INITIAL_TECH_NUM = 50;
 
 }

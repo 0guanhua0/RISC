@@ -3,13 +3,12 @@ package edu.duke.ece651.risk.shared.player;
 import edu.duke.ece651.risk.shared.map.BasicResource;
 import edu.duke.ece651.risk.shared.map.Territory;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 
-import static edu.duke.ece651.risk.shared.Mock.setupMockInput;
+import static edu.duke.ece651.risk.shared.Constant.INITIAL_FOOD_NUM;
+import static edu.duke.ece651.risk.shared.Constant.INITIAL_TECH_NUM;
 
 /**
  * @program: risk
@@ -21,8 +20,8 @@ public class PlayerV2<T> extends PlayerV1 {
     BasicResource tech;
     BasicResource food;
     private void initResource(){
-        tech = new BasicResource();
-        food = new BasicResource();
+        tech = new BasicResource(INITIAL_TECH_NUM);
+        food = new BasicResource(INITIAL_FOOD_NUM);
     }
 
     public PlayerV2(InputStream in, OutputStream out) throws IOException {
