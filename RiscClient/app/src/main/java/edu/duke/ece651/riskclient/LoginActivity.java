@@ -3,6 +3,9 @@ package edu.duke.ece651.riskclient;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,6 +13,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.Objects;
+
+import edu.duke.ece651.riskclient.utils.HTTPUtils;
+
+import static edu.duke.ece651.riskclient.Constant.SUCCESSFUL;
+import static edu.duke.ece651.riskclient.Constant.USER_NAME;
+import static edu.duke.ece651.riskclient.Constant.USER_PASSWORD;
+import static edu.duke.ece651.riskclient.utils.HTTPUtils.authUser;
+import static edu.duke.ece651.riskclient.utils.UIUtils.showToastUI;
 
 /**
  * @author xkw
@@ -23,8 +34,6 @@ public class LoginActivity extends AppCompatActivity {
      */
     private TextInputEditText etName;
     private TextInputEditText etPassWord;
-    private Button btLogin;
-    private Button btSignUp;
 
     /**
      * variable
@@ -40,24 +49,36 @@ public class LoginActivity extends AppCompatActivity {
         etName = (TextInputEditText) findViewById(R.id.et_name);
         etPassWord = (TextInputEditText) findViewById(R.id.et_password);
 
-        btLogin = (Button)findViewById(R.id.bt_login);
+        Button btLogin = (Button)findViewById(R.id.bt_login);
         btLogin.setOnClickListener(view -> {
             btLogin.setClickable(false);
             userName = Objects.requireNonNull(etName.getText()).toString().trim();
             userPassword = Objects.requireNonNull(etPassWord.getText()).toString().trim();
-            // TODO: use socket to authenticate user
-//            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-//            intent.putExtra(MainActivity.LOGIN_NAME, userName);
-//            intent.putExtra(MainActivity.LOGIN_POSITION, userPosition);
-//            intent.putExtra(MainActivity.LOGIN_PERMISSION, userPermission);
-//            startActivity(intent);
-//              saveData();
-//            finish();
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-            startActivity(intent);
+            authUser(new Player(userName, userPassword), new onResultListener() {
+                @Override
+                public void onFailure(String error) {
+                    btLogin.setClickable(true);
+                    showToastUI(LoginActivity.this, error);
+                    Log.e(TAG, error);
+                }
+
+                @Override
+                public void onSuccessful() {
+                    btLogin.setClickable(true);
+                    showToastUI(LoginActivity.this, "login successful");
+                    // login successful
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    intent.putExtra(MainActivity.LOGIN_NAME, userName);
+                    startActivity(intent);
+                    // save user name & password
+                    saveUserData();
+                    // kill login activity(don't need to go back this page
+                    finish();
+                }
+            });
         });
 
-        btSignUp = (Button) findViewById(R.id.tbt_signup);
+        Button btSignUp = (Button) findViewById(R.id.tbt_signup);
         btSignUp.setOnClickListener(view -> {
             Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
             startActivity(intent);
@@ -69,15 +90,15 @@ public class LoginActivity extends AppCompatActivity {
     public void saveUserData(){
         SharedPreferences preferences = getSharedPreferences("login_data", MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putString("name", userName);
-        editor.putString("password", userPassword);
+        editor.putString(USER_NAME, userName);
+        editor.putString(USER_PASSWORD, userPassword);
         editor.apply();
     }
 
     public void loadUserData(){
         SharedPreferences preferences = getSharedPreferences("login_data", MODE_PRIVATE);
-        userName = preferences.getString("name", "");
-        userPassword = preferences.getString("password", "");
+        userName = preferences.getString(USER_NAME, "");
+        userPassword = preferences.getString(USER_PASSWORD, "");
         etName.setText(userName);
         etPassWord.setText(userPassword);
     }

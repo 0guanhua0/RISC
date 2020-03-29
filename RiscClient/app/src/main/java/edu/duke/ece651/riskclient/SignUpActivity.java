@@ -34,18 +34,25 @@ public class SignUpActivity extends AppCompatActivity {
 
         Button signUp = findViewById(R.id.bt_signup);
         signUp.setOnClickListener(view -> {
+            signUp.setClickable(false);
             String name = Objects.requireNonNull(etName.getText()).toString();
             String password = Objects.requireNonNull(etPassword.getText()).toString();
-            String result = addUser(new Player(name, password));
-            showToastUI(SignUpActivity.this, result);
-            if (result.equals(SUCCESSFUL)){
-                // sign successful
-                Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
-                startActivity(intent);
-            }else {
-                // failure
-                showToastUI(SignUpActivity.this, result);
-            }
+            addUser(new Player(name, password), new onResultListener() {
+                @Override
+                public void onFailure(String error) {
+                    signUp.setClickable(true);
+                    showToastUI(SignUpActivity.this, error);
+                }
+
+                @Override
+                public void onSuccessful() {
+                    signUp.setClickable(true);
+                    showToastUI(SignUpActivity.this, "Sign up successful.");
+                    // sign up successful
+                    Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                }
+            });
         });
     }
 

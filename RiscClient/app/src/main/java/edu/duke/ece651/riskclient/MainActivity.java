@@ -9,6 +9,11 @@ import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
+    /**
+     *  constant value
+     */
+    public final static String LOGIN_NAME = "edu.duke.ece651.risk.LOGIN_NAME";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

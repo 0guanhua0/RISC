@@ -1,6 +1,9 @@
 package edu.duke.ece651.riskclient;
 
 public class Constant {
+    public static final String HOST = "localhost";
+    public static final int PORT = 12345;
+
     public static final String USER_NAME = "userName";
     public static final String USER_PASSWORD = "userPassword";
     public static final String ACTION_TYPE = "action";
