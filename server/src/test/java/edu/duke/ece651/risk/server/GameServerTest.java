@@ -187,4 +187,19 @@ public class GameServerTest {
         th.join();
     }
 
-} 
+    @Test
+    void askUserInfo() throws IOException, ClassNotFoundException {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        Player<String> player1 = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList("-1", "test"))), new ByteArrayOutputStream());
+        Player<String> player2 = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList("abc", "10", "0"))), outputStream);
+        int roomID = 0;
+        GameServer gameServer = new GameServer(null);
+        gameServer.rooms.put(roomID, new RoomController(roomID, player1, new MapDataBase<String>()));
+
+
+        //test ask user info
+        assertEquals(true, gameServer.askUserInfo(player2));
+        assertEquals("input user info\n", readAllStringFromObjectStream(outputStream));
+
+    }
+}

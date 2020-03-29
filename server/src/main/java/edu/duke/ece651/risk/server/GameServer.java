@@ -64,6 +64,13 @@ public class GameServer {
         String helloInfo = "Welcome to the fancy RISK game!!!";
         player.send(helloInfo);
 
+        //ask for user password
+        while (true) {
+            if (askUserInfo(player)) {
+                break;
+            }
+        }
+
         int choice = askValidRoomNum(player);
         synchronized (this) {
             if (choice < 0){
@@ -100,6 +107,14 @@ public class GameServer {
                 player.send("Invalid choice, try again.");
             }
         }
+    }
+
+    Boolean askUserInfo(Player<?> player) throws IOException {
+
+        player.send("input user info\n");
+
+        player.send(true);
+        return true;
     }
 
     /**
