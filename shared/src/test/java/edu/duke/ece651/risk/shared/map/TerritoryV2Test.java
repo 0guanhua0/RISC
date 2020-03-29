@@ -10,7 +10,9 @@ class TerritoryV2Test {
 
     @Test
     void getSize() throws IOException {
-        TerritoryV2 territory = new TerritoryV2("name",3);
+        TerritoryV2 territory = new TerritoryV2("name",3,2,4);
         assertEquals(territory.getSize(),3);
+        assertEquals(territory.getFoodYield(),2);
+        assertEquals(territory.getTechYield(),5);
     }
 }

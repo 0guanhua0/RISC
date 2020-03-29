@@ -11,7 +11,8 @@ import java.util.*;
  **/
 public class WorldMapV2<T extends Serializable> extends WorldMap{
     public WorldMapV2(Map<String, Set<String>> adjaList, List<T> colorList,
-                      Map<Set<String>, Boolean> groups,Map<String,Integer> sizes){
+                      Map<Set<String>, Boolean> groups, Map<String,Integer> sizes,
+                      Map<String,Integer> food, Map<String,Integer> tech){
 
         //check legality of groups
         Set<String> allName = new HashSet<>();
@@ -33,11 +34,14 @@ public class WorldMapV2<T extends Serializable> extends WorldMap{
 
         this.colorList = colorList;
         this.atlas = new HashMap<String,Territory>();
+
         //initialize each single territory
         for (Map.Entry<String, Set<String>> entry : adjaList.entrySet()) {
             String terriName = entry.getKey();
             int size = sizes.get(terriName);
-            Territory territory = new TerritoryV2(terriName,size);
+            int foodYield = food.get(terriName);
+            int techYield = tech.get(terriName);
+            Territory territory = new TerritoryV2(terriName,size,foodYield,techYield);
             atlas.put(terriName,territory);
         }
 
