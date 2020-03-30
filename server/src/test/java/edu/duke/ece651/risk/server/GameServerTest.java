@@ -198,7 +198,7 @@ public class GameServerTest {
         Thread.sleep(100);
 
         Client client = new Client();
-        client.init("127.0.0.1", 12345);
+        client.init("localhost", 12345);
         assertEquals("Welcome to the fancy RISK game!!!", client.recv());
         client.send("-1");
 
