@@ -65,10 +65,12 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onSuccessful() {
                     btLogin.setClickable(true);
-                    showToastUI(LoginActivity.this, "login successful");
+                    showToastUI(LoginActivity.this, "Login successful.");
                     // login successful
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     intent.putExtra(MainActivity.LOGIN_NAME, userName);
+                    // TODO: pass the user id to Main
+                    intent.putExtra(MainActivity.LOGIN_ID, 1);
                     startActivity(intent);
                     // save user name & password
                     saveUserData();

@@ -1,6 +1,8 @@
 package edu.duke.ece651.riskclient;
 
-public class Player {
+import java.io.Serializable;
+
+public class Player implements Serializable {
     long id;
     String name;
     String password;
@@ -8,6 +10,11 @@ public class Player {
     public Player(String name, String password) {
         this.name = name;
         this.password = password;
+    }
+
+    public Player(int id, String name){
+        this.id = id;
+        this.name = name;
     }
 
     public long getId() {

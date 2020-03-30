@@ -13,6 +13,8 @@
         <item name="overlapAnchor">false</item>
     </style>
 
+    <style name="ToolBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
     <style name="ToolbarPopupTheme" parent="@style/ThemeOverlay.AppCompat.Light">
         <item name="android:colorBackground">#000000</item>
         <item name="android:textColor">#FFFFFF</item>
@@ -36,6 +38,11 @@
 
     <style name="Widget.TextButton" parent="Widget.MaterialComponents.Button.TextButton">
         <item name="android:textColor">@color/colorPrimary</item>
+    </style>
+
+    <style name="Widget.FloatingAciButton" parent="Widget.MaterialComponents.Button">
+        <item name="android:textColor">#ffffff</item>
+        <item name="backgroundTint">?attr/colorPrimary</item>
     </style>
 
 </resources>

@@ -1,6 +1,9 @@
 package edu.duke.ece651.riskclient;
 
 public class Constant {
+    // the longest waiting time for any network operation
+    public static final int TIME_OUT = 30 * 1000;
+
     public static final String HOST = "localhost";
     public static final int PORT = 12345;
 
