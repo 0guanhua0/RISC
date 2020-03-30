@@ -85,21 +85,20 @@ public abstract class WorldMap<T extends Serializable> implements Serializable {
      * this method could be used to check the legality of a move action
      * note that the distance is defined as minimum path between src and target territory and
      * the whole minimum should under the control of same user
-     * when there is no such a path, it will throw an exception to report that
+     * when there is no such a path, it will return Integer.MAX_VALUE
      */
 
-    public int getMinCtrlDist(String srcName, String targetName) throws IllegalArgumentException{
+    public int getMinCtrlDist(String srcName, String targetName){
         if (!this.atlas.containsKey(srcName)||!this.atlas.containsKey(targetName)){
-            throw new IllegalArgumentException("invalid input territories name");
+            return Integer.MAX_VALUE;
         }
         Territory src = this.atlas.get(srcName);
         Territory target = this.atlas.get(targetName);
 
         int owner = src.getOwner();
         if (owner!=target.getOwner()){
-            throw new IllegalArgumentException("invalid input territories name");
+            return Integer.MAX_VALUE;
         }
-
 
         //the dist it takes from src territory to key
         Map<Territory,Integer> dist = new HashMap<>();
@@ -128,6 +127,6 @@ public abstract class WorldMap<T extends Serializable> implements Serializable {
                 }
             }
         }
-        throw new IllegalArgumentException("invalid input territories name");
+        return Integer.MAX_VALUE;
     }
 }

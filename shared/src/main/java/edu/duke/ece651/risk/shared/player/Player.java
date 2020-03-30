@@ -30,6 +30,7 @@ public abstract class Player<T> {
         this.territories = new HashSet<>();
         this.in = new ObjectInputStream(in);
         this.out = new ObjectOutputStream(out);
+        this.id = -1;
     }
 
 

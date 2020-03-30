@@ -50,7 +50,7 @@ class PlayerV2Test {
         Territory storm = worldMap.getTerritory("the storm kingdom");
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        PlayerV2<String> player = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),out);
+        Player<String> player = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),out);
 
         assertEquals(player.getFoodNum(),INITIAL_FOOD_NUM);
     }
@@ -63,6 +63,7 @@ class PlayerV2Test {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         PlayerV2<String> player = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),out);
+        player.setId(1);
 
         assertEquals(player.getTechNum(),INITIAL_TECH_NUM);
     }
@@ -74,7 +75,8 @@ class PlayerV2Test {
         Territory storm = worldMap.getTerritory("the storm kingdom");
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        PlayerV2<String> player = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),out);
+        Player<String> player = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),out);
+        player.setId(1);
         player.addTerritory(storm);
 
         assertEquals(player.getFoodNum(),INITIAL_FOOD_NUM);
@@ -95,7 +97,9 @@ class PlayerV2Test {
         Territory storm = worldMap.getTerritory("the storm kingdom");
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        PlayerV2<String> player = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),out);
+        Player<String> player = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),out);
+        player.setId(1);
+
         player.addTerritory(storm);
 
         assertEquals(player.getTechNum(),INITIAL_TECH_NUM);

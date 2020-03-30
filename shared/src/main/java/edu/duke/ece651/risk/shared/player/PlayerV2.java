@@ -16,7 +16,7 @@ import static edu.duke.ece651.risk.shared.Constant.INITIAL_TECH_NUM;
  * @author: Chengda Wu
  * @create: 2020-03-28 20:16
  **/
-public class PlayerV2<T> extends PlayerV1 {
+public class PlayerV2<T> extends PlayerV1<T> {
     BasicResource tech;
     BasicResource food;
     private void initResource(){

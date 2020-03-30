@@ -30,6 +30,9 @@ public abstract class Territory implements Serializable {
 
     //assign this territory to corresponding user
     public void setOwner(int id) {
+        if (-1==id){
+            throw new IllegalArgumentException("id can't be negative!");
+        }
         status.setIsFree(false);
         status.setOwnerId(id);
     }

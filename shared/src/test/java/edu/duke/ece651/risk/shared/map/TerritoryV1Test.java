@@ -223,4 +223,16 @@ class TerritoryV1Test {
         TerritoryV1 name = new TerritoryV1("name");
         assertEquals(name.getSize(),0);
     }
+
+    @Test
+    void getFoodYield() {
+        TerritoryV1 name = new TerritoryV1("name");
+        assertEquals(0,name.getFoodYield());
+    }
+
+    @Test
+    void getTechYield() {
+        TerritoryV1 name = new TerritoryV1("name");
+        assertEquals(0,name.getTechYield());
+    }
 }
