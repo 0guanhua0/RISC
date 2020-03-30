@@ -79,6 +79,9 @@ public class PlayerV2<T> extends PlayerV1<T> {
         if (upTechRight&&TECH_MAP.containsKey(techLevel)&&TECH_MAP.get(techLevel)<=getTechNum()){
             return true;
         }else{
+//            System.out.println(upTechRight);
+//            System.out.println(TECH_MAP.containsKey(techLevel));
+//            System.out.println(TECH_MAP.get(techLevel)<=getTechNum());
             return false;
         }
     }
