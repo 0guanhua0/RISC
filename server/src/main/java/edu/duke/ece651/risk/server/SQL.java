@@ -2,6 +2,7 @@ package edu.duke.ece651.risk.server;
 
 import java.sql.*;
 
+//todo: add change password
 public class SQL {
     Connection conn = null;
 

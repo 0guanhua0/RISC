@@ -25,7 +25,9 @@ public class GameServer {
     // list of all rooms(each room represent a running game)
     Map<Integer, RoomController> rooms;
     // list of connected player
-    Map<Integer, UserInfo> connectedUser;
+    Map<String, UserInfo> connectedUser;
+    // db for user name & password
+    SQL db;
 
     public GameServer(Server server) {
         this.server = server;
@@ -33,6 +35,7 @@ public class GameServer {
         this.threadPool = new ThreadPoolExecutor(4, 16, 5, TimeUnit.SECONDS, workQueue);
         this.rooms = new ConcurrentHashMap<>();
         this.connectedUser = new ConcurrentHashMap<>();
+        this.db = new SQL();
     }
 
     /**
@@ -132,7 +135,7 @@ public class GameServer {
         String action = obj.get("action").toString();
 
         //todo: query SQL to get user id
-        int userId = 0;
+        //int userId = 0;
         UserInfo userInfo = new UserInfo();
 
         //TODO: add to constant
@@ -140,8 +143,8 @@ public class GameServer {
         if (action.equals("login")) {
             //check db for user id
             //if db return true if user not in connect list
-            if (!connectedUser.containsKey(userId)) {
-                connectedUser.put(userId, userInfo);
+            if (db.authUser(userName, passWord) && !connectedUser.containsKey(userName)) {
+                connectedUser.put(userName, userInfo);
                 return true;
             } else {
                 player.send("invalid login");
@@ -153,7 +156,7 @@ public class GameServer {
         if (action.equals("signup")) {
             //check db for user id
             //add to db
-            if (true) {
+            if (db.addUser(userName, passWord)) {
                 return true;
 
             } else {
@@ -161,6 +164,8 @@ public class GameServer {
             }
         }
 
+        //todo: add change passsword func
+        /*
         if (action.equals("change")) {
             //check db for user id
             //ch password
@@ -172,11 +177,13 @@ public class GameServer {
             }
 
         }
+
+         */
         //log out
         if (action.equals("logout")) {
-            if (true) {
+            if (connectedUser.containsKey(userName)) {
                 //if user in current list
-                connectedUser.remove(userId);
+                connectedUser.remove(userName);
                 return true;
             } else {
                 player.send("invalid logout");
