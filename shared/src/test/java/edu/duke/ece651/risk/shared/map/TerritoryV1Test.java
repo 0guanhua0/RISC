@@ -19,12 +19,15 @@ class TerritoryV1Test {
 
 
     @Test
-    void getOwner() {
+    void testSetGetOwner() {
         TerritoryV1 stormKindom = new TerritoryV1("The Storm Kindom");
         stormKindom.setOwner(3);
         assert (3 == stormKindom.getOwner());
         assert (!stormKindom.isFree());
         assertEquals("The Storm Kindom", stormKindom.getName());
+        assertThrows(IllegalArgumentException.class,()->{stormKindom.setOwner(0);});
+        assertThrows(IllegalArgumentException.class,()->{stormKindom.setOwner(-1);});
+
     }
 
     @Test
