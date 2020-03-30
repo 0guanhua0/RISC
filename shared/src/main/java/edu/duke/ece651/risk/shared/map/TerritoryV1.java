@@ -12,6 +12,7 @@ import java.util.Random;
  * @program: risk-Map
  * @description:
  * this is Territory class that let server use to set/represent/update the state of a certain territory
+ * used for evolution1
  * @author: Chengda Wu (cw402)
  * @create: 2020-03-08 20:37
  **/
