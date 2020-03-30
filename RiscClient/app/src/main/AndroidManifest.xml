@@ -15,7 +15,7 @@
         android:usesCleartextTraffic="true">
         <activity android:name=".activity.PlayGameActivity"></activity>
         <activity android:name=".activity.SelectMapActivity" />
-        <activity android:name=".activity.AddRoomActivity" />
+        <activity android:name=".activity.NewRoomActivity" />
         <activity android:name=".activity.SignUpActivity" />
         <activity android:name=".activity.MainActivity" />
         <activity

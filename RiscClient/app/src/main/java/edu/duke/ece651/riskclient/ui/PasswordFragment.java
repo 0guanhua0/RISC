@@ -2,8 +2,6 @@ package edu.duke.ece651.riskclient.ui;
 
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -16,10 +14,10 @@ import edu.duke.ece651.riskclient.R;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link UpdateFragment#newInstance} factory method to
+ * Use the {@link PasswordFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class UpdateFragment extends Fragment {
+public class PasswordFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_ITEM_PLAYER = "player";
 
@@ -27,7 +25,7 @@ public class UpdateFragment extends Fragment {
 
     private Player player;
 
-    public UpdateFragment() {
+    public PasswordFragment() {
         // Required empty public constructor
     }
 
@@ -38,8 +36,8 @@ public class UpdateFragment extends Fragment {
      * @param player player object
      * @return A new instance of fragment UpdateFragment.
      */
-    public static UpdateFragment newInstance(Player player) {
-        UpdateFragment fragment = new UpdateFragment();
+    public static PasswordFragment newInstance(Player player) {
+        PasswordFragment fragment = new PasswordFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_ITEM_PLAYER, player);
         fragment.setArguments(args);
@@ -59,7 +57,7 @@ public class UpdateFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_update, container, false);
+        View view = inflater.inflate(R.layout.fragment_password, container, false);
         tvUserName = view.findViewById(R.id.tv_user_name);
         setUpUI();
         return view;

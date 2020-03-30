@@ -6,25 +6,19 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 
 import com.google.android.material.navigation.NavigationView;
-
-import java.util.Objects;
 
 import edu.duke.ece651.riskclient.Player;
 import edu.duke.ece651.riskclient.R;
 import edu.duke.ece651.riskclient.ui.AboutFragment;
 import edu.duke.ece651.riskclient.ui.HomeFragment;
-import edu.duke.ece651.riskclient.ui.UpdateFragment;
-
-import static edu.duke.ece651.riskclient.utils.UIUtils.showToastUI;
+import edu.duke.ece651.riskclient.ui.PasswordFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -56,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
         player = new Player(userID, userName);
 
         // setup toolBar
-        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar_main);
+        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setTitle("Fancy Risk");
 
@@ -105,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
                     fragment = HomeFragment.newInstance(player);
                     break;
                 case R.id.nav_update:
-                    fragment = UpdateFragment.newInstance(player);
+                    fragment = PasswordFragment.newInstance(player);
                     break;
                 case R.id.nav_about:
                     fragment = AboutFragment.newInstance();

@@ -27,10 +27,12 @@ public class SignUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
 
-        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar_signup);
+        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        Objects.requireNonNull(getSupportActionBar()).setTitle("Sign Up");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getSupportActionBar() != null){
+            getSupportActionBar().setTitle("Sign Up");
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         TextInputEditText etName = findViewById(R.id.et_signup_name);
         TextInputEditText etPassword = findViewById(R.id.et_signup_password1);
