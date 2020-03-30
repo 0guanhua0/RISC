@@ -46,17 +46,23 @@ public class GameServerTest {
     public void testRun() throws IOException, InterruptedException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         Socket socket1 = mock(Socket.class);
-        when(socket1.getInputStream()).thenReturn(setupMockInput(new ArrayList<>(Arrays.asList("-1", "-1"))));
+        when(socket1.getInputStream()).thenReturn(setupMockInput(new ArrayList<>(Arrays.asList("{\"userName\": \"name1\",\n" +
+                "\"userPassword\": \"password\",\n" +
+                "\"action\": \"signup\" }", "-1", "-1"))));
         when(socket1.getOutputStream()).thenReturn(outputStream);
 
         Socket socket2 = mock(Socket.class);
-        when(socket2.getInputStream()).thenReturn(setupMockInput(new ArrayList<>()));
+        when(socket2.getInputStream()).thenReturn(setupMockInput(new ArrayList<>(Arrays.asList("{\"userName\": \"name2\",\n" +
+                "\"userPassword\": \"password\",\n" +
+                "\"action\": \"signup\" }"))));
         when(socket2.getOutputStream()).thenReturn(new ByteArrayOutputStream());
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         stream.close();
         Socket socketError = mock(Socket.class);
-        when(socketError.getInputStream()).thenReturn(setupMockInput(new ArrayList<>()));
+        when(socketError.getInputStream()).thenReturn(setupMockInput(new ArrayList<>(Arrays.asList("{\"userName\": \"name3\",\n" +
+                "\"userPassword\": \"password\",\n" +
+                "\"action\": \"signup\" }"))));
         when(socketError.getOutputStream()).thenReturn(stream);
 
         Server server = mock(Server.class);
@@ -87,7 +93,9 @@ public class GameServerTest {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         Socket socket1 = mock(Socket.class);
         when(socket1.getInputStream())
-                .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList("-1", "test"))));
+                .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList("{\"userName\": \"name\",\n" +
+                        "\"userPassword\": \"password\",\n" +
+                        "\"action\": \"signup\" }", "-1", "test"))));
         when(socket1.getOutputStream()).thenReturn(outputStream);
 
         //handle the request for first player
@@ -102,14 +110,16 @@ public class GameServerTest {
         outputStream.reset();
         Socket socket2 = mock(Socket.class);
         when(socket2.getInputStream())
-                .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList("0", "0"))));
+                .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList("{\"userName\": \"name2\",\n" +
+                        "\"userPassword\": \"password\",\n" +
+                        "\"action\": \"signup\" }", "0", "0"))));
         when(socket2.getOutputStream()).thenReturn(outputStream);
         //handle the request for second player
         assertEquals(1, gameServer.rooms.size());
         gameServer.handleIncomeRequest(socket2);
         assertEquals(1, gameServer.rooms.size());
         assertEquals(
-                "Welcome to the fancy RISK game!!!" + SUCCESSFUL + "{\"playerColor\":\"blue\",\"playerID\":2}" + "Please wait other players to join th game(need 3, joined 2)",
+                "Welcome to the fancy RISK game!!!" +  "SUCCESSFUL"+ SUCCESSFUL + "{\"playerColor\":\"blue\",\"playerID\":2}" + "Please wait other players to join th game(need 3, joined 2)",
                 readAllStringFromObjectStream(outputStream)
         );
         assertEquals(2, gameServer.rooms.get(0).players.size());
@@ -119,7 +129,9 @@ public class GameServerTest {
         outputStream.reset();
         Socket socket3 = mock(Socket.class);
         when(socket3.getInputStream())
-                .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList("0", "0"))));
+                .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList("{\"userName\": \"name3\",\n" +
+                        "\"userPassword\": \"password\",\n" +
+                        "\"action\": \"signup\" }", "0", "0"))));
         when(socket3.getOutputStream()).thenReturn(outputStream);
         // handle the request for third player
         assertEquals(1, gameServer.rooms.size());
