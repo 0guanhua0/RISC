@@ -1,10 +1,8 @@
-package edu.duke.ece651.riskclient;
+package edu.duke.ece651.riskclient.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 import android.widget.Button;
 
@@ -14,9 +12,10 @@ import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.Objects;
 
-import edu.duke.ece651.riskclient.utils.HTTPUtils;
+import edu.duke.ece651.riskclient.Player;
+import edu.duke.ece651.riskclient.R;
+import edu.duke.ece651.riskclient.onResultListener;
 
-import static edu.duke.ece651.riskclient.Constant.SUCCESSFUL;
 import static edu.duke.ece651.riskclient.Constant.USER_NAME;
 import static edu.duke.ece651.riskclient.Constant.USER_PASSWORD;
 import static edu.duke.ece651.riskclient.utils.HTTPUtils.authUser;

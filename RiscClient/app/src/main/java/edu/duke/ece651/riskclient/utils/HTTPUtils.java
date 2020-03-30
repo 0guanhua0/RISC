@@ -62,26 +62,26 @@ public class HTTPUtils {
      * @param listener result listener
      */
     static void sendAndRec(String str, onResultListener listener) {
-        new Thread(() -> {
+        listener.onSuccessful();
+        // no serve for now, so simply successful
+        /*new Thread(() -> {
             try {
-//                Socket socket = new Socket(getIP(), PORT);
-//                PrintWriter out = new PrintWriter(socket.getOutputStream());
-//                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-//                out.println(str);
-//                out.flush();
-//                String res = in.readLine();
-//                if (res.equals(SUCCESSFUL)){
-//                    listener.onSuccessful();
-//                }else {
-//                    listener.onFailure(res);
-//                }
-                Thread.sleep(100);
-                listener.onSuccessful();
+                Socket socket = new Socket(getIP(), PORT);
+                PrintWriter out = new PrintWriter(socket.getOutputStream());
+                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                out.println(str);
+                out.flush();
+                String res = in.readLine();
+                if (res.equals(SUCCESSFUL)){
+                    listener.onSuccessful();
+                }else {
+                    listener.onFailure(res);
+                }
             } catch (Exception e) {
                 Log.e(TAG, e.toString());
                 listener.onFailure("server is not running");
             }
-        }).start();
+        }).start();*/
     }
 
     static String getIP() throws UnknownHostException {

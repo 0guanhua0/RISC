@@ -1,4 +1,4 @@
-package edu.duke.ece651.riskclient;
+package edu.duke.ece651.riskclient.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,6 +18,8 @@ import com.google.android.material.navigation.NavigationView;
 
 import java.util.Objects;
 
+import edu.duke.ece651.riskclient.Player;
+import edu.duke.ece651.riskclient.R;
 import edu.duke.ece651.riskclient.ui.AboutFragment;
 import edu.duke.ece651.riskclient.ui.HomeFragment;
 import edu.duke.ece651.riskclient.ui.UpdateFragment;

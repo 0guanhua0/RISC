@@ -1,4 +1,4 @@
-package edu.duke.ece651.riskclient;
+package edu.duke.ece651.riskclient.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,6 +11,10 @@ import androidx.appcompat.widget.Toolbar;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.Objects;
+
+import edu.duke.ece651.riskclient.Player;
+import edu.duke.ece651.riskclient.R;
+import edu.duke.ece651.riskclient.onResultListener;
 
 import static edu.duke.ece651.riskclient.utils.HTTPUtils.addUser;
 import static edu.duke.ece651.riskclient.utils.UIUtils.showToastUI;
