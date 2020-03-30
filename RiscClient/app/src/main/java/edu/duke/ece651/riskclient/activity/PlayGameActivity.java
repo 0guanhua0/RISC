@@ -1,12 +1,11 @@
 package edu.duke.ece651.riskclient.activity;
 
+import android.os.Bundle;
+import android.view.MenuItem;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-
-import android.content.DialogInterface;
-import android.os.Bundle;
-import android.view.MenuItem;
 
 import edu.duke.ece651.riskclient.R;
 
@@ -41,13 +40,17 @@ public class PlayGameActivity extends AppCompatActivity {
 
     private void goBack(){
         AlertDialog.Builder builder = new AlertDialog.Builder(PlayGameActivity.this);
-        builder.setPositiveButton("Exit", (dialog1, which) -> {
-            showToastUI(PlayGameActivity.this, "Exit");
+        builder.setPositiveButton("Leave", (dialog1, which) -> {
+            showToastUI(PlayGameActivity.this, "Leave room");
+            // TODO: communicate with the server, send the exit info
+            onBackPressed();
         });
-        builder.setNegativeButton("Leave", (dialog2, which) -> {
-            showToastUI(PlayGameActivity.this, "Leave");
+        builder.setNegativeButton("Exit", (dialog2, which) -> {
+            showToastUI(PlayGameActivity.this, "Exit room");
+            // TODO: communicate with the server, send the exit info
+            onBackPressed();
         });
-        builder.setMessage("Do you want to exit the game or exit the game?");
+        builder.setMessage("Do you want to leave the game or exit the game?");
         AlertDialog dialog = builder.create();
         dialog.setOnShowListener(dialog12 -> {
             dialog.getButton(AlertDialog.BUTTON_POSITIVE)
@@ -56,7 +59,5 @@ public class PlayGameActivity extends AppCompatActivity {
                     );
         });
         dialog.show();
-        // TODO: communicate with the server, send the exit info
-        onBackPressed();
     }
 }

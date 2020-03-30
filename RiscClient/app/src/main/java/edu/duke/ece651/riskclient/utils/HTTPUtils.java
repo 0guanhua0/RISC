@@ -30,6 +30,11 @@ import static edu.duke.ece651.riskclient.Constant.USER_PASSWORD;
 public class HTTPUtils {
     private static final String TAG = HTTPUtils.class.getSimpleName();
 
+    /**
+     * This function will authenticate the player.
+     * @param player player to be authenticated
+     * @param listener result listener
+     */
     public static void authUser(Player player, onResultListener listener){
         try {
             JSONObject jsonObject = new JSONObject();

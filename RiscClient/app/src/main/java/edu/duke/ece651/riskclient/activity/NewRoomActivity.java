@@ -7,12 +7,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,13 +65,31 @@ public class NewRoomActivity extends AppCompatActivity {
     }
 
     private void setUpUI(){
+        TextInputLayout tilRoomName = findViewById(R.id.til_room_name);
         TextInputEditText etRoomName = findViewById(R.id.et_room_name);
+
+        etRoomName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                tilRoomName.setError(null);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
 
         Button btCreate = findViewById(R.id.bt_create);
         btCreate.setOnClickListener(v -> {
             String roomName = Objects.requireNonNull(etRoomName.getText()).toString();
             if (roomName.isEmpty()){
-                showToastUI(NewRoomActivity.this, "Room name can't be empty");
+                tilRoomName.setError("Room name can't be empty");
                 return;
             }
             if (selectedMap == null){

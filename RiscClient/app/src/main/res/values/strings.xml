@@ -20,7 +20,7 @@
     <!--  add room activity  -->
     <string name="add_room_name">Room Name</string>
     <string name="add_room_selected_map">Selected map:</string>
-    <string name="add_room_unselected_map">nothing selected yet</string>
+    <string name="add_room_unselected_map">not selected yet</string>
     <string name="add_room_create">Create</string>
 
     <string name="menu_home">Home</string>
