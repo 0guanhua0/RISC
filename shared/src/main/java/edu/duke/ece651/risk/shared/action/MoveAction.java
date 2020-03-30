@@ -38,16 +38,12 @@ public class MoveAction implements Action, Serializable {
 
         //TODO note that I should test for whether the player is able to move to an uncontrolled area
         if (srcNode.getOwner() != playerId){
-            System.out.println(1);
             return false;
         }else if (srcNode.getUnitsNum() < unitsNum || unitsNum <= 0){
-            System.out.println(2);
             return false;
         }else if (Integer.MAX_VALUE==dist){//when there is no such path under the control of current user
-            System.out.println(3);
             return false;
         }else if (player.getFoodNum()<dist*unitsNum){
-            System.out.println(4);
             return false;
         }else {
             return true;

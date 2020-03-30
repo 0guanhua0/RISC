@@ -89,7 +89,7 @@ class TerritoryV1Test {
         assert (territoryV1.isFree());
         territoryV1.setOwner(3);
         assert (!territoryV1.isFree());
-        territoryV1.setIsFree(true);
+        territoryV1.setIsFree();
         assert (territoryV1.isFree());
     }
 
@@ -157,6 +157,7 @@ class TerritoryV1Test {
         Territory north = worldMap.getTerritory("kingdom of the north");
         Territory dorne = worldMap.getTerritory("principality of dorne");
         //two players join this game
+
         Player<String> p1 = new PlayerV1<>("Red", 1);
         Player<String> p2 = new PlayerV1<>("Blue", 2);
         //assign some territories to each player
@@ -183,15 +184,16 @@ class TerritoryV1Test {
         AttackAction a11 = new AttackAction("principality of dorne", "kingdom of the reach", 1, 5);
         AttackAction a12 = new AttackAction("kingdom of mountain and vale", "the storm kingdom", 1, 1);
 
-        WorldState worldState = new WorldState(null, worldMap);
+        WorldState worldState1 = new WorldState(p1,worldMap);
+        WorldState worldState2 = new WorldState(p2,worldMap);
 
-        assertTrue(a10.perform(worldState));
-        assertTrue(a11.perform(worldState));
-        assertTrue(a12.perform(worldState));
+        assertTrue(a10.perform(worldState1));
+        assertTrue(a11.perform(worldState1));
+        assertTrue(a12.perform(worldState1));
 
         //player 2 attack to empty territory
         AttackAction a20 = new AttackAction("kingdom of the reach", "kingdom of the rock", 2, 2);
-        assertTrue(a20.perform(worldState));
+        assertTrue(a20.perform(worldState2));
 
         //perform
         List<AttackResult> resultList0 = reach.resolveCombats();

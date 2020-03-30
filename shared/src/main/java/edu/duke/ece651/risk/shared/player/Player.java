@@ -90,7 +90,7 @@ public abstract class Player<T> {
             throw new IllegalArgumentException("the territory doesn't belong to this user!");
         }
         territories.remove(territory);
-        territory.setIsFree(true);
+        territory.setIsFree();
     }
 
     public void send(Object data) throws IOException {

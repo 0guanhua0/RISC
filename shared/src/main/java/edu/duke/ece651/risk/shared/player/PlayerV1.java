@@ -36,10 +36,10 @@ public class PlayerV1<T> extends Player<T> {
     public void updateResource() {}
 
     @Override
-    public int getFoodNum() { return 0; }
+    public int getFoodNum() { return Integer.MAX_VALUE; }
 
     @Override
-    public int getTechNum() { return 0; }
+    public int getTechNum() { return Integer.MAX_VALUE; }
 
     @Override
     public void useFood(int foodUse) {}

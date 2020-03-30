@@ -85,14 +85,12 @@ public class TerritoryV1 extends Territory{
                 this.lossNUnits(1);
             }
         }
-
         // update the ownership only if attacker has units left
         if (attackUnits > 0) {
             setOwner(attackerID);
             // left units will remain in this territory
             addNUnits(attackUnits);
         }
-
         return new AttackResult(attackerID, defenderID, srcNames, destName, attackUnits > 0);
     }
 
