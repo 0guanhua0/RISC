@@ -1,4 +1,4 @@
-the storm kingdom: kingdom of the reach^kingdom of the rock^principality of dorne
+the storm kingdom: kingdom of the reach^kingdom of the rock^principality of dorne^kingdom of mountain and vale
 kingdom of the reach: the storm kingdom^kingdom of the rock^principality of dorne
 kingdom of the rock: kingdom of the north^kingdom of mountain and vale^the storm kingdom^kingdom of the reach
 kingdom of mountain and vale: kingdom of the north^kingdom of the rock^the storm kingdom

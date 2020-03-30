@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">Risk</string>
+
+    <string name="login_info">Welcome to the \n fancy RISC Game!!!</string>
+    <string name="login_login">Log in</string>
+    <string name="login_signup">Sign up</string>
+    <string name="login_name_hint">UserName</string>
+    <string name="login_password_hint">Password</string>
+
+    <string name="signup_password1_hint">Password</string>
+    <string name="signup_password2_hint">Again</string>
+
+    <string name="menu_home">Home</string>
+    <string name="menu_update">Change Password</string>
+    <string name="menu_about">About</string>
+
+    <!--  update fragment  -->
+    <string name="update_old_password">Old Password</string>
+    <string name="update_new_password">New Password</string>
+    <string name="update_submit">Submit</string>
+
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>

@@ -214,4 +214,9 @@ class TerritoryV1Test {
     }
 
 
+    @Test
+    void getSize() throws IOException {
+        TerritoryV1 name = new TerritoryV1("name");
+        assertEquals(name.getSize(),0);
+    }
 }
