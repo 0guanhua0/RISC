@@ -43,7 +43,7 @@ public class SQL {
         // ask postgres to crypt the password
 
         //check if user already exists
-        if (authUser(name, pwd)) {
+        if (authUserName(name)) {
             return false;
         }
         Statement statement = conn.createStatement();
@@ -61,6 +61,16 @@ public class SQL {
                 "  FROM risk\n" +
                 " WHERE name = '%s' \n" +
                 "   AND password = '%s'", name, pwd));
+        return set.next();
+
+    }
+
+    public boolean authUserName(String name) throws SQLException {
+
+        Statement statement = conn.createStatement();
+        ResultSet set = statement.executeQuery(String.format("SELECT PLAYER_ID \n" +
+                "  FROM risk\n" +
+                " WHERE name = '%s' ", name));
         return set.next();
 
     }

@@ -14,6 +14,7 @@ class SQLTest {
         SQL sql = new SQL();
         String userName = "test";
         String password = "123";
+        assertFalse(sql.authUserName(userName));
         assertEquals(false, sql.authUser(userName, password));
 
 
