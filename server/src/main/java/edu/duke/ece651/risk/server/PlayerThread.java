@@ -98,8 +98,6 @@ public class PlayerThread extends Thread{
         player.send(roundInfo);
         //build the current state of game
         WorldState worldState = new WorldState(this.player, this.map);
-
-
         //if player hasn't losed yet, let him or her play another round of game
         if (player.getTerrNum() > 0){
             while (true){
