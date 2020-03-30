@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -14,11 +15,12 @@ import java.util.List;
 public class MapAdapter extends RecyclerView.Adapter<MapAdapter.MapViewHolder> {
 
     public interface onClickListener{
-        void onClick(String mapName);
+        void onClick(int position);
     }
 
     private List<WorldMap> mapList;
     private onClickListener listener;
+    private View oldView;
 
     public MapAdapter(){
         mapList = new ArrayList<>();
@@ -35,9 +37,15 @@ public class MapAdapter extends RecyclerView.Adapter<MapAdapter.MapViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull MapViewHolder holder, int position) {
         WorldMap map = mapList.get(position);
+
         holder.tvMapName.setText(map.getName());
-        holder.tvMapName.setOnClickListener(v -> {
-            listener.onClick(map.getName());
+        holder.background.setOnClickListener(v -> {
+            listener.onClick(position);
+            holder.background.setSelected(true);
+            if (oldView != null && oldView != holder.background){
+                oldView.setSelected(false);
+            }
+            oldView = holder.background;
         });
     }
 
@@ -58,10 +66,12 @@ public class MapAdapter extends RecyclerView.Adapter<MapAdapter.MapViewHolder> {
 
     static class MapViewHolder extends RecyclerView.ViewHolder{
 
+        ConstraintLayout background;
         TextView tvMapName;
 
         MapViewHolder(@NonNull View itemView) {
             super(itemView);
+            background = itemView.findViewById(R.id.layout_background);
             tvMapName = itemView.findViewById(R.id.map_name);
         }
     }

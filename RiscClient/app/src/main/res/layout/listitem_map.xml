@@ -1,25 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="50dp"
-    android:elevation="2dp">
+    android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/map_name"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:textSize="@dimen/normal_text_size"
-        android:text="Clash of kingdom"
-        android:gravity="center_vertical|start"
         android:layout_marginHorizontal="@dimen/normal_margin"
-        android:background="@color/colorAccent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        android:layout_marginVertical="5dp"
+        android:background="@drawable/background_selector"
+        android:clickable="true">
+        <TextView
+            android:id="@+id/map_name"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textSize="@dimen/normal_text_size"
+            android:text="Clash of kingdom"
+            android:gravity="center_vertical|start"
+            android:layout_marginHorizontal="@dimen/normal_margin"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <View
         android:id="@+id/divide"
@@ -28,4 +36,4 @@
         android:background="#d3d3d3"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>
