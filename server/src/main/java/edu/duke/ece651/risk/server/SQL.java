@@ -49,7 +49,7 @@ public class SQL {
             Statement statement = conn.createStatement();
             statement.executeUpdate(String.format("INSERT INTO risk (name, password) VALUES (\n" +
                     "  '%s',\n" +
-                    "  crypt('%s', gen_salt('bf'))\n" +
+                    "  '%s'\n" +
                     ");", name, pwd));
         } catch (SQLException e) {
             return false;
@@ -63,7 +63,7 @@ public class SQL {
             try (ResultSet set = statement.executeQuery(String.format("SELECT PLAYER_ID \n" +
                     "  FROM risk\n" +
                     " WHERE name = '%s' \n" +
-                    "   AND password = crypt('%s', password);", name, pwd));) {
+                    "   AND password = '%s'", name, pwd));) {
                 return set.next();
             } catch (SQLException ignored) {
             }

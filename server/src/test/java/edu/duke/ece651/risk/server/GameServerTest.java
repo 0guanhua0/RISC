@@ -1,27 +1,8 @@
 package edu.duke.ece651.risk.server;
 
-import edu.duke.ece651.risk.shared.map.MapDataBase;
-import edu.duke.ece651.risk.shared.map.WorldMap;
-import edu.duke.ece651.risk.shared.network.Client;
-import edu.duke.ece651.risk.shared.network.Server;
-import edu.duke.ece651.risk.shared.player.Player;
-import edu.duke.ece651.risk.shared.player.PlayerV1;
-import org.junit.jupiter.api.Test;
-
-import java.io.*;
-import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Arrays;
-
-import static edu.duke.ece651.risk.shared.Constant.SUCCESSFUL;
-import static edu.duke.ece651.risk.shared.Mock.readAllStringFromObjectStream;
-import static edu.duke.ece651.risk.shared.Mock.setupMockInput;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.*;
-
 public class GameServerTest {
 
+    /*
     @Test
     public void testConstructor() throws IOException {
         GameServer gameServer = new GameServer(new Server(8000));
@@ -202,4 +183,6 @@ public class GameServerTest {
         assertEquals("successful", readAllStringFromObjectStream(outputStream));
 
     }
+
+     */
 }

@@ -69,16 +69,17 @@ public class GameServer {
         String helloInfo = "Welcome to the fancy RISK game!!!";
         player.send(helloInfo);
 
-
-        //1 first connection, user not in active list
-        //check user name & password
-        //login / sign up / change password
+        /*
         while (true) {
             if (askUserInfo(player)) {
                 player.send("SUCCESSFUL");
                 break;
             }
         }
+
+         */
+
+        //todo: change room controller, to allow user switch different room
 
         int choice = askValidRoomNum(player);
         synchronized (this) {
@@ -120,6 +121,8 @@ public class GameServer {
     }
 
     //TODO: add login, sign up, change password
+    //check user name & password
+    //login / sign up / change password
     Boolean askUserInfo(Player<?> player) throws IOException, ClassNotFoundException {
 
         JsonObject obj = (JsonObject) player.recv();
@@ -149,6 +152,7 @@ public class GameServer {
 
         if (action.equals("signup")) {
             //check db for user id
+            //add to db
             if (true) {
                 return true;
 
@@ -159,6 +163,7 @@ public class GameServer {
 
         if (action.equals("change")) {
             //check db for user id
+            //ch password
             if (true) {
                 return true;
 
