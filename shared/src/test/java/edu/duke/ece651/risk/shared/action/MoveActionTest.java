@@ -19,13 +19,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class MoveActionTest {
 
+
     private static final String storm = "the storm kingdom";
     private static final String reach = "kingdom of the reach";
     private static final String rock = "kingdom of the rock";
     private static final String vale = "kingdom of mountain and vale";
     private static final String north = "kingdom of the north";
     private static final String dorne = "principality of dorne";
-
 
 
     @Test

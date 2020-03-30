@@ -28,6 +28,7 @@ class PlayerV2Test {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         PlayerV2<String> player = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),out);
+        player.setId(1);
 
         player.addTerritory(storm);
         player.addTerritory(reach);
