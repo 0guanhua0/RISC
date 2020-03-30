@@ -64,6 +64,7 @@ public class PlayerThreadTest {
                 ACTION_DONE,
                 ACTION_DONE
         ))), new ByteArrayOutputStream());
+        p.setId(1);
         Player<String> player = spy(p);
 
         GameInfo gameInfo = new GameInfo(-1, 1);

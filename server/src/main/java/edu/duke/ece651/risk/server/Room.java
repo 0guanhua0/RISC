@@ -199,7 +199,7 @@ public class Room {
      * update the state(e.g. num of units and resources)
      * of current map after the end of each single round of game
      */
-    void updateMap(){
+    void updateWorld(){
         //add one units to all territory
         for (Territory territory : map.getAtlas().values()){
             territory.addNUnits(1);
@@ -248,7 +248,7 @@ public class Room {
                 break;
             }
             gameInfo.nextRound();
-            updateMap();
+            updateWorld();
         }
         endGame();
     }

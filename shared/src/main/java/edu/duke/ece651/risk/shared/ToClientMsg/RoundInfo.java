@@ -32,11 +32,17 @@ public class RoundInfo implements Serializable {
         return roundNum;
     }
 
-    //TODO have a better way to deep copy a map and put it into WorldMap class
+    //TODO have a better way to deep copy a map and put it into WorldMap class!!!
     void copyMap(WorldMap<String> oldMap) throws IOException {
         this.map = new MapDataBase<String>().getMap(oldMap.getName());
         for (Territory t : oldMap.getAtlas().values()){
-            this.map.getTerritory(t.getName()).setOwner(t.getOwner());
+            Territory territory = this.map.getTerritory(t.getName());
+            if (t.isFree()){
+                territory.setIsFree();
+            }else{
+                territory.setOwner(t.getOwner());
+            }
+            //this.map.getTerritory(t.getName()).setOwner(t.getOwner());
             this.map.getTerritory(t.getName()).addNUnits(t.getUnitsNum());
         }
     }

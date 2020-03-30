@@ -53,7 +53,6 @@ public class PlayerThread extends Thread{
         ClientSelect clientSelect = new ClientSelect(totalUnits, terrPerUsr, map.getName());
         // tell player to select
         player.send(clientSelect);
-
         // stage 1: select territory group(check validation before move on)
         while(true){
             Set<String> recv = (HashSet<String>)player.recv();
@@ -67,7 +66,6 @@ public class PlayerThread extends Thread{
                 }
             }
         }
-
         // stage 2: assign units(check validation before move on)
         while (true){
             ServerSelect serverSelect = (ServerSelect)player.recv();
@@ -86,7 +84,6 @@ public class PlayerThread extends Thread{
                 }
             }
         }
-
         // wait all players to finish this step
         barrier.await();
     }
@@ -97,8 +94,8 @@ public class PlayerThread extends Thread{
         // 2. mapping between id and color
         // 3. round number
         RoundInfo roundInfo = new RoundInfo(gameInfo.getRoundNum(), map, gameInfo.getIdToName());
-        player.send(roundInfo);
 
+        player.send(roundInfo);
         //build the current state of game
         WorldState worldState = new WorldState(this.player, this.map);
 
