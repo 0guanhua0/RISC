@@ -33,7 +33,7 @@ public class PlayerV1<T> extends Player<T> {
     }
 
     @Override
-    public void updateResource() {}
+    public void updateState() {}
 
     @Override
     public int getFoodNum() { return Integer.MAX_VALUE; }
@@ -46,4 +46,14 @@ public class PlayerV1<T> extends Player<T> {
 
     @Override
     public void useTech(int techUse) {}
+
+    @Override
+    public boolean canUpTech() {
+        return false;
+    }
+
+    @Override
+    public void upTech() {}
+
+
 }

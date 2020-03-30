@@ -206,7 +206,7 @@ public class Room {
         }
         //update tech&food resources for every player
         for (Player<String> player : players) {
-            player.updateResource();
+            player.updateState();
         }
 
     }

@@ -1,5 +1,6 @@
 package edu.duke.ece651.risk.shared.player;
 
+import edu.duke.ece651.risk.shared.Constant;
 import edu.duke.ece651.risk.shared.map.BasicResource;
 import edu.duke.ece651.risk.shared.map.Territory;
 
@@ -7,8 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import static edu.duke.ece651.risk.shared.Constant.INITIAL_FOOD_NUM;
-import static edu.duke.ece651.risk.shared.Constant.INITIAL_TECH_NUM;
+import static edu.duke.ece651.risk.shared.Constant.*;
 
 /**
  * @program: risk
@@ -19,9 +19,14 @@ import static edu.duke.ece651.risk.shared.Constant.INITIAL_TECH_NUM;
 public class PlayerV2<T> extends PlayerV1<T> {
     BasicResource tech;
     BasicResource food;
+    //this variable marks that this user have right to upgrade her maximum technology
+    boolean upTechRight;
+    int techLevel;
     private void initResource(){
         tech = new BasicResource(INITIAL_TECH_NUM);
         food = new BasicResource(INITIAL_FOOD_NUM);
+        upTechRight = true;
+        techLevel = 1;
     }
 
     public PlayerV2(InputStream in, OutputStream out) throws IOException {
@@ -30,7 +35,7 @@ public class PlayerV2<T> extends PlayerV1<T> {
     }
 
     @Override
-    public void updateResource() {
+    public void updateState() {
         for (Object o : territories) {
             Territory territory = (Territory)o;
             int foodYield = territory.getFoodYield();
@@ -38,6 +43,7 @@ public class PlayerV2<T> extends PlayerV1<T> {
             tech.addResource(techYield);
             food.addResource(foodYield);
         }
+        this.upTechRight = true;
     }
 
     @Override
@@ -67,4 +73,27 @@ public class PlayerV2<T> extends PlayerV1<T> {
         tech.useResource(techUse);
 
     }
+
+    @Override
+    public boolean canUpTech() {
+        if (upTechRight&&TECH_MAP.containsKey(techLevel)&&TECH_MAP.get(techLevel)<=getTechNum()){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    /**
+     * this method should always be called after canUpTech
+     */
+    @Override
+    public void upTech() {
+        if (!canUpTech()){
+            throw new IllegalArgumentException("Can't up tech now!");
+        }
+        this.useTech(TECH_MAP.get(techLevel));
+        this.techLevel++;
+        upTechRight = false;
+    }
+
 }

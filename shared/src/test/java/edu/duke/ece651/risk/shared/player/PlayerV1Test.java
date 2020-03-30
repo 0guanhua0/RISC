@@ -21,4 +21,10 @@ class PlayerV1Test {
         PlayerV1<String> playerV1 = new PlayerV1<String>(Mock.setupMockInput(Arrays.asList()),new ByteArrayOutputStream());
         assertEquals(playerV1.getTechNum(),Integer.MAX_VALUE);
     }
+
+    @Test
+    void canUpTech() throws IOException {
+        PlayerV1<String> playerV1 = new PlayerV1<String>(Mock.setupMockInput(Arrays.asList()),new ByteArrayOutputStream());
+        assertFalse(playerV1.canUpTech());
+    }
 }

@@ -123,7 +123,7 @@ public abstract class Player<T> {
      * this method is called to add the resource production of each territory
      * that they own at the end of the turn.
      */
-    public abstract void updateResource();
+    public abstract void updateState();
 
     public abstract int getFoodNum();
 
@@ -132,5 +132,11 @@ public abstract class Player<T> {
     public abstract void useFood(int foodUse);
 
     public abstract void useTech(int techUse);
+
+    public abstract boolean canUpTech();
+
+    public abstract void upTech();
+
+
 
 }

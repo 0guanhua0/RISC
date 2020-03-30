@@ -10,8 +10,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
-import static edu.duke.ece651.risk.shared.Constant.INITIAL_FOOD_NUM;
-import static edu.duke.ece651.risk.shared.Constant.INITIAL_TECH_NUM;
+import static edu.duke.ece651.risk.shared.Constant.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PlayerV2Test {
@@ -35,7 +34,7 @@ class PlayerV2Test {
         player.addTerritory(vale);
 
         for (int i = 1; i <= 10; i++) {
-            player.updateResource();
+            player.updateState();
             int foodYield = (storm.getFoodYield()+reach.getFoodYield()+vale.getFoodYield())*i;
             int techYield = (storm.getTechYield()+reach.getTechYield()+vale.getTechYield())*i;
             assertEquals(player.food.getRemain(), foodYield+INITIAL_FOOD_NUM);
@@ -85,7 +84,7 @@ class PlayerV2Test {
         assertEquals(0, player.getFoodNum());
 
         assertThrows(IllegalArgumentException.class,()->{player.useFood(1);});
-        player.updateResource();
+        player.updateState();
 
         assertEquals(storm.getFoodYield(),player.getFoodNum());
 
@@ -108,9 +107,58 @@ class PlayerV2Test {
         assertEquals(0, player.getTechNum());
 
         assertThrows(IllegalArgumentException.class,()->{player.useTech(1);});
-        player.updateResource();
+        player.updateState();
 
         assertEquals(storm.getTechYield(),player.getTechNum());
 
+    }
+
+    @Test
+    void canUpTech() throws IOException {
+
+        MapDataBase<String> mapDataBase = new MapDataBase<String>();
+        WorldMap<String> worldMap = mapDataBase.getMap("a clash of kings");
+        Territory storm = worldMap.getTerritory("the storm kingdom");
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        PlayerV2<String> player = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),out);
+        player.setId(1);
+        player.addTerritory(storm);
+
+        assertTrue(player.canUpTech());
+        player.upTech();//after this operation is level 2
+        assertFalse(player.canUpTech());//test can only upgrade technology once during every single round of game
+        player.updateState();
+        assertFalse(player.canUpTech());//test don't have enough resources
+        for (int i=1;i<100;i++){
+            player.updateState();
+        }
+        player.upTech();//after this operation is level 3
+        player.updateState();
+        player.upTech();//after this operation is level 4
+        player.updateState();
+        player.upTech();//after this operation is level 5
+        player.updateState();
+        player.upTech();//after this operation is level 6
+        player.updateState();
+        assertFalse(player.canUpTech());//test at the maximum level
+    }
+
+    @Test
+    void upTech() throws IOException {
+
+        MapDataBase<String> mapDataBase = new MapDataBase<String>();
+        WorldMap<String> worldMap = mapDataBase.getMap("a clash of kings");
+        Territory storm = worldMap.getTerritory("the storm kingdom");
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        PlayerV2<String> player = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),out);
+        player.setId(1);
+        player.addTerritory(storm);
+
+        player.upTech();
+        assertEquals(2,player.techLevel);
+        assertFalse(player.upTechRight);
+        assertEquals(player.tech.getRemain(),INITIAL_TECH_NUM-TECH_MAP.get(1));
     }
 }
