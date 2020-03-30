@@ -10,6 +10,7 @@ import edu.duke.ece651.risk.shared.player.PlayerV1;
 import java.io.IOException;
 import java.net.Socket;
 import java.security.InvalidKeyException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +30,7 @@ public class GameServer {
     // db for user name & password
     SQL db;
 
-    public GameServer(Server server) {
+    public GameServer(Server server) throws SQLException, ClassNotFoundException {
         this.server = server;
         BlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<>(32);
         this.threadPool = new ThreadPoolExecutor(4, 16, 5, TimeUnit.SECONDS, workQueue);
@@ -126,7 +127,7 @@ public class GameServer {
     //TODO: add login, sign up, change password
     //check user name & password
     //login / sign up / change password
-    Boolean askUserInfo(Player<?> player) throws IOException, ClassNotFoundException {
+    Boolean askUserInfo(Player<?> player) throws IOException, ClassNotFoundException, SQLException {
 
         JsonObject obj = (JsonObject) player.recv();
 
@@ -135,7 +136,6 @@ public class GameServer {
         String action = obj.get("action").toString();
 
         //todo: query SQL to get user id
-        //int userId = 0;
         UserInfo userInfo = new UserInfo();
 
         //TODO: add to constant
@@ -220,7 +220,7 @@ public class GameServer {
         return roomList;
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, SQLException, ClassNotFoundException {
         GameServer gameServer = new GameServer(new Server());
         gameServer.run();
     }
