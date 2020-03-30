@@ -1,10 +1,31 @@
 package edu.duke.ece651.risk.server;
 
+import edu.duke.ece651.risk.shared.map.MapDataBase;
+import edu.duke.ece651.risk.shared.network.Client;
+import edu.duke.ece651.risk.shared.network.Server;
+import edu.duke.ece651.risk.shared.player.Player;
+import edu.duke.ece651.risk.shared.player.PlayerV1;
+import org.junit.jupiter.api.Test;
+
+import java.io.ByteArrayOutputStream;
+import java.io.EOFException;
+import java.io.IOException;
+import java.net.Socket;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import static edu.duke.ece651.risk.shared.Constant.SUCCESSFUL;
+import static edu.duke.ece651.risk.shared.Mock.readAllStringFromObjectStream;
+import static edu.duke.ece651.risk.shared.Mock.setupMockInput;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.*;
+
 public class GameServerTest {
 
-    /*
     @Test
-    public void testConstructor() throws IOException {
+    public void testConstructor() throws IOException, SQLException, ClassNotFoundException {
         GameServer gameServer = new GameServer(new Server(8000));
         assertEquals(gameServer.rooms.size(), 0);
         assertNotNull(gameServer.threadPool);
@@ -43,7 +64,14 @@ public class GameServerTest {
         when(server.accept()).thenReturn(socket1).thenReturn(socket2).thenReturn(socketError);
 
         Thread thread = new Thread(()->{
-            GameServer gameServer = new GameServer(server);
+            GameServer gameServer = null;
+            try {
+                gameServer = new GameServer(server);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
             gameServer.run();
         });
         thread.start();
@@ -54,12 +82,12 @@ public class GameServerTest {
     }
 
     @Test
-    public void testHandleIncomeRequest() throws IOException, ClassNotFoundException {
+    public void testHandleIncomeRequest() throws IOException, ClassNotFoundException, SQLException {
         //prepare for the first player who creates a new room
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         Socket socket1 = mock(Socket.class);
         when(socket1.getInputStream())
-                .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList("user info", "-1", "test"))));
+                .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList("-1", "test"))));
         when(socket1.getOutputStream()).thenReturn(outputStream);
 
         //handle the request for first player
@@ -81,7 +109,7 @@ public class GameServerTest {
         gameServer.handleIncomeRequest(socket2);
         assertEquals(1, gameServer.rooms.size());
         assertEquals(
-                "Welcome to the fancy RISK game!!!" + SUCCESSFUL.repeat(2) + "{\"playerColor\":\"blue\",\"playerID\":2}" + "Please wait other players to join th game(need 3, joined 2)",
+                "Welcome to the fancy RISK game!!!" + SUCCESSFUL + "{\"playerColor\":\"blue\",\"playerID\":2}" + "Please wait other players to join th game(need 3, joined 2)",
                 readAllStringFromObjectStream(outputStream)
         );
         assertEquals(2, gameServer.rooms.get(0).players.size());
@@ -104,9 +132,9 @@ public class GameServerTest {
         assertEquals(3, gameServer.rooms.get(0).players.size());
         assertEquals(0, gameServer.rooms.get(0).roomID);
     }
-    
+
     @Test
-    public void testAskValidRoomNum() throws IOException, ClassNotFoundException {
+    public void testAskValidRoomNum() throws IOException, ClassNotFoundException, SQLException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         Player<String> player1 = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList("-1", "test"))), new ByteArrayOutputStream());
         Player<String> player2 = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList("abc", "10", "0"))), outputStream);
@@ -118,7 +146,7 @@ public class GameServerTest {
     }
 
     @Test
-    public void testGetRoomList() throws IOException, ClassNotFoundException {
+    public void testGetRoomList() throws IOException, ClassNotFoundException, SQLException {
         Player<String> player = new PlayerV1<>(
                 setupMockInput(
                         new ArrayList<>(Arrays.asList(
@@ -151,7 +179,7 @@ public class GameServerTest {
         Thread th = new Thread(()->{
             try {
                 GameServer.main(null);
-            } catch (IOException ignored) {
+            } catch (IOException | SQLException | ClassNotFoundException ignored) {
             }
         });
         th.start();
@@ -168,21 +196,4 @@ public class GameServerTest {
         th.join();
     }
 
-    @Test
-    void askUserInfo() throws IOException, ClassNotFoundException {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        Player<String> player1 = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList("-1", "test"))), new ByteArrayOutputStream());
-        Player<String> player2 = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList("successful"))), outputStream);
-        int roomID = 0;
-        GameServer gameServer = new GameServer(null);
-        gameServer.rooms.put(roomID, new RoomController(roomID, player1, new MapDataBase<String>()));
-
-
-        //test ask user info
-        assertEquals(true, gameServer.askUserInfo(player2));
-        assertEquals("successful", readAllStringFromObjectStream(outputStream));
-
-    }
-
-     */
 }

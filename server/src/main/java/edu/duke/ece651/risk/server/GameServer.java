@@ -1,6 +1,5 @@
 package edu.duke.ece651.risk.server;
 
-import com.google.gson.JsonObject;
 import edu.duke.ece651.risk.shared.Room;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.network.Server;
@@ -66,6 +65,7 @@ public class GameServer {
      *
      * @param socket represent a newly accept player
      */
+    //todo: a class handle different socket
     void handleIncomeRequest(Socket socket) throws IOException, ClassNotFoundException {
         // here we wrap the socket with player object ASAP(i.e. decouple socket with stream)
         Player<String> player = new PlayerV1<>(socket.getInputStream(), socket.getOutputStream());
@@ -73,6 +73,7 @@ public class GameServer {
         String helloInfo = "Welcome to the fancy RISK game!!!";
         player.send(helloInfo);
 
+        //tmp validation
         /*
         while (true) {
             if (askUserInfo(player)) {
@@ -124,74 +125,8 @@ public class GameServer {
         }
     }
 
-    //TODO: add login, sign up, change password
-    //check user name & password
-    //login / sign up / change password
-    Boolean askUserInfo(Player<?> player) throws IOException, ClassNotFoundException, SQLException {
-
-        JsonObject obj = (JsonObject) player.recv();
-
-        String userName = obj.get("userName").toString();
-        String passWord = obj.get("passWord").toString();
-        String action = obj.get("action").toString();
-
-        //todo: query SQL to get user id
-        UserInfo userInfo = new UserInfo();
-
-        //TODO: add to constant
-
-        if (action.equals("login")) {
-            //check db for user id
-            //if db return true if user not in connect list
-            if (db.authUser(userName, passWord) && !connectedUser.containsKey(userName)) {
-                connectedUser.put(userName, userInfo);
-                return true;
-            } else {
-                player.send("invalid login");
-            }
-
-        }
 
 
-        if (action.equals("signup")) {
-            //check db for user id
-            //add to db
-            if (db.addUser(userName, passWord)) {
-                return true;
-
-            } else {
-                player.send("invalid signup");
-            }
-        }
-
-        //todo: add change passsword func
-        /*
-        if (action.equals("change")) {
-            //check db for user id
-            //ch password
-            if (true) {
-                return true;
-
-            } else {
-                player.send("invalid change");
-            }
-
-        }
-
-         */
-        //log out
-        if (action.equals("logout")) {
-            if (connectedUser.containsKey(userName)) {
-                //if user in current list
-                connectedUser.remove(userName);
-                return true;
-            } else {
-                player.send("invalid logout");
-            }
-        }
-
-        return false;
-    }
 
     /**
      * This function will return the current running room list.
