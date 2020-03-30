@@ -11,6 +11,7 @@ import java.sql.SQLException;
  */
 
 
+//todo: change to constant file
 //TODO: add login, sign up, change password
 //check user name & password
 //login / sign up / change password
@@ -24,12 +25,13 @@ public class UserValidation {
         JSONObject obj = new JSONObject(msg);
 
         String userName = obj.get("userName").toString();
-        String userPassword = obj.get("passWord").toString();
+        String userPassword = obj.get("userPassword").toString();
         String action = obj.get("action").toString();
 
 
         if (action.equals("login")) {
             if (db.authUser(userName, userPassword)) {
+                player.send("SUCCESSFUL");
                 return true;
             } else {
                 player.send("invalid login");
@@ -40,6 +42,8 @@ public class UserValidation {
 
         if (action.equals("signup")) {
             if (db.addUser(userName, userPassword)) {
+
+                player.send("SUCCESSFUL");
                 return true;
 
             } else {
@@ -54,6 +58,8 @@ public class UserValidation {
         }
 
          */
+
+        player.send("invalid user info");
 
         return false;
 

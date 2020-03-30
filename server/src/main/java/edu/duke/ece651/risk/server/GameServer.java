@@ -49,7 +49,7 @@ public class GameServer {
                 threadPool.execute(() -> {
                     try {
                         handleIncomeRequest(socket);
-                    } catch (IOException | ClassNotFoundException e) {
+                    } catch (IOException | ClassNotFoundException | SQLException e) {
                         // IO Exception, probably a bette way is write to log file
                     }
                 });
@@ -66,7 +66,7 @@ public class GameServer {
      * @param socket represent a newly accept player
      */
     //todo: a class handle different socket
-    void handleIncomeRequest(Socket socket) throws IOException, ClassNotFoundException {
+    void handleIncomeRequest(Socket socket) throws IOException, ClassNotFoundException, SQLException {
         // here we wrap the socket with player object ASAP(i.e. decouple socket with stream)
         Player<String> player = new PlayerV1<>(socket.getInputStream(), socket.getOutputStream());
 
@@ -74,15 +74,13 @@ public class GameServer {
         player.send(helloInfo);
 
         //tmp validation
-        /*
         while (true) {
-            if (askUserInfo(player)) {
-                player.send("SUCCESSFUL");
+            if (UserValidation.validate(player, db)) {
                 break;
             }
         }
 
-         */
+
 
         //todo: change room controller, to allow user switch different room
 
