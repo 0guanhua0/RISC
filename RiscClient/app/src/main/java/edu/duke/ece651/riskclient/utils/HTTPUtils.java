@@ -1,35 +1,31 @@
 package edu.duke.ece651.riskclient.utils;
 
-import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.InetAddress;
-import java.net.Socket;
 import java.net.UnknownHostException;
 
-import edu.duke.ece651.riskclient.Player;
-import edu.duke.ece651.riskclient.onResultListener;
+import edu.duke.ece651.riskclient.objects.Player;
+import edu.duke.ece651.riskclient.listener.onResultListener;
 
 import static edu.duke.ece651.riskclient.Constant.ACTION_LOGIN;
 import static edu.duke.ece651.riskclient.Constant.ACTION_SIGN_UP;
 import static edu.duke.ece651.riskclient.Constant.ACTION_TYPE;
 import static edu.duke.ece651.riskclient.Constant.HOST;
-import static edu.duke.ece651.riskclient.Constant.PORT;
-import static edu.duke.ece651.riskclient.Constant.SUCCESSFUL;
 import static edu.duke.ece651.riskclient.Constant.USER_NAME;
 import static edu.duke.ece651.riskclient.Constant.USER_PASSWORD;
 
 public class HTTPUtils {
     private static final String TAG = HTTPUtils.class.getSimpleName();
 
+    /**
+     * This function will authenticate the player.
+     * @param player player to be authenticated
+     * @param listener result listener
+     */
     public static void authUser(Player player, onResultListener listener){
         try {
             JSONObject jsonObject = new JSONObject();
@@ -62,26 +58,26 @@ public class HTTPUtils {
      * @param listener result listener
      */
     static void sendAndRec(String str, onResultListener listener) {
-        new Thread(() -> {
-            try {
+        listener.onSuccessful();
+        // no serve for now, so simply successful
+//        new Thread(() -> {
+//            try {
 //                Socket socket = new Socket(getIP(), PORT);
-//                PrintWriter out = new PrintWriter(socket.getOutputStream());
-//                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-//                out.println(str);
+//                ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+//                ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+//                out.writeObject(str);
 //                out.flush();
-//                String res = in.readLine();
+//                String res = (String) in.readObject();
 //                if (res.equals(SUCCESSFUL)){
 //                    listener.onSuccessful();
 //                }else {
 //                    listener.onFailure(res);
 //                }
-                Thread.sleep(100);
-                listener.onSuccessful();
-            } catch (Exception e) {
-                Log.e(TAG, e.toString());
-                listener.onFailure("server is not running");
-            }
-        }).start();
+//            } catch (Exception e) {
+//                Log.e(TAG, e.toString());
+//                listener.onFailure("server is not running");
+//            }
+//        }).start();
     }
 
     static String getIP() throws UnknownHostException {

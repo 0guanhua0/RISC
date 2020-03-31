@@ -1,22 +1,24 @@
-package edu.duke.ece651.riskclient;
+package edu.duke.ece651.riskclient.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.Objects;
 
-import edu.duke.ece651.riskclient.utils.HTTPUtils;
+import edu.duke.ece651.riskclient.objects.Player;
+import edu.duke.ece651.riskclient.R;
+import edu.duke.ece651.riskclient.listener.onResultListener;
 
-import static edu.duke.ece651.riskclient.Constant.SUCCESSFUL;
 import static edu.duke.ece651.riskclient.Constant.USER_NAME;
 import static edu.duke.ece651.riskclient.Constant.USER_PASSWORD;
 import static edu.duke.ece651.riskclient.utils.HTTPUtils.authUser;
@@ -32,6 +34,8 @@ public class LoginActivity extends AppCompatActivity {
     /**
      * UI variable
      */
+    TextInputLayout tilName;
+    TextInputLayout tilPassword;
     private TextInputEditText etName;
     private TextInputEditText etPassWord;
 
@@ -46,14 +50,75 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        etName = (TextInputEditText) findViewById(R.id.et_name);
-        etPassWord = (TextInputEditText) findViewById(R.id.et_password);
+        setUpUI();
 
+        loadUserData();
+    }
+
+    private void setUpUI(){
+        setUpEditText();
+        setUpButton();
+    }
+
+    private void setUpEditText(){
+        tilName = findViewById(R.id.til_name);
+        tilPassword = findViewById(R.id.til_password);
+
+        etName = findViewById(R.id.et_name);
+        etPassWord = findViewById(R.id.et_password);
+
+        etName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                tilName.setError(null);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        etPassWord.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                tilPassword.setError(null);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+    }
+
+    private void setUpButton(){
         Button btLogin = (Button)findViewById(R.id.bt_login);
         btLogin.setOnClickListener(view -> {
-            btLogin.setClickable(false);
             userName = Objects.requireNonNull(etName.getText()).toString().trim();
             userPassword = Objects.requireNonNull(etPassWord.getText()).toString().trim();
+
+            if (userName.isEmpty()){
+                tilName.setError("User name can't be empty");
+                return;
+            }
+            if (userPassword.isEmpty()){
+                tilPassword.setError("Password can't be empty");
+                return;
+            }
+
+            // make the button un-clickable(prevent multiple request)
+            btLogin.setClickable(false);
             authUser(new Player(userName, userPassword), new onResultListener() {
                 @Override
                 public void onFailure(String error) {
@@ -85,11 +150,9 @@ public class LoginActivity extends AppCompatActivity {
             Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
             startActivity(intent);
         });
-
-        loadUserData();
     }
 
-    public void saveUserData(){
+    private void saveUserData(){
         SharedPreferences preferences = getSharedPreferences("login_data", MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(USER_NAME, userName);
@@ -97,7 +160,7 @@ public class LoginActivity extends AppCompatActivity {
         editor.apply();
     }
 
-    public void loadUserData(){
+    private void loadUserData(){
         SharedPreferences preferences = getSharedPreferences("login_data", MODE_PRIVATE);
         userName = preferences.getString(USER_NAME, "");
         userPassword = preferences.getString(USER_PASSWORD, "");
