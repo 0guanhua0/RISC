@@ -2,6 +2,9 @@ package edu.duke.ece651.risk.shared;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import edu.duke.ece651.risk.shared.map.MapDataBase;
+import edu.duke.ece651.risk.shared.map.Territory;
+import edu.duke.ece651.risk.shared.map.WorldMap;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 
@@ -118,5 +121,30 @@ public class UtilsTest {
             put("kingdom of the north",5);
         }};
         assertEquals(map,stringIntegerMap);
+    }
+
+    @Test
+    void testClone() throws IOException, ClassNotFoundException {
+        MapDataBase<String> mapDataBase = new MapDataBase<>();
+        WorldMap<String> worldMap = mapDataBase.getMap("a clash of kings");
+        Territory storm = worldMap.getTerritory("the storm kingdom");
+        storm.setOwner(2);
+        storm.addNUnits(5);
+        Territory north = worldMap.getTerritory("kingdom of the north");
+        north.setOwner(3);
+
+
+        WorldMap<String> cloneRes = (WorldMap)Utils.clone(worldMap);
+        Territory stormClone = cloneRes.getTerritory("the storm kingdom");
+        Territory northClone = cloneRes.getTerritory("kingdom of the north");
+        Territory rockClone = cloneRes.getTerritory("kingdom of the rock");
+        assertEquals(2,stormClone.getOwner());
+        assertEquals(5,stormClone.getUnitsNum());
+        assertEquals(3,northClone.getOwner());
+        assertEquals(0,northClone.getUnitsNum());
+        assertEquals(0,rockClone.getOwner());
+
+        assertFalse(stormClone==storm);
+        assertFalse(cloneRes==worldMap);
     }
 }

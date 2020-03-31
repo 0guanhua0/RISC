@@ -25,7 +25,7 @@ public class RoundInfoTest {
     static RoundInfo roundInfo;
 
     @BeforeAll
-    static void beforeAll() throws IOException {
+    static void beforeAll() throws IOException, ClassNotFoundException {
         map = new MapDataBase<String>().getMap("a clash of kings");
         String t1 = "the storm kingdom";
         String t2 = "kingdom of the reach";

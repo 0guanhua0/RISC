@@ -8,6 +8,7 @@ import java.util.*;
  * @author: Chengda Wu
  * @create: 2020-03-28 10:20
  **/
+
 public class TerritoryV2 extends TerritoryV1 {
 
     int size;

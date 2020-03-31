@@ -95,4 +95,23 @@ public class PlayerV2<T> extends PlayerV1<T> {
         upTechRight = false;
     }
 
+    /**
+     *
+     * @param curLevel: cur technology level for a unit
+     * @param targetLevel: target technology level for a unit
+     * @return such upgrade is feasible or not
+     */
+    @Override
+    public boolean canUpUnit(int curLevel, int targetLevel) {
+        return super.canUpUnit(curLevel, targetLevel);
+    }
+
+    /**
+     * @param curLevel: cur technology level for a unit
+     * @param targetLevel target technology level for a unit
+     */
+    @Override
+    public void upUnit(int curLevel, int targetLevel) {
+        super.upUnit(curLevel, targetLevel);
+    }
 }
