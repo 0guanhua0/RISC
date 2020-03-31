@@ -13,6 +13,10 @@
     <string name="signup_password2_hint">Again</string>
 
     <!--  update fragment  -->
+    <string name="home_all_room">available rooms</string>
+    <string name="home_room_in">rooms you in</string>
+
+    <!--  update fragment  -->
     <string name="update_old_password">Old Password</string>
     <string name="update_new_password">New Password</string>
     <string name="update_submit">Submit</string>

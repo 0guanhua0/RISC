@@ -21,9 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import edu.duke.ece651.riskclient.MapAdapter;
+import edu.duke.ece651.riskclient.adapter.MapAdapter;
 import edu.duke.ece651.riskclient.R;
-import edu.duke.ece651.riskclient.WorldMap;
+import edu.duke.ece651.riskclient.objects.WorldMap;
 
 import static edu.duke.ece651.riskclient.utils.UIUtils.showToastUI;
 

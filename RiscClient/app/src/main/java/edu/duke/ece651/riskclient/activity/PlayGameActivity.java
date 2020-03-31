@@ -1,5 +1,6 @@
 package edu.duke.ece651.riskclient.activity;
 
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.MenuItem;
 
@@ -39,9 +40,10 @@ public class PlayGameActivity extends AppCompatActivity {
     }
 
     private void goBack(){
+        // TODO: change text to save & exit
         AlertDialog.Builder builder = new AlertDialog.Builder(PlayGameActivity.this);
-        builder.setPositiveButton("Leave", (dialog1, which) -> {
-            showToastUI(PlayGameActivity.this, "Leave room");
+        builder.setPositiveButton("Save", (dialog1, which) -> {
+            showToastUI(PlayGameActivity.this, "Sava room");
             // TODO: communicate with the server, send the exit info
             onBackPressed();
         });
@@ -50,7 +52,7 @@ public class PlayGameActivity extends AppCompatActivity {
             // TODO: communicate with the server, send the exit info
             onBackPressed();
         });
-        builder.setMessage("Do you want to leave the game or exit the game?");
+        builder.setMessage("Do you want to save the game?");
         AlertDialog dialog = builder.create();
         dialog.setOnShowListener(dialog12 -> {
             dialog.getButton(AlertDialog.BUTTON_POSITIVE)

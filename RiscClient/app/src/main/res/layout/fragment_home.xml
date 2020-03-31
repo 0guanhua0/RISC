@@ -6,13 +6,50 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="edu.duke.ece651.riskclient.ui.HomeFragment">
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="hello"
-        android:layout_margin="@dimen/normal_margin"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/cg_room_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/normal_margin"
+            android:requiresFadingEdge="horizontal"
+            android:fadingEdgeLength="10dp"
+            app:singleSelection="true"
+            app:singleLine="true"
+            app:checkedChip="@id/chip_all_room"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.chip.Chip
+                style="@style/Widget.MaterialComponents.Chip.Filter"
+                android:id="@+id/chip_all_room"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/normal_chip_height"
+                android:text="@string/home_all_room"/>
+
+            <com.google.android.material.chip.Chip
+                style="@style/Widget.MaterialComponents.Chip.Filter"
+                android:id="@+id/chip_room_in"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/normal_chip_height"
+                android:text="@string/home_room_in"/>
+        </com.google.android.material.chip.ChipGroup>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_room_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="@dimen/normal_margin"
+            android:layout_marginBottom="@dimen/normal_margin"
+            android:background="@drawable/border"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cg_room_type"/>
+    </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"

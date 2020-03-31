@@ -1,4 +1,4 @@
-package edu.duke.ece651.riskclient;
+package edu.duke.ece651.riskclient.adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,11 +12,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MapAdapter extends RecyclerView.Adapter<MapAdapter.MapViewHolder> {
+import edu.duke.ece651.riskclient.R;
+import edu.duke.ece651.riskclient.listener.onClickListener;
+import edu.duke.ece651.riskclient.objects.WorldMap;
 
-    public interface onClickListener{
-        void onClick(int position);
-    }
+public class MapAdapter extends RecyclerView.Adapter<MapAdapter.MapViewHolder> {
 
     private List<WorldMap> mapList;
     private onClickListener listener;

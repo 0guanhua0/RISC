@@ -14,7 +14,7 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.navigation.NavigationView;
 
-import edu.duke.ece651.riskclient.Player;
+import edu.duke.ece651.riskclient.objects.Player;
 import edu.duke.ece651.riskclient.R;
 import edu.duke.ece651.riskclient.ui.AboutFragment;
 import edu.duke.ece651.riskclient.ui.HomeFragment;

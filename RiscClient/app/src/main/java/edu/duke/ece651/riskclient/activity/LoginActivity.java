@@ -15,9 +15,9 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.Objects;
 
-import edu.duke.ece651.riskclient.Player;
+import edu.duke.ece651.riskclient.objects.Player;
 import edu.duke.ece651.riskclient.R;
-import edu.duke.ece651.riskclient.onResultListener;
+import edu.duke.ece651.riskclient.listener.onResultListener;
 
 import static edu.duke.ece651.riskclient.Constant.USER_NAME;
 import static edu.duke.ece651.riskclient.Constant.USER_PASSWORD;
