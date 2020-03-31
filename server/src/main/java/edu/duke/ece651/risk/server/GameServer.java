@@ -8,6 +8,7 @@ import edu.duke.ece651.risk.shared.player.PlayerV2;
 import java.io.IOException;
 import java.net.Socket;
 import java.security.InvalidKeyException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -21,27 +22,34 @@ public class GameServer {
     // thread pool, used to handle incoming request
     ThreadPoolExecutor threadPool;
     // list of all rooms(each room represent a running game)
+
+    // list of connected player
+    Map<String, UserInfo> connectedUser;
+    // db for user name & password
+    SQL db;
     Map<Integer, Room> rooms;
 
-    public GameServer(Server server) {
+    public GameServer(Server server) throws SQLException, ClassNotFoundException {
         this.server = server;
         BlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<>(32);
         this.threadPool = new ThreadPoolExecutor(4, 16, 5, TimeUnit.SECONDS, workQueue);
         this.rooms = new ConcurrentHashMap<>();
+        this.connectedUser = new ConcurrentHashMap<>();
+        this.db = new SQL();
     }
 
     /**
      * This will run forever(until the thread is killed), keep listen for new connection and handle it.
      */
-    public void run(){
+    public void run() {
         System.out.println("Game server is running, waiting for new connection...");
-        while (!Thread.currentThread().isInterrupted()){
+        while (!Thread.currentThread().isInterrupted()) {
             Socket socket = server.accept();
-            if (socket != null){
-                threadPool.execute(()-> {
+            if (socket != null) {
+                threadPool.execute(() -> {
                     try {
                         handleIncomeRequest(socket);
-                    } catch (IOException | ClassNotFoundException e) {
+                    } catch (IOException | ClassNotFoundException | SQLException e) {
                         // IO Exception, probably a bette way is write to log file
                     }
                 });
@@ -54,18 +62,31 @@ public class GameServer {
      * 1. ask the player whether he/she want to start a new room or join an existing room
      * 2. either create a new RoomController or fetch an existing one
      * 3. pass the socket(i.e player) to corresponding "room"
+     *
      * @param socket represent a newly accept player
      */
-    void handleIncomeRequest(Socket socket) throws IOException, ClassNotFoundException {
+    //todo: a class handle different socket
+    void handleIncomeRequest(Socket socket) throws IOException, ClassNotFoundException, SQLException {
         // here we wrap the socket with player object ASAP(i.e. decouple socket with stream)
         Player<String> player = new PlayerV2<>(socket.getInputStream(), socket.getOutputStream());
 
         String helloInfo = "Welcome to the fancy RISK game!!!";
         player.send(helloInfo);
 
+        //tmp validation
+        while (true) {
+            if (UserValidation.validate(player, db)) {
+                break;
+            }
+        }
+
+
+
+        //todo: change room controller, to allow user switch different room
+
         int choice = askValidRoomNum(player);
         synchronized (this) {
-            if (choice < 0){
+            if (choice < 0) {
                 // create a new room
                 int roomID = rooms.size();
                 rooms.put(roomID, new Room(roomID, player, new MapDataBase<>()));
@@ -78,36 +99,42 @@ public class GameServer {
 
     /**
      * This function asks the player whether he/she want to start a new room or join an existing room.
+     *
      * @param player player object, handle the communication
      * @return room number/ID, e.g. -1(or any negative number) stands for a new room, > 0 stands for an existing room
      */
     int askValidRoomNum(Player<?> player) throws IOException {
         player.send(getRoomList());
+
         while (true){
             try {
                 String choice = (String) player.recv();
                 int num = Integer.parseInt(choice);
-                if (num >= 0 && !rooms.containsKey(num)){
+                if (num >= 0 && !rooms.containsKey(num)) {
                     throw new InvalidKeyException();
                 }
                 player.send(SUCCESSFUL);
                 return num;
-            }catch (NumberFormatException | NullPointerException | InvalidKeyException | ClassNotFoundException e){
+            } catch (NumberFormatException | NullPointerException | InvalidKeyException | ClassNotFoundException e) {
                 // Number format error
                 player.send("Invalid choice, try again.");
             }
         }
     }
 
+
+
+
     /**
      * This function will return the current running room list.
+     *
      * @return List of room object
      */
+
     List<edu.duke.ece651.risk.shared.Room> getRoomList(){
         // clear any finished room
         List<Integer> finishedRoom = new ArrayList<>();
         List<edu.duke.ece651.risk.shared.Room> roomList = new ArrayList<>();
-
         for (Room room : rooms.values()){
             if (room.hasFinished()){
                 finishedRoom.add(room.roomID);
@@ -118,14 +145,14 @@ public class GameServer {
             }
         }
 
-        for (int id : finishedRoom){
+        for (int id : finishedRoom) {
             rooms.remove(id, rooms.get(id));
         }
 
         return roomList;
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, SQLException, ClassNotFoundException {
         GameServer gameServer = new GameServer(new Server());
         gameServer.run();
     }
