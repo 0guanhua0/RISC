@@ -48,7 +48,7 @@ public class GameServerTest {
         Socket socket1 = mock(Socket.class);
         when(socket1.getInputStream()).thenReturn(setupMockInput(new ArrayList<>(Arrays.asList("{\"userName\": \"name1\",\n" +
                 "\"userPassword\": \"password\",\n" +
-                "\"action\": \"signup\" }", "-1", "-1"))));
+                "\"action\": \"signup\" }"))));
         when(socket1.getOutputStream()).thenReturn(outputStream);
 
         Socket socket2 = mock(Socket.class);
@@ -73,15 +73,15 @@ public class GameServerTest {
             GameServer gameServer = null;
             try {
                 gameServer = new GameServer(server);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
+            } catch (SQLException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
+            System.out.println("before run");
             gameServer.run();
+            System.out.println("run");
         });
         thread.start();
-        Thread.sleep(100);
+        Thread.sleep(2000);
         thread.interrupt();
         thread.join();
         verify(server, atLeast(3)).accept();
@@ -200,7 +200,9 @@ public class GameServerTest {
         Client client = new Client();
         client.init("localhost", 12345);
         assertEquals("Welcome to the fancy RISK game!!!", client.recv());
-        client.send("-1");
+        client.send("{\"userName\": \"name3\",\n" +
+                "\"userPassword\": \"password\",\n" +
+                "\"action\": \"signup\" }");
 
         Thread.sleep(2000);
 
