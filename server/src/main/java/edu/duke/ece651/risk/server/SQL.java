@@ -54,9 +54,9 @@ public class SQL {
             return false;
         }
         Statement statement = conn.createStatement();
-        statement.executeUpdate(String.format("INSERT INTO risk (name, password) VALUES (\n" +
-                "  '%s',\n" +
-                "  '%s'\n" +
+        statement.executeUpdate(String.format("INSERT INTO risk (name, password) VALUES ( " +
+                "  '%s', " +
+                "  '%s' " +
                 ");", name, pwd));
 
         statement.close();
@@ -68,9 +68,9 @@ public class SQL {
         Class.forName("org.postgresql.Driver");
         Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
         Statement statement = conn.createStatement();
-        ResultSet set = statement.executeQuery(String.format("SELECT PLAYER_ID \n" +
-                "  FROM risk\n" +
-                " WHERE name = '%s' \n" +
+        ResultSet set = statement.executeQuery(String.format("SELECT PLAYER_ID  " +
+                "  FROM risk " +
+                " WHERE name = '%s'  " +
                 "   AND password = '%s'", name, pwd));
         boolean rst = set.next();
         set.close();
@@ -85,8 +85,8 @@ public class SQL {
         Class.forName("org.postgresql.Driver");
         Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
         Statement statement = conn.createStatement();
-        ResultSet set = statement.executeQuery(String.format("SELECT PLAYER_ID \n" +
-                "  FROM risk\n" +
+        ResultSet set = statement.executeQuery(String.format("SELECT PLAYER_ID " +
+                "  FROM risk " +
                 " WHERE name = '%s' ", name));
 
         boolean rst = set.next();
