@@ -8,9 +8,9 @@ public class SQL {
 
     public SQL() throws ClassNotFoundException, SQLException {
 
+
         Class.forName("org.postgresql.Driver");
         conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/risk", "postgres", "postgres");
-
         //drop table if exists
         dropTable();
         //create table
@@ -39,7 +39,6 @@ public class SQL {
     }
 
 
-
     public boolean addUser(String name, String pwd) throws SQLException {
         // ask postgres to crypt the password
 
@@ -53,6 +52,7 @@ public class SQL {
                 "  '%s'\n" +
                 ");", name, pwd));
 
+        statement.close();
         return true;
     }
 
@@ -62,7 +62,9 @@ public class SQL {
                 "  FROM risk\n" +
                 " WHERE name = '%s' \n" +
                 "   AND password = '%s'", name, pwd));
-        return set.next();
+        Boolean rst = set.next();
+        statement.close();
+        return rst;
 
     }
 
@@ -72,7 +74,10 @@ public class SQL {
         ResultSet set = statement.executeQuery(String.format("SELECT PLAYER_ID \n" +
                 "  FROM risk\n" +
                 " WHERE name = '%s' ", name));
-        return set.next();
+
+        Boolean rst = set.next();
+        statement.close();
+        return rst;
 
     }
 
