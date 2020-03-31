@@ -5,6 +5,8 @@ import edu.duke.ece651.risk.shared.action.AttackResult;
 import java.io.IOException;
 import java.util.*;
 
+import static edu.duke.ece651.risk.shared.Constant.UNIT_BONUS;
+
 /**
  * @program: risk
  * @description: this is territory class for evolution2 of risk game
@@ -16,14 +18,15 @@ public class TerritoryV2 extends TerritoryV1 {
     int size;
     int foodYield;
     int techYield;
-    Group group;
+    //key is the technology level of units, value is the set of units
+    Map<Integer, List<Unit>> unitGroup;
 
     public TerritoryV2(String name, int size, int foodYield, int techYield) {
         super(name);
         this.size = size;
         this.foodYield = foodYield;
         this.techYield = techYield;
-        this.group = new GroupV2();
+        this.unitGroup = new HashMap<>();;
     }
 
     public int getSize() {
@@ -60,12 +63,20 @@ public class TerritoryV2 extends TerritoryV1 {
 
     @Override
     public boolean canAddUnits(int num, int level) {
-        return group.canAdd(num,level);
+        if (num<=0||!UNIT_BONUS.containsKey(level)){
+            return false;
+        }else{
+            return true;
+        }
     }
 
     @Override
     public boolean canLoseUnits(int num, int level) {
-        return group.canLose(num,level);
+        if (num<=0||!UNIT_BONUS.containsKey(level)||unitGroup.get(level).size()<num){
+            return false;
+        }else{
+            return true;
+        }
     }
 
     @Override
@@ -89,7 +100,11 @@ public class TerritoryV2 extends TerritoryV1 {
         if (!canAddUnits(num,level)){
             throw new IllegalArgumentException("invalid input arguments!");
         }
-        group.addUnits(num,level);
+        List<Unit> units = unitGroup.getOrDefault(level,new ArrayList<>());
+        for (int i = 0; i < num; i++) {
+            units.add(new Unit());
+        }
+        unitGroup.put(level,units);
     }
 
     @Override
@@ -97,16 +112,20 @@ public class TerritoryV2 extends TerritoryV1 {
         if (!canLoseUnits(num, level)){
             throw new IllegalArgumentException("invalid input arguments");
         }
-        group.loseUnits(num,level);
+        List<Unit> units = unitGroup.get(level);
+        for (int i = 0; i < num; i++) {
+            units.remove(units.size()-1);
+        }
+        unitGroup.put(level,units);
     }
 
     @Override
     public int getBasicUnitsNum() {
-        return group.getUnitsNum(0);
+        return unitGroup.getOrDefault(0,new ArrayList<>()).size();
     }
 
     @Override
     public int getUnitsNum(int level) {
-        return group.getUnitsNum(level);
+        return unitGroup.getOrDefault(level,new ArrayList<>()).size();
     }
 }
