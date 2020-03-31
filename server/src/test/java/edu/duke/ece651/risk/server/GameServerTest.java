@@ -30,7 +30,7 @@ public class GameServerTest {
         assertEquals(gameServer.rooms.size(), 0);
         assertNotNull(gameServer.threadPool);
         assertNotNull(gameServer.server);
-        new Thread(()->{
+        new Thread(() -> {
             Socket socket = gameServer.server.accept();
             assertNotNull(socket);
             try {
@@ -70,16 +70,10 @@ public class GameServerTest {
 
         when(server.accept()).thenReturn(socket1).thenReturn(socket2).thenReturn(socketError);
 
-        Thread thread = new Thread(()->{
+        Thread thread = new Thread(() -> {
             GameServer gameServer = null;
-            try {
-                gameServer = new GameServer(server);
-            } catch (SQLException | ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-            System.out.println("before run");
+            gameServer = new GameServer(server);
             gameServer.run();
-            System.out.println("run");
         });
         thread.start();
         Thread.sleep(2000);
@@ -120,7 +114,7 @@ public class GameServerTest {
         gameServer.handleIncomeRequest(socket2);
         assertEquals(1, gameServer.rooms.size());
         assertEquals(
-                "Welcome to the fancy RISK game!!!" +  "SUCCESSFUL"+ SUCCESSFUL + "{\"playerColor\":\"blue\",\"playerID\":2}" + "Please wait other players to join th game(need 3, joined 2)",
+                "Welcome to the fancy RISK game!!!" + "SUCCESSFUL" + SUCCESSFUL + "{\"playerColor\":\"blue\",\"playerID\":2}" + "Please wait other players to join th game(need 3, joined 2)",
                 readAllStringFromObjectStream(outputStream)
         );
         assertEquals(2, gameServer.rooms.get(0).players.size());
@@ -138,7 +132,7 @@ public class GameServerTest {
         assertEquals(1, gameServer.rooms.size());
         try {
             gameServer.handleIncomeRequest(socket3);
-        }catch (EOFException ignored){
+        } catch (EOFException ignored) {
             // here we only want to test addPlayer function, don't test the selectTerritory or others
         }
         assertEquals(1, gameServer.rooms.size());
@@ -189,7 +183,7 @@ public class GameServerTest {
 
     @Test
     public void testMain() throws IOException, InterruptedException, ClassNotFoundException {
-        Thread th = new Thread(()->{
+        Thread th = new Thread(() -> {
             try {
                 GameServer.main(null);
             } catch (IOException | SQLException | ClassNotFoundException ignored) {
