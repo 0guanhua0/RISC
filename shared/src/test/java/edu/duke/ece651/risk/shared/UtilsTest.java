@@ -129,7 +129,7 @@ public class UtilsTest {
         WorldMap<String> worldMap = mapDataBase.getMap("a clash of kings");
         Territory storm = worldMap.getTerritory("the storm kingdom");
         storm.setOwner(2);
-        storm.addNUnits(5);
+        storm.addBasicUnits(5);
         Territory north = worldMap.getTerritory("kingdom of the north");
         north.setOwner(3);
 

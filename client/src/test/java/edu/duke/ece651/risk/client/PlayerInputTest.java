@@ -27,8 +27,8 @@ class PlayerInputTest {
         t2.setFree();
         t3.setOwner(1);
 
-        t1.addNUnits(10);
-        t2.addNUnits(10);
+        t1.addBasicUnits(10);
+        t2.addBasicUnits(10);
 
         territories.add(t1);
         territories.add(t2);

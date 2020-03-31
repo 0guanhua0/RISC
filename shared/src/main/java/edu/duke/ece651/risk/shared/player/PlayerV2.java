@@ -33,10 +33,12 @@ public class PlayerV2<T> extends PlayerV1<T> {
         initResource();
     }
 
+    //TODO test the update of units
     @Override
     public void updateState() {
         for (Object o : territories) {
             Territory territory = (Territory)o;
+            territory.addBasicUnits(1);
             int foodYield = territory.getFoodYield();
             int techYield = territory.getTechYield();
             tech.addResource(techYield);
@@ -114,4 +116,7 @@ public class PlayerV2<T> extends PlayerV1<T> {
     public void upUnit(int curLevel, int targetLevel) {
         super.upUnit(curLevel, targetLevel);
     }
+
+
+
 }

@@ -74,7 +74,7 @@ public class PlayerThread extends Thread{
                     //if valid, update the map
                     for (String terrName : serverSelect.getAllName()) {
                         Territory territory = map.getTerritory(terrName);
-                        territory.addNUnits(serverSelect.getUnitsNum(terrName));
+                        territory.addBasicUnits(serverSelect.getUnitsNum(terrName));
                         player.addTerritory(territory);
                     }
                     player.send(SUCCESSFUL);

@@ -33,20 +33,12 @@ public class RoundInfo implements Serializable {
         return roundNum;
     }
 
+    //TODO based on our previous experience, I am not sure whether using ObjectStream will bring some unexpected result
+    //but it's necessary to have an automatic deep copy method, otherwise, every time we change the field of WorldMap,
+    //we'll need to go back and change this method
     void copyMap(WorldMap<String> oldMap) throws IOException, ClassNotFoundException {
         WorldMap<String> clone = Utils.clone(oldMap);
         this.map = clone;
-//        this.map = new MapDataBase<String>().getMap(oldMap.getName());
-//        for (Territory t : oldMap.getAtlas().values()){
-//            Territory territory = this.map.getTerritory(t.getName());
-//            if (t.isFree()){
-//                territory.setFree();
-//            }else{
-//                territory.setOwner(t.getOwner());
-//            }
-//            //this.map.getTerritory(t.getName()).setOwner(t.getOwner());
-//            this.map.getTerritory(t.getName()).addNUnits(t.getUnitsNum());
-//        }
     }
 
 

@@ -56,26 +56,26 @@ class TerritoryV1Test {
     void addNUnits() {
         TerritoryV1 test = new TerritoryV1("test");
         assert (test.units.isEmpty());
-        test.addNUnits(10);
+        test.addBasicUnits(10);
         assert (10 == test.getUnitsNum());
-        assertThrows(IllegalArgumentException.class, () -> test.addNUnits(-1));
+        assertThrows(IllegalArgumentException.class, () -> test.addBasicUnits(-1));
     }
 
     @Test
     void lossNUnits() {
         TerritoryV1 test = new TerritoryV1("test");
         assert (test.units.isEmpty());
-        test.addNUnits(10);
+        test.addBasicUnits(10);
         assert (10 == test.getUnitsNum());
-        assertThrows(IllegalArgumentException.class, () -> test.lossNUnits(-1));
-        assertThrows(IllegalArgumentException.class, () -> test.lossNUnits(11));
+        assertThrows(IllegalArgumentException.class, () -> test.loseBasicUnits(-1));
+        assertThrows(IllegalArgumentException.class, () -> test.loseBasicUnits(11));
         assertEquals(10, test.getUnitsNum());
 
 
-        test.lossNUnits(5);
+        test.loseBasicUnits(5);
         assert (5 == test.getUnitsNum());
 
-        test.lossNUnits(5);
+        test.loseBasicUnits(5);
         assert (0 == test.getUnitsNum());
     }
 
@@ -167,13 +167,13 @@ class TerritoryV1Test {
         p2.addTerritory(reach);
         //assign some units to each territory, 5 units for each player
         //player 1
-        north.addNUnits(2);
-        vale.addNUnits(2);
-        rock.addNUnits(10);
-        dorne.addNUnits(5);
+        north.addBasicUnits(2);
+        vale.addBasicUnits(2);
+        rock.addBasicUnits(10);
+        dorne.addBasicUnits(5);
         //player2
-        storm.addNUnits(10);
-        reach.addNUnits(10);
+        storm.addBasicUnits(10);
+        reach.addBasicUnits(10);
 
         //player 1 multiple place attack(10 + 5)
         AttackAction a10 = new AttackAction("kingdom of the rock", "kingdom of the reach", 1, 10);

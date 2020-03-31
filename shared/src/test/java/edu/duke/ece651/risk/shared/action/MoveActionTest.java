@@ -1,13 +1,11 @@
 package edu.duke.ece651.risk.shared.action;
 
-import edu.duke.ece651.risk.shared.Constant;
 import edu.duke.ece651.risk.shared.Mock;
 import edu.duke.ece651.risk.shared.WorldState;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.risk.shared.player.Player;
-import edu.duke.ece651.risk.shared.player.PlayerV1;
 import edu.duke.ece651.risk.shared.player.PlayerV2;
 import org.junit.jupiter.api.Test;
 
@@ -61,14 +59,14 @@ class MoveActionTest {
         //assign some units to each player
         //player 1
         assertEquals(0,northTerr.getUnitsNum());
-        northTerr.addNUnits(7);
+        northTerr.addBasicUnits(7);
         assertEquals(7,northTerr.getUnitsNum());
-        valeTerr.addNUnits(2);
-        rockTerr.addNUnits(10);
-        dorneTerr.addNUnits(2);
+        valeTerr.addBasicUnits(2);
+        rockTerr.addBasicUnits(10);
+        dorneTerr.addBasicUnits(2);
         //player2
-        stormTerr.addNUnits(3);
-        reachTerr.addNUnits(3);
+        stormTerr.addBasicUnits(3);
+        reachTerr.addBasicUnits(3);
 
         WorldState p1State = new WorldState(p1, worldMap);
         WorldState p2State = new WorldState(p2, worldMap);
@@ -144,14 +142,14 @@ class MoveActionTest {
         //assign some units to each player
         //player 1
         assertEquals(0,northTerr.getUnitsNum());
-        northTerr.addNUnits(7);
+        northTerr.addBasicUnits(7);
         assertEquals(7,northTerr.getUnitsNum());
-        valeTerr.addNUnits(2);
-        rockTerr.addNUnits(10);
-        dorneTerr.addNUnits(2);
+        valeTerr.addBasicUnits(2);
+        rockTerr.addBasicUnits(10);
+        dorneTerr.addBasicUnits(2);
         //player2
-        stormTerr.addNUnits(3);
-        reachTerr.addNUnits(3);
+        stormTerr.addBasicUnits(3);
+        reachTerr.addBasicUnits(3);
 
         WorldState p1State = new WorldState(p1, worldMap);
         WorldState p2State = new WorldState(p2, worldMap);

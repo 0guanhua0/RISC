@@ -60,8 +60,8 @@ public class MoveAction implements Action, Serializable {
         //update the state of src and target territory
         Territory srcNode = map.getTerritory(src);
         Territory destNode = map.getTerritory(dest);
-        srcNode.lossNUnits(unitsNum);
-        destNode.addNUnits(unitsNum);
+        srcNode.loseBasicUnits(unitsNum);
+        destNode.addBasicUnits(unitsNum);
         //update the food storage
         int foodCost = map.getMinCtrlDist(src,dest)*unitsNum;
         player.useFood(foodCost);

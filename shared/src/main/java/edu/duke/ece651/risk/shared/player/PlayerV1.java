@@ -1,5 +1,7 @@
 package edu.duke.ece651.risk.shared.player;
 
+import edu.duke.ece651.risk.shared.map.Territory;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,7 +35,11 @@ public class PlayerV1<T> extends Player<T> {
     }
 
     @Override
-    public void updateState() {}
+    public void updateState() {
+        for (Territory territory : territories) {
+            territory.addBasicUnits(1);
+        }
+    }
 
     @Override
     public int getFoodNum() { return Integer.MAX_VALUE; }

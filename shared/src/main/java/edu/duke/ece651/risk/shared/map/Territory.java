@@ -1,6 +1,5 @@
 package edu.duke.ece651.risk.shared.map;
 
-import edu.duke.ece651.risk.shared.action.Army;
 import edu.duke.ece651.risk.shared.action.AttackResult;
 import org.json.JSONObject;
 
@@ -109,9 +108,51 @@ public abstract class Territory implements Serializable {
 
     public abstract int getUnitsNum();
 
-    public abstract void addNUnits(int num) throws IllegalArgumentException;
+    /**
+     * add some basic units into this territory
+     * @param num： number of level0 units
+     * @throws IllegalArgumentException
+     */
+    public abstract void addBasicUnits(int num) throws IllegalArgumentException;
 
-    public abstract void lossNUnits(int num);
+    /**
+     * add some units with specified level into this territory
+     * @param num: number of units to move
+     * @param level: technology level of this units
+     */
+    public abstract void addUnits(int num, int level);
+
+    /**
+     * let this territory lose some basic units
+     * @param num： number of level0 units
+     * @throws IllegalArgumentException
+     */
+    public abstract void loseBasicUnits(int num);
+
+    /**
+     * lose some units with specified level
+     * @param num: number of units to move
+     * @param level: technology level of this units
+     */
+    public abstract void loseUnits(int num,int level);
+
+    /**
+     * check if its a legal units group to add, also help ensure Liskov substitution
+     * this method should ba called before any adding and losing operation
+     * @param num: number of units for a add/lose operation
+     * @param level: technology level for this set of units
+     * @return whether such operation is legality or not
+     */
+    public abstract boolean canAddUnits(int num, int level);
+
+    /**
+     * check if its a legal units group to lose, also help ensure Liskov substitution
+     * this method should ba called before any adding and losing operation
+     * @param num: number of units for a add/lose operation
+     * @param level: technology level for this set of units
+     * @return whether such operation is legality or not
+     */
+    public abstract boolean canLoseUnits(int num, int level);
 
     public abstract void addAttack(int playerId, Army army);
 

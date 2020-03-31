@@ -1,12 +1,8 @@
 package edu.duke.ece651.risk.shared.map;
 
-import edu.duke.ece651.risk.shared.action.Army;
 import edu.duke.ece651.risk.shared.action.AttackResult;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 /**
  * @program: risk-Map
@@ -22,19 +18,19 @@ public class TerritoryV1 extends Territory{
 
     public TerritoryV1(String name) {
        super(name);
-       this.units = new ArrayList<>();
+       this.units = new LinkedList<>();//use linked list since there will be some remove operation
     }
 
-    public void addNUnits(int num) throws IllegalArgumentException {
-        if (num<0){
+    public void addBasicUnits(int num) throws IllegalArgumentException {
+        if (!canAddUnits(num,0)){
             throw new IllegalArgumentException("Input number can't be negative");
         }
         for (int i = 0; i < num; i++) {
             units.add(new Unit());
         }
     }
-    public void lossNUnits(int num) throws IllegalArgumentException{
-        if (num > units.size() || num < 0){
+    public void loseBasicUnits(int num) throws IllegalArgumentException{
+        if (!canLoseUnits(num,0)){
             throw new IllegalArgumentException("Invalid input number");
         }
         for (int i = 0; i < num; i++) {
@@ -83,14 +79,14 @@ public class TerritoryV1 extends Territory{
             if (i1 <= i2) {
                 attackUnits--;
             } else {
-                this.lossNUnits(1);
+                this.loseBasicUnits(1);
             }
         }
         // update the ownership only if attacker has units left
         if (attackUnits > 0) {
             setOwner(attackerID);
             // left units will remain in this territory
-            addNUnits(attackUnits);
+            addBasicUnits(attackUnits);
         }
         return new AttackResult(attackerID, defenderID, srcNames, destName, attackUnits > 0);
     }
@@ -107,5 +103,40 @@ public class TerritoryV1 extends Territory{
     @Override
     public int getTechYield(){
         return 0;
+    }
+
+
+    @Override
+    public boolean canAddUnits(int num, int level) {
+        if (level!=0||num<0){
+            return false;
+        }else{
+            return true;
+        }
+    }
+
+    @Override
+    public boolean canLoseUnits(int num, int level) {
+        if (level!=0||num<0||num>units.size()){
+            return false;
+        }else{
+            return true;
+        }
+    }
+
+    @Override
+    public void addUnits(int num, int level) {
+        if (!canAddUnits(num,level)){
+            throw new IllegalArgumentException("invalid!");
+        }
+        addBasicUnits(num);
+    }
+
+    @Override
+    public void loseUnits(int num, int level) {
+        if (!canLoseUnits(num,level)){
+            throw new IllegalArgumentException("invalid");
+        }
+        loseBasicUnits(num);
     }
 }

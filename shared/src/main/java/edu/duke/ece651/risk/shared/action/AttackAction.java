@@ -1,6 +1,7 @@
 package edu.duke.ece651.risk.shared.action;
 
 import edu.duke.ece651.risk.shared.WorldState;
+import edu.duke.ece651.risk.shared.map.Army;
 import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.risk.shared.player.Player;
@@ -85,7 +86,7 @@ public class AttackAction implements Action, Serializable {
         player.useFood(unitsNum);
 
         // reduce src units
-        worldMap.getTerritory(src).lossNUnits(unitsNum);
+        worldMap.getTerritory(src).loseBasicUnits(unitsNum);
         // add attack units to target territory's attack buffer
         worldMap.getTerritory(dest).addAttack(playerId, new Army(playerId, src, unitsNum));
 
