@@ -120,7 +120,7 @@ public class GameServerTest {
         gameServer.handleIncomeRequest(socket2);
         assertEquals(1, gameServer.rooms.size());
         assertEquals(
-                "Welcome to the fancy RISK game!!!" + "SUCCESSFUL" + SUCCESSFUL + "{\"playerColor\":\"blue\",\"playerID\":2}" + "Please wait other players to join th game(need 3, joined 2)",
+                "Welcome to the fancy RISK game!!!" + SUCCESSFUL.repeat(2) + "{\"playerColor\":\"blue\",\"playerID\":2}" + "Please wait other players to join th game(need 3, joined 2)",
                 readAllStringFromObjectStream(outputStream)
         );
         assertEquals(2, gameServer.rooms.get(0).players.size());
