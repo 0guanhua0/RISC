@@ -71,7 +71,7 @@ public class Constant {
     }};
 
     //key is the target level of a unit
-    //value is the cost of tech resources to upgrade this unit from level 0 to target level
+    //value is the cost of tech resources to upgrade this unit from level 0 to level specified in key
     public static final Map<Integer,Integer> UP_UNIT_COST = new HashMap<>(){
         {
             put(0,0);
