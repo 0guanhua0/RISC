@@ -13,6 +13,7 @@ import java.util.Arrays;
 import static edu.duke.ece651.risk.shared.Mock.readAllStringFromObjectStream;
 import static edu.duke.ece651.risk.shared.Mock.setupMockInput;
 import static org.junit.jupiter.api.Assertions.*;
+import static edu.duke.ece651.risk.shared.Constant.*;
 
 class UserValidationTest {
 
@@ -27,7 +28,7 @@ class UserValidationTest {
         Player<String> player1 = new PlayerV1<>(setupMockInput(inputStream1), outputStream1);
 
         assertFalse(UserValidation.validate(player1, db));
-        assertEquals("invalid login", readAllStringFromObjectStream(outputStream1));
+        assertEquals(INVALID_LOGIN, readAllStringFromObjectStream(outputStream1));
 
 
         ByteArrayOutputStream outputStream2 = new ByteArrayOutputStream();
@@ -37,7 +38,7 @@ class UserValidationTest {
         Player<String> player2 = new PlayerV1<>(setupMockInput(inputStream2), outputStream2);
 
         assertTrue(UserValidation.validate(player2, db));
-        assertEquals("SUCCESSFUL", readAllStringFromObjectStream(outputStream2));
+        assertEquals(SUCCESSFUL, readAllStringFromObjectStream(outputStream2));
 
 
         ByteArrayOutputStream outputStream3 = new ByteArrayOutputStream();
@@ -47,7 +48,7 @@ class UserValidationTest {
         Player<String> player3 = new PlayerV1<>(setupMockInput(inputStream3), outputStream3);
 
         assertTrue(UserValidation.validate(player3, db));
-        assertEquals("SUCCESSFUL", readAllStringFromObjectStream(outputStream3));
+        assertEquals(SUCCESSFUL, readAllStringFromObjectStream(outputStream3));
 
 
 
@@ -58,7 +59,7 @@ class UserValidationTest {
         Player<String> player5 = new PlayerV1<>(setupMockInput(inputStream5), outputStream5);
 
         assertFalse(UserValidation.validate(player5, db));
-        assertEquals("invalid user info", readAllStringFromObjectStream(outputStream5));
+        assertEquals(INVALID_VALIDATE, readAllStringFromObjectStream(outputStream5));
 
         ByteArrayOutputStream outputStream6 = new ByteArrayOutputStream();
         ArrayList inputStream6 = new ArrayList<>(Arrays.asList("{\"userName\": \"name\",\n" +
@@ -67,7 +68,7 @@ class UserValidationTest {
         Player<String> player6 = new PlayerV1<>(setupMockInput(inputStream6), outputStream6);
 
         assertFalse(UserValidation.validate(player6, db));
-        assertEquals("invalid signup", readAllStringFromObjectStream(outputStream6));
+        assertEquals(INVALID_SIGNUP, readAllStringFromObjectStream(outputStream6));
 
 
 

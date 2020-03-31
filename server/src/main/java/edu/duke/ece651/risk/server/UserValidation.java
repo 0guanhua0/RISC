@@ -6,48 +6,47 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.sql.SQLException;
 
+import static edu.duke.ece651.risk.shared.Constant.*;
+
 /**
  * validate usr info with data base
  */
 
-
-//todo: change to constant file
-//TODO: add login, sign up, change password
-//check user name & password
 //login / sign up / change password
 public class UserValidation {
     /**
      *
      */
+
     public static Boolean validate(Player<?> player, SQL db) throws SQLException, IOException, ClassNotFoundException {
 
         String msg = (String) player.recv();
         JSONObject obj = new JSONObject(msg);
 
-        String userName = obj.get("userName").toString();
-        String userPassword = obj.get("userPassword").toString();
-        String action = obj.get("action").toString();
+        String userName = obj.getString(USER_NAME);
+        String userPassword = obj.getString(USER_PASSWORD);
+        String action = obj.getString(ACTION);
 
 
-        if (action.equals("login")) {
+        if (action.equals(LOGIN)) {
             if (db.authUser(userName, userPassword)) {
-                player.send("SUCCESSFUL");
+                player.send(SUCCESSFUL);
                 return true;
             } else {
-                player.send("invalid login");
+                player.send(INVALID_LOGIN);
                 return false;
 
             }
         }
 
-        if (action.equals("signup")) {
+        if (action.equals(SIGNUP)) {
             if (db.addUser(userName, userPassword)) {
 
-                player.send("SUCCESSFUL");
+                player.send(SUCCESSFUL);
                 return true;
 
             } else {
-                player.send("invalid signup");
+                player.send(INVALID_SIGNUP);
                 return false;
             }
         }
@@ -59,8 +58,7 @@ public class UserValidation {
 
          */
 
-        player.send("invalid user info");
-
+        player.send(INVALID_VALIDATE);
         return false;
 
 
