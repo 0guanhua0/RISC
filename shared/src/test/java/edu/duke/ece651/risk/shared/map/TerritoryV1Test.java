@@ -58,9 +58,6 @@ class TerritoryV1Test {
         assert (test.units.isEmpty());
         test.addNUnits(10);
         assert (10 == test.getUnitsNum());
-        for (Unit unit : test.units) {
-            assertEquals("soldier", unit.name);
-        }
         assertThrows(IllegalArgumentException.class, () -> test.addNUnits(-1));
     }
 
@@ -73,15 +70,11 @@ class TerritoryV1Test {
         assertThrows(IllegalArgumentException.class, () -> test.lossNUnits(-1));
         assertThrows(IllegalArgumentException.class, () -> test.lossNUnits(11));
         assertEquals(10, test.getUnitsNum());
-        for (Unit unit : test.units) {
-            assertEquals("soldier", unit.name);
-        }
+
 
         test.lossNUnits(5);
         assert (5 == test.getUnitsNum());
-        for (Unit unit : test.units) {
-            assertEquals("soldier", unit.name);
-        }
+
         test.lossNUnits(5);
         assert (0 == test.getUnitsNum());
     }
@@ -92,7 +85,7 @@ class TerritoryV1Test {
         assert (territoryV1.isFree());
         territoryV1.setOwner(3);
         assert (!territoryV1.isFree());
-        territoryV1.setIsFree();
+        territoryV1.setFree();
         assert (territoryV1.isFree());
     }
 

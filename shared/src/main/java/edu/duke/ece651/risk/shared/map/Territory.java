@@ -56,7 +56,7 @@ public abstract class Territory implements Serializable {
         return status.isFree();
     }
 
-    public void setIsFree() {
+    public void setFree() {
         status.setOwnerId(0);
     }
 
@@ -102,7 +102,6 @@ public abstract class Territory implements Serializable {
         for (Map.Entry<Integer, List<Army>> entry : attackAct.entrySet()) {
             attackResults.add(resolveCombat(entry.getKey(), entry.getValue(), diceAttack, diceDefend));
         }
-
         // clean up attackMap
         attackAct.clear();
         return attackResults;

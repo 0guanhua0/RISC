@@ -38,7 +38,7 @@ public class RoundInfo implements Serializable {
         for (Territory t : oldMap.getAtlas().values()){
             Territory territory = this.map.getTerritory(t.getName());
             if (t.isFree()){
-                territory.setIsFree();
+                territory.setFree();
             }else{
                 territory.setOwner(t.getOwner());
             }

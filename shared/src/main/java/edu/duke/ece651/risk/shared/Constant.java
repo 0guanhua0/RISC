@@ -1,7 +1,6 @@
 package edu.duke.ece651.risk.shared;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This class stores some common constant value which will be used by both client and server side.
@@ -53,15 +52,17 @@ public class Constant {
         put(5,"tank");
         put(6,"fighter jet");
     }};
-    //key is the current level of units, value is the cost of tech resources to upgrade this unit to the next technical level
+    //key is the target level of a unit
+    //value is the cost of tech resources to upgrade this unit from level 0 to target level
     public static final Map<Integer,Integer> UP_UNIT_COST = new HashMap<>(){
         {
-            put(0,3);
-            put(1,8);
-            put(2,19);
-            put(3,25);
-            put(4,35);
-            put(5,50);
+            put(0,0);
+            put(1,3);
+            put(2,11);
+            put(3,30);
+            put(4,55);
+            put(5,90);
+            put(6,140);
         }
     };
     //key is the current level of units, value is the extra bonus for a fight

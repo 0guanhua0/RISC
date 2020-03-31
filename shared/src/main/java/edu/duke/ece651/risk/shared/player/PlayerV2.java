@@ -1,6 +1,5 @@
 package edu.duke.ece651.risk.shared.player;
 
-import edu.duke.ece651.risk.shared.Constant;
 import edu.duke.ece651.risk.shared.map.BasicResource;
 import edu.duke.ece651.risk.shared.map.Territory;
 
@@ -75,13 +74,10 @@ public class PlayerV2<T> extends PlayerV1<T> {
     }
 
     @Override
-    public boolean canUpTech() {
+    public boolean canUpMaxTech() {
         if (upTechRight&&TECH_MAP.containsKey(techLevel)&&TECH_MAP.get(techLevel)<=getTechNum()){
             return true;
         }else{
-//            System.out.println(upTechRight);
-//            System.out.println(TECH_MAP.containsKey(techLevel));
-//            System.out.println(TECH_MAP.get(techLevel)<=getTechNum());
             return false;
         }
     }
@@ -90,8 +86,8 @@ public class PlayerV2<T> extends PlayerV1<T> {
      * this method should always be called after canUpTech
      */
     @Override
-    public void upTech() {
-        if (!canUpTech()){
+    public void upMaxTech() {
+        if (!canUpMaxTech()){
             throw new IllegalArgumentException("Can't up tech now!");
         }
         this.useTech(TECH_MAP.get(techLevel));

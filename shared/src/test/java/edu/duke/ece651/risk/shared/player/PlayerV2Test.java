@@ -125,23 +125,23 @@ class PlayerV2Test {
         player.setId(1);
         player.addTerritory(storm);
 
-        assertTrue(player.canUpTech());
-        player.upTech();//after this operation is level 2
-        assertFalse(player.canUpTech());//test can only upgrade technology once during every single round of game
+        assertTrue(player.canUpMaxTech());
+        player.upMaxTech();//after this operation is level 2
+        assertFalse(player.canUpMaxTech());//test can only upgrade technology once during every single round of game
         player.updateState();
-        assertFalse(player.canUpTech());//test don't have enough resources
+        assertFalse(player.canUpMaxTech());//test don't have enough resources
         for (int i=1;i<100;i++){
             player.updateState();
         }
-        player.upTech();//after this operation is level 3
+        player.upMaxTech();//after this operation is level 3
         player.updateState();
-        player.upTech();//after this operation is level 4
+        player.upMaxTech();//after this operation is level 4
         player.updateState();
-        player.upTech();//after this operation is level 5
+        player.upMaxTech();//after this operation is level 5
         player.updateState();
-        player.upTech();//after this operation is level 6
+        player.upMaxTech();//after this operation is level 6
         player.updateState();
-        assertFalse(player.canUpTech());//test at the maximum level
+        assertFalse(player.canUpMaxTech());//test at the maximum level
     }
 
     @Test
@@ -156,7 +156,7 @@ class PlayerV2Test {
         player.setId(1);
         player.addTerritory(storm);
 
-        player.upTech();
+        player.upMaxTech();
         assertEquals(2,player.techLevel);
         assertFalse(player.upTechRight);
         assertEquals(player.tech.getRemain(),INITIAL_TECH_NUM-TECH_MAP.get(1));

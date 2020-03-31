@@ -48,12 +48,23 @@ public class PlayerV1<T> extends Player<T> {
     public void useTech(int techUse) {}
 
     @Override
-    public boolean canUpTech() {
+    public boolean canUpMaxTech() {
         return false;
     }
 
     @Override
-    public void upTech() {}
+    public void upMaxTech() {}
 
+    @Override
+    public boolean canUpUnit(int curLevel, int targetLevel) {
+        return false;
+    }
+
+    @Override
+    public void upUnit(int curLevel, int targetLevel) {
+        if (!canUpUnit(curLevel,targetLevel)){
+            throw new IllegalArgumentException("Invalid!");
+        }
+    }
 
 }

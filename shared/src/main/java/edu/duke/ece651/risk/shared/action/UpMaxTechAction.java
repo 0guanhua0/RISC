@@ -16,7 +16,7 @@ public class UpMaxTechAction implements Action{
      */
     public boolean isValid(WorldState worldState){
         Player<String> player = worldState.getPlayer();
-        return player.canUpTech();
+        return player.canUpMaxTech();
     }
 
     /**
@@ -28,7 +28,7 @@ public class UpMaxTechAction implements Action{
             throw new IllegalArgumentException("Invalid action");
         }
         Player<String> player = worldState.getPlayer();
-        player.upTech();
+        player.upMaxTech();
         return true;
     }
 }

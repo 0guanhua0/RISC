@@ -30,7 +30,7 @@ public class TerritoryV1 extends Territory{
             throw new IllegalArgumentException("Input number can't be negative");
         }
         for (int i = 0; i < num; i++) {
-            units.add(new Unit("soldier"));
+            units.add(new Unit());
         }
     }
     public void lossNUnits(int num) throws IllegalArgumentException{
