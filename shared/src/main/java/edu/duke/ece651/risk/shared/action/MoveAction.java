@@ -49,7 +49,7 @@ public class MoveAction implements Action, Serializable {
 
         if (srcNode.getOwner() != playerId){
             return false;
-        }else if (srcNode.canLoseUnits(this.unitsNum,this.unitsLevel)){
+        }else if (!srcNode.canLoseUnits(this.unitsNum,this.unitsLevel)){
             return false;
         }else if (Integer.MAX_VALUE==dist){//when there is no such path under the control of current user
             return false;

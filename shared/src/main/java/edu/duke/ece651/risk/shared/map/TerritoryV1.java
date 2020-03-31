@@ -38,7 +38,13 @@ public class TerritoryV1 extends Territory{
         }
     }
 
-    public int getUnitsNum(){
+    @Override
+    public int getUnitsNum(int level) {
+        return (0==level)?units.size():0;
+    }
+
+    @Override
+    public int getBasicUnitsNum(){
         return units.size();
     }
 
@@ -71,7 +77,7 @@ public class TerritoryV1 extends Territory{
         }
 
         // start combat
-        while (attackUnits > 0 && this.getUnitsNum() > 0) {
+        while (attackUnits > 0 && this.getBasicUnitsNum() > 0) {
             int i1 = diceAttack.nextInt(20); // attacker dice
             int i2 = diceDefend.nextInt(20); // defender dice
 

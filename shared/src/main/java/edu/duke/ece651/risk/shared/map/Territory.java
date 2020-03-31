@@ -106,7 +106,18 @@ public abstract class Territory implements Serializable {
         return attackResults;
     }
 
-    public abstract int getUnitsNum();
+    /**
+     * @return the number of basic units
+     */
+    public abstract int getBasicUnitsNum();
+
+    /**
+     * get the number of units with certain tech level
+     * @param level: technology level for units you want
+     * @return number of units, 0 when level not exist
+     */
+    public abstract int getUnitsNum(int level);
+
 
     /**
      * add some basic units into this territory

@@ -139,9 +139,9 @@ public class UtilsTest {
         Territory northClone = cloneRes.getTerritory("kingdom of the north");
         Territory rockClone = cloneRes.getTerritory("kingdom of the rock");
         assertEquals(2,stormClone.getOwner());
-        assertEquals(5,stormClone.getUnitsNum());
+        assertEquals(5,stormClone.getBasicUnitsNum());
         assertEquals(3,northClone.getOwner());
-        assertEquals(0,northClone.getUnitsNum());
+        assertEquals(0,northClone.getBasicUnitsNum());
         assertEquals(0,rockClone.getOwner());
 
         assertFalse(stormClone==storm);

@@ -58,9 +58,9 @@ class MoveActionTest {
 
         //assign some units to each player
         //player 1
-        assertEquals(0,northTerr.getUnitsNum());
+        assertEquals(0,northTerr.getBasicUnitsNum());
         northTerr.addBasicUnits(7);
-        assertEquals(7,northTerr.getUnitsNum());
+        assertEquals(7,northTerr.getBasicUnitsNum());
         valeTerr.addBasicUnits(2);
         rockTerr.addBasicUnits(10);
         dorneTerr.addBasicUnits(2);
@@ -87,7 +87,7 @@ class MoveActionTest {
         //test invalid number of units
         Action a3 = new MoveAction(north,vale,1,0);
         assertFalse(a3.isValid(p1State));
-        MoveAction a4 = new MoveAction(north, vale, 1, northTerr.getUnitsNum() + 1);
+        MoveAction a4 = new MoveAction(north, vale, 1, northTerr.getBasicUnitsNum() + 1);
         assertFalse(a4.isValid(p1State));
 
         //test invalid path
@@ -141,9 +141,9 @@ class MoveActionTest {
 
         //assign some units to each player
         //player 1
-        assertEquals(0,northTerr.getUnitsNum());
+        assertEquals(0,northTerr.getBasicUnitsNum());
         northTerr.addBasicUnits(7);
-        assertEquals(7,northTerr.getUnitsNum());
+        assertEquals(7,northTerr.getBasicUnitsNum());
         valeTerr.addBasicUnits(2);
         rockTerr.addBasicUnits(10);
         dorneTerr.addBasicUnits(2);
@@ -159,14 +159,14 @@ class MoveActionTest {
         MoveAction a0 = new MoveAction(north, dorne, 1, 1);
         assertThrows(IllegalArgumentException.class,()->{a0.perform(p1State);});
 
-        int northStart = northTerr.getUnitsNum();
-        int valeStart = valeTerr.getUnitsNum();
+        int northStart = northTerr.getBasicUnitsNum();
+        int valeStart = valeTerr.getBasicUnitsNum();
         int foodStorage = p1.getFoodNum();
         for (int i=1;i<=3;i++){
             MoveAction moveAction = new MoveAction(north, vale, 1, 2);
             moveAction.perform(p1State);
-            assertEquals(northTerr.getUnitsNum(),northStart-i*2);
-            assertEquals(valeTerr.getUnitsNum(),valeStart+i*2);
+            assertEquals(northTerr.getBasicUnitsNum(),northStart-i*2);
+            assertEquals(valeTerr.getBasicUnitsNum(),valeStart+i*2);
             assertEquals(foodStorage-5*i*2,p1.getFoodNum());
         }
         MoveAction moveAction = new MoveAction(rock, vale, 1, 1);

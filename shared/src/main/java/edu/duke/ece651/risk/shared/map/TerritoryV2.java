@@ -25,6 +25,7 @@ public class TerritoryV2 extends TerritoryV1 {
         this.size = size;
         this.foodYield = foodYield;
         this.techYield = techYield;
+        this.group = new Group();
     }
 
     public int getSize() {
@@ -71,7 +72,7 @@ public class TerritoryV2 extends TerritoryV1 {
 
     @Override
     public void addBasicUnits(int num) throws IllegalArgumentException {
-        if (canAddUnits(num,0)){
+        if (!canAddUnits(num,0)){
             throw new IllegalArgumentException("invalid arguments!");
         }
         addUnits(num,0);
@@ -79,7 +80,7 @@ public class TerritoryV2 extends TerritoryV1 {
 
     @Override
     public void loseBasicUnits(int num) throws IllegalArgumentException {
-        if (canLoseUnits(num,0)){
+        if (!canLoseUnits(num,0)){
             throw new IllegalArgumentException("Invalid arguments");
         }
         loseUnits(num,0);
@@ -101,5 +102,13 @@ public class TerritoryV2 extends TerritoryV1 {
         group.loseUnits(num,level);
     }
 
+    @Override
+    public int getBasicUnitsNum() {
+        return group.getUnitsNum(0);
+    }
 
+    @Override
+    public int getUnitsNum(int level) {
+        return group.getUnitsNum(level);
+    }
 }

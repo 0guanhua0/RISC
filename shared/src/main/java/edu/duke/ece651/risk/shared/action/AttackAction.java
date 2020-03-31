@@ -55,7 +55,7 @@ public class AttackAction implements Action, Serializable {
         }
 
         //validate src has enough unit
-        if (src.canLoseUnits(this.unitsNum,this.unitsLevel)) {
+        if (!src.canLoseUnits(this.unitsNum,this.unitsLevel)) {
             return false;
         }
 

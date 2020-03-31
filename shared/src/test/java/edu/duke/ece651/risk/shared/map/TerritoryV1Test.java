@@ -57,7 +57,7 @@ class TerritoryV1Test {
         TerritoryV1 test = new TerritoryV1("test");
         assert (test.units.isEmpty());
         test.addBasicUnits(10);
-        assert (10 == test.getUnitsNum());
+        assert (10 == test.getBasicUnitsNum());
         assertThrows(IllegalArgumentException.class, () -> test.addBasicUnits(-1));
     }
 
@@ -66,17 +66,17 @@ class TerritoryV1Test {
         TerritoryV1 test = new TerritoryV1("test");
         assert (test.units.isEmpty());
         test.addBasicUnits(10);
-        assert (10 == test.getUnitsNum());
+        assert (10 == test.getBasicUnitsNum());
         assertThrows(IllegalArgumentException.class, () -> test.loseBasicUnits(-1));
         assertThrows(IllegalArgumentException.class, () -> test.loseBasicUnits(11));
-        assertEquals(10, test.getUnitsNum());
+        assertEquals(10, test.getBasicUnitsNum());
 
 
         test.loseBasicUnits(5);
-        assert (5 == test.getUnitsNum());
+        assert (5 == test.getBasicUnitsNum());
 
         test.loseBasicUnits(5);
-        assert (0 == test.getUnitsNum());
+        assert (0 == test.getBasicUnitsNum());
     }
 
     @Test
@@ -204,11 +204,11 @@ class TerritoryV1Test {
 
         //check result
         assertEquals(1, reach.getOwner());
-        assertEquals(8, reach.getUnitsNum());
+        assertEquals(8, reach.getBasicUnitsNum());
 
         rock.resolveCombats();
         assertEquals(2, rock.getOwner());
-        assertEquals(2, rock.getUnitsNum());
+        assertEquals(2, rock.getBasicUnitsNum());
 
         // lose
         assertFalse(storm.resolveCombats().get(0).isAttackerWin());

@@ -1,6 +1,8 @@
 package edu.duke.ece651.risk.shared.map;
 
+import java.io.Serializable;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -12,7 +14,7 @@ import static edu.duke.ece651.risk.shared.Constant.UNIT_BONUS;
  * @author: Chengda Wu
  * @create: 2020-03-31 10:44
  **/
-public class Group {
+public class Group implements Serializable {
 
     //key is the technology level of units, value is the set of units
     Map<Integer, Set<Unit>> unitGroup;
@@ -62,7 +64,7 @@ public class Group {
         if (!canAdd(num,level)){
             throw new IllegalArgumentException("Invalid argument!");
         }
-        Set<Unit> units = unitGroup.get(level);
+        Set<Unit> units = unitGroup.getOrDefault(level,new HashSet<>());
         for (int i = 0; i < num; i++) {
             units.add(new Unit());
         }
@@ -83,10 +85,18 @@ public class Group {
             units.add(new Unit());
         }
         for (int i = 0; i < num; i++) {
-            units.remove(units.size() - 1);
+            units.remove(new Unit());
         }
     }
 
+    /**
+     * get the number of units with specified technology level
+     * @param level: technology level of units you want
+     * @return number of units, 0 for invalid technology level
+     */
+    public int getUnitsNum(int level){
+        return unitGroup.getOrDefault(level,new HashSet<>()).size();
+    }
 
 
 }
