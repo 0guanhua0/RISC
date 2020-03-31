@@ -72,7 +72,11 @@ public class GameServerTest {
 
         Thread thread = new Thread(() -> {
             GameServer gameServer = null;
-            gameServer = new GameServer(server);
+            try {
+                gameServer = new GameServer(server);
+            } catch (SQLException | ClassNotFoundException e) {
+                e.printStackTrace();
+            }
             gameServer.run();
         });
         thread.start();
@@ -90,7 +94,9 @@ public class GameServerTest {
         when(socket1.getInputStream())
                 .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList("{\"userName\": \"name\",\n" +
                         "\"userPassword\": \"password\",\n" +
-                        "\"action\": \"signup\" }", "-1", "test"))));
+                        "\"action\": \"login\" }", "{\"userName\": \"name\",\n" +
+                        "\"userPassword\": \"password\",\n" +
+                        "\"action\": \"signup\" }",  "-1", "test"))));
         when(socket1.getOutputStream()).thenReturn(outputStream);
 
         //handle the request for first player
