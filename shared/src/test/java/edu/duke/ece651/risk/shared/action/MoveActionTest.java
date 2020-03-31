@@ -1,147 +1,178 @@
 package edu.duke.ece651.risk.shared.action;
 
+import edu.duke.ece651.risk.shared.Constant;
+import edu.duke.ece651.risk.shared.Mock;
+import edu.duke.ece651.risk.shared.WorldState;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.risk.shared.player.Player;
 import edu.duke.ece651.risk.shared.player.PlayerV1;
+import edu.duke.ece651.risk.shared.player.PlayerV2;
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class MoveActionTest {
+
+
+    private static final String storm = "the storm kingdom";
+    private static final String reach = "kingdom of the reach";
+    private static final String rock = "kingdom of the rock";
+    private static final String vale = "kingdom of mountain and vale";
+    private static final String north = "kingdom of the north";
+    private static final String dorne = "principality of dorne";
+
 
     @Test
     void isValid() throws IOException {
         MapDataBase<String> mapDataBase = new MapDataBase<String>();
         //prepare the world
         WorldMap<String> worldMap = mapDataBase.getMap("a clash of kings");
-        Territory storm = worldMap.getTerritory("the storm kingdom");
-        Territory reach = worldMap.getTerritory("kingdom of the reach");
-        Territory rock = worldMap.getTerritory("kingdom of the rock");
-        Territory vale = worldMap.getTerritory("kingdom of mountain and vale");
-        Territory north = worldMap.getTerritory("kingdom of the north");
-        Territory dorne = worldMap.getTerritory("principality of dorne");
-        //two players join this game
-        Player<String> p1 = new PlayerV1<>("Red",1);
-        Player<String> p2 = new PlayerV1<>("Blue", 2);
-        //assign some territories to each player
+        Territory stormTerr = worldMap.getTerritory("the storm kingdom");
+        Territory reachTerr = worldMap.getTerritory("kingdom of the reach");
+        Territory rockTerr = worldMap.getTerritory("kingdom of the rock");
+        Territory valeTerr = worldMap.getTerritory("kingdom of mountain and vale");
+        Territory northTerr = worldMap.getTerritory("kingdom of the north");
+        Territory dorneTerr = worldMap.getTerritory("principality of dorne");
 
+        //two players join this game
+        Player<String> p1 = new PlayerV2<>(Mock.setupMockInput(Arrays.asList()),new ByteArrayOutputStream());
+        p1.setId(1);
+        Player<String> p2 = new PlayerV2<>(Mock.setupMockInput(Arrays.asList()),new ByteArrayOutputStream());
+        p2.setId(2);
+
+        //assign some territories to each player
         //player1
-        assert (north.isFree());
-        assert (0==north.getOwner());
-        p1.addTerritory(north);
-        assert (!north.isFree());
-        assert (north.getOwner()==1);
-        p1.addTerritory(vale);
-        p1.addTerritory(rock);
-        p1.addTerritory(dorne);
+        assertTrue(northTerr.isFree());
+        assertEquals(0,northTerr.getOwner());
+        p1.addTerritory(northTerr);
+        p1.addTerritory(valeTerr);
+        p1.addTerritory(rockTerr);
+        p1.addTerritory(dorneTerr);
         //player2
-        p2.addTerritory(storm);
-        p2.addTerritory(reach);
-        //assign some units to each territory, 5 units for each player
+        p2.addTerritory(stormTerr);
+        p2.addTerritory(reachTerr);
+
+        //assign some units to each player
         //player 1
-        assert (north.getUnitsNum()==0);
-        north.addNUnits(2);
-        assert (north.getUnitsNum()==2);
-        vale.addNUnits(2);
-        rock.addNUnits(1);
-        dorne.addNUnits(1);
+        assertEquals(0,northTerr.getUnitsNum());
+        northTerr.addNUnits(7);
+        assertEquals(7,northTerr.getUnitsNum());
+        valeTerr.addNUnits(2);
+        rockTerr.addNUnits(10);
+        dorneTerr.addNUnits(2);
         //player2
-        storm.addNUnits(2);
-        reach.addNUnits(2);
+        stormTerr.addNUnits(3);
+        reachTerr.addNUnits(3);
+
+        WorldState p1State = new WorldState(p1, worldMap);
+        WorldState p2State = new WorldState(p2, worldMap);
 
         //test invalid input name
-        MoveAction a0 = new MoveAction("king of north", "kingdom of mountain and vale", 1, 1);
-        assert (!a0.isValid(worldMap));
-        MoveAction a1 = new MoveAction("kingdom of the north", "king of mountain and vale", 1, 1);
-        assert (!a1.isValid(worldMap));
+        Action a0 = new MoveAction("king of north", "kingdom of mountain and vale", 1, 1);
+        assertFalse (a0.isValid(p1State));
+        Action a1 = new MoveAction("kingdom of the north", "king of mountain and vale", 1, 1);
+        assertFalse (a1.isValid(p1State));
 
-        //test normal move
-        MoveAction a2 = new MoveAction("kingdom of the north", "kingdom of mountain and vale", 1, 1);
-        assert(a2.isValid(worldMap));
-        MoveAction a21 = new MoveAction("kingdom of the reach", "the storm kingdom", 2, 1);
-        assert (a21.isValid(worldMap));
+        //test invalid source territory
+        Action a2 = new MoveAction(storm, vale, 1, 1);
+        assertFalse(a2.isValid(p1State));
+        //test invalid target territory
+        MoveAction a21 = new MoveAction(vale, storm, 1, 1);
+        assertFalse(a21.isValid(p1State));
 
-        //test unexisted path between two territories controlled by the same player
-        MoveAction a3 = new MoveAction("kingdom of the north", "principality of dorne", 1, 1);
-        assert (!a3.isValid(worldMap));
-        //test move to a territories which the user has no control over
-        MoveAction a4 = new MoveAction("kingdom of the rock", "kingdom of the reach", 1, 1);
-        assert (!a4.isValid(worldMap));
+        //test invalid number of units
+        Action a3 = new MoveAction(north,vale,1,0);
+        assertFalse(a3.isValid(p1State));
+        MoveAction a4 = new MoveAction(north, vale, 1, northTerr.getUnitsNum() + 1);
+        assertFalse(a4.isValid(p1State));
 
-        //test invalid move units(large than the units src territory has)
-        MoveAction a5 = new MoveAction("kingdom of the north", "kingdom of mountain and vale", 1, 3);
-        assert (!a5.isValid(worldMap));
-        MoveAction a51 = new MoveAction("kingdom of the rock", "kingdom of mountain and vale", 1, 2);
-        assert (!a51.isValid(worldMap));
+        //test invalid path
+        MoveAction a5 = new MoveAction(north, dorne, 1, 1);
+        assertFalse(a5.isValid(p1State));
 
-        //test move between units that this player has no control over
-        MoveAction a6 = new MoveAction("kingdom of the north", "kingdom of mountain and vale", 2, 1);
-        assert (!a6.isValid(worldMap));
+        //test invalid number of food storage
+        MoveAction a6 = new MoveAction(north, vale, 1, 6);
+        assertTrue(a6.isValid(p1State));
+        MoveAction a7 = new MoveAction(north, vale, 1, 7);
+        assertFalse(a7.isValid(p1State));
 
-        //test move between negative units
-        MoveAction a7 = new MoveAction("kingdom of the north", "kingdom of mountain and vale", 1, -1);
-        assertFalse(a7.isValid(worldMap));
-
+        //test legality move
+        for (int i=1;i<=10;i++){
+            int unit = i;
+            MoveAction moveAction = new MoveAction(rock, vale, 1, unit);
+            assertTrue(moveAction.isValid(p1State));
+        }
 
     }
 
     @Test
     void perform() throws IOException {
-        MapDataBase<String> mapDataBase = new MapDataBase<>();
+        MapDataBase<String> mapDataBase = new MapDataBase<String>();
         //prepare the world
         WorldMap<String> worldMap = mapDataBase.getMap("a clash of kings");
-        Territory storm = worldMap.getTerritory("the storm kingdom");
-        Territory reach = worldMap.getTerritory("kingdom of the reach");
-        Territory rock = worldMap.getTerritory("kingdom of the rock");
-        Territory vale = worldMap.getTerritory("kingdom of mountain and vale");
-        Territory north = worldMap.getTerritory("kingdom of the north");
-        Territory dorne = worldMap.getTerritory("principality of dorne");
+        Territory stormTerr = worldMap.getTerritory("the storm kingdom");
+        Territory reachTerr = worldMap.getTerritory("kingdom of the reach");
+        Territory rockTerr = worldMap.getTerritory("kingdom of the rock");
+        Territory valeTerr = worldMap.getTerritory("kingdom of mountain and vale");
+        Territory northTerr = worldMap.getTerritory("kingdom of the north");
+        Territory dorneTerr = worldMap.getTerritory("principality of dorne");
+
         //two players join this game
-        Player<String> p1 = new PlayerV1<>("Red",1);
-        Player<String> p2 = new PlayerV1<>("Blue", 2);
+        Player<String> p1 = new PlayerV2<>(Mock.setupMockInput(Arrays.asList()),new ByteArrayOutputStream());
+        p1.setId(1);
+        Player<String> p2 = new PlayerV2<>(Mock.setupMockInput(Arrays.asList()),new ByteArrayOutputStream());
+        p2.setId(2);
+
         //assign some territories to each player
         //player1
-        p1.addTerritory(north);
-        p1.addTerritory(vale);
-        p1.addTerritory(rock);
-        p1.addTerritory(dorne);
+        assertTrue(northTerr.isFree());
+        assertEquals(0,northTerr.getOwner());
+        p1.addTerritory(northTerr);
+        p1.addTerritory(valeTerr);
+        p1.addTerritory(rockTerr);
+        p1.addTerritory(dorneTerr);
         //player2
-        p2.addTerritory(storm);
-        p2.addTerritory(reach);
-        //assign some units to each territory, 5 units for each player
+        p2.addTerritory(stormTerr);
+        p2.addTerritory(reachTerr);
+
+        //assign some units to each player
         //player 1
-        north.addNUnits(2);
-        vale.addNUnits(2);
-        rock.addNUnits(1);
-        dorne.addNUnits(1);
+        assertEquals(0,northTerr.getUnitsNum());
+        northTerr.addNUnits(7);
+        assertEquals(7,northTerr.getUnitsNum());
+        valeTerr.addNUnits(2);
+        rockTerr.addNUnits(10);
+        dorneTerr.addNUnits(2);
         //player2
-        storm.addNUnits(2);
-        reach.addNUnits(2);
+        stormTerr.addNUnits(3);
+        reachTerr.addNUnits(3);
 
-        assert (north.getUnitsNum()==2&&vale.getUnitsNum()==2);
-        MoveAction a0 = new MoveAction("kingdom of the north", "kingdom of mountain and vale", 1, 1);
-        a0.perform(worldMap);
-        assert (north.getUnitsNum()==1&&vale.getUnitsNum()==3);
-        MoveAction a1 = new MoveAction("kingdom of mountain and vale","kingdom of the north", 1, 1);
-        a1.perform(worldMap);
-        assert (north.getUnitsNum()==2&&vale.getUnitsNum()==2);
+        WorldState p1State = new WorldState(p1, worldMap);
+        WorldState p2State = new WorldState(p2, worldMap);
 
-        assert (2==reach.getUnitsNum()&&2==storm.getUnitsNum());
-        MoveAction a2 = new MoveAction("kingdom of the reach", "the storm kingdom", 2, 1);
-        a2.perform(worldMap);
-        System.out.println(reach.getUnitsNum());
-        System.out.println(storm.getUnitsNum());
-        assert (1==reach.getUnitsNum()&&3==storm.getUnitsNum());
-        MoveAction a3 = new MoveAction("the storm kingdom", "kingdom of the reach", 2, 1);
-        a3.perform(worldMap);
-        assert (2==reach.getUnitsNum()&&2==storm.getUnitsNum());
 
-        MoveAction a4 = new MoveAction("kingdom of the north", "kingdom of mountain and vale", 2, 1);
-        assertThrows(IllegalArgumentException.class, ()->a4.perform(worldMap));
+        //test invalid action
+        MoveAction a0 = new MoveAction(north, dorne, 1, 1);
+        assertThrows(IllegalArgumentException.class,()->{a0.perform(p1State);});
+
+        int northStart = northTerr.getUnitsNum();
+        int valeStart = valeTerr.getUnitsNum();
+        int foodStorage = p1.getFoodNum();
+        for (int i=1;i<=3;i++){
+            MoveAction moveAction = new MoveAction(north, vale, 1, 2);
+            moveAction.perform(p1State);
+            assertEquals(northTerr.getUnitsNum(),northStart-i*2);
+            assertEquals(valeTerr.getUnitsNum(),valeStart+i*2);
+            assertEquals(foodStorage-5*i*2,p1.getFoodNum());
+        }
+        MoveAction moveAction = new MoveAction(rock, vale, 1, 1);
+        assertThrows(IllegalArgumentException.class,()->{moveAction.perform(p1State);});
     }
 
     @Test

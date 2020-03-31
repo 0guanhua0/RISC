@@ -1,4 +1,4 @@
-package edu.duke.ece651.riskclient;
+package edu.duke.ece651.riskclient.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,6 +12,10 @@ import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.Objects;
 
+import edu.duke.ece651.riskclient.objects.Player;
+import edu.duke.ece651.riskclient.R;
+import edu.duke.ece651.riskclient.listener.onResultListener;
+
 import static edu.duke.ece651.riskclient.utils.HTTPUtils.addUser;
 import static edu.duke.ece651.riskclient.utils.UIUtils.showToastUI;
 
@@ -23,10 +27,12 @@ public class SignUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
 
-        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar_signup);
+        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        Objects.requireNonNull(getSupportActionBar()).setTitle("Sign Up");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getSupportActionBar() != null){
+            getSupportActionBar().setTitle("Sign Up");
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         TextInputEditText etName = findViewById(R.id.et_signup_name);
         TextInputEditText etPassword = findViewById(R.id.et_signup_password1);

@@ -5,7 +5,7 @@ import java.util.*;
 /**
  * @program: risk
  * @description: this is the map class for evolution1
- * @author: Mr.Wang
+ * @author: Chengda Wu
  * @create: 2020-03-28 15:00
  **/
 public class WorldMapV1<T extends Serializable> extends WorldMap{

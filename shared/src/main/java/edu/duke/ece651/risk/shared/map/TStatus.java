@@ -16,15 +16,14 @@ import java.io.Serializable;
 public class TStatus implements Serializable {
 
     //player id of the owner of corresponding territory, 0 to represent this territory is currently free
+    //when ownerId==0, corresponding territory is free and not owned by any player
     int ownerId;
     //name of corresponding territory
     String name;
-    //show whether this territory is free or not
-    boolean isFree;
+
 
     public TStatus(String name) {
         this.name = name;
-        this.isFree = true;
         this.ownerId = 0;
     }
 
@@ -35,11 +34,8 @@ public class TStatus implements Serializable {
         return ownerId;
     }
 
-    public void setIsFree(boolean free) {
-        isFree = free;
-    }
     public boolean isFree(){
-        return isFree;
+        return ownerId==0 ;
     }
 
     public String getName() {

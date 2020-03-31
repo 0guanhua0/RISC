@@ -31,4 +31,29 @@ public class PlayerV1<T> extends Player<T> {
     public PlayerV1(int id, InputStream in, OutputStream out) throws IOException {
         super(id, in, out);
     }
+
+    @Override
+    public void updateState() {}
+
+    @Override
+    public int getFoodNum() { return Integer.MAX_VALUE; }
+
+    @Override
+    public int getTechNum() { return Integer.MAX_VALUE; }
+
+    @Override
+    public void useFood(int foodUse) {}
+
+    @Override
+    public void useTech(int techUse) {}
+
+    @Override
+    public boolean canUpTech() {
+        return false;
+    }
+
+    @Override
+    public void upTech() {}
+
+
 }

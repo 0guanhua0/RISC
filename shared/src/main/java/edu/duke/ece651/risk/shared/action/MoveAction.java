@@ -1,16 +1,18 @@
 package edu.duke.ece651.risk.shared.action;
 
+import edu.duke.ece651.risk.shared.WorldState;
 import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.WorldMap;
+import edu.duke.ece651.risk.shared.player.Player;
 
 import java.io.Serializable;
-import java.util.Objects;
 
 public class MoveAction implements Action, Serializable {
     String src;
     String dest;
     int playerId;
     int unitsNum;
+
 
     public MoveAction(String src, String dest,
                       int playerId, int unitsNum) {
@@ -22,34 +24,48 @@ public class MoveAction implements Action, Serializable {
 
 
     @Override
-    public boolean isValid(WorldMap<?> map) {
+    public boolean isValid(WorldState worldState) {
+        WorldMap<String> map = worldState.getMap();
+        Player<String> player = worldState.getPlayer();
+
         //check if two input names are valid
         if (!map.hasTerritory(src) || !map.hasTerritory(dest)){
             return false;
         }
         Territory srcNode = map.getTerritory(src);
-        Territory destNode = map.getTerritory(dest);
+
+        int dist = map.getMinCtrlDist(src,dest);
+
+        //TODO note that I should test for whether the player is able to move to an uncontrolled area
         if (srcNode.getOwner() != playerId){
-            return false;
-        }else if (!srcNode.hasPathTo(destNode)){
             return false;
         }else if (srcNode.getUnitsNum() < unitsNum || unitsNum <= 0){
             return false;
-        }else{
+        }else if (Integer.MAX_VALUE==dist){//when there is no such path under the control of current user
+            return false;
+        }else if (player.getFoodNum()<dist*unitsNum){
+            return false;
+        }else {
             return true;
         }
     }
     @Override
-    public boolean perform(WorldMap<?> map) {
+    public boolean perform(WorldState worldState) {
         //perform the real action
-        if (!isValid(map)){
+        if (!isValid(worldState)){
             throw new IllegalArgumentException("Invalid move action!");
         }
+        WorldMap<String> map = worldState.getMap();
+        Player<String> player = worldState.getPlayer();
         //update the state of src and target territory
         Territory srcNode = map.getTerritory(src);
         Territory destNode = map.getTerritory(dest);
         srcNode.lossNUnits(unitsNum);
         destNode.addNUnits(unitsNum);
+        //update the food storage
+        int foodCost = map.getMinCtrlDist(src,dest)*unitsNum;
+        player.useFood(foodCost);
+
         return true;
     }
 
@@ -66,7 +82,5 @@ public class MoveAction implements Action, Serializable {
                     src.equals(that.src) &&
                     dest.equals(that.dest);
         }
-
     }
-
 }

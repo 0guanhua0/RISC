@@ -32,13 +32,19 @@ public class MapDataBase<T extends Serializable> implements Serializable{
             String groupPath = Paths.get(baseDirStr,mapName, "group.txt").toString();
             String neighPath = Paths.get(baseDirStr,mapName, "neigh.txt").toString();
             String sizePath = Paths.get(baseDirStr,mapName, "size.txt").toString();
+            String foodPath = Paths.get(baseDirStr,mapName, "food.txt").toString();
+            String techPath = Paths.get(baseDirStr,mapName, "tech.txt").toString();
 
 
             Map<String,Set<String>> atlas = Utils.readNeighConfig(neighPath);
             List<String> colorList = Utils.readColorConfig(colorPath);
             Map<Set<String>,Boolean> groups = Utils.readGroupConfig(groupPath);
             Map<String, Integer> size = Utils.readSizeConfig(sizePath);
-            WorldMap<T> worldMap = new WorldMapV2(atlas,colorList,groups,size);
+            Map<String, Integer> food = Utils.readBasicResourceConfig(foodPath);
+            Map<String, Integer> tech = Utils.readSizeConfig(techPath);
+
+
+            WorldMap<T> worldMap = new WorldMapV2(atlas,colorList,groups,size,food,tech);
             worldMap.setName(mapName);
             mapHub.put(mapName,worldMap);
         }
