@@ -4,6 +4,9 @@ import java.sql.*;
 
 //todo: add change password, encrypt password
 public class SQL {
+    static String dbUrl = "jdbc:postgresql://vcm-12835.vm.duke.edu:5432/risk";
+    static String dbUser = "postgres";
+    static String dbPassword = "postgres";
 
     public SQL() throws ClassNotFoundException, SQLException {
         //drop table if exists
@@ -16,7 +19,7 @@ public class SQL {
 
     public void createTable() throws SQLException, ClassNotFoundException {
         Class.forName("org.postgresql.Driver");
-        Connection conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/risk", "postgres", "postgres");
+        Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
 
         Statement statement = conn.createStatement();
         // create table
@@ -31,8 +34,7 @@ public class SQL {
 
     public void dropTable() throws SQLException, ClassNotFoundException {
         Class.forName("org.postgresql.Driver");
-        Connection conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/risk", "postgres", "postgres");
-
+        Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
         Statement statement = conn.createStatement();
         // create table
         String sql = "DROP TABLE IF EXISTS risk;";
@@ -44,8 +46,7 @@ public class SQL {
 
     public boolean addUser(String name, String pwd) throws SQLException, ClassNotFoundException {
         Class.forName("org.postgresql.Driver");
-        Connection conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/risk", "postgres", "postgres");
-
+        Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
         // ask postgres to crypt the password
 
         //check if user already exists
@@ -65,8 +66,7 @@ public class SQL {
 
     public boolean authUser(String name, String pwd) throws SQLException, ClassNotFoundException {
         Class.forName("org.postgresql.Driver");
-        Connection conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/risk", "postgres", "postgres");
-
+        Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
         Statement statement = conn.createStatement();
         ResultSet set = statement.executeQuery(String.format("SELECT PLAYER_ID \n" +
                 "  FROM risk\n" +
@@ -83,8 +83,7 @@ public class SQL {
     public boolean authUserName(String name) throws SQLException, ClassNotFoundException {
 
         Class.forName("org.postgresql.Driver");
-        Connection conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/risk", "postgres", "postgres");
-
+        Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
         Statement statement = conn.createStatement();
         ResultSet set = statement.executeQuery(String.format("SELECT PLAYER_ID \n" +
                 "  FROM risk\n" +
