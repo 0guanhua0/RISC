@@ -8,6 +8,7 @@ import edu.duke.ece651.risk.shared.player.Player;
 
 import java.io.Serializable;
 
+
 public class AttackAction implements Action, Serializable {
     String src;
     String dest;
@@ -98,7 +99,7 @@ public class AttackAction implements Action, Serializable {
         worldMap.getTerritory(src).loseUnits(unitsNum,unitsLevel);
         // add attack units to target territory's attack buffer
         //TODO note that this part of attack action should be changed
-        worldMap.getTerritory(dest).addAttack(playerId, new Army(playerId, src, unitsNum));
+        worldMap.getTerritory(dest).addAttack(playerId, new Army(playerId, src, unitsNum,this.unitsLevel));
 
         return true;
     }
