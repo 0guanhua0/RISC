@@ -5,8 +5,6 @@ import edu.duke.ece651.risk.shared.action.AttackResult;
 import java.io.IOException;
 import java.util.*;
 
-import static edu.duke.ece651.risk.shared.Constant.UNIT_BONUS;
-
 /**
  * @program: risk
  * @description: this is territory class for evolution2 of risk game
@@ -25,7 +23,7 @@ public class TerritoryV2 extends TerritoryV1 {
         this.size = size;
         this.foodYield = foodYield;
         this.techYield = techYield;
-        this.group = new Group();
+        this.group = new GroupV2();
     }
 
     public int getSize() {
