@@ -1,6 +1,7 @@
 package edu.duke.ece651.risk.shared.map;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 
 public class Army implements Serializable {
@@ -13,6 +14,12 @@ public class Army implements Serializable {
     public Army(int playerID, String src, Map<Integer,Integer> levelToNuml) {
         this.src = src;
         this.levelToNum = levelToNuml;
+    }
+    public Army(int playerID, String src, int unitNum) {
+        this.src = src;
+        this.levelToNum = new HashMap<>(){{
+            put(0,unitNum);
+        }};
     }
 
     public String getSrc() {
