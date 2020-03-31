@@ -60,6 +60,14 @@ class UserValidationTest {
         assertFalse(UserValidation.validate(player5, db));
         assertEquals("invalid user info", readAllStringFromObjectStream(outputStream5));
 
+        ByteArrayOutputStream outputStream6 = new ByteArrayOutputStream();
+        ArrayList inputStream6 = new ArrayList<>(Arrays.asList("{\"userName\": \"name\",\n" +
+                "\"userPassword\": \"password\",\n" +
+                "\"action\": \"signup\" }"));
+        Player<String> player6 = new PlayerV1<>(setupMockInput(inputStream6), outputStream6);
+
+        assertFalse(UserValidation.validate(player6, db));
+        assertEquals("invalid signup", readAllStringFromObjectStream(outputStream6));
 
 
 
