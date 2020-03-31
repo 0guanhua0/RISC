@@ -32,7 +32,7 @@ public class Group {
      * @return: such action is valid or not
      */
     public boolean canAdd(int num,int level){
-        if (num<0||!UNIT_BONUS.containsKey(level)){
+        if (num<=0||!UNIT_BONUS.containsKey(level)){
             return false;
         }else{
             return true;
@@ -46,7 +46,7 @@ public class Group {
      * @return: such action is valid or not
      */
     public boolean canLose(int num,int level){
-        if (num<0||!UNIT_BONUS.containsKey(level)||unitGroup.get(level).size()<num){
+        if (num<=0||!UNIT_BONUS.containsKey(level)||unitGroup.get(level).size()<num){
             return false;
         }else{
             return true;

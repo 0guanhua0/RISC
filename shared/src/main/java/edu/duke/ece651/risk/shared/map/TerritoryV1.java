@@ -108,7 +108,7 @@ public class TerritoryV1 extends Territory{
 
     @Override
     public boolean canAddUnits(int num, int level) {
-        if (level!=0||num<0){
+        if (level!=0||num<=0){
             return false;
         }else{
             return true;
@@ -117,7 +117,7 @@ public class TerritoryV1 extends Territory{
 
     @Override
     public boolean canLoseUnits(int num, int level) {
-        if (level!=0||num<0||num>units.size()){
+        if (level!=0||num<=0||num>units.size()){
             return false;
         }else{
             return true;

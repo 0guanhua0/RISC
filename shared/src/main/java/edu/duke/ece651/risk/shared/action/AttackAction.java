@@ -13,17 +13,27 @@ public class AttackAction implements Action, Serializable {
     String dest;
     int playerId;
     int unitsNum;
+    int unitsLevel;
+
+    public AttackAction(String src, String dest, int playerId, int unitsNum, int unitsLevel) {
+        this.src = src;
+        this.dest = dest;
+        this.playerId = playerId;
+        this.unitsNum = unitsNum;
+        this.unitsLevel = unitsLevel;
+    }
 
     public AttackAction(String src, String dest, int playerId, int unitsNum) {
         this.src = src.toLowerCase();
         this.dest = dest.toLowerCase();
         this.playerId = playerId;
         this.unitsNum = unitsNum;
+        this.unitsLevel = 0;
     }
+
 
     /**
      * validate the attack move
-     *
      * @param worldState WorldState object
      * @return true if valid, false if invalid
      */
@@ -45,7 +55,7 @@ public class AttackAction implements Action, Serializable {
         }
 
         //validate src has enough unit
-        if (src.getUnitsNum() < this.unitsNum) {
+        if (src.canLoseUnits(this.unitsNum,this.unitsLevel)) {
             return false;
         }
 
@@ -69,7 +79,6 @@ public class AttackAction implements Action, Serializable {
 
     /**
      * following function perform single attack update, add update to territory map
-     *
      * @param worldState WorldState object
      * @return true, if valid
      */
@@ -86,8 +95,9 @@ public class AttackAction implements Action, Serializable {
         player.useFood(unitsNum);
 
         // reduce src units
-        worldMap.getTerritory(src).loseBasicUnits(unitsNum);
+        worldMap.getTerritory(src).loseUnits(unitsNum,unitsLevel);
         // add attack units to target territory's attack buffer
+        //TODO note that this part of attack action should be changed
         worldMap.getTerritory(dest).addAttack(playerId, new Army(playerId, src, unitsNum));
 
         return true;
