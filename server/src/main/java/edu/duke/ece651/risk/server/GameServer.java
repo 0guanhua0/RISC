@@ -1,10 +1,9 @@
 package edu.duke.ece651.risk.server;
 
-import edu.duke.ece651.risk.shared.Room;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.network.Server;
 import edu.duke.ece651.risk.shared.player.Player;
-import edu.duke.ece651.risk.shared.player.PlayerV1;
+import edu.duke.ece651.risk.shared.player.PlayerV2;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -22,7 +21,7 @@ public class GameServer {
     // thread pool, used to handle incoming request
     ThreadPoolExecutor threadPool;
     // list of all rooms(each room represent a running game)
-    Map<Integer, RoomController> rooms;
+    Map<Integer, Room> rooms;
 
     public GameServer(Server server) {
         this.server = server;
@@ -59,7 +58,7 @@ public class GameServer {
      */
     void handleIncomeRequest(Socket socket) throws IOException, ClassNotFoundException {
         // here we wrap the socket with player object ASAP(i.e. decouple socket with stream)
-        Player<String> player = new PlayerV1<>(socket.getInputStream(), socket.getOutputStream());
+        Player<String> player = new PlayerV2<>(socket.getInputStream(), socket.getOutputStream());
 
         String helloInfo = "Welcome to the fancy RISK game!!!";
         player.send(helloInfo);
@@ -69,8 +68,7 @@ public class GameServer {
             if (choice < 0){
                 // create a new room
                 int roomID = rooms.size();
-                //TODO here I create a MapDataBase object for every room, a more efficient approach would be using deep copy to build a new object of WorldMap after this user choose the WorldMap she wants
-                rooms.put(roomID, new RoomController(roomID, player, new MapDataBase<>()));
+                rooms.put(roomID, new Room(roomID, player, new MapDataBase<>()));
             }else {
                 // join an existing room
                 rooms.get(choice).addPlayer(player);
@@ -85,7 +83,6 @@ public class GameServer {
      */
     int askValidRoomNum(Player<?> player) throws IOException {
         player.send(getRoomList());
-
         while (true){
             try {
                 String choice = (String) player.recv();
@@ -106,17 +103,17 @@ public class GameServer {
      * This function will return the current running room list.
      * @return List of room object
      */
-    List<Room> getRoomList(){
+    List<edu.duke.ece651.risk.shared.Room> getRoomList(){
         // clear any finished room
         List<Integer> finishedRoom = new ArrayList<>();
-        List<Room> roomList = new ArrayList<>();
+        List<edu.duke.ece651.risk.shared.Room> roomList = new ArrayList<>();
 
-        for (RoomController room : rooms.values()){
+        for (Room room : rooms.values()){
             if (room.hasFinished()){
                 finishedRoom.add(room.roomID);
             }else {
                 if (!room.hasStarted()){
-                    roomList.add(new Room(room.roomID, ""));
+                    roomList.add(new edu.duke.ece651.risk.shared.Room(room.roomID, ""));
                 }
             }
         }

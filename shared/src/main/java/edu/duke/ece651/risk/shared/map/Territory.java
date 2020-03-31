@@ -15,7 +15,6 @@ public abstract class Territory implements Serializable {
     Set<Territory> neigh;
     //class to represent current status of this territory
     TStatus status;
-
     HashMap<Integer, List<Army>> attackAct;
 
     public Territory(String name) {
@@ -29,9 +28,14 @@ public abstract class Territory implements Serializable {
         return status.getOwnerId();
     }
 
+
     //assign this territory to corresponding user
+    //normally, this method shouldn't be called explicitly outside of the class
+    //since when loseTerritory and add addTerritory are called, this method will be called automatically
     public void setOwner(int id) {
-        status.setIsFree(false);
+        if (id<=0){
+            throw new IllegalArgumentException("a player id must be positive!");
+        }
         status.setOwnerId(id);
     }
 
@@ -52,8 +56,7 @@ public abstract class Territory implements Serializable {
         return status.isFree();
     }
 
-    public void setIsFree(boolean isFree) {
-        status.setIsFree(isFree);
+    public void setIsFree() {
         status.setOwnerId(0);
     }
 
@@ -76,7 +79,6 @@ public abstract class Territory implements Serializable {
 
     //return true only when there is path from current territory to the target territory,
     //and all territories along the path should under the control of owner of current territory
-    //TODO test the correctness of this method
     public boolean hasPathTo(Territory target) {
         if (this == target || target.getOwner() != this.getOwner()) {//a territory is not adjacent to itself
             return false;
@@ -103,7 +105,6 @@ public abstract class Territory implements Serializable {
 
         // clean up attackMap
         attackAct.clear();
-
         return attackResults;
     }
 
@@ -118,4 +119,8 @@ public abstract class Territory implements Serializable {
     abstract AttackResult resolveCombat(int attackerID, List<Army> armies, Random diceAttack, Random diceDefend);
 
     abstract int getSize();
+
+    abstract public int getFoodYield();
+    abstract public int getTechYield();
+
 }

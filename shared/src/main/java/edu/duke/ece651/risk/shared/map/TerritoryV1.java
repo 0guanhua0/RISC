@@ -12,6 +12,7 @@ import java.util.Random;
  * @program: risk-Map
  * @description:
  * this is Territory class that let server use to set/represent/update the state of a certain territory
+ * used for evolution1
  * @author: Chengda Wu (cw402)
  * @create: 2020-03-08 20:37
  **/
@@ -85,18 +86,26 @@ public class TerritoryV1 extends Territory{
                 this.lossNUnits(1);
             }
         }
-
         // update the ownership only if attacker has units left
         if (attackUnits > 0) {
             setOwner(attackerID);
             // left units will remain in this territory
             addNUnits(attackUnits);
         }
-
         return new AttackResult(attackerID, defenderID, srcNames, destName, attackUnits > 0);
     }
 
     public int getSize(){
+        return 0;
+    }
+
+    @Override
+    public int getFoodYield(){
+        return 0;
+    }
+
+    @Override
+    public int getTechYield(){
         return 0;
     }
 }

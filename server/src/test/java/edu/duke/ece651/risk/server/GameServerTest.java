@@ -1,7 +1,6 @@
 package edu.duke.ece651.risk.server;
 
 import edu.duke.ece651.risk.shared.map.MapDataBase;
-import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.risk.shared.network.Client;
 import edu.duke.ece651.risk.shared.network.Server;
 import edu.duke.ece651.risk.shared.player.Player;
@@ -131,7 +130,7 @@ public class GameServerTest {
         Player<String> player2 = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList("abc", "10", "0"))), outputStream);
         int roomID = 0;
         GameServer gameServer = new GameServer(null);
-        gameServer.rooms.put(roomID, new RoomController(roomID, player1, new MapDataBase<String>()));
+        gameServer.rooms.put(roomID, new Room(roomID, player1, new MapDataBase<String>()));
         assertEquals(roomID, gameServer.askValidRoomNum(player2));
         assertEquals("Invalid choice, try again.".repeat(2) + SUCCESSFUL, readAllStringFromObjectStream(outputStream));
     }
@@ -146,9 +145,9 @@ public class GameServerTest {
                                 "a clash of kings"
                         ))), new ByteArrayOutputStream());
 
-        RoomController room1 = new RoomController(1, player, new MapDataBase<>()); // waiting
-        RoomController room2 = new RoomController(2, player, new MapDataBase<>()); // running
-        RoomController room3 = new RoomController(3, player, new MapDataBase<>()); // finish
+        Room room1 = new Room(1, player, new MapDataBase<>()); // waiting
+        Room room2 = new Room(2, player, new MapDataBase<>()); // running
+        Room room3 = new Room(3, player, new MapDataBase<>()); // finish
 
         room2.players.add(new PlayerV1<>("Green", 1));
         room3.gameInfo.winnerID = 1;

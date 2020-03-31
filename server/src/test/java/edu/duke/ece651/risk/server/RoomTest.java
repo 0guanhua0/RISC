@@ -19,22 +19,22 @@ import static edu.duke.ece651.risk.shared.Constant.*;
 import static edu.duke.ece651.risk.shared.Mock.setupMockInput;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class RoomControllerTest {
+public class RoomTest {
 
     @Test
     void testConstructor() throws IOException, ClassNotFoundException {
 
-        assertThrows(IllegalArgumentException.class,()->{new RoomController(-1,null, new MapDataBase<String>());});
+        assertThrows(IllegalArgumentException.class,()->{new Room(-1,null, new MapDataBase<String>());});
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         Player<String> player = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList("hogwarts", "", "a clash of kings"))), outputStream);
         MapDataBase<String> mapDataBase = new MapDataBase<>();
-        RoomController roomController = new RoomController(0, player, mapDataBase);
-        assertEquals(roomController.roomID,0);
-        assertEquals(roomController.players.size(),1);
-        assertEquals(roomController.players.get(0).getId(),1);
-        assertEquals(roomController.players.get(0).getColor(),"red");
-        assertEquals(roomController.map.getAtlas().size(), mapDataBase.getMap("a clash of kings").getAtlas().size());
+        Room room = new Room(0, player, mapDataBase);
+        assertEquals(room.roomID,0);
+        assertEquals(room.players.size(),1);
+        assertEquals(room.players.get(0).getId(),1);
+        assertEquals(room.players.get(0).getColor(),"red");
+        assertEquals(room.map.getAtlas().size(), mapDataBase.getMap("a clash of kings").getAtlas().size());
     }
 
     @Test
@@ -43,32 +43,32 @@ public class RoomControllerTest {
         MapDataBase<String> mapDataBase = new MapDataBase<>();
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         Player<String> player = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList("test"))), stream);
-        RoomController roomController = new RoomController(0, player, mapDataBase);
-        roomController.addPlayer(new PlayerV1<>(setupMockInput(new ArrayList<>()), new ByteArrayOutputStream()));
-        roomController.addPlayer(new PlayerV1<>(setupMockInput(new ArrayList<>()), new ByteArrayOutputStream()));
+        Room room = new Room(0, player, mapDataBase);
+        room.addPlayer(new PlayerV1<>(setupMockInput(new ArrayList<>()), new ByteArrayOutputStream()));
+        room.addPlayer(new PlayerV1<>(setupMockInput(new ArrayList<>()), new ByteArrayOutputStream()));
         // already have enough players, will not add
-        roomController.addPlayer(new PlayerV1<>(setupMockInput(new ArrayList<>()), new ByteArrayOutputStream()));
-        roomController.addPlayer(new PlayerV1<>(setupMockInput(new ArrayList<>()), new ByteArrayOutputStream()));
+        room.addPlayer(new PlayerV1<>(setupMockInput(new ArrayList<>()), new ByteArrayOutputStream()));
+        room.addPlayer(new PlayerV1<>(setupMockInput(new ArrayList<>()), new ByteArrayOutputStream()));
 
-        assertEquals(roomController.players.size(),3);
-        assertEquals(roomController.players.get(0).getColor(),"red");
-        assertEquals(roomController.players.get(1).getColor(),"blue");
-        assertEquals(roomController.players.get(2).getColor(),"black");
-        assertEquals(roomController.players.size(), roomController.map.getColorList().size());
+        assertEquals(room.players.size(),3);
+        assertEquals(room.players.get(0).getColor(),"red");
+        assertEquals(room.players.get(1).getColor(),"blue");
+        assertEquals(room.players.get(2).getColor(),"black");
+        assertEquals(room.players.size(), room.map.getColorList().size());
     }
 
     @Test
     public void testAskForMap() throws IOException, ClassNotFoundException {
-        assertThrows(IllegalArgumentException.class,()->{new RoomController(-1,null, new MapDataBase<String>());});
+        assertThrows(IllegalArgumentException.class,()->{new Room(-1,null, new MapDataBase<String>());});
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
         Player<String> player = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList("hogwarts", "","a clash of kings"))), stream);
         MapDataBase<String> mapDataBase = new MapDataBase<>();
-        RoomController roomController = new RoomController(0, player, mapDataBase);
-        assertEquals(roomController.roomID,0);
-        assertEquals(roomController.players.size(),1);
-        assertEquals(roomController.map,mapDataBase.getMap("a clash of kings"));
+        Room room = new Room(0, player, mapDataBase);
+        assertEquals(room.roomID,0);
+        assertEquals(room.players.size(),1);
+        assertEquals(room.map,mapDataBase.getMap("a clash of kings"));
 
         ByteArrayInputStream temp = new ByteArrayInputStream(stream.toByteArray());
         ObjectInputStream objectInputStream = new ObjectInputStream(temp);
@@ -95,9 +95,9 @@ public class RoomControllerTest {
         Player<String> player = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList("a clash of kings"))), outputStream);
         MapDataBase<String> mapDataBase = new MapDataBase<>();
         WorldMap<String> curMap = mapDataBase.getMap("a clash of kings");
-        RoomController roomController = new RoomController(0, player, mapDataBase);
+        Room room = new Room(0, player, mapDataBase);
         try {
-            roomController.addPlayer(new PlayerV1<>(setupMockInput(new ArrayList<>()), new ByteArrayOutputStream()));
+            room.addPlayer(new PlayerV1<>(setupMockInput(new ArrayList<>()), new ByteArrayOutputStream()));
         }catch (EOFException ignored){
 
         }
@@ -108,33 +108,33 @@ public class RoomControllerTest {
         Territory t5 = curMap.getTerritory("the storm kingdom");
         Territory t6 = curMap.getTerritory("principality of dorne");
 
-        Player<String> player1 = roomController.players.get(0);
-        Player<String> player2 = roomController.players.get(1);
+        Player<String> player1 = room.players.get(0);
+        Player<String> player2 = room.players.get(1);
         player1.addTerritory(t1);
         player1.addTerritory(t2);
         player1.addTerritory(t3);
         player1.addTerritory(t4);
         player1.addTerritory(t5);
         player1.addTerritory(t6);
-        roomController.gameInfo.winnerID = -1;
-        roomController.checkWinner();
-        assertEquals(roomController.gameInfo.winnerID,1);
+        room.gameInfo.winnerID = -1;
+        room.checkWinner();
+        assertEquals(room.gameInfo.winnerID,1);
 
         player1.loseTerritory(t1);
         player2.addTerritory(t1);
-        roomController.gameInfo.winnerID = -1;
-        roomController.checkWinner();
-        assertEquals(roomController.gameInfo.winnerID,-1);
+        room.gameInfo.winnerID = -1;
+        room.checkWinner();
+        assertEquals(room.gameInfo.winnerID,-1);
 
         player2.loseTerritory(t1);
         player1.addTerritory(t1);
-        roomController.gameInfo.winnerID = -1;
-        roomController.checkWinner();
-        assertEquals(roomController.gameInfo.winnerID,1);
+        room.gameInfo.winnerID = -1;
+        room.checkWinner();
+        assertEquals(room.gameInfo.winnerID,1);
 
         Territory test = new TerritoryV1("some name");
         player1.addTerritory(test);
-        assertThrows(IllegalStateException.class, roomController::checkWinner);
+        assertThrows(IllegalStateException.class, room::checkWinner);
     }
 
     @Test
@@ -142,8 +142,8 @@ public class RoomControllerTest {
         Player<String> player1 = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList("hogwarts", "", "a clash of kings"))), new ByteArrayOutputStream());
         Player<String> player2 = new PlayerV1<>("Green", 2);
 
-        RoomController roomController = new RoomController(0, player1, new MapDataBase<>());
-        roomController.players.add(player2);
+        Room room = new Room(0, player1, new MapDataBase<>());
+        room.players.add(player2);
 
         String t1 = "the storm kingdom";
         String t2 = "kingdom of the reach";
@@ -152,24 +152,24 @@ public class RoomControllerTest {
         String t5 = "principality of dorne";
         String t6 = "kingdom of the north";
 
-        roomController.map.getTerritory(t1).addNUnits(8);
-        roomController.map.getTerritory(t2).addNUnits(10);
-        roomController.map.getTerritory(t3).addNUnits(15);
-        roomController.map.getTerritory(t5).addNUnits(2);
+        room.map.getTerritory(t1).addNUnits(8);
+        room.map.getTerritory(t2).addNUnits(10);
+        room.map.getTerritory(t3).addNUnits(15);
+        room.map.getTerritory(t5).addNUnits(2);
 
-        player1.addTerritory(roomController.map.getTerritory(t2));
-        player1.addTerritory(roomController.map.getTerritory(t3));
-        player2.addTerritory(roomController.map.getTerritory(t1));
-        player2.addTerritory(roomController.map.getTerritory(t5));
+        player1.addTerritory(room.map.getTerritory(t2));
+        player1.addTerritory(room.map.getTerritory(t3));
+        player2.addTerritory(room.map.getTerritory(t1));
+        player2.addTerritory(room.map.getTerritory(t5));
 
         // attacker lose
-        roomController.map.getTerritory(t1).addAttack(1, new Army(1, t3, 1));
+        room.map.getTerritory(t1).addAttack(1, new Army(1, t3, 1));
         // attacker win
-        roomController.map.getTerritory(t5).addAttack(1, new Army(1, t2, 10));
+        room.map.getTerritory(t5).addAttack(1, new Army(1, t2, 10));
 
         assertEquals(2, player1.getTerrNum());
         assertEquals(2, player2.getTerrNum());
-        roomController.resolveCombats();
+        room.resolveCombats();
         assertEquals(3, player1.getTerrNum());
         assertEquals(1, player2.getTerrNum());
     }
@@ -182,10 +182,10 @@ public class RoomControllerTest {
         Player<String> player1 = new PlayerV1<>("Red", 1, setupMockInput(new ArrayList<>(Arrays.asList("a clash of kings"))), p1OutStream);
         Player<String> player2 = new PlayerV1<>("Blue", 2, setupMockInput(new ArrayList<>()), p2OutStream);
 
-        RoomController roomController = new RoomController(0, player1, new MapDataBase<>());
-        roomController.players.add(player2);
-        roomController.gameInfo.winnerID = 1;
-        roomController.endGame();
+        Room room = new Room(0, player1, new MapDataBase<>());
+        room.players.add(player2);
+        room.gameInfo.winnerID = 1;
+        room.endGame();
         ObjectInputStream s1 = new ObjectInputStream(new ByteArrayInputStream(p1OutStream.toByteArray()));
         ObjectInputStream s2 = new ObjectInputStream(new ByteArrayInputStream(p2OutStream.toByteArray()));
         s1.readObject(); // mapDataBase
@@ -268,10 +268,10 @@ public class RoomControllerTest {
                                 ACTION_DONE
                         ))), new ByteArrayOutputStream());
 
-        RoomController roomController = new RoomController(1, player1, new MapDataBase<>());
-        roomController.addPlayer(player2);
+        Room room = new Room(1, player1, new MapDataBase<>());
+        room.addPlayer(player2);
         // player 1 should win the game
         Thread.sleep(500); // because the game will run in a separate thread, we will need to wait some time and then check the result
-        assertEquals(1, roomController.gameInfo.winnerID);
+        assertEquals(1, room.gameInfo.winnerID);
     }
 }

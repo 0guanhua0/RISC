@@ -1,5 +1,6 @@
 package edu.duke.ece651.risk.shared.map;
 
+import edu.duke.ece651.risk.shared.WorldState;
 import edu.duke.ece651.risk.shared.action.AttackAction;
 import edu.duke.ece651.risk.shared.action.AttackResult;
 import edu.duke.ece651.risk.shared.player.Player;
@@ -18,12 +19,15 @@ class TerritoryV1Test {
 
 
     @Test
-    void getOwner() {
+    void testSetGetOwner() {
         TerritoryV1 stormKindom = new TerritoryV1("The Storm Kindom");
         stormKindom.setOwner(3);
         assert (3 == stormKindom.getOwner());
         assert (!stormKindom.isFree());
         assertEquals("The Storm Kindom", stormKindom.getName());
+        assertThrows(IllegalArgumentException.class,()->{stormKindom.setOwner(0);});
+        assertThrows(IllegalArgumentException.class,()->{stormKindom.setOwner(-1);});
+
     }
 
     @Test
@@ -88,7 +92,7 @@ class TerritoryV1Test {
         assert (territoryV1.isFree());
         territoryV1.setOwner(3);
         assert (!territoryV1.isFree());
-        territoryV1.setIsFree(true);
+        territoryV1.setIsFree();
         assert (territoryV1.isFree());
     }
 
@@ -156,6 +160,7 @@ class TerritoryV1Test {
         Territory north = worldMap.getTerritory("kingdom of the north");
         Territory dorne = worldMap.getTerritory("principality of dorne");
         //two players join this game
+
         Player<String> p1 = new PlayerV1<>("Red", 1);
         Player<String> p2 = new PlayerV1<>("Blue", 2);
         //assign some territories to each player
@@ -181,13 +186,17 @@ class TerritoryV1Test {
         AttackAction a10 = new AttackAction("kingdom of the rock", "kingdom of the reach", 1, 10);
         AttackAction a11 = new AttackAction("principality of dorne", "kingdom of the reach", 1, 5);
         AttackAction a12 = new AttackAction("kingdom of mountain and vale", "the storm kingdom", 1, 1);
-        assertTrue(a10.perform(worldMap));
-        assertTrue(a11.perform(worldMap));
-        assertTrue(a12.perform(worldMap));
+
+        WorldState worldState1 = new WorldState(p1,worldMap);
+        WorldState worldState2 = new WorldState(p2,worldMap);
+
+        assertTrue(a10.perform(worldState1));
+        assertTrue(a11.perform(worldState1));
+        assertTrue(a12.perform(worldState1));
 
         //player 2 attack to empty territory
         AttackAction a20 = new AttackAction("kingdom of the reach", "kingdom of the rock", 2, 2);
-        assertTrue(a20.perform(worldMap));
+        assertTrue(a20.perform(worldState2));
 
         //perform
         List<AttackResult> resultList0 = reach.resolveCombats();
@@ -218,5 +227,17 @@ class TerritoryV1Test {
     void getSize() throws IOException {
         TerritoryV1 name = new TerritoryV1("name");
         assertEquals(name.getSize(),0);
+    }
+
+    @Test
+    void getFoodYield() {
+        TerritoryV1 name = new TerritoryV1("name");
+        assertEquals(0,name.getFoodYield());
+    }
+
+    @Test
+    void getTechYield() {
+        TerritoryV1 name = new TerritoryV1("name");
+        assertEquals(0,name.getTechYield());
     }
 }
