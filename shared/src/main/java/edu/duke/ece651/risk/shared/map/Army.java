@@ -1,22 +1,18 @@
 package edu.duke.ece651.risk.shared.map;
 
 import java.io.Serializable;
+import java.util.Map;
 
 public class Army implements Serializable {
     // where this army comes from(e.g. territory name)
     String src;
-    // number of units in this army
-    int unitNums;
-    //technology level of these units
-    int level;
+    Map<Integer,Integer> levelToNum;
 
 
 
-
-    public Army(int playerID, String src, int unitNums,int level) {
+    public Army(int playerID, String src, Map<Integer,Integer> levelToNuml) {
         this.src = src;
-        this.unitNums = unitNums;
-        this.level = level;
+        this.levelToNum = levelToNuml;
     }
 
     public String getSrc() {
@@ -24,6 +20,7 @@ public class Army implements Serializable {
     }
 
     public int getUnitNums() {
-        return unitNums;
+        return levelToNum.get(0);
     }
+
 }
