@@ -4,13 +4,8 @@ import java.sql.*;
 
 //todo: add change password, encrypt password
 public class SQL {
-    Connection conn = null;
 
     public SQL() throws ClassNotFoundException, SQLException {
-
-
-        Class.forName("org.postgresql.Driver");
-        conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/risk", "postgres", "postgres");
         //drop table if exists
         dropTable();
         //create table
@@ -19,7 +14,10 @@ public class SQL {
 
     }
 
-    public void createTable() throws SQLException {
+    public void createTable() throws SQLException, ClassNotFoundException {
+        Class.forName("org.postgresql.Driver");
+        Connection conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/risk", "postgres", "postgres");
+
         Statement statement = conn.createStatement();
         // create table
         String sql = "CREATE TABLE risk (PLAYER_ID SERIAL PRIMARY KEY," +
@@ -27,19 +25,27 @@ public class SQL {
                 "PASSWORD TEXT NOT NULL);";
         statement.executeUpdate(sql);
         statement.close();
+        conn.close();
     }
 
 
-    public void dropTable() throws SQLException {
+    public void dropTable() throws SQLException, ClassNotFoundException {
+        Class.forName("org.postgresql.Driver");
+        Connection conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/risk", "postgres", "postgres");
+
         Statement statement = conn.createStatement();
         // create table
         String sql = "DROP TABLE IF EXISTS risk;";
         statement.executeUpdate(sql);
         statement.close();
+        conn.close();
     }
 
 
-    public boolean addUser(String name, String pwd) throws SQLException {
+    public boolean addUser(String name, String pwd) throws SQLException, ClassNotFoundException {
+        Class.forName("org.postgresql.Driver");
+        Connection conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/risk", "postgres", "postgres");
+
         // ask postgres to crypt the password
 
         //check if user already exists
@@ -53,22 +59,31 @@ public class SQL {
                 ");", name, pwd));
 
         statement.close();
+        conn.close();
         return true;
     }
 
-    public boolean authUser(String name, String pwd) throws SQLException {
+    public boolean authUser(String name, String pwd) throws SQLException, ClassNotFoundException {
+        Class.forName("org.postgresql.Driver");
+        Connection conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/risk", "postgres", "postgres");
+
         Statement statement = conn.createStatement();
         ResultSet set = statement.executeQuery(String.format("SELECT PLAYER_ID \n" +
                 "  FROM risk\n" +
                 " WHERE name = '%s' \n" +
                 "   AND password = '%s'", name, pwd));
         Boolean rst = set.next();
+        set.close();
         statement.close();
+        conn.close();
         return rst;
 
     }
 
-    public boolean authUserName(String name) throws SQLException {
+    public boolean authUserName(String name) throws SQLException, ClassNotFoundException {
+
+        Class.forName("org.postgresql.Driver");
+        Connection conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/risk", "postgres", "postgres");
 
         Statement statement = conn.createStatement();
         ResultSet set = statement.executeQuery(String.format("SELECT PLAYER_ID \n" +
@@ -76,7 +91,10 @@ public class SQL {
                 " WHERE name = '%s' ", name));
 
         Boolean rst = set.next();
+
+        set.close();
         statement.close();
+        conn.close();
         return rst;
 
     }
