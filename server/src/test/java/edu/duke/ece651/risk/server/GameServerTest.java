@@ -74,8 +74,8 @@ public class GameServerTest {
             GameServer gameServer = null;
             try {
                 gameServer = new GameServer(server);
-            } catch (SQLException | ClassNotFoundException e) {
-                e.printStackTrace();
+            } catch (SQLException | ClassNotFoundException ignored) {
+                //unreachable
             }
             gameServer.run();
         });
