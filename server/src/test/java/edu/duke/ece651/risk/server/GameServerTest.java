@@ -51,6 +51,7 @@ public class GameServerTest {
                 "\"action\": \"signup\" }"))));
         when(socket1.getOutputStream()).thenReturn(outputStream);
 
+
         Socket socket2 = mock(Socket.class);
         when(socket2.getInputStream()).thenReturn(setupMockInput(new ArrayList<>(Arrays.asList("{\"userName\": \"name2\",\n" +
                 "\"userPassword\": \"password\",\n" +
