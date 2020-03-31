@@ -27,6 +27,9 @@
     <string name="add_room_unselected_map">not selected yet</string>
     <string name="add_room_create">Create</string>
 
+    <!--  wait game activity  -->
+    <string name="wait_game_promt">Waiting for other player…</string>
+
     <string name="menu_home">Home</string>
     <string name="menu_update">Change Password</string>
     <string name="menu_about">About</string>

@@ -98,7 +98,7 @@ public class NewRoomActivity extends AppCompatActivity {
             }
             // TODO: send the new room info to server and receive response
             showToastUI(NewRoomActivity.this, "Create new room successful.");
-            Intent intent = new Intent(NewRoomActivity.this, PlayGameActivity.class);
+            Intent intent = new Intent(NewRoomActivity.this, WaitGameActivity.class);
             startActivity(intent);
             // kill current activity, user can't go back
             finish();

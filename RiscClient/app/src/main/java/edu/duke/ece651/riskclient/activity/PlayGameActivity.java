@@ -1,7 +1,9 @@
 package edu.duke.ece651.riskclient.activity;
 
+import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 
 import androidx.appcompat.app.AlertDialog;
@@ -39,6 +41,7 @@ public class PlayGameActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    // probably want to extract this into constant
     private void goBack(){
         // TODO: change text to save & exit
         AlertDialog.Builder builder = new AlertDialog.Builder(PlayGameActivity.this);
@@ -52,6 +55,8 @@ public class PlayGameActivity extends AppCompatActivity {
             // TODO: communicate with the server, send the exit info
             onBackPressed();
         });
+
+        builder.setOnCancelListener(dialog -> showToastUI(PlayGameActivity.this, "cancel"));
         builder.setMessage("Do you want to save the game?");
         AlertDialog dialog = builder.create();
         dialog.setOnShowListener(dialog12 -> {
