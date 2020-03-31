@@ -39,6 +39,7 @@ public class SQL {
     }
 
 
+
     public boolean addUser(String name, String pwd) throws SQLException {
         // ask postgres to crypt the password
 
