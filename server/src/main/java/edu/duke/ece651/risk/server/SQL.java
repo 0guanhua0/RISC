@@ -72,7 +72,7 @@ public class SQL {
                 "  FROM risk\n" +
                 " WHERE name = '%s' \n" +
                 "   AND password = '%s'", name, pwd));
-        Boolean rst = set.next();
+        boolean rst = set.next();
         set.close();
         statement.close();
         conn.close();
@@ -89,7 +89,7 @@ public class SQL {
                 "  FROM risk\n" +
                 " WHERE name = '%s' ", name));
 
-        Boolean rst = set.next();
+        boolean rst = set.next();
 
         set.close();
         statement.close();
