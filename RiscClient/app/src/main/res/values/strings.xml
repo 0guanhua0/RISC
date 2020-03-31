@@ -30,6 +30,11 @@
     <!--  wait game activity  -->
     <string name="wait_game_promt">Waiting for other player…</string>
 
+    <!--  play game activity  -->
+    <string name="play_game_move_attack">Move/\nAttack</string>
+    <string name="play_game_upgrade">Upgrade</string>
+    <string name="play_game_done">Done</string>
+
     <string name="menu_home">Home</string>
     <string name="menu_update">Change Password</string>
     <string name="menu_about">About</string>

@@ -50,8 +50,9 @@ public class WaitGameActivity extends AppCompatActivity {
             public void run() {
                 Intent intent = new Intent(WaitGameActivity.this, PlayGameActivity.class);
                 startActivity(intent);
+                finish();
             }
-        }, 100);
+        }, 1000);
     }
 
     @Override

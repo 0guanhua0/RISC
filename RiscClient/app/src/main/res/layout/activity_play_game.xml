@@ -11,6 +11,68 @@
         android:id="@+id/app_bar"
         layout="@layout/app_bar"/>
 
+    <ImageView
+        android:id="@+id/img_map"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/image_height"
+        android:layout_margin="@dimen/normal_margin"
+        android:src="@drawable/risk_img"
+        app:layout_constraintTop_toBottomOf="@id/app_bar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="@dimen/normal_margin"
+        android:background="@drawable/border"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/img_map"
+        app:layout_constraintBottom_toTopOf="@id/ll_button_group"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/ll_button_group"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:layout_marginVertical="@dimen/normal_margin"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <Button
+            android:id="@+id/bt_move"
+            android:layout_width="@dimen/small_button_width"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="@dimen/normal_margin"
+            android:text="@string/play_game_move_attack"
+            style="@style/Widget.Button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+        <Button
+            android:id="@+id/bt_upgrade"
+            android:layout_width="@dimen/small_button_width"
+            android:layout_height="match_parent"
+            android:text="@string/play_game_upgrade"
+            style="@style/Widget.Button"
+            app:layout_constraintStart_toEndOf="@id/bt_move"
+            app:layout_constraintEnd_toStartOf="@id/bt_done"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+        <Button
+            android:id="@+id/bt_done"
+            android:layout_width="@dimen/small_button_width"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="@dimen/normal_margin"
+            android:text="@string/play_game_done"
+            style="@style/Widget.Button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

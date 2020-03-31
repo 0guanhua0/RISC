@@ -1,9 +1,6 @@
 package edu.duke.ece651.riskclient.activity;
 
-import android.content.DialogInterface;
-import android.content.res.Resources;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 
 import androidx.appcompat.app.AlertDialog;
@@ -16,15 +13,20 @@ import static edu.duke.ece651.riskclient.utils.UIUtils.showToastUI;
 
 public class PlayGameActivity extends AppCompatActivity {
 
+    private String roomName;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play_game);
 
+        // TODO: pass room name inside
+        roomName = "Room Name Here";
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null){
-            getSupportActionBar().setTitle("Play Game");
+            getSupportActionBar().setTitle(roomName);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
     }

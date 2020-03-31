@@ -11,7 +11,8 @@
     <dimen name="normal_margin_horizontal">10dp</dimen>
     <dimen name="small_margin_horizontal">8dp</dimen>
 
-    <dimen name="button_width">120dp</dimen>
+    <dimen name="normal_button_width">120dp</dimen>
+    <dimen name="small_button_width">105dp</dimen>
 
     <!-- dimensions for navigation view -->
     <dimen name="nav_image_size">68dp</dimen>
@@ -26,6 +27,6 @@
     <dimen name="fab_margin">16dp</dimen>
 
     <dimen name="round_level">10dp</dimen>
-
     <dimen name="normal_chip_height">30dp</dimen>
+    <dimen name="image_height">200dp</dimen>
 </resources>
