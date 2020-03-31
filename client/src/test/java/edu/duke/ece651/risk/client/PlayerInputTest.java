@@ -21,8 +21,10 @@ class PlayerInputTest {
 
     @BeforeAll
     static void beforeAll(){
-        t1.setOwner(0);
-        t2.setOwner(0);
+        //TODO note that it's not the correct way to test this code
+        //who writes the code here should refactor it
+        t1.setIsFree();
+        t2.setIsFree();
         t3.setOwner(1);
 
         t1.addNUnits(10);

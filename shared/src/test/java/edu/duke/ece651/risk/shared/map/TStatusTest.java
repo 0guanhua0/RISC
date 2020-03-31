@@ -16,11 +16,11 @@ class TStatusTest {
     @Test
     void testFree() {
         TStatus test = new TStatus("test");
-        assert (true==test.isFree());
-        test.setIsFree(false);
-        assert (false==test.isFree);
-        test.setIsFree(true);
-        assert (true==test.isFree);
+        assertTrue(test.isFree());
+        test.setOwnerId(1);
+        assertFalse(test.isFree());
+        test.setOwnerId(0);
+        assertTrue(test.isFree());
     }
 
     @Test

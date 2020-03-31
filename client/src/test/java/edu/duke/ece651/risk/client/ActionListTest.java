@@ -20,9 +20,9 @@ class ActionListTest {
         List<Action> m = tmp.get(Constant.ACTION_MOVE);
         assert (m.isEmpty());
 
-        AttackAction attackAction = new AttackAction("a", "B", 0, 0);
-        aL.addAction(Constant.ACTION_ATTACK, attackAction);
+        AttackAction attackAction1 = new AttackAction("a", "B", 0, 0);
+        aL.addAction(Constant.ACTION_ATTACK, attackAction1);
         a = tmp.get(Constant.ACTION_ATTACK);
-        assert (a.contains(attackAction));
+        assert (a.contains(attackAction1));
     }
 }

@@ -1,7 +1,10 @@
 package edu.duke.ece651.risk.shared.map;
 
+import edu.duke.ece651.risk.shared.Mock;
+import edu.duke.ece651.risk.shared.player.PlayerV2;
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
@@ -34,11 +37,22 @@ class WorldMapTest {
            put("c",2);
         }};
 
+        Map<String,Integer> food = new HashMap<>(){{
+            put("a",3);
+            put("b",3);
+            put("c",3);
+        }};
+
+        Map<String,Integer> tech = new HashMap<>(){{
+            put("a",4);
+            put("b",4);
+            put("c",4);
+        }};
         List<String> colorList = new ArrayList<>(Arrays.asList("red","blue"));
-        assertThrows(AssertionError.class,()->{new WorldMapV2<>(map,colorList,groups,sizes);});
+        assertThrows(AssertionError.class,()->{new WorldMapV2<>(map,colorList,groups,sizes,food,tech);});
 
         List<String> colorList2 = new ArrayList<>(Arrays.asList("red","blue","pink","yellow"));
-        assertThrows(AssertionError.class,()->{new WorldMapV2<>(map,colorList2,groups,sizes);});
+        assertThrows(AssertionError.class,()->{new WorldMapV2<>(map,colorList2,groups,sizes,food,tech);});
 
 
         MapDataBase<String> mapDataBase = new MapDataBase<>();
@@ -130,39 +144,39 @@ class WorldMapTest {
     void testGetDist() throws IOException {
         MapDataBase<String> mapDataBase = new MapDataBase<>();
         WorldMap<String> kingMap = mapDataBase.getMap("a clash of kings");
-        assertThrows(IllegalArgumentException.class,()->{kingMap.getDist("a", storm);});
-        assertThrows(IllegalArgumentException.class,()->{kingMap.getDist(storm,"a");});
-        assertEquals(kingMap.getDist(storm, storm),0);
-        assertEquals(kingMap.getDist(north,rock),5);
-        assertEquals(kingMap.getDist(rock,north),3);
-        assertEquals(kingMap.getDist(reach,vale),5);
-        assertEquals(kingMap.getDist(dorne,rock),6);
+        //in the begining, the owner id of all maps is 0, which means they are all free now
+        assertEquals(Integer.MAX_VALUE,kingMap.getMinCtrlDist("a", storm));
+        assertEquals(Integer.MAX_VALUE,kingMap.getMinCtrlDist(storm,"a"));
+        assertEquals(kingMap.getMinCtrlDist(storm, storm),0);
+        assertEquals(kingMap.getMinCtrlDist(north,rock),5);
+        assertEquals(kingMap.getMinCtrlDist(rock,north),3);
+        assertEquals(kingMap.getMinCtrlDist(reach,vale),5);
+        assertEquals(kingMap.getMinCtrlDist(dorne,rock),6);
+
+        //test when territories are owned by different user
+        PlayerV2<String> player1 = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),new ByteArrayOutputStream());
+        player1.setId(1);
+        PlayerV2<String> player2 = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),new ByteArrayOutputStream());
+        player2.setId(2);
+
+        player1.addTerritory(kingMap.getTerritory(storm));
+        player1.addTerritory(kingMap.getTerritory(north));
+
+        assertEquals(Integer.MAX_VALUE,kingMap.getMinCtrlDist(storm,north));
+        player1.addTerritory(kingMap.getTerritory(rock));
+        assertEquals(5,kingMap.getMinCtrlDist(storm,north));
+        player1.addTerritory(kingMap.getTerritory(vale));
+        assertEquals(4,kingMap.getMinCtrlDist(storm,north));
+        player1.loseTerritory(kingMap.getTerritory(vale));
+        player2.addTerritory(kingMap.getTerritory(vale));
+        assertEquals(5,kingMap.getMinCtrlDist(storm,north));
+        assertEquals(Integer.MAX_VALUE,kingMap.getMinCtrlDist(vale,north));
 
         WorldMap<String> ringMap = mapDataBase.getMap("ring");
-        assertEquals(ringMap.getDist("a","a"),0);
-        assertEquals(ringMap.getDist("a","c"),4);
-        assertEquals(ringMap.getDist("a","e"),8);
+        assertEquals(ringMap.getMinCtrlDist("a","a"),0);
+        assertEquals(ringMap.getMinCtrlDist("a","c"),4);
+        assertEquals(ringMap.getMinCtrlDist("a","e"),8);
 
-        Map<String, Set<String>> adjaList = new HashMap<>(){{
-            put("a",new HashSet<>());
-            put("b",new HashSet<>());
-        }};
-        List<String> colorList = new ArrayList<>(){{
-            add("red");
-        }};
-        Set<String> set = new HashSet<>(){{
-            add("a");
-            add("b");
-        }};
-        Map<Set<String>, Boolean> groups = new HashMap<>(){{
-            put(set,false);
-        }};
-        Map<String,Integer> sizes = new HashMap<>(){{
-            put("a",0);
-            put("b",0);
-        }};
 
-        WorldMap<String> test = new WorldMapV2(adjaList,colorList,groups,sizes);
-        assertThrows(IllegalStateException.class,()->{test.getDist("a","b");});
     }
 }

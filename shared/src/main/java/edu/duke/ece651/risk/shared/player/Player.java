@@ -30,7 +30,9 @@ public abstract class Player<T> {
         this.territories = new HashSet<>();
         this.in = new ObjectInputStream(in);
         this.out = new ObjectOutputStream(out);
+        this.id = -1;
     }
+
 
     //since only after first player communicating with server and selecting the map
     // can we get the color field for player, so color can't be a input field for first player
@@ -88,7 +90,7 @@ public abstract class Player<T> {
             throw new IllegalArgumentException("the territory doesn't belong to this user!");
         }
         territories.remove(territory);
-        territory.setIsFree(true);
+        territory.setIsFree();
     }
 
     public void send(Object data) throws IOException {
@@ -116,4 +118,25 @@ public abstract class Player<T> {
     public int getTerrNum(){
         return territories.size();
     }
+
+    /**
+     * this method is called to add the resource production of each territory
+     * that they own at the end of the turn.
+     */
+    public abstract void updateState();
+
+    public abstract int getFoodNum();
+
+    public abstract int getTechNum();
+
+    public abstract void useFood(int foodUse);
+
+    public abstract void useTech(int techUse);
+
+    public abstract boolean canUpTech();
+
+    public abstract void upTech();
+
+
+
 }

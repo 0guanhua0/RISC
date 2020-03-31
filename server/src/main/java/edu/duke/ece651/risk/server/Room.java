@@ -15,7 +15,7 @@ import static edu.duke.ece651.risk.shared.Constant.*;
 
 //TODO for every method that have networking, take client losing connection into consideration
 //TODO for every method that have networking, handle some exceptions rather than just throwing it
-public class RoomController {
+public class Room {
     int roomID;
     // all players in current room
     List<Player<String>> players;
@@ -33,7 +33,7 @@ public class RoomController {
      * @throws IllegalArgumentException probably because of invalid roomID(should be positive)
      * @throws ClassNotFoundException probably because of not follow the protocol
      */
-    public RoomController(int roomID, Player<String> player, MapDataBase<String> mapDataBase) throws IOException, IllegalArgumentException, ClassNotFoundException {
+    public Room(int roomID, Player<String> player, MapDataBase<String> mapDataBase) throws IOException, IllegalArgumentException, ClassNotFoundException {
         if (roomID < 0){
             throw new IllegalArgumentException("Invalid value of Room Id");
         }
@@ -195,10 +195,20 @@ public class RoomController {
         }
     }
 
-    void addNewUnits(){
+    /**
+     * update the state(e.g. num of units and resources)
+     * of current map after the end of each single round of game
+     */
+    void updateWorld(){
+        //add one units to all territory
         for (Territory territory : map.getAtlas().values()){
             territory.addNUnits(1);
         }
+        //update tech&food resources for every player
+        for (Player<String> player : players) {
+            player.updateState();
+        }
+
     }
 
     boolean hasFinished(){
@@ -238,8 +248,7 @@ public class RoomController {
                 break;
             }
             gameInfo.nextRound();
-            // add one units to all territory
-            addNewUnits();
+            updateWorld();
         }
         endGame();
     }

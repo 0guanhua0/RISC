@@ -1,5 +1,6 @@
 package edu.duke.ece651.risk.shared.action;
 
+import edu.duke.ece651.risk.shared.WorldState;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 
 /**
@@ -11,11 +12,11 @@ public interface Action {
      * Check the validation of current action.
      * @return true if valid
      */
-    boolean isValid(WorldMap<?> worldMap);
+    boolean isValid(WorldState worldState);
 
     /**
      * Perform the action.
      * @return true if perform successful
      */
-    boolean perform(WorldMap<?> worldMap);
+    boolean perform(WorldState worldState);
 }

@@ -1,5 +1,8 @@
 package edu.duke.ece651.risk.shared;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * This class stores some common constant value which will be used by both client and server side.
  * (e.g. the "key" value of serialization and deserialization)
@@ -27,6 +30,50 @@ public class Constant {
 
     public static final int UNITS_PER_TERR = 5;
 
+    public static final int INITIAL_FOOD_NUM = 30;
+    public static final int INITIAL_TECH_NUM = 50;
 
-
+    //the key is current technical level, value is the cost of tech resources to upgrade maximum tech level to the next technical level
+    public static final Map<Integer,Integer> TECH_MAP = new HashMap<>(){
+        {
+            put(1,50);
+            put(2,75);
+            put(3,125);
+            put(4,200);
+            put(5,300);
+        }
+    };
+    //key is the level of units, value is the name of corresponding units
+    public static final Map<Integer,String> UNIT_NAME = new HashMap<>(){{
+        put(0,"Light infantry");
+        put(1,"infantry");
+        put(2,"Hussar");
+        put(3,"cavalry");
+        put(4,"Heavy cavalry");
+        put(5,"tank");
+        put(6,"fighter jet");
+    }};
+    //key is the current level of units, value is the cost of tech resources to upgrade this unit to the next technical level
+    public static final Map<Integer,Integer> UP_UNIT_COST = new HashMap<>(){
+        {
+            put(0,3);
+            put(1,8);
+            put(2,19);
+            put(3,25);
+            put(4,35);
+            put(5,50);
+        }
+    };
+    //key is the current level of units, value is the extra bonus for a fight
+    public static final Map<Integer,Integer> UNIT_BONUS = new HashMap<>(){
+        {
+            put(0,0);
+            put(1,1);
+            put(2,3);
+            put(3,5);
+            put(4,8);
+            put(5,11);
+            put(6,15);
+        }
+    };
 }
