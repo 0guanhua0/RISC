@@ -34,6 +34,8 @@
     <string name="play_game_move_attack">Move/\nAttack</string>
     <string name="play_game_upgrade">Upgrade</string>
     <string name="play_game_done">Done</string>
+    <string name="play_game_confirm">Confirm</string>
+    <string name="play_game_decline">Decline</string>
 
     <string name="menu_home">Home</string>
     <string name="menu_update">Change Password</string>

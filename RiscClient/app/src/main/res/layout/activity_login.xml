@@ -93,7 +93,6 @@
                 style="@style/Widget.Button"/>
 
         </LinearLayout>
-
     </LinearLayout>
 
 </ScrollView>

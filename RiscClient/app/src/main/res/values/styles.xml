@@ -45,4 +45,8 @@
         <item name="backgroundTint">?attr/colorPrimary</item>
     </style>
 
+    <style name="Widget.DropDownMenu" parent="Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu">
+
+    </style>
+
 </resources>

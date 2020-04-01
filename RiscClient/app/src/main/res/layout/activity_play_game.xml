@@ -34,7 +34,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/ll_button_group"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="@dimen/large_button_height"
         android:orientation="horizontal"
         android:layout_marginVertical="@dimen/normal_margin"
         app:layout_constraintStart_toStartOf="parent"
