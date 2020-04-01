@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import java.util.HashMap;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 class ActionListTest {
     ActionList aL = new ActionList();
 
@@ -16,13 +18,13 @@ class ActionListTest {
         HashMap<String, List<Action>> tmp =  aL.getActions();
 
         List<Action> a = tmp.get(Constant.ACTION_ATTACK);
-        assert (a.isEmpty());
+        assertTrue(a.isEmpty());
         List<Action> m = tmp.get(Constant.ACTION_MOVE);
-        assert (m.isEmpty());
+        assertTrue(m.isEmpty());
 
         AttackAction attackAction1 = new AttackAction("a", "B", 0, 0);
         aL.addAction(Constant.ACTION_ATTACK, attackAction1);
         a = tmp.get(Constant.ACTION_ATTACK);
-        assert (a.contains(attackAction1));
+        assertTrue(a.contains(attackAction1));
     }
 }

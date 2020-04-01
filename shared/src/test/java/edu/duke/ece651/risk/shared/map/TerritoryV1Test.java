@@ -22,8 +22,8 @@ class TerritoryV1Test {
     void testSetGetOwner() {
         TerritoryV1 stormKindom = new TerritoryV1("The Storm Kindom");
         stormKindom.setOwner(3);
-        assert (3 == stormKindom.getOwner());
-        assert (!stormKindom.isFree());
+        assertEquals(3, stormKindom.getOwner());
+        assertFalse(stormKindom.isFree());
         assertEquals("The Storm Kindom", stormKindom.getName());
         assertThrows(IllegalArgumentException.class,()->{stormKindom.setOwner(0);});
         assertThrows(IllegalArgumentException.class,()->{stormKindom.setOwner(-1);});
@@ -40,24 +40,24 @@ class TerritoryV1Test {
             add(n2);
         }};
         stormKindom.setNeigh(neigh);
-        assert (stormKindom.neigh.contains(n1));
-        assert (stormKindom.neigh.contains(n2));
+        assertTrue(stormKindom.neigh.contains(n1));
+        assertTrue(stormKindom.neigh.contains(n2));
     }
 
     @Test
     void isFree() {
         TerritoryV1 stormKindom = new TerritoryV1("The Storm Kindom");
-        assert (stormKindom.isFree());
+        assertTrue (stormKindom.isFree());
         stormKindom.setOwner(3);
-        assert (3 == stormKindom.getOwner() && !stormKindom.isFree());
+        assertTrue (3 == stormKindom.getOwner() && !stormKindom.isFree());
     }
 
     @Test
     void addNUnits() {
         TerritoryV1 test = new TerritoryV1("test");
-        assert (test.units.isEmpty());
+        assertTrue (test.units.isEmpty());
         test.addNUnits(10);
-        assert (10 == test.getUnitsNum());
+        assertEquals(10, test.getUnitsNum());
         for (Unit unit : test.units) {
             assertEquals("soldier", unit.name);
         }
@@ -67,9 +67,9 @@ class TerritoryV1Test {
     @Test
     void lossNUnits() {
         TerritoryV1 test = new TerritoryV1("test");
-        assert (test.units.isEmpty());
+        assertTrue (test.units.isEmpty());
         test.addNUnits(10);
-        assert (10 == test.getUnitsNum());
+        assertEquals(10, test.getUnitsNum());
         assertThrows(IllegalArgumentException.class, () -> test.lossNUnits(-1));
         assertThrows(IllegalArgumentException.class, () -> test.lossNUnits(11));
         assertEquals(10, test.getUnitsNum());
@@ -78,22 +78,22 @@ class TerritoryV1Test {
         }
 
         test.lossNUnits(5);
-        assert (5 == test.getUnitsNum());
+        assertEquals(5, test.getUnitsNum());
         for (Unit unit : test.units) {
             assertEquals("soldier", unit.name);
         }
         test.lossNUnits(5);
-        assert (0 == test.getUnitsNum());
+        assertEquals(0, test.getUnitsNum());
     }
 
     @Test
     void setStatus() {
         TerritoryV1 territoryV1 = new TerritoryV1("test");
-        assert (territoryV1.isFree());
+        assertTrue (territoryV1.isFree());
         territoryV1.setOwner(3);
-        assert (!territoryV1.isFree());
+        assertFalse(territoryV1.isFree());
         territoryV1.setIsFree();
-        assert (territoryV1.isFree());
+        assertTrue (territoryV1.isFree());
     }
 
     @Test

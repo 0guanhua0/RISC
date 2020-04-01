@@ -10,7 +10,7 @@ class TStatusTest {
     void testOwnerId() {
         TStatus test = new TStatus("test");
         test.setOwnerId(1);
-        assert (1==test.getOwnerId());
+        assertEquals(1, test.getOwnerId());
     }
 
     @Test
@@ -27,6 +27,6 @@ class TStatusTest {
     void getName() {
         TStatus test = new TStatus("test");
         String name = test.getName();
-        assert ("test" ==name);
+        assertSame("test", name);
     }
 }

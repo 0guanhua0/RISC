@@ -70,10 +70,10 @@ class WorldMapTest {
 
         assertEquals("the storm kingdom", territory1.status.getName());
         Set<Territory> neigh = territory1.getNeigh();
-        assert (4==neigh.size());
-        assert (neigh.contains(territory2));
-        assert (neigh.contains(territory3));
-        assert (neigh.contains(territory7));
+        assertEquals(4, neigh.size());
+        assertTrue (neigh.contains(territory2));
+        assertTrue (neigh.contains(territory3));
+        assertTrue (neigh.contains(territory7));
 
         assertThrows(IllegalArgumentException.class, ()->worldMap.getTerritory("The Storm Kingdo"));
 
@@ -84,10 +84,10 @@ class WorldMapTest {
 
 
         //test hasFreeTerritory()
-        assert (worldMap.hasFreeTerritory("The Storm Kingdom"));
+        assertTrue (worldMap.hasFreeTerritory("The Storm Kingdom"));
         territory1.setOwner(1);
-        assert (!worldMap.hasFreeTerritory("The Storm Kingdom"));
-        assert (!worldMap.hasFreeTerritory("Kingdom"));
+        assertFalse(worldMap.hasFreeTerritory("The Storm Kingdom"));
+        assertFalse(worldMap.hasFreeTerritory("Kingdom"));
 
         assertEquals(2, worldMap.getPlayerNums());
     }

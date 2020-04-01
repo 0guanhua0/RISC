@@ -18,9 +18,9 @@ class PlayerTest {
     @Test
     void constructor() throws IOException {
         Player<String> p1 = new PlayerV1<String>("Red", 1);
-        assert (p1.territories.isEmpty());
-        assert (p1.color.equals("Red"));
-        assert (1==p1.id);
+        assertTrue(p1.territories.isEmpty());
+        assertTrue(p1.color.equals("Red"));
+        assertTrue(1==p1.id);
         assertThrows(IllegalArgumentException.class, ()->{new PlayerV1<String>("Red",0);});
 
         Player<String> p2 = new PlayerV1<String>(setupMockInput(new ArrayList<Object>()), new ByteArrayOutputStream());
@@ -55,10 +55,10 @@ class PlayerTest {
         assertThrows(IllegalArgumentException.class,()->{p1.addTerritory(n1);});
         p1.addTerritory(n2);
         assertEquals(2, p1.getTerrNum());
-        assert (p1.territories.contains(n1));
-        assert (p1.territories.contains(n2));
-        assert (1==n1.getOwner());
-        assert (1==n2.getOwner());
+        assertTrue(p1.territories.contains(n1));
+        assertTrue(p1.territories.contains(n2));
+        assertTrue(1==n1.getOwner());
+        assertTrue(1==n2.getOwner());
     }
 
     @Test
@@ -78,10 +78,10 @@ class PlayerTest {
         TerritoryV1 n3 = new TerritoryV1("n3");
         assertThrows(IllegalArgumentException.class, ()-> p1.loseTerritory(n3));
 
-        assert (!p1.territories.contains(n1));
-        assert (p1.territories.contains(n2));
-        assert (n1.isFree());
-        assert (!n2.isFree());
+        assertTrue(!p1.territories.contains(n1));
+        assertTrue(p1.territories.contains(n2));
+        assertTrue(n1.isFree());
+        assertTrue(!n2.isFree());
     }
 
 
