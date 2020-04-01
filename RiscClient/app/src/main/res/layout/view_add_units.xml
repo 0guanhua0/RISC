@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_marginStart="@dimen/normal_margin_horizontal"
+    android:layout_marginEnd="@dimen/normal_margin_horizontal"
+    android:layout_marginTop="@dimen/normal_margin_vertical"
+    android:layout_marginBottom="@dimen/normal_margin_vertical">
+
+    <include
+        android:id="@+id/layout_level"
+        layout="@layout/widget_dropdown"/>
+
+    <include
+        android:id="@+id/layout_number"
+        layout="@layout/widget_dropdown"/>
+</LinearLayout>

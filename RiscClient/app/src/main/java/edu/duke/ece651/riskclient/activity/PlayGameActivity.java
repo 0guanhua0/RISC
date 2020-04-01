@@ -1,14 +1,26 @@
 package edu.duke.ece651.riskclient.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import edu.duke.ece651.risk.shared.map.Territory;
+import edu.duke.ece651.risk.shared.map.TerritoryV2;
+import edu.duke.ece651.risk.shared.map.Unit;
 import edu.duke.ece651.riskclient.R;
+import edu.duke.ece651.riskclient.adapter.TerritoryAdapter;
+import edu.duke.ece651.riskclient.adapter.UnitAdapter;
 
 import static edu.duke.ece651.riskclient.utils.UIUtils.showToastUI;
 
@@ -16,6 +28,8 @@ public class PlayGameActivity extends AppCompatActivity {
     private static final String ROOM_NAME = "edu.duke.ece651.riskclient.playgame.roomname";
 
     private String roomName;
+    private List<Territory> territories;
+    private TerritoryAdapter territoryAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +45,8 @@ public class PlayGameActivity extends AppCompatActivity {
             getSupportActionBar().setTitle(roomName);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+
+        setUpUI();
     }
 
     @Override
@@ -56,6 +72,45 @@ public class PlayGameActivity extends AppCompatActivity {
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void setUpUI(){
+        Button btMoveAttack = findViewById(R.id.bt_move_attack);
+        Button btUpgrade = findViewById(R.id.bt_upgrade);
+        Button btDone = findViewById(R.id.bt_done);
+
+        btMoveAttack.setOnClickListener(v -> {
+            Intent intent = new Intent(PlayGameActivity.this, MoveAttackActivity.class);
+            startActivity(intent);
+        });
+
+        btUpgrade.setOnClickListener(v -> {
+            Intent intent = new Intent(PlayGameActivity.this, UpgradeActivity.class);
+            startActivity(intent);
+        });
+
+        btDone.setOnClickListener(v -> {
+
+        });
+
+        RecyclerView rvTerritoryList = findViewById(R.id.rv_territory_list);
+
+        territories = new ArrayList<>();
+        for (int i = 0; i < 30; i++){
+            territories.add(new TerritoryV2("t" + i, 1, 1, 1));
+        }
+
+        territoryAdapter = new TerritoryAdapter();
+        territoryAdapter.setListener(position -> {
+            Territory territory = territories.get(position);
+            showToastUI(PlayGameActivity.this, territory.getName());
+        });
+
+        rvTerritoryList.setLayoutManager(new LinearLayoutManager(PlayGameActivity.this));
+        rvTerritoryList.setHasFixedSize(true);
+        rvTerritoryList.setAdapter(territoryAdapter);
+
+        territoryAdapter.setTerritories(territories);
     }
 
     // probably want to extract this into constant
