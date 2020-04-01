@@ -11,9 +11,9 @@ class MapDataBaseTest {
     @Test
     void containsMap() throws IOException {
         MapDataBase<String> mapDataBase = new MapDataBase<String>();
-        assert (mapDataBase.containsMap("a clash of kings"));
-        assert (mapDataBase.containsMap("a Clash of Kings"));
-        assert (!mapDataBase.containsMap("Clash of Kings"));
+        assertTrue (mapDataBase.containsMap("a clash of kings"));
+        assertTrue (mapDataBase.containsMap("a Clash of Kings"));
+        assertTrue (!mapDataBase.containsMap("Clash of Kings"));
         assertFalse(mapDataBase.containsMap(null));
     }
 
