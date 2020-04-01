@@ -30,4 +30,8 @@ public class Army implements Serializable {
         return levelToNum.get(0);
     }
 
+    public Map<Integer, Integer> getTroops() {
+        return levelToNum;
+    }
+
 }

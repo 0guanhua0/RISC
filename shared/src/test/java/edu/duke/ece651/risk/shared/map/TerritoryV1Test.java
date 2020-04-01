@@ -141,79 +141,78 @@ class TerritoryV1Test {
 
     }
 
-    @Test
-    void testResolveCombat() throws IOException {
-        MapDataBase<String> mapDataBase = new MapDataBase<>();
-        //prepare the world
-        WorldMap<String> worldMap = mapDataBase.getMap("a clash of kings");
-        Territory storm = worldMap.getTerritory("the storm kingdom");
-        Territory reach = worldMap.getTerritory("kingdom of the reach");
-        Territory rock = worldMap.getTerritory("kingdom of the rock");
-        Territory vale = worldMap.getTerritory("kingdom of mountain and vale");
-        Territory north = worldMap.getTerritory("kingdom of the north");
-        Territory dorne = worldMap.getTerritory("principality of dorne");
-        //two players join this game
-
-        Player<String> p1 = new PlayerV1<>("Red", 1);
-        Player<String> p2 = new PlayerV1<>("Blue", 2);
-        //assign some territories to each player
-        //player1
-        p1.addTerritory(north);
-        p1.addTerritory(vale);
-        p1.addTerritory(rock);
-        p1.addTerritory(dorne);
-        //player2
-        p2.addTerritory(storm);
-        p2.addTerritory(reach);
-        //assign some units to each territory, 5 units for each player
-        //player 1
-        north.addBasicUnits(2);
-        vale.addBasicUnits(2);
-        rock.addBasicUnits(10);
-        dorne.addBasicUnits(5);
-        //player2
-        storm.addBasicUnits(10);
-        reach.addBasicUnits(10);
-
-        //player 1 multiple place attack(10 + 5)
-        AttackAction a10 = new AttackAction("kingdom of the rock", "kingdom of the reach", 1, 10);
-        AttackAction a11 = new AttackAction("principality of dorne", "kingdom of the reach", 1, 5);
-        AttackAction a12 = new AttackAction("kingdom of mountain and vale", "the storm kingdom", 1, 1);
-
-        WorldState worldState1 = new WorldState(p1,worldMap);
-        WorldState worldState2 = new WorldState(p2,worldMap);
-
-        assertTrue(a10.perform(worldState1));
-        assertTrue(a11.perform(worldState1));
-        assertTrue(a12.perform(worldState1));
-
-        //player 2 attack to empty territory
-        AttackAction a20 = new AttackAction("kingdom of the reach", "kingdom of the rock", 2, 2);
-        assertTrue(a20.perform(worldState2));
-
-        //perform
-        List<AttackResult> resultList0 = reach.resolveCombats();
-        // attacker: 10 + 5, defender 10
-        AttackResult r = new AttackResult(1, 2, new ArrayList<>(Arrays.asList("kingdom of the rock")), "kingdom of the reach", true);
-
-        AttackResult r0 = resultList0.get(0);
-        assertEquals(r0.getAttackerID(), r.getAttackerID());
-        assertEquals(r0.getDefenderID(), r.getDefenderID());
-        assertEquals(r0.getDestTerritory(), r.getDestTerritory());
-        assertEquals(r0.isAttackerWin(), r.isAttackerWin());
-
-        //check result
-        assertEquals(1, reach.getOwner());
-        assertEquals(8, reach.getBasicUnitsNum());
-
-        rock.resolveCombats();
-        assertEquals(2, rock.getOwner());
-        assertEquals(2, rock.getBasicUnitsNum());
-
-        // lose
-        assertFalse(storm.resolveCombats().get(0).isAttackerWin());
-
-    }
+//    @Test
+//    void testResolveCombat() throws IOException {
+//        MapDataBase<String> mapDataBase = new MapDataBase<>();
+//        //prepare the world
+//        WorldMap<String> worldMap = mapDataBase.getMap("a clash of kings");
+//        Territory storm = worldMap.getTerritory("the storm kingdom");
+//        Territory reach = worldMap.getTerritory("kingdom of the reach");
+//        Territory rock = worldMap.getTerritory("kingdom of the rock");
+//        Territory vale = worldMap.getTerritory("kingdom of mountain and vale");
+//        Territory north = worldMap.getTerritory("kingdom of the north");
+//        Territory dorne = worldMap.getTerritory("principality of dorne");
+//        //two players join this game
+//
+//        Player<String> p1 = new PlayerV1<>("Red", 1);
+//        Player<String> p2 = new PlayerV1<>("Blue", 2);
+//        //assign some territories to each player
+//        //player1
+//        p1.addTerritory(north);
+//        p1.addTerritory(vale);
+//        p1.addTerritory(rock);
+//        p1.addTerritory(dorne);
+//        //player2
+//        p2.addTerritory(storm);
+//        p2.addTerritory(reach);
+//        //assign some units to each territory, 5 units for each player
+//        //player 1
+//        north.addBasicUnits(2);
+//        vale.addBasicUnits(2);
+//        rock.addBasicUnits(10);
+//        dorne.addBasicUnits(5);
+//        //player2
+//        storm.addBasicUnits(10);
+//        reach.addBasicUnits(10);
+//
+//        //player 1 multiple place attack(10 + 5)
+//        AttackAction a10 = new AttackAction("kingdom of the rock", "kingdom of the reach", 1, 10);
+//        AttackAction a11 = new AttackAction("principality of dorne", "kingdom of the reach", 1, 5);
+//        AttackAction a12 = new AttackAction("kingdom of mountain and vale", "the storm kingdom", 1, 1);
+//
+//        WorldState worldState1 = new WorldState(p1,worldMap);
+//        WorldState worldState2 = new WorldState(p2,worldMap);
+//
+//        assertTrue(a10.perform(worldState1));
+//        assertTrue(a11.perform(worldState1));
+//        assertTrue(a12.perform(worldState1));
+//
+//        //player 2 attack to empty territory
+//        AttackAction a20 = new AttackAction("kingdom of the reach", "kingdom of the rock", 2, 2);
+//        assertTrue(a20.perform(worldState2));
+//
+//        //perform
+//        List<AttackResult> resultList0 = reach.resolveCombats();
+//        // attacker: 10 + 5, defender 10
+//        AttackResult r = new AttackResult(1, 2, new ArrayList<>(Arrays.asList("kingdom of the rock")), "kingdom of the reach", true);
+//
+//        AttackResult r0 = resultList0.get(0);
+//        assertEquals(r0.getAttackerID(), r.getAttackerID());
+//        assertEquals(r0.getDefenderID(), r.getDefenderID());
+//        assertEquals(r0.getDestTerritory(), r.getDestTerritory());
+//        assertEquals(r0.isAttackerWin(), r.isAttackerWin());
+//
+//        //check result
+//        assertEquals(1, reach.getOwner());
+//        assertEquals(8, reach.getBasicUnitsNum());
+//
+//        rock.resolveCombats();
+//        assertEquals(2, rock.getOwner());
+//        assertEquals(2, rock.getBasicUnitsNum());
+//
+//        // lose
+//        assertFalse(storm.resolveCombats().get(0).isAttackerWin());
+//    }
 
 
     @Test

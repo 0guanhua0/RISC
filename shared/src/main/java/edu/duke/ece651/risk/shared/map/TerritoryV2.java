@@ -1,11 +1,13 @@
 package edu.duke.ece651.risk.shared.map;
 
+import edu.duke.ece651.risk.shared.Utils;
 import edu.duke.ece651.risk.shared.action.AttackResult;
 
 import java.io.IOException;
 import java.util.*;
-
 import static edu.duke.ece651.risk.shared.Constant.UNIT_BONUS;
+import static edu.duke.ece651.risk.shared.Utils.getMaxLevel;
+import static edu.duke.ece651.risk.shared.Utils.getMinLevel;
 
 /**
  * @program: risk
@@ -33,6 +35,8 @@ public class TerritoryV2 extends TerritoryV1 {
         return size;
     }
 
+
+
     @Override
     public int getFoodYield(){
         return foodYield;
@@ -43,23 +47,62 @@ public class TerritoryV2 extends TerritoryV1 {
         return techYield;
     }
 
-    //TODO  overwrite this method
-    @Override
-    public void addAttack(int playerId, Army army) {
-        super.addAttack(playerId, army);
-    }
 
-    //TODO overwrite this method
     @Override
     AttackResult resolveCombat(int attackerID, List<Army> armies, Random diceAttack, Random diceDefend) {
-        return super.resolveCombat(attackerID, armies, diceAttack, diceDefend);
+        // retrieve the attack info
+        int defenderID = getOwner();
+        List<String> srcNames = new ArrayList<>();
+        String destName = getName();
+
+        //get all forces that this enemy has
+        Map<Integer,Integer> enemy = new HashMap<>();
+        for (Army army : armies){
+            Map<Integer, Integer> troops = army.getTroops();
+            for (Map.Entry<Integer, Integer> entry : troops.entrySet()) {
+                enemy.put(entry.getKey(),enemy.getOrDefault(entry.getKey(),0)+entry.getValue());
+            }
+        }
+        boolean isOwnTurn = false;
+        // start combat
+        while (!enemy.isEmpty() && !unitGroup.isEmpty()) {
+            //select the unit for attacker and defender
+            int attackLevel = isOwnTurn?getMinLevel(enemy):getMaxLevel(enemy);
+            int defendLevel = isOwnTurn?getMaxLevel(unitGroup):getMinLevel(unitGroup);
+
+            int i1 = diceAttack.nextInt(20)+UNIT_BONUS.get(attackLevel); // attacker dice
+            int i2 = diceDefend.nextInt(20)+UNIT_BONUS.get(defendLevel); // defender dice
+            // the one with lower roll loss one unit(tie, defender win)
+            if (i1 <= i2) {//attacker loses
+                enemy.put(attackLevel,enemy.get(attackLevel)-1);
+                if (0==enemy.get(attackLevel)){
+                    enemy.remove(attackLevel);
+                }
+            } else {//defender loses
+                List<Unit> units = unitGroup.get(defendLevel);
+                units.remove(units.size()-1);
+                if (units.isEmpty()){
+                    unitGroup.remove(defendLevel);
+                }
+            }
+            isOwnTurn = !isOwnTurn;
+        }
+        // update the ownership only if attacker has units left
+        if (!enemy.isEmpty()) {
+            setOwner(attackerID);
+            this.unitGroup = new HashMap<>();
+            for (Map.Entry<Integer, Integer> entry : enemy.entrySet()) {
+                int num = entry.getValue();
+                List<Unit> units = new ArrayList<>();
+                for (int i = 0; i < num ; i++) {
+                    units.add(new Unit());
+                }
+                unitGroup.put(entry.getKey(),units);
+            }
+        }
+        return new AttackResult(attackerID, defenderID, srcNames, destName, !unitGroup.isEmpty());
     }
 
-    //TODO overwrite this method
-    @Override
-    public List<AttackResult> resolveCombats() throws IOException {
-        return super.resolveCombats();
-    }
 
     @Override
     public boolean canAddUnits(int num, int level) {
@@ -72,7 +115,7 @@ public class TerritoryV2 extends TerritoryV1 {
 
     @Override
     public boolean canLoseUnits(int num, int level) {
-        if (num<=0||!UNIT_BONUS.containsKey(level)||unitGroup.get(level).size()<num){
+        if (num<=0||!UNIT_BONUS.containsKey(level)||unitGroup.getOrDefault(level,new ArrayList<>()).size()<num){
             return false;
         }else{
             return true;

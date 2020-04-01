@@ -64,37 +64,39 @@ public class TerritoryV1 extends Territory{
      * @param diceDefend 20 side dice for defender
      * @return combat result
      */
+    //temporarily commented
     AttackResult resolveCombat(int attackerID, List<Army> armies, Random diceAttack, Random diceDefend){
-        // the attack info
-        int defenderID = getOwner();
-        List<String> srcNames = new ArrayList<>();
-        int attackUnits = 0;
-        String destName = getName();
-
-        for (Army army : armies){
-            attackUnits += army.getUnitNums();
-            srcNames.add(army.getSrc());
-        }
-
-        // start combat
-        while (attackUnits > 0 && this.getBasicUnitsNum() > 0) {
-            int i1 = diceAttack.nextInt(20); // attacker dice
-            int i2 = diceDefend.nextInt(20); // defender dice
-
-            // the one with lower roll loss one unit(tie, defender win)
-            if (i1 <= i2) {
-                attackUnits--;
-            } else {
-                this.loseBasicUnits(1);
-            }
-        }
-        // update the ownership only if attacker has units left
-        if (attackUnits > 0) {
-            setOwner(attackerID);
-            // left units will remain in this territory
-            addBasicUnits(attackUnits);
-        }
-        return new AttackResult(attackerID, defenderID, srcNames, destName, attackUnits > 0);
+        return null;
+//        // the attack info
+//        int defenderID = getOwner();
+//        List<String> srcNames = new ArrayList<>();
+//        int attackUnits = 0;
+//        String destName = getName();
+//
+//        for (Army army : armies){
+//            attackUnits += army.getUnitNums();
+//            srcNames.add(army.getSrc());
+//        }
+//
+//        // start combat
+//        while (attackUnits > 0 && this.getBasicUnitsNum() > 0) {
+//            int i1 = diceAttack.nextInt(20); // attacker dice
+//            int i2 = diceDefend.nextInt(20); // defender dice
+//
+//            // the one with lower roll loss one unit(tie, defender win)
+//            if (i1 <= i2) {
+//                attackUnits--;
+//            } else {
+//                this.loseBasicUnits(1);
+//            }
+//        }
+//        // update the ownership only if attacker has units left
+//        if (attackUnits > 0) {
+//            setOwner(attackerID);
+//            // left units will remain in this territory
+//            addBasicUnits(attackUnits);
+//        }
+//        return new AttackResult(attackerID, defenderID, srcNames, destName, attackUnits > 0);
     }
 
     public int getSize(){

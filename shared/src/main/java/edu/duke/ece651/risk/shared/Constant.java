@@ -66,8 +66,8 @@ public class Constant {
         put(2, "Hussar");
         put(3, "cavalry");
         put(4, "Heavy cavalry");
-        put(5, "tank");
-        put(6, "fighter jet");
+        put(5, "elite cavalry");
+        put(6, "cavalry commander");
     }};
 
     //key is the target level of a unit
