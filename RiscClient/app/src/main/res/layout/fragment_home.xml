@@ -28,7 +28,9 @@
                 style="@style/Widget.MaterialComponents.Chip.Filter"
                 android:id="@+id/chip_all_room"
                 android:layout_width="wrap_content"
-                android:layout_height="@dimen/normal_chip_height"
+                android:layout_height="wrap_content"
+                android:height="@dimen/normal_chip_height"
+                app:chipMinHeight="@dimen/normal_chip_height"
                 android:text="@string/home_all_room"/>
 
             <com.google.android.material.chip.Chip

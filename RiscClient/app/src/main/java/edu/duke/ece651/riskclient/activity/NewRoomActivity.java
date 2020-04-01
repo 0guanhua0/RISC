@@ -98,7 +98,7 @@ public class NewRoomActivity extends AppCompatActivity {
             }
             // TODO: send the new room info to server and receive response
             showToastUI(NewRoomActivity.this, "Create new room successful.");
-            Intent intent = new Intent(NewRoomActivity.this, PlayGameActivity.class);
+            Intent intent = new Intent(NewRoomActivity.this, WaitGameActivity.class);
             startActivity(intent);
             // kill current activity, user can't go back
             finish();
@@ -114,7 +114,7 @@ public class NewRoomActivity extends AppCompatActivity {
 
     private void setUpRecyclerView(){
         // TODO: replace the fake data with real one
-        List<WorldMap> maps = new ArrayList<>();
+        List<WorldMap> maps = new ArrayList<WorldMap>();
         for (int i = 0; i < 10; i ++){
             maps.add(new WorldMap("a" + i));
         }

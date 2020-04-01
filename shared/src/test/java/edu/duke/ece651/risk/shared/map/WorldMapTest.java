@@ -21,41 +21,41 @@ class WorldMapTest {
     @Test
     void testWorldMap() throws IOException {
         //test constructor
-        Map<String, Set<String>> map = new HashMap<>() {{
-            put("a", new HashSet<>());
-            put("b", new HashSet<>());
-            put("c", new HashSet<>());
+        Map<String, Set<String>> map = new HashMap<String, Set<String>>() {{
+            put("a", new HashSet<String>());
+            put("b", new HashSet<String>());
+            put("c", new HashSet<String>());
         }};
-        Map<Set<String>,Boolean> groups = new HashMap<>(){{
-            put(new HashSet<>(Arrays.asList("a")),false);
-            put(new HashSet<>(Arrays.asList("b")),false);
-            put(new HashSet<>(Arrays.asList("c")),false);
+        Map<Set<String>,Boolean> groups = new HashMap<Set<String>, Boolean>(){{
+            put(new HashSet<String>(Arrays.asList("a")),false);
+            put(new HashSet<String>(Arrays.asList("b")),false);
+            put(new HashSet<String>(Arrays.asList("c")),false);
         }};
-        Map<String,Integer> sizes = new HashMap<>(){{
+        Map<String,Integer> sizes = new HashMap<String, Integer>(){{
            put("a",2);
            put("b",2);
            put("c",2);
         }};
 
-        Map<String,Integer> food = new HashMap<>(){{
+        Map<String,Integer> food = new HashMap<String, Integer>(){{
             put("a",3);
             put("b",3);
             put("c",3);
         }};
 
-        Map<String,Integer> tech = new HashMap<>(){{
+        Map<String,Integer> tech = new HashMap<String, Integer>(){{
             put("a",4);
             put("b",4);
             put("c",4);
         }};
-        List<String> colorList = new ArrayList<>(Arrays.asList("red","blue"));
-        assertThrows(AssertionError.class,()->{new WorldMapV2<>(map,colorList,groups,sizes,food,tech);});
+        List<String> colorList = new ArrayList<String>(Arrays.asList("red","blue"));
+        assertThrows(AssertionError.class,()->{new WorldMapV2<String>(map,colorList,groups,sizes,food,tech);});
 
-        List<String> colorList2 = new ArrayList<>(Arrays.asList("red","blue","pink","yellow"));
-        assertThrows(AssertionError.class,()->{new WorldMapV2<>(map,colorList2,groups,sizes,food,tech);});
+        List<String> colorList2 = new ArrayList<String>(Arrays.asList("red","blue","pink","yellow"));
+        assertThrows(AssertionError.class,()->{new WorldMapV2<String>(map,colorList2,groups,sizes,food,tech);});
 
 
-        MapDataBase<String> mapDataBase = new MapDataBase<>();
+        MapDataBase<String> mapDataBase = new MapDataBase<String>();
         WorldMap<String> worldMap = mapDataBase.getMap("A clash of Kings");
         //test getTerritoryName
         Territory territory1 = worldMap.getTerritory(storm);
@@ -70,10 +70,10 @@ class WorldMapTest {
 
         assertEquals("the storm kingdom", territory1.status.getName());
         Set<Territory> neigh = territory1.getNeigh();
-        assert (4==neigh.size());
-        assert (neigh.contains(territory2));
-        assert (neigh.contains(territory3));
-        assert (neigh.contains(territory7));
+        assertEquals(4, neigh.size());
+        assertTrue (neigh.contains(territory2));
+        assertTrue (neigh.contains(territory3));
+        assertTrue (neigh.contains(territory7));
 
         assertThrows(IllegalArgumentException.class, ()->worldMap.getTerritory("The Storm Kingdo"));
 
@@ -84,10 +84,10 @@ class WorldMapTest {
 
 
         //test hasFreeTerritory()
-        assert (worldMap.hasFreeTerritory("The Storm Kingdom"));
+        assertTrue (worldMap.hasFreeTerritory("The Storm Kingdom"));
         territory1.setOwner(1);
-        assert (!worldMap.hasFreeTerritory("The Storm Kingdom"));
-        assert (!worldMap.hasFreeTerritory("Kingdom"));
+        assertFalse(worldMap.hasFreeTerritory("The Storm Kingdom"));
+        assertFalse(worldMap.hasFreeTerritory("Kingdom"));
 
         assertEquals(2, worldMap.getPlayerNums());
     }
@@ -104,7 +104,7 @@ class WorldMapTest {
         Territory territory6 = worldMap.getTerritory(north);
         Territory territory7 = worldMap.getTerritory(dorne);
         List<String> playerColor = worldMap.getColorList();
-        Map<String,Territory> map = new HashMap<>();
+        Map<String,Territory> map = new HashMap<String, Territory>();
         map.put(storm,territory1);
         map.put(reach,territory2);
         map.put(rock,territory3);
@@ -115,7 +115,7 @@ class WorldMapTest {
 
     @Test
     void testGroup() throws IOException {
-        MapDataBase<Serializable> mapDataBase = new MapDataBase<>();
+        MapDataBase<Serializable> mapDataBase = new MapDataBase<Serializable>();
         WorldMap<Serializable> worldMap = mapDataBase.getMap("a clash of kings");
         assertTrue(worldMap.hasFreeGroup(new HashSet<String>(Arrays.asList(
                 "kingdom of mountain and vale",
@@ -142,7 +142,7 @@ class WorldMapTest {
 
     @Test
     void testGetDist() throws IOException {
-        MapDataBase<String> mapDataBase = new MapDataBase<>();
+        MapDataBase<String> mapDataBase = new MapDataBase<String>();
         WorldMap<String> kingMap = mapDataBase.getMap("a clash of kings");
         //in the begining, the owner id of all maps is 0, which means they are all free now
         assertEquals(Integer.MAX_VALUE,kingMap.getMinCtrlDist("a", storm));
