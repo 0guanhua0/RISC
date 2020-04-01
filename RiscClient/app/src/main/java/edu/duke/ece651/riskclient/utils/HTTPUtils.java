@@ -5,7 +5,10 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.InetAddress;
+import java.net.Socket;
 import java.net.UnknownHostException;
 
 import edu.duke.ece651.riskclient.objects.Player;
@@ -15,6 +18,8 @@ import static edu.duke.ece651.riskclient.Constant.ACTION_LOGIN;
 import static edu.duke.ece651.riskclient.Constant.ACTION_SIGN_UP;
 import static edu.duke.ece651.riskclient.Constant.ACTION_TYPE;
 import static edu.duke.ece651.riskclient.Constant.HOST;
+import static edu.duke.ece651.riskclient.Constant.PORT;
+import static edu.duke.ece651.riskclient.Constant.SUCCESSFUL;
 import static edu.duke.ece651.riskclient.Constant.USER_NAME;
 import static edu.duke.ece651.riskclient.Constant.USER_PASSWORD;
 
@@ -65,6 +70,7 @@ public class HTTPUtils {
 //                Socket socket = new Socket(getIP(), PORT);
 //                ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
 //                ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+//                in.readObject();
 //                out.writeObject(str);
 //                out.flush();
 //                String res = (String) in.readObject();
