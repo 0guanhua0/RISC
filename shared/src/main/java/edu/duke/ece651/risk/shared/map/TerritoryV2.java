@@ -1,9 +1,7 @@
 package edu.duke.ece651.risk.shared.map;
 
-import edu.duke.ece651.risk.shared.Utils;
 import edu.duke.ece651.risk.shared.action.AttackResult;
 
-import java.io.IOException;
 import java.util.*;
 import static edu.duke.ece651.risk.shared.Constant.UNIT_BONUS;
 import static edu.duke.ece651.risk.shared.Utils.getMaxLevel;
@@ -170,5 +168,35 @@ public class TerritoryV2 extends TerritoryV1 {
     @Override
     public int getUnitsNum(int level) {
         return unitGroup.getOrDefault(level,new ArrayList<>()).size();
+    }
+
+
+    @Override
+    public boolean canUpUnit(int unitsNum, int srcLevel, int targetLevel) {
+        //check if the number of units with source tech level is valid
+        if (unitsNum<=0||this.getUnitsNum(srcLevel)<unitsNum){
+            return false;
+        }
+        //check if the target tech level is valid
+        if (!UNIT_BONUS.containsKey(targetLevel)){
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public void upUnit(int num, int curLevel, int targetLevel) {
+        if (!canUpUnit(num,curLevel,targetLevel)){
+            throw new IllegalArgumentException("Invalid argument!");
+        }
+        List<Unit> source = unitGroup.get(curLevel);
+        List<Unit> target = unitGroup.getOrDefault(targetLevel, new ArrayList<Unit>());
+
+        for (int i = 0; i < curLevel; i++) {
+            source.remove(source.size()-1);
+            target.add(new Unit());
+        }
+        unitGroup.put(curLevel, source);
+        unitGroup.put(targetLevel,target);
     }
 }

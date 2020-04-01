@@ -137,8 +137,8 @@ public abstract class Player<T> {
 
     public abstract void upMaxTech();
 
-    public abstract boolean canUpUnit(int curLevel,int targeLevel);
 
-    public abstract void upUnit(int curLevel,int targetLevel);
+
+    public abstract int getTechLevel();
 
 }

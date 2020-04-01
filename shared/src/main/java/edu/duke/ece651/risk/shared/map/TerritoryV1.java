@@ -14,11 +14,11 @@ import java.util.*;
  **/
 public class TerritoryV1 extends Territory{
 
-    List<Unit> units;
+    List<Unit> unitsV1;
 
     public TerritoryV1(String name) {
        super(name);
-       this.units = new LinkedList<>();//use linked list since there will be some remove operation
+       this.unitsV1 = new LinkedList<>();//use linked list since there will be some remove operation
     }
 
     public void addBasicUnits(int num) throws IllegalArgumentException {
@@ -26,7 +26,7 @@ public class TerritoryV1 extends Territory{
             throw new IllegalArgumentException("Input number can't be negative");
         }
         for (int i = 0; i < num; i++) {
-            units.add(new Unit());
+            unitsV1.add(new Unit());
         }
     }
     public void loseBasicUnits(int num) throws IllegalArgumentException{
@@ -34,18 +34,18 @@ public class TerritoryV1 extends Territory{
             throw new IllegalArgumentException("Invalid input number");
         }
         for (int i = 0; i < num; i++) {
-            units.remove(units.size() - 1);
+            unitsV1.remove(unitsV1.size() - 1);
         }
     }
 
     @Override
     public int getUnitsNum(int level) {
-        return (0==level)?units.size():0;
+        return (0==level)? unitsV1.size():0;
     }
 
     @Override
     public int getBasicUnitsNum(){
-        return units.size();
+        return unitsV1.size();
     }
 
     public void addAttack(int playerId, Army army) {
@@ -125,7 +125,7 @@ public class TerritoryV1 extends Territory{
 
     @Override
     public boolean canLoseUnits(int num, int level) {
-        if (level!=0||num<=0||num>units.size()){
+        if (level!=0||num<=0||num> unitsV1.size()){
             return false;
         }else{
             return true;
@@ -146,5 +146,17 @@ public class TerritoryV1 extends Territory{
             throw new IllegalArgumentException("invalid");
         }
         loseBasicUnits(num);
+    }
+
+    @Override
+    public boolean canUpUnit(int num, int curLevel, int targetLevel) {
+        return false;
+    }
+
+    @Override
+    public void upUnit(int num, int curLevel, int targetLevel) {
+        if (!canUpUnit(num,curLevel,targetLevel)){
+            throw new IllegalArgumentException("invalid argument");
+        }
     }
 }

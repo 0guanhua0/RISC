@@ -44,7 +44,11 @@ public class PlayerV2<T> extends PlayerV1<T> {
             tech.addResource(techYield);
             food.addResource(foodYield);
         }
-        this.upTechRight = true;
+        if (!upTechRight){
+            this.upTechRight = true;
+            techLevel++;
+        }
+
     }
 
     @Override
@@ -93,30 +97,13 @@ public class PlayerV2<T> extends PlayerV1<T> {
             throw new IllegalArgumentException("Can't up tech now!");
         }
         this.useTech(TECH_MAP.get(techLevel));
-        this.techLevel++;
         upTechRight = false;
     }
 
-    /**
-     *
-     * @param curLevel: cur technology level for a unit
-     * @param targetLevel: target technology level for a unit
-     * @return such upgrade is feasible or not
-     */
+
+
     @Override
-    public boolean canUpUnit(int curLevel, int targetLevel) {
-        return super.canUpUnit(curLevel, targetLevel);
+    public int getTechLevel() {
+        return this.techLevel;
     }
-
-    /**
-     * @param curLevel: cur technology level for a unit
-     * @param targetLevel target technology level for a unit
-     */
-    @Override
-    public void upUnit(int curLevel, int targetLevel) {
-        super.upUnit(curLevel, targetLevel);
-    }
-
-
-
 }

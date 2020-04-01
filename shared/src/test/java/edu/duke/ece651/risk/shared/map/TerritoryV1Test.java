@@ -1,17 +1,11 @@
 package edu.duke.ece651.risk.shared.map;
 
-import edu.duke.ece651.risk.shared.WorldState;
-import edu.duke.ece651.risk.shared.action.AttackAction;
-import edu.duke.ece651.risk.shared.action.AttackResult;
 import edu.duke.ece651.risk.shared.player.Player;
 import edu.duke.ece651.risk.shared.player.PlayerV1;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -55,7 +49,7 @@ class TerritoryV1Test {
     @Test
     void addNUnits() {
         TerritoryV1 test = new TerritoryV1("test");
-        assert (test.units.isEmpty());
+        assert (test.unitsV1.isEmpty());
         test.addBasicUnits(10);
         assert (10 == test.getBasicUnitsNum());
         assertThrows(IllegalArgumentException.class, () -> test.addBasicUnits(-1));
@@ -64,7 +58,7 @@ class TerritoryV1Test {
     @Test
     void lossNUnits() {
         TerritoryV1 test = new TerritoryV1("test");
-        assert (test.units.isEmpty());
+        assert (test.unitsV1.isEmpty());
         test.addBasicUnits(10);
         assert (10 == test.getBasicUnitsNum());
         assertThrows(IllegalArgumentException.class, () -> test.loseBasicUnits(-1));

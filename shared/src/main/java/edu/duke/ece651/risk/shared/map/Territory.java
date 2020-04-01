@@ -174,4 +174,22 @@ public abstract class Territory implements Serializable {
     abstract public int getFoodYield();
     abstract public int getTechYield();
 
+
+    /**
+     * @param num: number of units to update
+     * @param curLevel: cur level of units
+     * @param targetLevel: target level of units
+     * @return can update or not
+     */
+    public abstract boolean canUpUnit(int num, int curLevel,int targetLevel);
+
+
+    /**
+     * update some units within certain territory from source level to target level
+     * @param num: number of units to update
+     * @param curLevel: cur level of units
+     * @param targetLevel: target level of units
+     */
+    public abstract void upUnit(int num, int curLevel,int targetLevel);
+
 }
