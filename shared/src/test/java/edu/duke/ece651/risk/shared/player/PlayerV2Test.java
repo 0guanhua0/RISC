@@ -157,8 +157,12 @@ class PlayerV2Test {
         player.addTerritory(storm);
 
         player.upMaxTech();
-        assertEquals(2,player.techLevel);
+        assertEquals(1,player.techLevel);
         assertFalse(player.upTechRight);
         assertEquals(player.tech.getRemain(),INITIAL_TECH_NUM-TECH_MAP.get(1));
+        player.updateState();
+        assertEquals(2,player.techLevel);
+        assertTrue(player.upTechRight);
+
     }
 }

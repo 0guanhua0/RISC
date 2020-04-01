@@ -28,15 +28,4 @@ class PlayerV1Test {
         assertFalse(playerV1.canUpMaxTech());
     }
 
-    @Test
-    void canUpUnit() throws IOException {
-        PlayerV1<String> playerV1 = new PlayerV1<String>(Mock.setupMockInput(Arrays.asList()),new ByteArrayOutputStream());
-        assertFalse(playerV1.canUpUnit(0,0));
-    }
-
-    @Test
-    void upUnit() throws IOException {
-        PlayerV1<String> playerV1 = new PlayerV1<String>(Mock.setupMockInput(Arrays.asList()),new ByteArrayOutputStream());
-        assertThrows(IllegalArgumentException.class,()->{playerV1.upUnit(0,1);});
-    }
 }
