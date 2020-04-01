@@ -114,7 +114,7 @@ public class NewRoomActivity extends AppCompatActivity {
 
     private void setUpRecyclerView(){
         // TODO: replace the fake data with real one
-        List<WorldMap> maps = new ArrayList<>();
+        List<WorldMap> maps = new ArrayList<WorldMap>();
         for (int i = 0; i < 10; i ++){
             maps.add(new WorldMap("a" + i));
         }

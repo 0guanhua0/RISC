@@ -17,13 +17,13 @@ import static org.junit.jupiter.api.Assertions.*;
 class PlayerTest {
     @Test
     void constructor() throws IOException {
-        Player<String> p1 = new PlayerV1<>("Red", 1);
+        Player<String> p1 = new PlayerV1<String>("Red", 1);
         assert (p1.territories.isEmpty());
         assert (p1.color.equals("Red"));
         assert (1==p1.id);
         assertThrows(IllegalArgumentException.class, ()->{new PlayerV1<String>("Red",0);});
 
-        Player<String> p2 = new PlayerV1<>(setupMockInput(new ArrayList<>()), new ByteArrayOutputStream());
+        Player<String> p2 = new PlayerV1<String>(setupMockInput(new ArrayList<Object>()), new ByteArrayOutputStream());
         assertTrue(p2.territories.isEmpty());
         assertThrows(IllegalArgumentException.class, ()->p2.setId(0));
         p2.setId(2);
@@ -31,16 +31,16 @@ class PlayerTest {
         assertEquals(2, p2.getId());
         assertEquals("Green", p2.getColor());
 
-        Player<String> p3 = new PlayerV1<>(3, setupMockInput(new ArrayList<>()), new ByteArrayOutputStream());
+        Player<String> p3 = new PlayerV1<String>(3, setupMockInput(new ArrayList<Object>()), new ByteArrayOutputStream());
         assertTrue(p3.territories.isEmpty());
         assertEquals(3, p3.getId());
 
-        Player<String> p4 = new PlayerV1<>("Blue", 4, setupMockInput(new ArrayList<>()), new ByteArrayOutputStream());
+        Player<String> p4 = new PlayerV1<String>("Blue", 4, setupMockInput(new ArrayList<Object>()), new ByteArrayOutputStream());
         assertTrue(p4.territories.isEmpty());
         assertEquals(4, p4.getId());
         assertEquals("Blue", p4.getColor());
 
-        assertThrows(IllegalArgumentException.class, ()->new PlayerV1<>(0, setupMockInput(new ArrayList<>()), new ByteArrayOutputStream()));
+        assertThrows(IllegalArgumentException.class, ()->new PlayerV1<String>(0, setupMockInput(new ArrayList<Object>()), new ByteArrayOutputStream()));
     }
 
     @Test
@@ -48,7 +48,7 @@ class PlayerTest {
         Player<String> p1 = new PlayerV1<String>("Red",1);
         TerritoryV1 n1 = new TerritoryV1("n1");
         TerritoryV1 n2 = new TerritoryV1("n2");
-        HashSet<Territory> n1Neigh = new HashSet<>(){{
+        HashSet<Territory> n1Neigh = new HashSet<Territory>(){{
             add(n2);
         }};
         p1.addTerritory(n1);
@@ -67,7 +67,7 @@ class PlayerTest {
         TerritoryV1 n1 = new TerritoryV1("n1");
         int owner = n1.getOwner();
         TerritoryV1 n2 = new TerritoryV1("n2");
-        HashSet<Territory> n1Neigh = new HashSet<>(){{
+        HashSet<Territory> n1Neigh = new HashSet<Territory>(){{
             add(n2);
         }};
         p1.addTerritory(n1);
@@ -90,7 +90,7 @@ class PlayerTest {
         String str1 = "hello";
         String str2 = "over";
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        Player<String> player = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList(str1, str2))), outputStream);
+        Player<String> player = new PlayerV1<String>(setupMockInput(new ArrayList<Object>(Arrays.asList(str1, str2))), outputStream);
         assertEquals(str1, player.recv());
         assertEquals(str2, player.recv());
         player.send(str1);
@@ -100,7 +100,7 @@ class PlayerTest {
     @Test
     void testSendInfo() throws IOException, ClassNotFoundException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        Player<String> player = new PlayerV1<>("Green", 1, setupMockInput(new ArrayList<>(Arrays.asList())), outputStream);
+        Player<String> player = new PlayerV1<String>("Green", 1, setupMockInput(new ArrayList<Object>(Arrays.asList())), outputStream);
         player.sendPlayerInfo();
         assertEquals(
                 "{\"playerColor\":\"Green\",\"playerID\":1}",

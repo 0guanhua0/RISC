@@ -35,7 +35,7 @@ class TerritoryV1Test {
         TerritoryV1 stormKindom = new TerritoryV1("The Storm Kindom");
         TerritoryV1 n1 = new TerritoryV1("n1");
         TerritoryV1 n2 = new TerritoryV1("n2");
-        HashSet<Territory> neigh = new HashSet<>() {{
+        HashSet<Territory> neigh = new HashSet<Territory>() {{
             add(n1);
             add(n2);
         }};
@@ -101,7 +101,7 @@ class TerritoryV1Test {
         TerritoryV1 stormKindom = new TerritoryV1("The Storm Kindom");
         TerritoryV1 n1 = new TerritoryV1("n1");
         TerritoryV1 n2 = new TerritoryV1("n2");
-        HashSet<Territory> neigh = new HashSet<>() {{
+        HashSet<Territory> neigh = new HashSet<Territory>() {{
             add(n1);
             add(n2);
         }};
@@ -112,7 +112,7 @@ class TerritoryV1Test {
 
     @Test
     void hasPathTo() throws IOException {
-        MapDataBase<String> mapDataBase = new MapDataBase<>();
+        MapDataBase<String> mapDataBase = new MapDataBase<String>();
         //prepare the world
         WorldMap<String> worldMap = mapDataBase.getMap("a clash of kings");
         Territory storm = worldMap.getTerritory("the storm kingdom");
@@ -122,8 +122,8 @@ class TerritoryV1Test {
         Territory north = worldMap.getTerritory("kingdom of the north");
         Territory dorne = worldMap.getTerritory("principality of dorne");
         //two players join this game
-        Player<String> p1 = new PlayerV1<>("Red", 1);
-        Player<String> p2 = new PlayerV1<>("Blue", 2);
+        Player<String> p1 = new PlayerV1<String>("Red", 1);
+        Player<String> p2 = new PlayerV1<String>("Blue", 2);
         //assign some territories to each player
         p1.addTerritory(north);
         p1.addTerritory(vale);
@@ -150,7 +150,7 @@ class TerritoryV1Test {
 
     @Test
     void testResolveCombat() throws IOException {
-        MapDataBase<String> mapDataBase = new MapDataBase<>();
+        MapDataBase<String> mapDataBase = new MapDataBase<String>();
         //prepare the world
         WorldMap<String> worldMap = mapDataBase.getMap("a clash of kings");
         Territory storm = worldMap.getTerritory("the storm kingdom");
@@ -161,8 +161,8 @@ class TerritoryV1Test {
         Territory dorne = worldMap.getTerritory("principality of dorne");
         //two players join this game
 
-        Player<String> p1 = new PlayerV1<>("Red", 1);
-        Player<String> p2 = new PlayerV1<>("Blue", 2);
+        Player<String> p1 = new PlayerV1<String>("Red", 1);
+        Player<String> p2 = new PlayerV1<String>("Blue", 2);
         //assign some territories to each player
         //player1
         p1.addTerritory(north);
@@ -201,7 +201,7 @@ class TerritoryV1Test {
         //perform
         List<AttackResult> resultList0 = reach.resolveCombats();
         // attacker: 10 + 5, defender 10
-        AttackResult r = new AttackResult(1, 2, new ArrayList<>(Arrays.asList("kingdom of the rock")), "kingdom of the reach", true);
+        AttackResult r = new AttackResult(1, 2, new ArrayList<String>(Arrays.asList("kingdom of the rock")), "kingdom of the reach", true);
 
         AttackResult r0 = resultList0.get(0);
         assertEquals(r0.getAttackerID(), r.getAttackerID());

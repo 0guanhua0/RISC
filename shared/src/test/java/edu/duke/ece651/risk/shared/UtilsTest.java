@@ -31,40 +31,40 @@ public class UtilsTest {
     @Test
     public void testReadNeighConfig() throws  IOException{
 
-        Map<String, Set<String>> atlas1 = new HashMap<>();
-        Set<String> s1 = new HashSet<>(){{
+        Map<String, Set<String>> atlas1 = new HashMap<String, Set<String>>();
+        Set<String> s1 = new HashSet<String>(){{
             add(t3);
             add(t2);
             add(t5);
             add(t4);
         }};
         atlas1.put(t1,s1);
-        Set<String> s2 = new HashSet<>(){{
+        Set<String> s2 = new HashSet<String>(){{
             add(t3);
             add(t1);
             add(t5);
         }};
         atlas1.put(t2,s2);
-        Set<String> s3 = new HashSet<>(){{
+        Set<String> s3 = new HashSet<String>(){{
             add(t6);
             add(t4);
             add(t1);
             add(t2);
         }};
         atlas1.put(t3,s3);
-        Set<String> s4 = new HashSet<>(){{
+        Set<String> s4 = new HashSet<String>(){{
             add(t6);
             add(t3);
             add(t1);
         }};
         atlas1.put(t4,s4);
-        Set<String> s5 = new HashSet<>(){{
+        Set<String> s5 = new HashSet<String>(){{
             add(t2);
             add(t1);
         }};
 
         atlas1.put(t5,s5);
-        Set<String> s6 = new HashSet<>(){{
+        Set<String> s6 = new HashSet<String>(){{
             add(t3);
             add(t4);
         }};
@@ -78,7 +78,7 @@ public class UtilsTest {
 
     @Test
     void readColorConfig() throws IOException {
-        List<String> colorList = new ArrayList<>(Arrays.asList("red","blue"));
+        List<String> colorList = new ArrayList<String>(Arrays.asList("red","blue"));
         List<String> strings = Utils.readColorConfig(dir+"color.txt");
         assertEquals(colorList,strings);
         assertThrows(IOException.class,()->{Utils.readColorConfig(dir+"fake.txt");});
@@ -87,13 +87,13 @@ public class UtilsTest {
 
     @Test
     void readGroupConfig() throws IOException {
-        Map<Set<String>,Boolean> groups = new HashMap<>();
-        Set<String> group1 = new HashSet<>(){{
+        Map<Set<String>,Boolean> groups = new HashMap<Set<String>,Boolean>();
+        Set<String> group1 = new HashSet<String>(){{
             add(t6);
             add(t4);
             add(t1);
         }};
-        Set<String> group2 = new HashSet<>(){{
+        Set<String> group2 = new HashSet<String>(){{
             add(t2);
             add(t3);
             add(t5);
@@ -109,7 +109,7 @@ public class UtilsTest {
     @Test
     void readSizeConfig() throws IOException {
         Map<String, Integer> stringIntegerMap = Utils.readSizeConfig(dir + "size.txt");
-        Map<String,Integer> map = new HashMap<>(){{
+        Map<String,Integer> map = new HashMap<String, Integer>(){{
             put("the storm kingdom",2);
             put("kingdom of the reach",3);
             put("kingdom of the rock",3);

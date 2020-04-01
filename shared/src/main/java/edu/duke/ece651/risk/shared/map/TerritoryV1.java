@@ -22,7 +22,7 @@ public class TerritoryV1 extends Territory{
 
     public TerritoryV1(String name) {
        super(name);
-       this.units = new ArrayList<>();
+       this.units = new ArrayList<Unit>();
     }
 
     public void addNUnits(int num) throws IllegalArgumentException {
@@ -50,7 +50,7 @@ public class TerritoryV1 extends Territory{
         if (attackAct.containsKey(playerId)) {
             attackAct.get(playerId).add(army);
         } else {
-            attackAct.put(playerId, new ArrayList<>(Collections.singletonList(army)));
+            attackAct.put(playerId, new ArrayList<Army>(Collections.singletonList(army)));
         }
     }
 
@@ -65,7 +65,7 @@ public class TerritoryV1 extends Territory{
     AttackResult resolveCombat(int attackerID, List<Army> armies, Random diceAttack, Random diceDefend){
         // the attack info
         int defenderID = getOwner();
-        List<String> srcNames = new ArrayList<>();
+        List<String> srcNames = new ArrayList<String>();
         int attackUnits = 0;
         String destName = getName();
 
