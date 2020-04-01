@@ -4,13 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:layout_marginStart="@dimen/normal_margin_horizontal"
-    android:layout_marginEnd="@dimen/normal_margin_horizontal"
-    android:layout_marginTop="@dimen/normal_margin_vertical"
-    android:layout_marginBottom="@dimen/normal_margin_vertical">
+    android:padding="@dimen/normal_margin">
 
     <include
         android:id="@+id/layout_level"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/small_margin_vertical"
         layout="@layout/widget_dropdown"/>
 
     <include

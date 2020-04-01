@@ -38,8 +38,7 @@
     <string name="play_game_decline">Decline</string>
 
     <!--  move & attack activity  -->
-    <string name="move_attack_src_territory">Src Territory</string>
-    <string name="move_attack_dest_territory">Dest Territory</string>
+    <string name="move_attack_unit_info">Units info:</string>
 
     <string name="menu_home">Home</string>
     <string name="menu_update">Change Password</string>

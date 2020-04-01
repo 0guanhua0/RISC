@@ -6,6 +6,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,8 +24,11 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.TreeMap;
 
 import edu.duke.ece651.risk.shared.map.Unit;
 import edu.duke.ece651.riskclient.R;
@@ -34,13 +38,20 @@ import static edu.duke.ece651.riskclient.utils.UIUtils.showToastUI;
 
 public class MoveAttackActivity extends AppCompatActivity {
 
+    /**
+     * UI variable
+     */
+    private TextView tvUnitsInfo;
+
+    /**
+     * Variable
+     */
     private UnitAdapter srcUnitAdapter;
     private UnitAdapter destUnitAdapter;
-
     private List<Unit> srcUnits;
     private List<Unit> destUnits;
-
     private String actionType;
+    private Map<Integer, Integer> units;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +66,7 @@ public class MoveAttackActivity extends AppCompatActivity {
         }
 
         actionType = "move";
+        units = new TreeMap<>();
         setUpUI();
     }
 
@@ -87,11 +99,17 @@ public class MoveAttackActivity extends AppCompatActivity {
             sendUnits();
         });
 
+        tvUnitsInfo = findViewById(R.id.tv_units_info);
+        tvUnitsInfo.setText("");
+
         setUpActionDropdown();
         setUpSrcTerritory();
         setUpDestTerritory();
     }
 
+    /**
+     * Popup a window to ask the user input units info
+     */
     private void sendUnits(){
         LayoutInflater layoutInflater = getLayoutInflater();
 
@@ -100,17 +118,42 @@ public class MoveAttackActivity extends AppCompatActivity {
         TextInputLayout tlLevel = view.findViewById(R.id.layout_level);
         AutoCompleteTextView dpLevel = tlLevel.findViewById(R.id.input);
         tlLevel.setHint("Unit Level");
+        String[] items1 = new String[] {"1", "2", "3", "4", "5"};
+        ArrayAdapter<String> adapter1 =
+                new ArrayAdapter<>(
+                        MoveAttackActivity.this,
+                        R.layout.dropdown_menu_popup_item,
+                        items1);
+        dpLevel.setAdapter(adapter1);
+        dpLevel.setText(items1[0], false);
 
         // number
         TextInputLayout tlNumber = view.findViewById(R.id.layout_number);
         AutoCompleteTextView dpNumber = tlNumber.findViewById(R.id.input);
         tlNumber.setHint("Unit Numbers");
+        String[] items2 = new String[] {"1", "2", "3", "4", "5"};
+        ArrayAdapter<String> adapter2 =
+                new ArrayAdapter<>(
+                        MoveAttackActivity.this,
+                        R.layout.dropdown_menu_popup_item,
+                        items2);
+        dpNumber.setAdapter(adapter2);
+        dpNumber.setText(items2[0], false);
 
         AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
         mBuilder.setTitle("Add Units");
         mBuilder.setView(view);
         mBuilder.setPositiveButton("Confirm", ((dialogInterface, i) -> {
-            showToastUI(MoveAttackActivity.this, "Confirm");
+            // TODO: validate data here
+            Integer level = Integer.parseInt(dpLevel.getText().toString());
+            Integer number = Integer.parseInt(dpNumber.getText().toString());
+            if (units.containsKey(level)){
+                int old = units.get(level);
+                units.replace(level, old + number);
+            }else {
+                units.put(level, number);
+            }
+            refreshUnitsInfo();
         }));
         mBuilder.setNegativeButton("Cancel", ((dialogInterface, i) -> {
             showToastUI(MoveAttackActivity.this, "Cancel");
@@ -121,8 +164,8 @@ public class MoveAttackActivity extends AppCompatActivity {
     private void setUpActionDropdown(){
         TextInputLayout layout = findViewById(R.id.action_dropdown);
         layout.setHint("Action Type");
-        String[] items = new String[] {"Move", "Attack"};
 
+        String[] items = new String[] {"Move", "Attack"};
         ArrayAdapter<String> adapter =
                 new ArrayAdapter<>(
                         MoveAttackActivity.this,
@@ -136,7 +179,7 @@ public class MoveAttackActivity extends AppCompatActivity {
         dropdownAction.setOnItemClickListener((parent, v, position, id) -> {
             // TODO: update territory info
             showToastUI(MoveAttackActivity.this, "action: " + items[position]);
-            actionType = position == 0 ? "move" : "attack";
+            actionType = (position == 0 ? "move" : "attack");
         });
     }
 
@@ -221,5 +264,13 @@ public class MoveAttackActivity extends AppCompatActivity {
         rvUnitList.setHasFixedSize(true);
         rvUnitList.setAdapter(destUnitAdapter);
         destUnitAdapter.setUnits(destUnits);
+    }
+
+    private void refreshUnitsInfo(){
+        StringBuilder builder = new StringBuilder();
+        for (Map.Entry<Integer, Integer> entry : units.entrySet()){
+            builder.append(entry.getValue()).append(" units of level ").append(entry.getKey()).append("\n");
+        }
+        tvUnitsInfo.setText(builder.toString());
     }
 }

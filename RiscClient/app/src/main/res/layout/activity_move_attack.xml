@@ -47,7 +47,7 @@
     <LinearLayout
         android:id="@+id/ll_prompt"
         android:layout_width="match_parent"
-        android:layout_height="25dp"
+        android:layout_height="30dp"
         android:orientation="horizontal"
         android:layout_marginHorizontal="@dimen/normal_margin"
         android:layout_marginVertical="@dimen/small_margin_vertical"
@@ -58,22 +58,26 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="units info: "
-            android:textSize="@dimen/normal_text_size"
+            android:text="@string/move_attack_unit_info"
+            android:textSize="@dimen/large_text_size"
             android:textColor="@color/text_color"/>
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/img_add_unit"
-            android:layout_width="25dp"
-            android:layout_height="match_parent"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginHorizontal="@dimen/small_margin_horizontal"
+            android:layout_gravity="center_vertical"
             android:paddingVertical="2dp"
             android:scaleType="centerInside"
             android:src="@drawable/add"/>
     </LinearLayout>
 
     <TextView
+        android:id="@+id/tv_units_info"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:text="test\n\n\n\n\n\n\n\nttest"
+        android:textSize="@dimen/normal_text_size"
         android:scrollbars="vertical"
         android:layout_marginVertical="@dimen/small_margin_vertical"
         android:layout_marginHorizontal="@dimen/normal_margin"
