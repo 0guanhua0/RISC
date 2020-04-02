@@ -25,6 +25,13 @@ public class User {
         this.userName = userName;
     }
 
+    public User(String userName, InputStream in, OutputStream out) throws IOException {
+        this.in = new ObjectInputStream(in);
+        this.out = new ObjectOutputStream(out);
+        this.userName = userName;
+    }
+
+
     //update the room info
     public void addRoom(Integer roomID) {
         roomList.add(roomID);

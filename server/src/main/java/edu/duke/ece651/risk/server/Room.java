@@ -26,15 +26,16 @@ public class Room {
 
     /**
      * The constructor, initialize the whole game(room.
-     * @param roomID roomID for this room
-     * @param player the "beginner", the player create this room
+     *
+     * @param roomID      roomID for this room
+     * @param player      the "beginner", the player create this room
      * @param mapDataBase all map we have
-     * @throws IOException probably because of stream close
+     * @throws IOException              probably because of stream close
      * @throws IllegalArgumentException probably because of invalid roomID(should be positive)
-     * @throws ClassNotFoundException probably because of not follow the protocol
+     * @throws ClassNotFoundException   probably because of not follow the protocol
      */
     public Room(int roomID, Player<String> player, MapDataBase<String> mapDataBase) throws IOException, IllegalArgumentException, ClassNotFoundException {
-        if (roomID < 0){
+        if (roomID < 0) {
             throw new IllegalArgumentException("Invalid value of Room Id");
         }
         this.roomID = roomID;
@@ -60,13 +61,13 @@ public class Room {
     /**
      * call this method to add a new player into this room
      * after the last player enter the room, game will begin automatically
+     *
      * @param player new player
      * @throws IOException probably because of stream close
      */
     void addPlayer(Player<String> player) throws IOException {
-        // TODO: in evolution 2, we need to check whether this player is already in room
         // only accept new player if the game is not start yet
-        if(players.size() < map.getColorList().size()){
+        if (players.size() < map.getColorList().size()) {
             players.add(player);
 
             List<String> colorList = map.getColorList();
@@ -77,7 +78,7 @@ public class Room {
             gameInfo.addPlayer(player.getId(), player.getColor());
 
             // check whether has enough player to start the game
-            if (players.size() == colorList.size()){
+            if (players.size() == colorList.size()) {
                 player.send("You are the last player, game will start now.");
                 new Thread(() -> {
                     try {
@@ -85,7 +86,7 @@ public class Room {
                     } catch (Exception ignored) {
                     }
                 }).start();
-            }else {
+            } else {
                 player.send(String.format("Please wait other players to join th game(need %d, joined %d)", colorList.size(), players.size()));
             }
         }
@@ -94,12 +95,12 @@ public class Room {
     void askForMap(MapDataBase<String> mapDataBase) throws IOException, ClassNotFoundException {
         Player<String> firstPlayer = players.get(0);
         firstPlayer.send(mapDataBase);
-        while(true){
+        while (true) {
             String mapName = (String) firstPlayer.recv();
-            if (mapDataBase.containsMap(mapName)){
+            if (mapDataBase.containsMap(mapName)) {
                 map = mapDataBase.getMap(mapName);
                 break;
-            }else {
+            } else {
                 firstPlayer.send(SELECT_MAP_ERROR);
             }
         }
@@ -108,16 +109,26 @@ public class Room {
 
     /**
      * This function will send the data to all players in current room
+     *
      * @param data data to be sent
      */
     void sendAll(Object data) throws IOException {
-        for (Player<String> player : players){
-            player.send(data);
+        for (Player<String> player : players) {
+            try {
+                if (player.isConnect) {
+                    player.send(data);
+                }
+
+            } catch (IOException e) {
+                //player disconnect
+                player.disConnect();
+            }
         }
     }
 
     /**
      * This function should be called at the end of each round, will resolve all combats happen in all territories.
+     *
      * @throws IOException probably because of stream closed
      */
     void resolveCombats() throws IOException {
@@ -135,7 +146,7 @@ public class Room {
 
                 Territory destTerritory = map.getAtlas().get(aR.getDestTerritory());
                 List<Territory> srcTerritories = new ArrayList<>();
-                for (String name : aR.getSrcTerritories()){
+                for (String name : aR.getSrcTerritories()) {
                     srcTerritories.add(map.getAtlas().get(name));
                 }
 
@@ -143,7 +154,7 @@ public class Room {
                 sb.append(pAttack.getColor()).append(" attacks ").append(pDefend.getColor());
                 sb.append("'s territory ").append(destTerritory.getName());
                 sb.append("(from ");
-                for (String name : aR.getSrcTerritories()){
+                for (String name : aR.getSrcTerritories()) {
                     sb.append(name).append(", ");
                 }
                 sb.delete(sb.length() - 2, sb.length());
@@ -155,8 +166,7 @@ public class Room {
                     // attacker wins, win the destination territory
                     pDefend.loseTerritory(destTerritory);
                     pAttack.addTerritory(destTerritory);
-                }
-                else {
+                } else {
                     sb.append(" ---> attacker loses");
                 }
 
@@ -169,16 +179,16 @@ public class Room {
     /**
      * check whether there is a winner
      */
-    void checkWinner(){
+    void checkWinner() {
         int targetNum = map.getTerriNum();
         int totalNum = 0;
         for (Player<String> player : players) {
             int curNum = player.getTerrNum();
             totalNum += curNum;
-            if (totalNum > targetNum){
+            if (totalNum > targetNum) {
                 throw new IllegalStateException("Illegal State of current world");
             }
-            if (curNum == targetNum){
+            if (curNum == targetNum) {
                 gameInfo.setWinner(player.getId());
             }
         }
@@ -187,9 +197,9 @@ public class Room {
     void endGame() throws IOException {
         String winnerName = gameInfo.getWinnerName();
         for (Player<String> player : players) {
-            if (player.getId() != gameInfo.getWinnerID()){
+            if (player.getId() != gameInfo.getWinnerID()) {
                 player.send(String.format("Winner is the %s player.", winnerName));
-            }else{
+            } else {
                 player.send(YOU_WINS);
             }
         }
@@ -199,9 +209,9 @@ public class Room {
      * update the state(e.g. num of units and resources)
      * of current map after the end of each single round of game
      */
-    void updateWorld(){
+    void updateWorld() {
         //add one units to all territory
-        for (Territory territory : map.getAtlas().values()){
+        for (Territory territory : map.getAtlas().values()) {
             territory.addNUnits(1);
         }
         //update tech&food resources for every player
@@ -211,7 +221,7 @@ public class Room {
 
     }
 
-    boolean hasFinished(){
+    boolean hasFinished() {
         return gameInfo.hasFinished();
     }
 
@@ -228,7 +238,7 @@ public class Room {
         // wait for selecting territory
         barrierWait(barrier);
 
-        while(true) {
+        while (true) {
             // wait for all player to ready start a round(give main thread some time to process round result)
             barrierWait(barrier);
 
@@ -241,9 +251,9 @@ public class Room {
             sendAll(ROUND_OVER);
             // check the game result
             checkWinner();
-            if(!gameInfo.hasFinished()){
+            if (!gameInfo.hasFinished()) {
                 sendAll("continue");
-            }else {
+            } else {
                 sendAll(GAME_OVER);
                 break;
             }
@@ -253,10 +263,10 @@ public class Room {
         endGame();
     }
 
-    void barrierWait(CyclicBarrier barrier){
+    void barrierWait(CyclicBarrier barrier) {
         try {
             barrier.await();
-        }catch (InterruptedException | BrokenBarrierException ignored) {
+        } catch (InterruptedException | BrokenBarrierException ignored) {
         }
     }
 

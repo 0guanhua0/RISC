@@ -54,6 +54,10 @@ public class Constant {
     public static final String VALID_RECONNECT = "welcome back to game";
 
 
+    //player disconnect default input
+    public static final String DISCONNECT_INPUT = "d";
+
+
 
     //client requiring gaming info
     public static final String GET_WAIT_ROOM = "getWaitRoom";

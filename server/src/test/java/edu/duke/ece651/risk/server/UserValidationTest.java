@@ -1,5 +1,6 @@
 package edu.duke.ece651.risk.server;
 
+import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -24,9 +25,12 @@ class UserValidationTest {
                 "\"userPassword\": \"password\",\n" +
                 "\"action\": \"login\"} "));
         String userName = "name";
-        User user1 = new User(userName, setupMockInput(inputStream1), outputStream1);
+        JSONObject jsonObject1 = new JSONObject("{\"userName\": \"name\",\n" +
+                "\"userPassword\": \"password\",\n" +
+                "\"action\": \"login\"} ");
+        User user1 = new User(setupMockInput(inputStream1), outputStream1);
 
-        assertFalse(UserValidation.validate(user1, db));
+        assertFalse(UserValidation.validate(user1, db, jsonObject1));
         assertEquals(INVALID_LOGIN, readAllStringFromObjectStream(outputStream1));
 
 
@@ -35,10 +39,14 @@ class UserValidationTest {
                 "\"userPassword\": \"password\",\n" +
                 "\"action\": \"signup\" }"));
         String userName2 = "name";
-        User user2 = new User(userName2,setupMockInput(inputStream2), outputStream2);
+        JSONObject jsonObject2 = new JSONObject("{\"userName\": \"name\",\n" +
+                "\"userPassword\": \"password\",\n" +
+                "\"action\": \"signup\"} ");
+        User user2 = new User(setupMockInput(inputStream2), outputStream2);
 
-        assertTrue(UserValidation.validate(user2, db));
+        assertTrue(UserValidation.validate(user2, db, jsonObject2));
         assertEquals(SUCCESSFUL, readAllStringFromObjectStream(outputStream2));
+
 
 
         ByteArrayOutputStream outputStream3 = new ByteArrayOutputStream();
@@ -46,10 +54,15 @@ class UserValidationTest {
                 "\"userPassword\": \"password\",\n" +
                 "\"action\": \"login\" }"));
 
-        String userName3 = "naem";
+        JSONObject jsonObject3 = new JSONObject("{\"userName\": \"name\",\n" +
+                "\"userPassword\": \"password\",\n" +
+                "\"action\": \"login\" }");
+
+        String userName3 = "name";
         User user3 = new User(userName3, setupMockInput(inputStream3), outputStream3);
 
-        assertTrue(UserValidation.validate(user3, db));
+
+        assertTrue(UserValidation.validate(user3, db, jsonObject3));
         assertEquals(SUCCESSFUL, readAllStringFromObjectStream(outputStream3));
 
 
@@ -61,7 +74,10 @@ class UserValidationTest {
         String userName5 = "name";
         User user5 = new User(userName5, setupMockInput(inputStream5), outputStream5);
 
-        assertFalse(UserValidation.validate(user5, db));
+        JSONObject jsonObject5 = new JSONObject("{\"userName\": \"name\",\n" +
+                "\"userPassword\": \"password\",\n" +
+                "\"action\": \"xxx\" }");
+        assertFalse(UserValidation.validate(user5, db, jsonObject5));
         assertEquals(INVALID_VALIDATE, readAllStringFromObjectStream(outputStream5));
 
         ByteArrayOutputStream outputStream6 = new ByteArrayOutputStream();
@@ -69,9 +85,14 @@ class UserValidationTest {
                 "\"userPassword\": \"password\",\n" +
                 "\"action\": \"signup\" }"));
         String userName6 = "name";
+        JSONObject jsonObject6 = new JSONObject("{\"userName\": \"name\",\n" +
+                "\"userPassword\": \"password\",\n" +
+                "\"action\": \"signup\" }");
         User user6 = new User(userName6, setupMockInput(inputStream6), outputStream6);
-        assertFalse(UserValidation.validate(user6, db));
+        assertFalse(UserValidation.validate(user6, db, jsonObject6));
         assertEquals(INVALID_SIGNUP, readAllStringFromObjectStream(outputStream6));
+
+
 
 
 
