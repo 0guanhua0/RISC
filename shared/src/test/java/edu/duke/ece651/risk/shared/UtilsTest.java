@@ -151,7 +151,7 @@ public class UtilsTest {
 
     @Test
     void getUnitUpCost() {
-        int maxLevel = Utils.getMaxLevel(UNIT_BONUS);
+        int maxLevel = Utils.getMaxKey(UNIT_BONUS);
         assertThrows(IllegalArgumentException.class,()->{Utils.getUnitUpCost(1,0);});
         assertThrows(IllegalArgumentException.class,()->{Utils.getUnitUpCost(maxLevel,maxLevel+1);});
         assertThrows(IllegalArgumentException.class,()->{Utils.getUnitUpCost(-1,1);});
@@ -166,7 +166,7 @@ public class UtilsTest {
         HashMap<Integer, Integer> map = new HashMap<>();
         map.put(1,7);
         map.put(2,4);
-        assertEquals(2,Utils.getMaxLevel(map));
+        assertEquals(2,Utils.getMaxKey(map));
     }
 
     @Test
@@ -174,6 +174,6 @@ public class UtilsTest {
         HashMap<Integer, Integer> map = new HashMap<>();
         map.put(1,7);
         map.put(2,0);
-        assertEquals(1,Utils.getMinLevel(map));
+        assertEquals(1,Utils.getMinKey(map));
     }
 }

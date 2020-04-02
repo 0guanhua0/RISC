@@ -8,13 +8,16 @@ public class Army implements Serializable {
     // where this army comes from(e.g. territory name)
     String src;
     Map<Integer,Integer> levelToNum;
+    int playerId;
 
 
 
     public Army(int playerID, String src, Map<Integer,Integer> levelToNuml) {
         this.src = src;
         this.levelToNum = levelToNuml;
+        this.playerId = playerID;
     }
+
     public Army(int playerID, String src, int unitNum) {
         this.src = src;
         this.levelToNum = new HashMap<>(){{
@@ -26,8 +29,8 @@ public class Army implements Serializable {
         return src;
     }
 
-    public int getUnitNums() {
-        return levelToNum.get(0);
+    public int getUnitNums(int level) {
+        return levelToNum.get(level);
     }
 
     public Map<Integer, Integer> getTroops() {

@@ -135,10 +135,11 @@ class TerritoryV1Test {
 
     }
 
-//    @Test
-//    void testResolveCombat() throws IOException {
+    @Test
+    void testResolveCombat() throws IOException {
+        TerritoryV1 test = new TerritoryV1("test");
+        assertEquals(null,test.resolveCombat(0,null,null,null));
 //        MapDataBase<String> mapDataBase = new MapDataBase<>();
-//        //prepare the world
 //        WorldMap<String> worldMap = mapDataBase.getMap("a clash of kings");
 //        Territory storm = worldMap.getTerritory("the storm kingdom");
 //        Territory reach = worldMap.getTerritory("kingdom of the reach");
@@ -206,7 +207,7 @@ class TerritoryV1Test {
 //
 //        // lose
 //        assertFalse(storm.resolveCombats().get(0).isAttackerWin());
-//    }
+    }
 
 
     @Test
@@ -226,4 +227,31 @@ class TerritoryV1Test {
         TerritoryV1 name = new TerritoryV1("name");
         assertEquals(0,name.getTechYield());
     }
+
+
+    @Test
+    void canUpUnit() {
+        TerritoryV1 name = new TerritoryV1("name");
+        assertFalse(name.canUpUnit(0,0,0));
+        name.upUnit(0,0,0);
+    }
+    @Test
+    void addUnits() {
+        TerritoryV1 name = new TerritoryV1("name");
+        assertThrows(IllegalArgumentException.class,()->{name.addUnits(1,1);});
+        assertDoesNotThrow(()->{name.addUnits(1,0);});
+    }
+
+    @Test
+    void loseUnits() {
+        TerritoryV1 name = new TerritoryV1("name");
+        name.addUnits(1,0);
+        assertThrows(IllegalArgumentException.class,()->{name.loseUnits(1,1);});
+        assertDoesNotThrow(()->{name.loseUnits(1,0);});
+
+
+    }
+
+
+
 }

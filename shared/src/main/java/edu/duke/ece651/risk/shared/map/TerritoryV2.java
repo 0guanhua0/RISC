@@ -4,8 +4,8 @@ import edu.duke.ece651.risk.shared.action.AttackResult;
 
 import java.util.*;
 import static edu.duke.ece651.risk.shared.Constant.UNIT_BONUS;
-import static edu.duke.ece651.risk.shared.Utils.getMaxLevel;
-import static edu.duke.ece651.risk.shared.Utils.getMinLevel;
+import static edu.duke.ece651.risk.shared.Utils.getMaxKey;
+import static edu.duke.ece651.risk.shared.Utils.getMinKey;
 
 /**
  * @program: risk
@@ -65,8 +65,8 @@ public class TerritoryV2 extends TerritoryV1 {
         // start combat
         while (!enemy.isEmpty() && !unitGroup.isEmpty()) {
             //select the unit for attacker and defender
-            int attackLevel = isOwnTurn?getMinLevel(enemy):getMaxLevel(enemy);
-            int defendLevel = isOwnTurn?getMaxLevel(unitGroup):getMinLevel(unitGroup);
+            int attackLevel = isOwnTurn? getMinKey(enemy): getMaxKey(enemy);
+            int defendLevel = isOwnTurn? getMaxKey(unitGroup): getMinKey(unitGroup);
 
             int i1 = diceAttack.nextInt(20)+UNIT_BONUS.get(attackLevel); // attacker dice
             int i2 = diceDefend.nextInt(20)+UNIT_BONUS.get(defendLevel); // defender dice
@@ -174,7 +174,7 @@ public class TerritoryV2 extends TerritoryV1 {
     @Override
     public boolean canUpUnit(int unitsNum, int srcLevel, int targetLevel) {
         //check if the number of units with source tech level is valid
-        if (unitsNum<=0||this.getUnitsNum(srcLevel)<unitsNum){
+        if (unitsNum<=0||this.getUnitsNum(srcLevel)<unitsNum||srcLevel>=targetLevel){
             return false;
         }
         //check if the target tech level is valid
@@ -192,7 +192,7 @@ public class TerritoryV2 extends TerritoryV1 {
         List<Unit> source = unitGroup.get(curLevel);
         List<Unit> target = unitGroup.getOrDefault(targetLevel, new ArrayList<Unit>());
 
-        for (int i = 0; i < curLevel; i++) {
+        for (int i = 0; i < num; i++) {
             source.remove(source.size()-1);
             target.add(new Unit());
         }

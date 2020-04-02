@@ -1,6 +1,7 @@
 package edu.duke.ece651.risk.shared.map;
 
 import edu.duke.ece651.risk.shared.Mock;
+import edu.duke.ece651.risk.shared.Utils;
 import edu.duke.ece651.risk.shared.player.Player;
 import edu.duke.ece651.risk.shared.player.PlayerV2;
 import org.junit.jupiter.api.Test;
@@ -170,5 +171,33 @@ class TerritoryV2Test {
 //
 //        // lose
 //        assertFalse(storm.resolveCombats().get(0).isAttackerWin());
+    }
+    @Test
+    void canUpUnit() throws IOException {
+        MapDataBase<String> mapDataBase = new MapDataBase<String>();
+        //prepare the world
+        WorldMap<String> worldMap = mapDataBase.getMap("a clash of kings");
+        Territory stormTerr = worldMap.getTerritory("the storm kingdom");
+        stormTerr.addBasicUnits(5);
+        stormTerr.addUnits(2,1);
+        assertFalse(stormTerr.canUpUnit(0,0,1));
+        assertTrue(stormTerr.canUpUnit(5,0,1));
+        assertFalse(stormTerr.canUpUnit(6,0,1));
+        assertFalse(stormTerr.canUpUnit(1,1,0));
+        assertFalse(stormTerr.canUpUnit(1, Utils.getMaxKey(UNIT_BONUS),0));
+    }
+
+    @Test
+    void upUnit() throws IOException {
+        MapDataBase<String> mapDataBase = new MapDataBase<String>();
+        //prepare the world
+        WorldMap<String> worldMap = mapDataBase.getMap("a clash of kings");
+        Territory stormTerr = worldMap.getTerritory("the storm kingdom");
+        stormTerr.addBasicUnits(5);
+        stormTerr.addUnits(4,1);
+        assertThrows(IllegalArgumentException.class,()->{stormTerr.upUnit(6,0,1);});
+        stormTerr.upUnit(3,0,1);
+        assertEquals(2,stormTerr.getBasicUnitsNum());
+        assertEquals(7,stormTerr.getUnitsNum(1));
     }
 }

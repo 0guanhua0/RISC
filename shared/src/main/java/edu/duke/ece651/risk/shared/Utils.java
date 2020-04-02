@@ -106,11 +106,11 @@ public class Utils {
         return cloneObj;
     }
 
-    public static int getMaxLevel(Map<Integer,?> map){
+    public static int getMaxKey(Map<Integer,?> map){
         return map.keySet().stream().max(Integer::compareTo).get();
     }
 
-    public static int getMinLevel(Map<Integer,?> map){
+    public static int getMinKey(Map<Integer,?> map){
         return map.keySet().stream().min(Integer::compareTo).get();
     }
 }

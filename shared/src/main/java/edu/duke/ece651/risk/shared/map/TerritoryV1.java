@@ -154,9 +154,5 @@ public class TerritoryV1 extends Territory{
     }
 
     @Override
-    public void upUnit(int num, int curLevel, int targetLevel) {
-        if (!canUpUnit(num,curLevel,targetLevel)){
-            throw new IllegalArgumentException("invalid argument");
-        }
-    }
+    public void upUnit(int num, int curLevel, int targetLevel) { }
 }
