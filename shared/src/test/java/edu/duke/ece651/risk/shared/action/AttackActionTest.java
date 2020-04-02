@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.*;
 import java.util.Arrays;
+import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -21,6 +22,21 @@ class AttackActionTest {
     private static final String vale = "kingdom of mountain and vale";
     private static final String north = "kingdom of the north";
     private static final String dorne = "principality of dorne";
+
+    @Test
+    void testConstructor(){
+        HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
+        map.put(0,2);
+        map.put(1,3);
+        map.put(4,7);
+        AttackAction attackAction = new AttackAction("src", "dest", 1, map);
+        assertEquals(attackAction.src,"src");
+        assertEquals("dest",attackAction.dest);
+        assertEquals(1,attackAction.playerId);
+        assertEquals(map,attackAction.levelToNum);
+        assertEquals(12,attackAction.unitsNum);
+    }
+
 
     @Test
     void isValid() throws IOException {

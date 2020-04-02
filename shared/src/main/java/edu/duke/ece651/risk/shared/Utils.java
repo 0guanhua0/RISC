@@ -81,7 +81,7 @@ public class Utils {
         return res;
     }
     public static int getUnitUpCost(int cur,int target){
-        if (cur<target&&UNIT_BONUS.containsKey(cur)&&UNIT_BONUS.containsKey(target)){
+        if (cur>target||!UNIT_BONUS.containsKey(cur)||!UNIT_BONUS.containsKey(target)){
             throw new IllegalArgumentException("invalid input argument");
         }else{
             int start = UP_UNIT_COST.get(cur);

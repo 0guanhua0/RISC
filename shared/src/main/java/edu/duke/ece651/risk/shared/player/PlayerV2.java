@@ -33,7 +33,7 @@ public class PlayerV2<T> extends PlayerV1<T> {
         initResource();
     }
 
-    //TODO test the update of units
+    //TODO add more testing for this method
     @Override
     public void updateState() {
         for (Object o : territories) {
@@ -44,7 +44,7 @@ public class PlayerV2<T> extends PlayerV1<T> {
             tech.addResource(techYield);
             food.addResource(foodYield);
         }
-        if (!upTechRight){
+        if (!upTechRight){//note that we only update the max tech level after a round of game
             this.upTechRight = true;
             techLevel++;
         }

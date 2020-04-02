@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,6 +26,18 @@ class MoveActionTest {
     private static final String north = "kingdom of the north";
     private static final String dorne = "principality of dorne";
 
+    @Test
+    void testConst() {
+        HashMap<Integer, Integer> map = new HashMap<>();
+        map.put(1,3);
+        map.put(2,7);
+        MoveAction moveAction = new MoveAction("src", "dest", 1, map);
+        assertEquals(moveAction.src,"src");
+        assertEquals("dest",moveAction.dest);
+        assertEquals(1,moveAction.playerId);
+        assertEquals(map,moveAction.levelToNum);
+        assertEquals(10,moveAction.unitsNum);
+    }
 
     @Test
     void isValid() throws IOException {

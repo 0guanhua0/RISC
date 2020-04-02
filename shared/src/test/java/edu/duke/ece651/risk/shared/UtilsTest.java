@@ -1,5 +1,6 @@
 package edu.duke.ece651.risk.shared;
 
+import static edu.duke.ece651.risk.shared.Constant.UNIT_BONUS;
 import static org.junit.jupiter.api.Assertions.*;
 
 import edu.duke.ece651.risk.shared.map.MapDataBase;
@@ -146,5 +147,33 @@ public class UtilsTest {
 
         assertFalse(stormClone==storm);
         assertFalse(cloneRes==worldMap);
+    }
+
+    @Test
+    void getUnitUpCost() {
+        int maxLevel = Utils.getMaxLevel(UNIT_BONUS);
+        assertThrows(IllegalArgumentException.class,()->{Utils.getUnitUpCost(1,0);});
+        assertThrows(IllegalArgumentException.class,()->{Utils.getUnitUpCost(maxLevel,maxLevel+1);});
+        assertThrows(IllegalArgumentException.class,()->{Utils.getUnitUpCost(-1,1);});
+
+        assertEquals(3, Utils.getUnitUpCost(0, 1));
+        assertEquals(140,Utils.getUnitUpCost(0,6));
+        assertEquals(85,Utils.getUnitUpCost(4,6));
+    }
+
+    @Test
+    void getMaxLevel() {
+        HashMap<Integer, Integer> map = new HashMap<>();
+        map.put(1,7);
+        map.put(2,4);
+        assertEquals(2,Utils.getMaxLevel(map));
+    }
+
+    @Test
+    void getMinLevel() {
+        HashMap<Integer, Integer> map = new HashMap<>();
+        map.put(1,7);
+        map.put(2,0);
+        assertEquals(1,Utils.getMinLevel(map));
     }
 }

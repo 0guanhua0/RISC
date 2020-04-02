@@ -1,5 +1,6 @@
 package edu.duke.ece651.risk.shared.action;
 
+import edu.duke.ece651.risk.shared.Utils;
 import edu.duke.ece651.risk.shared.WorldState;
 import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.WorldMap;
@@ -8,6 +9,7 @@ import edu.duke.ece651.risk.shared.player.Player;
 import java.util.Map;
 
 import static edu.duke.ece651.risk.shared.Constant.UNIT_BONUS;
+import static edu.duke.ece651.risk.shared.Utils.getUnitUpCost;
 
 /**
  * @program: risk
@@ -40,10 +42,13 @@ public class UpUnitAction implements Action{
 
         //check if territory name is valid
         if (!map.hasTerritory(terr)){
+            System.out.println(1);
             return false;
         }
+
+        //check if territory has enough number of units with specified technology level
         Territory srcNode = map.getTerritory(terr);
-        if (srcNode.canUpUnit(this.unitsNum,this.srcLevel,this.targetLevel)){
+        if (!srcNode.canUpUnit(this.unitsNum,this.srcLevel,this.targetLevel)){
             return false;
         }
 
@@ -56,6 +61,13 @@ public class UpUnitAction implements Action{
         if (!UNIT_BONUS.containsKey(targetLevel)||player.getTechLevel()<targetLevel){
             return false;
         }
+
+        //check if player has enough technology resources
+        int cost = Utils.getUnitUpCost(srcLevel,targetLevel)*unitsNum;
+        if (player.getTechNum()<cost){
+            return false;
+        }
+
         return true;
     }
 
