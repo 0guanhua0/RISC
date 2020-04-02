@@ -163,6 +163,19 @@ class PlayerV2Test {
         player.updateState();
         assertEquals(2,player.techLevel);
         assertTrue(player.upTechRight);
+    }
 
+    @Test
+    void upMaxTech() throws IOException {
+        MapDataBase<String> mapDataBase = new MapDataBase<String>();
+        WorldMap<String> worldMap = mapDataBase.getMap("a clash of kings");
+        Territory storm = worldMap.getTerritory("the storm kingdom");
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        PlayerV2<String> player = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),out);
+        player.setId(1);
+
+        assertDoesNotThrow(()->{player.upMaxTech();});
+        assertThrows(IllegalArgumentException.class,()->{player.upMaxTech();});
     }
 }
