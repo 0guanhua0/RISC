@@ -12,7 +12,7 @@ public class User {
     ObjectOutputStream out;
 
     //class that store the online validated user
-    List<Room> roomList = new ArrayList<>();
+    List<Integer> roomList = new ArrayList<>();
     String userName;
 
     public User(String userName, InputStream in, OutputStream out) throws IOException {
@@ -22,17 +22,17 @@ public class User {
     }
 
     //update the room info
-    public void addRoom(Room room) {
-        roomList.add(room);
+    public void addRoom(Integer roomID) {
+        roomList.add(roomID);
 
     }
 
     //rm room info
-    public void rmRoom(Room room) {
-        roomList.add(room);
+    public void rmRoom(Integer roomID) {
+        roomList.add(roomID);
     }
 
-    public List<Room> getRoomList() {
+    public List<Integer> getRoomList() {
         return roomList;
     }
 

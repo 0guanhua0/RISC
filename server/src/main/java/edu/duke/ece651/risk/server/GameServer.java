@@ -23,8 +23,6 @@ public class GameServer {
     ThreadPoolExecutor threadPool;
     // list of all rooms(each room represent a running game)
 
-    // list of connected player
-    Map<String, UserInfo> connectedUser;
     // db for user name & password
     SQL db;
     Map<Integer, Room> rooms;
@@ -34,7 +32,6 @@ public class GameServer {
         BlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<>(32);
         this.threadPool = new ThreadPoolExecutor(4, 16, 5, TimeUnit.SECONDS, workQueue);
         this.rooms = new ConcurrentHashMap<>();
-        this.connectedUser = new ConcurrentHashMap<>();
         this.db = new SQL();
     }
 
@@ -74,11 +71,14 @@ public class GameServer {
         player.send(helloInfo);
 
         //tmp validation
+        /*
         while (true) {
             if (UserValidation.validate(player, db)) {
                 break;
             }
         }
+
+         */
 
 
 

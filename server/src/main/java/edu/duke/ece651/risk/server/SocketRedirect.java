@@ -1,5 +1,6 @@
 package edu.duke.ece651.risk.server;
 
+import edu.duke.ece651.risk.shared.player.Player;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -21,6 +22,8 @@ public class SocketRedirect {
         String userName = obj.getString(USER_NAME);
         String action = obj.getString(ACTION);
 
+        //check user is try to login/sign up
+        //or already login & try to start normal game
         //check user is in validate list
 
         //if no, return error
@@ -33,12 +36,13 @@ public class SocketRedirect {
         //if yes, proceed
         //according to actual action to redirect
         if (action.equals(GET_WAIT_ROOM)) {
-            user.send(user.getRoomList());
+            //user.send(user.getRoomList());
         }
 
 
         //todo; return available room
         if (action.equals(GET_IN_ROOM)) {
+            user.send(user.getRoomList());
 
         }
 
@@ -51,10 +55,24 @@ public class SocketRedirect {
 
         //create new room
         if (action.equals(CREATE_GAME)) {
+            //create new player
+
+            return;
 
         }
 
 
     }
+
+    //set player id as userName
+    //redirect socket io
+    public void createPlayer(Player player, User user) {
+        player.setColor(user.getUserName());
+
+    }
+
+    //check if user is try to login
+    //public boolean is
+
 
 }

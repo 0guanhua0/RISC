@@ -1,6 +1,5 @@
 package edu.duke.ece651.risk.server;
 
-import edu.duke.ece651.risk.shared.player.Player;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -18,9 +17,9 @@ public class UserValidation {
      *
      */
 
-    public static Boolean validate(Player<?> player, SQL db) throws SQLException, IOException, ClassNotFoundException {
+    public static Boolean validate(User user, SQL db) throws SQLException, IOException, ClassNotFoundException {
 
-        String msg = (String) player.recv();
+        String msg = (String) user.recv();
         JSONObject obj = new JSONObject(msg);
 
         String userName = obj.getString(USER_NAME);
@@ -30,10 +29,10 @@ public class UserValidation {
 
         if (action.equals(LOGIN)) {
             if (db.authUser(userName, userPassword)) {
-                player.send(SUCCESSFUL);
+                user.send(SUCCESSFUL);
                 return true;
             } else {
-                player.send(INVALID_LOGIN);
+                user.send(INVALID_LOGIN);
                 return false;
 
             }
@@ -42,11 +41,11 @@ public class UserValidation {
         if (action.equals(SIGNUP)) {
             if (db.addUser(userName, userPassword)) {
 
-                player.send(SUCCESSFUL);
+                user.send(SUCCESSFUL);
                 return true;
 
             } else {
-                player.send(INVALID_SIGNUP);
+                user.send(INVALID_SIGNUP);
                 return false;
             }
         }
@@ -58,7 +57,7 @@ public class UserValidation {
 
          */
 
-        player.send(INVALID_VALIDATE);
+        user.send(INVALID_VALIDATE);
         return false;
 
 
@@ -71,7 +70,7 @@ public class UserValidation {
                 return true;
 
             } else {
-                player.send("invalid change");
+                user.send("invalid change");
             }
 
         }
