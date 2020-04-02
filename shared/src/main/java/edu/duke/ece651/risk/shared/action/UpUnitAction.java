@@ -42,7 +42,6 @@ public class UpUnitAction implements Action{
 
         //check if territory name is valid
         if (!map.hasTerritory(terr)){
-            System.out.println(1);
             return false;
         }
 

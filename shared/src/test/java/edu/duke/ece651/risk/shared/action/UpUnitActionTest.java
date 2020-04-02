@@ -91,6 +91,51 @@ class UpUnitActionTest {
     }
 
     @Test
-    void perform() {
+    void perform() throws IOException {
+        MapDataBase<String> mapDataBase = new MapDataBase<String>();
+        //prepare the world
+        WorldMap<String> worldMap = mapDataBase.getMap("a clash of kings");
+        Territory stormTerr = worldMap.getTerritory("the storm kingdom");
+        Territory reachTerr = worldMap.getTerritory("kingdom of the reach");
+        Territory rockTerr = worldMap.getTerritory("kingdom of the rock");
+        Territory valeTerr = worldMap.getTerritory("kingdom of mountain and vale");
+        Territory northTerr = worldMap.getTerritory("kingdom of the north");
+        Territory dorneTerr = worldMap.getTerritory("principality of dorne");
+
+        //player join this game
+        Player<String> p1 = new PlayerV2<>(Mock.setupMockInput(Arrays.asList()),new ByteArrayOutputStream());
+        p1.setId(1);
+        Player<String> p2 = new PlayerV2<>(Mock.setupMockInput(Arrays.asList()),new ByteArrayOutputStream());
+        p2.setId(2);
+
+        WorldState worldState1 = new WorldState(p1, worldMap);
+        WorldState worldState2 = new WorldState(p2, worldMap);
+
+        //assign some territories to player1
+        p1.addTerritory(northTerr);
+        p1.addTerritory(valeTerr);
+        p1.addTerritory(rockTerr);
+        p1.addTerritory(dorneTerr);
+        //assign some territories to player2
+        p2.addTerritory(stormTerr);
+        p2.addTerritory(reachTerr);
+
+        //assign some units to player 1
+        northTerr.addBasicUnits(8);
+        valeTerr.addBasicUnits(2);
+        rockTerr.addBasicUnits(10);
+        dorneTerr.addBasicUnits(2);
+        //assign some units to player 2
+        stormTerr.addBasicUnits(3);
+        reachTerr.addBasicUnits(3);
+
+        //test invalid territory name
+        UpUnitAction action1 = new UpUnitAction("test", 0, 1, 1,1);
+        assertThrows(IllegalArgumentException.class,()->{action1.perform(worldState1);});
+
+        //test correct case
+        UpUnitAction action2 = new UpUnitAction(vale, 0, 1, 1, 1);
+        assertDoesNotThrow(()->{action2.isValid(worldState1);});
+        assertTrue(action2.isValid(worldState1));
     }
 }

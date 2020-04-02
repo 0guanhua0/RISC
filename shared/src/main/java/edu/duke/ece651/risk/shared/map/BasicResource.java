@@ -36,6 +36,5 @@ public class BasicResource {
         if (getRemain()<useNum){
             throw new IllegalArgumentException("There isn't enough resources for this operation!");
         }
-        totalNum -= useNum;
     }
 }
