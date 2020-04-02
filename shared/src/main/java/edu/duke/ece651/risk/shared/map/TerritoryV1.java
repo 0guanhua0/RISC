@@ -18,7 +18,7 @@ public class TerritoryV1 extends Territory{
 
     public TerritoryV1(String name) {
        super(name);
-       this.unitsV1 = new LinkedList<>();//use linked list since there will be some remove operation
+       this.unitsV1 = new LinkedList<Unit>();//use linked list since there will be some remove operation
     }
 
     public void addBasicUnits(int num) throws IllegalArgumentException {
@@ -52,7 +52,7 @@ public class TerritoryV1 extends Territory{
         if (attackAct.containsKey(playerId)) {
             attackAct.get(playerId).add(army);
         } else {
-            attackAct.put(playerId, new ArrayList<>(Collections.singletonList(army)));
+            attackAct.put(playerId, new ArrayList<Army>(Collections.singletonList(army)));
         }
     }
 

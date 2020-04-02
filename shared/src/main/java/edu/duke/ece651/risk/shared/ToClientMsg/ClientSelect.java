@@ -35,7 +35,7 @@ public class ClientSelect implements Serializable {
 
     //only return groups whose value is false
     public List<Set<String>> getGroups() {
-        List<Set<String>> groups = new ArrayList<>();
+        List<Set<String>> groups = new ArrayList<Set<String>>();
         for (Map.Entry<Set<String>, Boolean> entry : map.getGroups().entrySet()) {
             //if (!entry.getValue()){
             groups.add(entry.getKey());

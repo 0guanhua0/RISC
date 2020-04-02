@@ -50,7 +50,7 @@ public class Constant {
 
 
     //the key is current technical level, value is the cost of tech resources to upgrade maximum tech level to the next technical level
-    public static final Map<Integer, Integer> TECH_MAP = new HashMap<>() {
+    public static final Map<Integer, Integer> TECH_MAP = new HashMap<Integer, Integer>() {
         {
             put(1, 50);
             put(2, 75);
@@ -60,7 +60,7 @@ public class Constant {
         }
     };
     //key is the level of units, value is the name of corresponding units
-    public static final Map<Integer, String> UNIT_NAME = new HashMap<>() {{
+    public static final Map<Integer, String> UNIT_NAME = new HashMap<Integer, String>() {{
         put(0, "Light infantry");
         put(1, "infantry");
         put(2, "Hussar");
@@ -84,7 +84,7 @@ public class Constant {
         }
     };
     //key is the current level of units, value is the extra bonus for a fight
-    public static final Map<Integer, Integer> UNIT_BONUS = new HashMap<>() {
+    public static final Map<Integer, Integer> UNIT_BONUS = new HashMap<Integer, Integer>() {
         {
             put(0, 0);
             put(1, 1);

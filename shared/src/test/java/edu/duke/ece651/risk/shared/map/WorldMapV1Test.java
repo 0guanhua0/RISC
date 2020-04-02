@@ -8,12 +8,12 @@ class WorldMapV1Test {
     @Test
     void testWorldMapV1Constructor(){
         //test constructor
-        Map<String, Set<String>> map = new HashMap<>() {{
+        Map<String, Set<String>> map = new HashMap<String, Set<String>>() {{
             put("a", new HashSet<String>(Arrays.asList("b","c")));
             put("b", new HashSet<String>(Arrays.asList("a","c")));
             put("c", new HashSet<String>(Arrays.asList("a","b")));
         }};
-        Map<Set<String>,Boolean> groups = new HashMap<>(){{
+        Map<Set<String>,Boolean> groups = new HashMap<Set<String>, Boolean>(){{
             put(new HashSet<>(Arrays.asList("a")),false);
             put(new HashSet<>(Arrays.asList("b")),false);
             put(new HashSet<>(Arrays.asList("c")),false);
