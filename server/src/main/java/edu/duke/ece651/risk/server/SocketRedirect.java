@@ -4,6 +4,8 @@ import edu.duke.ece651.risk.shared.player.Player;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.sql.SQLException;
+import java.util.List;
 
 import static edu.duke.ece651.risk.shared.Constant.*;
 
@@ -15,17 +17,29 @@ import static edu.duke.ece651.risk.shared.Constant.*;
  */
 public class SocketRedirect {
 
-    public void redirect(User user, UserList userList) throws IOException, ClassNotFoundException {
+    public static void redirect(User user, UserList userList, SQL db, List availableRooms) throws IOException, ClassNotFoundException, SQLException {
         String msg = (String) user.recv();
         JSONObject obj = new JSONObject(msg);
 
         String userName = obj.getString(USER_NAME);
+        String userPassword = obj.getString(USER_PASSWORD);
         String action = obj.getString(ACTION);
 
         //check user is try to login/sign up
-        //or already login & try to start normal game
-        //check user is in validate list
+        if (action.equals(LOGIN)) {
+            UserValidation.validate(user, db);
+            return;
+        }
 
+        if (action.equals(SIGNUP)) {
+            if (UserValidation.validate(user,db) && !userList.hasUser(userName)) {
+                userList.addUser(userName);
+            }
+            return;
+        }
+
+        //user try to play game
+        //check user is in validate list
         //if no, return error
         if (!userList.hasUser(userName)) {
             //invalid user
@@ -35,12 +49,20 @@ public class SocketRedirect {
 
         //if yes, proceed
         //according to actual action to redirect
+        //create new room
+        if (action.equals(CREATE_GAME)) {
+            //proceed to original process
+            return;
+
+        }
+
         if (action.equals(GET_WAIT_ROOM)) {
-            //user.send(user.getRoomList());
+            user.send(availableRooms);
+            return;
         }
 
 
-        //todo; return available room
+        //todo; return the room user has join
         if (action.equals(GET_IN_ROOM)) {
             user.send(user.getRoomList());
 
@@ -53,13 +75,6 @@ public class SocketRedirect {
 
         }
 
-        //create new room
-        if (action.equals(CREATE_GAME)) {
-            //create new player
-
-            return;
-
-        }
 
 
     }
@@ -73,6 +88,7 @@ public class SocketRedirect {
 
     //check if user is try to login
     //public boolean is
+
 
 
 }

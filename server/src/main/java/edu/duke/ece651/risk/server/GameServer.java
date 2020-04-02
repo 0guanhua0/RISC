@@ -23,6 +23,7 @@ public class GameServer {
     ThreadPoolExecutor threadPool;
     // list of all rooms(each room represent a running game)
 
+    UserList userList;
     // db for user name & password
     SQL db;
     Map<Integer, Room> rooms;
@@ -33,6 +34,7 @@ public class GameServer {
         this.threadPool = new ThreadPoolExecutor(4, 16, 5, TimeUnit.SECONDS, workQueue);
         this.rooms = new ConcurrentHashMap<>();
         this.db = new SQL();
+        this.userList = new UserList();
     }
 
     /**
@@ -65,25 +67,22 @@ public class GameServer {
     //todo: a class handle different socket
     void handleIncomeRequest(Socket socket) throws IOException, ClassNotFoundException, SQLException {
         // here we wrap the socket with player object ASAP(i.e. decouple socket with stream)
-        Player<String> player = new PlayerV2<>(socket.getInputStream(), socket.getOutputStream());
+        User user = new User(socket.getInputStream(), socket.getOutputStream());
 
         String helloInfo = "Welcome to the fancy RISK game!!!";
-        player.send(helloInfo);
+        user.send(helloInfo);
 
-        //tmp validation
-        /*
-        while (true) {
-            if (UserValidation.validate(player, db)) {
-                break;
-            }
-        }
-
-         */
-
+        List availableRooms = getRoomList();
+       try {
+           SocketRedirect.redirect(user, userList, db, availableRooms);
+       }
+       catch (IOException ignored) {
+           //this exception happens because it is short socket
+           //just for user info validation
+       }
 
 
-        //todo: change room controller, to allow user switch different room
-
+        Player<String> player = new PlayerV2<>(socket.getInputStream(), socket.getOutputStream());
         int choice = askValidRoomNum(player);
         synchronized (this) {
             if (choice < 0) {

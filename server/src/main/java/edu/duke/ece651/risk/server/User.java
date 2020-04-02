@@ -16,10 +16,13 @@ public class User {
     List<Integer> roomList = new ArrayList<>();
     String userName;
 
-    public User(String userName, InputStream in, OutputStream out) throws IOException {
-        this.userName = userName;
+    public User(InputStream in, OutputStream out) throws IOException {
         this.in = new ObjectInputStream(in);
         this.out = new ObjectOutputStream(out);
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     //update the room info
