@@ -60,4 +60,8 @@ public class User {
     public ObjectOutputStream getOut() {
         return out;
     }
+
+    public boolean isInRoom(int roomID) {
+        return roomList.contains(roomID);
+    }
 }

@@ -264,4 +264,14 @@ public class Room {
     public List<Player<String>> getPlayers() {
         return players;
     }
+
+    //find certaion player
+    public Player getPlayer(String name) {
+        for (Player p : players) {
+            if (p.getColor().equals(name)) {
+                return p;
+            }
+        }
+        return null;
+    }
 }

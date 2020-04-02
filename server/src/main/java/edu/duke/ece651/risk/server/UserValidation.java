@@ -17,14 +17,10 @@ public class UserValidation {
      *
      */
 
-    public static Boolean validate(User user, SQL db) throws SQLException, IOException, ClassNotFoundException {
-
-        String msg = (String) user.recv();
-        JSONObject obj = new JSONObject(msg);
-
-        String userName = obj.getString(USER_NAME);
-        String userPassword = obj.getString(USER_PASSWORD);
-        String action = obj.getString(ACTION);
+    public static Boolean validate(User user, SQL db, JSONObject msg) throws SQLException, IOException, ClassNotFoundException {
+        String userName = msg.getString(USER_NAME);
+        String userPassword = msg.getString(USER_PASSWORD);
+        String action = msg.getString(ACTION);
 
 
         if (action.equals(LOGIN)) {

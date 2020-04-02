@@ -6,6 +6,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 import static edu.duke.ece651.risk.shared.Constant.*;
 
@@ -17,7 +18,8 @@ import static edu.duke.ece651.risk.shared.Constant.*;
  */
 public class SocketRedirect {
 
-    public static void redirect(User user, UserList userList, SQL db, List availableRooms) throws IOException, ClassNotFoundException, SQLException {
+    public static void redirect(User user, UserList userList, SQL db, List availableRooms, Map<Integer, Room> rooms) throws IOException, ClassNotFoundException, SQLException {
+        //header info from client
         String msg = (String) user.recv();
         JSONObject obj = new JSONObject(msg);
 
@@ -27,12 +29,12 @@ public class SocketRedirect {
 
         //check user is try to login/sign up
         if (action.equals(LOGIN)) {
-            UserValidation.validate(user, db);
+            UserValidation.validate(user, db, obj);
             return;
         }
 
         if (action.equals(SIGNUP)) {
-            if (UserValidation.validate(user,db) && !userList.hasUser(userName)) {
+            if (UserValidation.validate(user,db, obj) && !userList.hasUser(userName)) {
                 userList.addUser(userName);
             }
             return;
@@ -65,29 +67,34 @@ public class SocketRedirect {
         //todo; return the room user has join
         if (action.equals(GET_IN_ROOM)) {
             user.send(user.getRoomList());
-
+            return;
         }
 
         //join the existing game
         //if new player, then just new player
         //if existing player, then plug in the stream
         if (action.equals(JOIN_GAME)) {
+            int roomID = obj.getInt("roomID");
+            // user is a player already in room
+            // redirect io
+            if (user.isInRoom(roomID)) {
+                //go to the room
+                //find that player
+                Player currPlayer = rooms.get(roomID).getPlayer(userName);
+
+                //plug in io
+                currPlayer.setIn(user.getIn());
+                currPlayer.setOut(user.getOut());
+
+            }
+
+
 
         }
 
 
 
     }
-
-    //set player id as userName
-    //redirect socket io
-    public void createPlayer(Player player, User user) {
-        player.setColor(user.getUserName());
-
-    }
-
-    //check if user is try to login
-    //public boolean is
 
 
 

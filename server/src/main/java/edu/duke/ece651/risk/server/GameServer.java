@@ -73,13 +73,12 @@ public class GameServer {
         user.send(helloInfo);
 
         List availableRooms = getRoomList();
-       try {
-           SocketRedirect.redirect(user, userList, db, availableRooms);
-       }
-       catch (IOException ignored) {
-           //this exception happens because it is short socket
-           //just for user info validation
-       }
+        try {
+            SocketRedirect.redirect(user, userList, db, availableRooms, rooms);
+        } catch (IOException ignored) {
+            //this exception happens because it is short socket
+            //just for user info validation
+        }
 
 
         Player<String> player = new PlayerV2<>(socket.getInputStream(), socket.getOutputStream());
@@ -89,9 +88,13 @@ public class GameServer {
                 // create a new room
                 int roomID = rooms.size();
                 rooms.put(roomID, new Room(roomID, player, new MapDataBase<>()));
-            }else {
+
+                //add the roomID to the user list
+                user.addRoom(roomID);
+            } else {
                 // join an existing room
                 rooms.get(choice).addPlayer(player);
+                user.addRoom(choice);
             }
         }
     }
@@ -105,7 +108,7 @@ public class GameServer {
     int askValidRoomNum(Player<?> player) throws IOException {
         player.send(getRoomList());
 
-        while (true){
+        while (true) {
             try {
                 String choice = (String) player.recv();
                 int num = Integer.parseInt(choice);
@@ -122,23 +125,21 @@ public class GameServer {
     }
 
 
-
-
     /**
      * This function will return the current running room list.
      *
      * @return List of room object
      */
 
-    List<edu.duke.ece651.risk.shared.Room> getRoomList(){
+    List<edu.duke.ece651.risk.shared.Room> getRoomList() {
         // clear any finished room
         List<Integer> finishedRoom = new ArrayList<>();
         List<edu.duke.ece651.risk.shared.Room> roomList = new ArrayList<>();
-        for (Room room : rooms.values()){
-            if (room.hasFinished()){
+        for (Room room : rooms.values()) {
+            if (room.hasFinished()) {
                 finishedRoom.add(room.roomID);
-            }else {
-                if (!room.hasStarted()){
+            } else {
+                if (!room.hasStarted()) {
                     roomList.add(new edu.duke.ece651.risk.shared.Room(room.roomID, ""));
                 }
             }
