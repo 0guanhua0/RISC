@@ -47,6 +47,24 @@ public class Constant {
     public static final String INVALID_SIGNUP = "user name already exists";
     public static final String INVALID_VALIDATE = "invalid validation";
     public static final String VALIDATE_SUCCESSFUL = "SUCCESSFUL";
+    public static final String INVALID_USER = "invalid user / not login";
+    public static final String INVALID_RECONNECT = "the room ID you want to reconnect is invalid";
+
+
+    public static final String VALID_RECONNECT = "welcome back to game";
+
+
+
+    //client requiring gaming info
+    public static final String GET_WAIT_ROOM = "getWaitRoom";
+    public static final String GET_IN_ROOM = "getWaitRoom";
+    public static final String JOIN_GAME = "joinGame";
+    public static final String CREATE_GAME = "createGame";
+
+    //time when player offline others have to wait
+    public static final int WAIT_TIME = 60000;
+
+
 
 
     //the key is current technical level, value is the cost of tech resources to upgrade maximum tech level to the next technical level

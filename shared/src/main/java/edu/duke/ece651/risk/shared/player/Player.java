@@ -9,7 +9,6 @@ import java.util.Set;
 
 import static edu.duke.ece651.risk.shared.Constant.PLAYER_COLOR;
 import static edu.duke.ece651.risk.shared.Constant.PLAYER_ID;
-
 /**
  * @program: risk
  * @description: this is the abstract player class
@@ -137,6 +136,14 @@ public abstract class Player<T> {
 
     public abstract void upTech();
 
+    /**
+     * reset connection handle connection
+     */
+    public void setIn(InputStream in) throws IOException {
+        this.in = new ObjectInputStream(in);
+    }
 
-
+    public void setOut(OutputStream out) throws IOException {
+        this.out = new ObjectOutputStream(out);
+    }
 }
