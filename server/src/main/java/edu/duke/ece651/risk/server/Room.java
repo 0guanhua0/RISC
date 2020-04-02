@@ -259,4 +259,9 @@ public class Room {
         }catch (InterruptedException | BrokenBarrierException ignored) {
         }
     }
+
+    //return list of player
+    public List<Player<String>> getPlayers() {
+        return players;
+    }
 }

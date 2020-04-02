@@ -5,13 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * each validate user has certain room he has joined
+ * each validate user has:
+ * room has join
  */
 public class User {
     ObjectInputStream in;
     ObjectOutputStream out;
 
-    //class that store the online validated user
+    //list store the room user join
     List<Integer> roomList = new ArrayList<>();
     String userName;
 
@@ -49,4 +50,11 @@ public class User {
         return in.readObject();
     }
 
+    public ObjectInputStream getIn() {
+        return in;
+    }
+
+    public ObjectOutputStream getOut() {
+        return out;
+    }
 }
