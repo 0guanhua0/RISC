@@ -1,6 +1,5 @@
 package edu.duke.ece651.risk.server;
 
-import edu.duke.ece651.risk.shared.player.Player;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -15,8 +14,8 @@ import static edu.duke.ece651.risk.shared.Constant.*;
  */
 public class SocketRedirect {
 
-    public void redirect(Player<?> player) throws IOException, ClassNotFoundException {
-        String msg = (String) player.recv();
+    public void redirect(User user, UserList userList) throws IOException, ClassNotFoundException {
+        String msg = (String) user.recv();
         JSONObject obj = new JSONObject(msg);
 
         String userName = obj.getString(USER_NAME);
@@ -24,23 +23,38 @@ public class SocketRedirect {
 
         //check user is in validate list
 
-        //if yes, proceed
         //if no, return error
+        if (!userList.hasUser(userName)) {
+            //invalid user
+            user.send(INVALID_USER);
+            return;
+        }
+
+        //if yes, proceed
+        //according to actual action to redirect
+        if (action.equals(GET_WAIT_ROOM)) {
+            user.send(user.getRoomList());
+        }
+
+
+        //todo; return available room
+        if (action.equals(GET_IN_ROOM)) {
+
+        }
+
+        //join the existing game
+        //if new player, then just new player
+        //if existing player, then plug in the stream
+        if (action.equals(JOIN_GAME)) {
+
+        }
+
+        //create new room
+        if (action.equals(CREATE_GAME)) {
+
+        }
 
 
     }
-
-    //function handle income socket
-
-    //get available room
-    //return available room
-
-    //get room player is in
-    //return room player is in
-
-    //join the available room
-    //redirect the socket in/out
-
-    //create new room
 
 }
