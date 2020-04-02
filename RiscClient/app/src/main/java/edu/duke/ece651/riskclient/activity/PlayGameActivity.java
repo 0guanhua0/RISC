@@ -6,6 +6,7 @@ import android.view.MenuItem;
 import android.widget.Button;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.TerritoryV2;
@@ -26,6 +28,8 @@ import static edu.duke.ece651.riskclient.utils.UIUtils.showToastUI;
 
 public class PlayGameActivity extends AppCompatActivity {
     private static final String ROOM_NAME = "edu.duke.ece651.riskclient.playgame.roomname";
+    private static final int ACTION_MOVE_ATTACK = 1;
+    private static final int ACTION_UPGRADE = 2;
 
     private String roomName;
     private List<Territory> territories;
@@ -59,7 +63,7 @@ public class PlayGameActivity extends AppCompatActivity {
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         roomName = savedInstanceState.getString(ROOM_NAME);
-        getSupportActionBar().setTitle(roomName);
+        Objects.requireNonNull(getSupportActionBar()).setTitle(roomName);
     }
 
     @Override
@@ -74,6 +78,19 @@ public class PlayGameActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        switch (requestCode){
+            case ACTION_MOVE_ATTACK:
+            case ACTION_UPGRADE:
+                if (resultCode == RESULT_OK){
+                    // TODO: fetch the data
+                }
+                break;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
     private void setUpUI(){
         Button btMoveAttack = findViewById(R.id.bt_move_attack);
         Button btUpgrade = findViewById(R.id.bt_upgrade);
@@ -81,16 +98,23 @@ public class PlayGameActivity extends AppCompatActivity {
 
         btMoveAttack.setOnClickListener(v -> {
             Intent intent = new Intent(PlayGameActivity.this, MoveAttackActivity.class);
-            startActivity(intent);
+            startActivityForResult(intent, ACTION_MOVE_ATTACK);
         });
 
         btUpgrade.setOnClickListener(v -> {
             Intent intent = new Intent(PlayGameActivity.this, UpgradeActivity.class);
-            startActivity(intent);
+            startActivityForResult(intent, ACTION_UPGRADE);
         });
 
         btDone.setOnClickListener(v -> {
-
+            // once click done, invalid all buttons
+            btMoveAttack.setClickable(false);
+            btUpgrade.setClickable(false);
+            btDone.setClickable(false);
+            // TODO: send data to server
+            btMoveAttack.setClickable(true);
+            btUpgrade.setClickable(true);
+            btDone.setClickable(true);
         });
 
         RecyclerView rvTerritoryList = findViewById(R.id.rv_territory_list);

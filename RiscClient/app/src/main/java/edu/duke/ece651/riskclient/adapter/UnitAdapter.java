@@ -14,7 +14,6 @@ import java.util.List;
 import edu.duke.ece651.risk.shared.map.Unit;
 import edu.duke.ece651.riskclient.R;
 import edu.duke.ece651.riskclient.listener.onClickListener;
-import edu.duke.ece651.riskclient.objects.Room;
 
 public class UnitAdapter extends RecyclerView.Adapter<UnitAdapter.RoomViewHolder> {
 

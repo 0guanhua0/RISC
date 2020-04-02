@@ -14,7 +14,6 @@ import java.util.List;
 import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.riskclient.R;
 import edu.duke.ece651.riskclient.listener.onClickListener;
-import edu.duke.ece651.riskclient.objects.Room;
 
 public class TerritoryAdapter extends RecyclerView.Adapter<TerritoryAdapter.RoomViewHolder> {
 

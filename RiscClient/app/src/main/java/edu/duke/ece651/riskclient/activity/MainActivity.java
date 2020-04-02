@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -115,6 +116,9 @@ public class MainActivity extends AppCompatActivity {
             drawer.closeDrawers();
             return true;
         });
+        View headView = navigationView.getHeaderView(0);
+        TextView tvName = headView.findViewById(R.id.tv_user_name);
+        tvName.setText(player.getName());
     }
 
     private void replaceFragment(Fragment fragment){

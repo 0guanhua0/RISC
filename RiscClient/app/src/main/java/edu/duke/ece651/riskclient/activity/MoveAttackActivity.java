@@ -88,7 +88,9 @@ public class MoveAttackActivity extends AppCompatActivity {
 
         btConfirm.setOnClickListener(v -> {
             // TODO: communicate with server
-            onBackPressed();
+            Intent data = new Intent();
+            setResult(RESULT_OK, data);
+            finish();
         });
         btDecline.setOnClickListener(v -> {
             onBackPressed();

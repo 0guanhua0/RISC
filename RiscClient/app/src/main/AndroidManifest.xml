@@ -17,12 +17,6 @@
         <activity android:name=".activity.MoveAttackActivity" />
         <activity android:name=".activity.WaitGameActivity" />
         <activity android:name=".activity.PlayGameActivity" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".activity.NewRoomActivity" />
         <activity android:name=".activity.SignUpActivity" />
@@ -30,7 +24,12 @@
         <activity
             android:name=".activity.LoginActivity"
             android:theme="@style/AppTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.VIEW" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
     </application>
 
