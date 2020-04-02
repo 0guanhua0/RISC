@@ -10,7 +10,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ArmyTest {
     Map<Integer,Integer> map = new HashMap<Integer,Integer>();
-    new Army(1,"src","dest",)
 
     @Test
     void getSrc() {
