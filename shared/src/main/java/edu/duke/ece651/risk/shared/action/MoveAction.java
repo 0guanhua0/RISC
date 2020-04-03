@@ -25,7 +25,7 @@ public class MoveAction implements Action, Serializable {
         this.src = src.toLowerCase();
         this.dest = dest.toLowerCase();
         this.playerId = playerId;
-        this.levelToNum = new HashMap<>(){{
+        this.levelToNum = new HashMap<Integer, Integer>(){{
             put(0,unitsNum);
         }};
         this.unitsNum = unitsNum;
