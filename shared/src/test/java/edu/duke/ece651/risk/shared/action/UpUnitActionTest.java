@@ -135,7 +135,7 @@ class UpUnitActionTest {
 
         //test correct case
         UpUnitAction action2 = new UpUnitAction(vale, 0, 1, 1, 1);
-        assertDoesNotThrow(()->{action2.isValid(worldState1);});
-        assertTrue(action2.isValid(worldState1));
+        assertDoesNotThrow(()->{action2.perform(worldState1);});
+        assertTrue(action2.perform(worldState1));
     }
 }

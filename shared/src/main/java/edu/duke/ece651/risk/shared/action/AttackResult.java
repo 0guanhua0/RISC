@@ -25,10 +25,6 @@ public class AttackResult {
                 getDestTerritory().equals(that.getDestTerritory());
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(getAttackerID(), getDefenderID(), getSrcTerritories(), getDestTerritory(), isAttackerWin());
-    }
 
     public AttackResult(int attackerID, int defenderID, List<String> srcTerritories, String destTerritory, boolean isAttackerWin) {
         this.attackerID = attackerID;
