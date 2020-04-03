@@ -171,8 +171,8 @@ public class RoomTest {
         assertEquals(2, player2.getTerrNum());
         room.resolveCombats();
         //TODO double  check the legality of this action
-        assertEquals(4, player1.getTerrNum());
-        assertEquals(0, player2.getTerrNum());
+        assertEquals(3, player1.getTerrNum());
+        assertEquals(1, player2.getTerrNum());
     }
 
     @Test

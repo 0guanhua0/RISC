@@ -20,7 +20,7 @@ public class Army implements Serializable {
 
     public Army(int playerID, String src, int unitNum) {
         this.src = src;
-        this.levelToNum = new HashMap<>(){{
+        this.levelToNum = new HashMap<Integer, Integer>(){{
             put(0,unitNum);
         }};
     }
