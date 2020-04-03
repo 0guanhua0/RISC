@@ -30,7 +30,7 @@ class UserValidationTest {
                 "\"action\": \"login\"} ");
         User user1 = new User(setupMockInput(inputStream1), outputStream1);
 
-        assertFalse(UserValidation.validate(user1, db, jsonObject1));
+        assertFalse(UserValidation.logIn(user1, db, jsonObject1));
         assertEquals(INVALID_LOGIN, readAllStringFromObjectStream(outputStream1));
 
 
@@ -44,7 +44,7 @@ class UserValidationTest {
                 "\"action\": \"signup\"} ");
         User user2 = new User(setupMockInput(inputStream2), outputStream2);
 
-        assertTrue(UserValidation.validate(user2, db, jsonObject2));
+        assertTrue(UserValidation.signUp(user2, db, jsonObject2));
         assertEquals(SUCCESSFUL, readAllStringFromObjectStream(outputStream2));
 
 
@@ -62,23 +62,11 @@ class UserValidationTest {
         User user3 = new User(userName3, setupMockInput(inputStream3), outputStream3);
 
 
-        assertTrue(UserValidation.validate(user3, db, jsonObject3));
+        assertTrue(UserValidation.logIn(user3, db, jsonObject3));
         assertEquals(SUCCESSFUL, readAllStringFromObjectStream(outputStream3));
 
 
 
-        ByteArrayOutputStream outputStream5 = new ByteArrayOutputStream();
-        ArrayList inputStream5 =  new ArrayList<>(Arrays.asList("{\"userName\": \"name\",\n" +
-                "\"userPassword\": \"password\",\n" +
-                "\"action\": \"xxx\" }"));
-        String userName5 = "name";
-        User user5 = new User(userName5, setupMockInput(inputStream5), outputStream5);
-
-        JSONObject jsonObject5 = new JSONObject("{\"userName\": \"name\",\n" +
-                "\"userPassword\": \"password\",\n" +
-                "\"action\": \"xxx\" }");
-        assertFalse(UserValidation.validate(user5, db, jsonObject5));
-        assertEquals(INVALID_VALIDATE, readAllStringFromObjectStream(outputStream5));
 
         ByteArrayOutputStream outputStream6 = new ByteArrayOutputStream();
         ArrayList inputStream6 = new ArrayList<>(Arrays.asList("{\"userName\": \"name\",\n" +
@@ -89,7 +77,7 @@ class UserValidationTest {
                 "\"userPassword\": \"password\",\n" +
                 "\"action\": \"signup\" }");
         User user6 = new User(userName6, setupMockInput(inputStream6), outputStream6);
-        assertFalse(UserValidation.validate(user6, db, jsonObject6));
+        assertFalse(UserValidation.signUp(user6, db, jsonObject6));
         assertEquals(INVALID_SIGNUP, readAllStringFromObjectStream(outputStream6));
 
 
