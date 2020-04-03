@@ -39,6 +39,8 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     // material design
     implementation 'com.google.android.material:material:1.2.0-alpha02'
+    // number picker
+    implementation 'com.github.polok:clicknumberpicker:0.1.2'
 
     // testing library
     testImplementation 'junit:junit:4.12'

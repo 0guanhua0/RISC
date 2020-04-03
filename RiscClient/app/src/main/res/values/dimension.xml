@@ -32,4 +32,6 @@
     <dimen name="round_level">10dp</dimen>
     <dimen name="normal_chip_height">30dp</dimen>
     <dimen name="image_height">200dp</dimen>
+
+    <dimen name="number_picker_width">120dp</dimen>
 </resources>

@@ -31,6 +31,7 @@ public class NewRoomActivity extends AppCompatActivity {
 
     private MapAdapter mapAdapter;
     private WorldMap selectedMap;
+    private List<WorldMap> maps;
 
     /**
      * UI variable
@@ -48,6 +49,14 @@ public class NewRoomActivity extends AppCompatActivity {
             getSupportActionBar().setTitle("Add Room");
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+
+        maps = new ArrayList<>();
+        // TODO: replace this with real data
+        for (int i = 0; i < 10; i ++){
+            maps.add(new WorldMap("a" + i));
+        }
+        // set default selected map
+        selectedMap = maps.get(0);
 
         setUpUI();
     }
@@ -108,17 +117,12 @@ public class NewRoomActivity extends AppCompatActivity {
         imgMap.setImageResource(R.drawable.risk_img);
 
         tvMapName = findViewById(R.id.tv_map_name);
+        tvMapName.setText(selectedMap.getName());
 
         setUpRecyclerView();
     }
 
     private void setUpRecyclerView(){
-        // TODO: replace the fake data with real one
-        List<WorldMap> maps = new ArrayList<WorldMap>();
-        for (int i = 0; i < 10; i ++){
-            maps.add(new WorldMap("a" + i));
-        }
-
         mapAdapter = new MapAdapter();
         mapAdapter.setListener(position -> {
             selectedMap = maps.get(position);

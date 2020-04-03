@@ -13,11 +13,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+        <activity android:name=".activity.SelectTerritoryActivity" />
         <activity android:name=".activity.UpgradeActivity" />
         <activity android:name=".activity.MoveAttackActivity" />
         <activity android:name=".activity.WaitGameActivity" />
-        <activity android:name=".activity.PlayGameActivity" >
-        </activity>
+        <activity android:name=".activity.PlayGameActivity" />
         <activity android:name=".activity.NewRoomActivity" />
         <activity android:name=".activity.SignUpActivity" />
         <activity android:name=".activity.MainActivity" />

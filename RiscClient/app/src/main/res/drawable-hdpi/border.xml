@@ -5,14 +5,12 @@
         android:width="3sp"
         android:color="@color/grey" />
 
-    <!-- 这个可以不加，padding用不上 -->
     <padding
         android:bottom="5sp"
         android:left="5sp"
         android:right="5sp"
         android:top="5sp" />
 
-    <!-- 圆角 -->
     <corners
         android:bottomLeftRadius="10dp"
         android:bottomRightRadius="10dp"

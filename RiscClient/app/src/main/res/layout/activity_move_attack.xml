@@ -23,7 +23,7 @@
         layout="@layout/widget_dropdown" />
 
     <include
-        layout="@layout/widget_territory_units_view"
+        layout="@layout/widget_territory_units_list"
         android:id="@+id/src_territory"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -34,7 +34,7 @@
         app:layout_constraintEnd_toEndOf="parent"/>
 
     <include
-        layout="@layout/widget_territory_units_view"
+        layout="@layout/widget_territory_units_list"
         android:id="@+id/dest_territory"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

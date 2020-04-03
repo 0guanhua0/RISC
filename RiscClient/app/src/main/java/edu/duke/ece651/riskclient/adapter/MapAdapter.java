@@ -20,10 +20,11 @@ public class MapAdapter extends RecyclerView.Adapter<MapAdapter.MapViewHolder> {
 
     private List<WorldMap> mapList;
     private onClickListener listener;
-    private View oldView;
+    private int selectedPosition;
 
     public MapAdapter(){
         mapList = new ArrayList<>();
+        selectedPosition = 0;
     }
 
     @NonNull
@@ -39,13 +40,21 @@ public class MapAdapter extends RecyclerView.Adapter<MapAdapter.MapViewHolder> {
         WorldMap map = mapList.get(position);
 
         holder.tvMapName.setText(map.getName());
-        holder.background.setOnClickListener(v -> {
-            listener.onClick(position);
+
+        if (position == selectedPosition){
             holder.background.setSelected(true);
-            if (oldView != null && oldView != holder.background){
-                oldView.setSelected(false);
+        }else {
+            holder.background.setSelected(false);
+        }
+
+        holder.background.setOnClickListener(v -> {
+            if (listener != null){
+                listener.onClick(position);
             }
-            oldView = holder.background;
+            int previousPosition = selectedPosition;
+            selectedPosition = position;
+            notifyItemChanged(previousPosition);
+            notifyItemChanged(selectedPosition);
         });
     }
 

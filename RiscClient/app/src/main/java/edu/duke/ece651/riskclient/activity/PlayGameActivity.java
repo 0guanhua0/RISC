@@ -128,6 +128,7 @@ public class PlayGameActivity extends AppCompatActivity {
         territoryAdapter.setListener(position -> {
             Territory territory = territories.get(position);
             showToastUI(PlayGameActivity.this, territory.getName());
+            showTerritoryDialog(territory);
         });
 
         rvTerritoryList.setLayoutManager(new LinearLayoutManager(PlayGameActivity.this));
@@ -135,6 +136,13 @@ public class PlayGameActivity extends AppCompatActivity {
         rvTerritoryList.setAdapter(territoryAdapter);
 
         territoryAdapter.setTerritories(territories);
+    }
+
+    private void showTerritoryDialog(Territory territory){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Detail Info");
+        builder.setMessage("nothing for now");
+        builder.show();
     }
 
     // probably want to extract this into constant
