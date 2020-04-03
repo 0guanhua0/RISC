@@ -36,15 +36,11 @@ import static edu.duke.ece651.riskclient.utils.UIUtils.showToastUI;
 public class HomeFragment extends Fragment {
     private static final String TAG = "HomeFragment";
 
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_ITEM_PLAYER = "player";
-
     private SwipeRefreshLayout swipeRefreshLayout;
 
     /**
      * Variable
      */
-    private Player player;
     private boolean isRoomWait;
     private RoomAdapter roomAdapter;
 
@@ -56,13 +52,11 @@ public class HomeFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param player player object
      * @return A new instance of fragment HomeFragment.
      */
-    public static HomeFragment newInstance(Player player) {
+    public static HomeFragment newInstance() {
         HomeFragment fragment = new HomeFragment();
         Bundle args = new Bundle();
-        args.putSerializable(ARG_ITEM_PLAYER, player);
         fragment.setArguments(args);
         return fragment;
     }
@@ -70,9 +64,6 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            player = (Player) getArguments().getSerializable(ARG_ITEM_PLAYER);
-        }
         isRoomWait = false;
     }
 
@@ -125,7 +116,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void updateData(){
-        getRoomList(player, isRoomWait, new onResultListener() {
+        getRoomList(isRoomWait, new onResultListener() {
             @Override
             public void onFailure(String error) {
                 showToastUI(getActivity(), error);

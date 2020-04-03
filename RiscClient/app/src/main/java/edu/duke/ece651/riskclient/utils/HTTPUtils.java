@@ -5,26 +5,24 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.InetAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
 
-import edu.duke.ece651.riskclient.objects.Player;
 import edu.duke.ece651.riskclient.listener.onResultListener;
+import edu.duke.ece651.riskclient.objects.Player;
 
 import static edu.duke.ece651.riskclient.Constant.ACTION_GET_ROOM_IN;
 import static edu.duke.ece651.riskclient.Constant.ACTION_GET_ROOM_WAIT;
 import static edu.duke.ece651.riskclient.Constant.ACTION_LOGIN;
 import static edu.duke.ece651.riskclient.Constant.ACTION_SIGN_UP;
 import static edu.duke.ece651.riskclient.Constant.ACTION_TYPE;
-import static edu.duke.ece651.riskclient.Constant.HOST;
-import static edu.duke.ece651.riskclient.Constant.PORT;
 import static edu.duke.ece651.riskclient.Constant.SUCCESSFUL;
 import static edu.duke.ece651.riskclient.Constant.USER_NAME;
 import static edu.duke.ece651.riskclient.Constant.USER_PASSWORD;
+import static edu.duke.ece651.riskclient.RiskApplication.getPlayer;
+import static edu.duke.ece651.riskclient.RiskApplication.getPlayerName;
+import static edu.duke.ece651.riskclient.RiskApplication.getTmpSocket;
 
 /**
  * This class contains some method which can be used to get data from server.
@@ -35,6 +33,7 @@ public class HTTPUtils {
 
     /**
      * This function will authenticate the player.
+     * since we don't authenticate the player we won't save it globally.
      * @param player player to be authenticated
      * @param listener result listener
      */
@@ -53,11 +52,11 @@ public class HTTPUtils {
 
     /**
      * This function responsible for user sign up, add a user to DB.
-     * @param player new player object
      * @param listener result listener
      */
-    public static void addUser(Player player, onResultListener listener){
+    public static void addUser(onResultListener listener){
         try {
+            Player player = getPlayer();
             JSONObject jsonObject = new JSONObject();
             jsonObject.put(USER_NAME, player.getName());
             jsonObject.put(USER_PASSWORD, player.getPassword());
@@ -71,14 +70,13 @@ public class HTTPUtils {
 
     /**
      * This function will get the latest room list.
-     * @param player player object(used to authentication)
      * @param isRoomIn the room type, true for rooms you are in, false for not
      * @param listener result listener
      */
-    public static void getRoomList(Player player, boolean isRoomIn, onResultListener listener){
+    public static void getRoomList(boolean isRoomIn, onResultListener listener){
         try {
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put(USER_NAME, player.getName());
+            jsonObject.put(USER_NAME, getPlayerName());
             jsonObject.put(ACTION_TYPE, isRoomIn ? ACTION_GET_ROOM_IN : ACTION_GET_ROOM_WAIT);
             sendAndRec(jsonObject.toString(), listener);
         }catch (JSONException e){
@@ -96,7 +94,8 @@ public class HTTPUtils {
         listener.onSuccessful(null);
 
 //        new Thread(() -> {
-//            try (Socket socket = new Socket(getIP(), PORT)) {
+//            try {
+//                Socket socket = getTmpSocket();
 //                ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
 //                ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
 //                in.readObject();
@@ -104,7 +103,7 @@ public class HTTPUtils {
 //                out.flush();
 //                String res = (String) in.readObject();
 //                if (res.equals(SUCCESSFUL)){
-//                    listener.onSuccessful();
+//                    listener.onSuccessful(null);
 //                }else {
 //                    listener.onFailure(res);
 //                }
@@ -113,10 +112,6 @@ public class HTTPUtils {
 //                listener.onFailure("server is not running");
 //            }
 //        }).start();
-    }
-
-    static String getIP() throws UnknownHostException {
-        return InetAddress.getByName(HOST).getHostAddress();
     }
 
 }
