@@ -35,7 +35,7 @@ public class SocketRedirect {
 
         if (action.equals(SIGNUP)) {
             if (UserValidation.validate(user,db, obj) && !userList.hasUser(userName)) {
-                userList.addUser(userName);
+                //userList.addUser(userName);
             }
             return;
         }
