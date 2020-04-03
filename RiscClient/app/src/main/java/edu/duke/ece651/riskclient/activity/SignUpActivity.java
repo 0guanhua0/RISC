@@ -68,7 +68,7 @@ public class SignUpActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onSuccessful() {
+                    public void onSuccessful(Object o) {
                         signUp.setClickable(true);
                         showToastUI(SignUpActivity.this, "Sign up successful.");
                         // sign up successful

@@ -48,7 +48,7 @@ public class WaitGameActivity extends AppCompatActivity {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                Intent intent = new Intent(WaitGameActivity.this, PlayGameActivity.class);
+                Intent intent = new Intent(WaitGameActivity.this, SelectTerritoryActivity.class);
                 startActivity(intent);
                 finish();
             }

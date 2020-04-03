@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,13 +18,14 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.duke.ece651.risk.shared.Room;
 import edu.duke.ece651.riskclient.adapter.RoomAdapter;
-import edu.duke.ece651.riskclient.listener.onClickListener;
+import edu.duke.ece651.riskclient.listener.onResultListener;
 import edu.duke.ece651.riskclient.objects.Player;
 import edu.duke.ece651.riskclient.R;
 import edu.duke.ece651.riskclient.activity.NewRoomActivity;
-import edu.duke.ece651.riskclient.objects.Room;
 
+import static edu.duke.ece651.riskclient.utils.HTTPUtils.getRoomList;
 import static edu.duke.ece651.riskclient.utils.UIUtils.showToastUI;
 
 /**
@@ -37,16 +39,13 @@ public class HomeFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_ITEM_PLAYER = "player";
 
-    /**
-     * UI variable
-     */
-    private FloatingActionButton fab;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     /**
      * Variable
      */
     private Player player;
-    private boolean isEmptyRoom;
+    private boolean isRoomWait;
     private RoomAdapter roomAdapter;
 
     public HomeFragment() {
@@ -74,7 +73,7 @@ public class HomeFragment extends Fragment {
         if (getArguments() != null) {
             player = (Player) getArguments().getSerializable(ARG_ITEM_PLAYER);
         }
-        isEmptyRoom = false;
+        isRoomWait = false;
     }
 
     @Override
@@ -87,7 +86,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void setUpUI(View view){
-        fab = view.findViewById(R.id.fab);
+        FloatingActionButton fab = view.findViewById(R.id.fab);
         fab.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), NewRoomActivity.class);
             startActivity(intent);
@@ -100,15 +99,14 @@ public class HomeFragment extends Fragment {
             }else {
                 showToastUI(getActivity(), "click room all");
             }
-            isEmptyRoom = (id == R.id.chip_room_in);
+            isRoomWait = (id == R.id.chip_room_in);
             updateData();
         });
 
         List<Room> rooms = new ArrayList<>();
         for (int i = 0; i < 30; i++){
-            rooms.add(new Room("room" + (i + 1)));
+            rooms.add(new Room(i, "room" + (i + 1)));
         }
-
         roomAdapter = new RoomAdapter();
         roomAdapter.setListener(position -> {
             Room room = rooms.get(position);
@@ -121,9 +119,25 @@ public class HomeFragment extends Fragment {
         rcRoomList.setAdapter(roomAdapter);
 
         roomAdapter.setRooms(rooms);
+
+        swipeRefreshLayout = view.findViewById(R.id.swr_layout);
+        swipeRefreshLayout.setOnRefreshListener(this::updateData);
     }
 
     private void updateData(){
+        getRoomList(player, isRoomWait, new onResultListener() {
+            @Override
+            public void onFailure(String error) {
+                showToastUI(getActivity(), error);
+            }
 
+            @Override
+            public void onSuccessful(Object o) {
+                swipeRefreshLayout.setRefreshing(false);
+                if (o != null){
+                    roomAdapter.setRooms((List<Room>) o);
+                }
+            }
+        });
     }
 }

@@ -12,6 +12,8 @@ public class Constant {
     public static final String ACTION_TYPE = "action";
     public static final String ACTION_LOGIN = "login";
     public static final String ACTION_SIGN_UP = "signup";
+    public static final String ACTION_GET_ROOM_IN = "getRoomIn";
+    public static final String ACTION_GET_ROOM_WAIT = "getRoomWait";
 
     public static final String RESULT = "result";
     public static final String SUCCESSFUL = "successful";

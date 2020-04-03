@@ -2,5 +2,5 @@ package edu.duke.ece651.riskclient.listener;
 
 public interface onResultListener{
     void onFailure(String error);
-    void onSuccessful();
+    void onSuccessful(Object object);
 }

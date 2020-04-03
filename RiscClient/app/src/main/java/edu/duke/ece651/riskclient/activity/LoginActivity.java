@@ -128,7 +128,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void onSuccessful() {
+                public void onSuccessful(Object o) {
                     btLogin.setClickable(true);
                     showToastUI(LoginActivity.this, "Login successful.");
                     // login successful
