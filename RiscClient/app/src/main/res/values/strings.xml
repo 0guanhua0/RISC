@@ -12,11 +12,12 @@
     <string name="signup_password1_hint">Password</string>
     <string name="signup_password2_hint">Again</string>
 
-    <!--  update fragment  -->
+    <!--  home fragment  -->
     <string name="home_all_room">available rooms</string>
     <string name="home_room_in">rooms you in</string>
 
     <!--  update fragment  -->
+    <string name="update_name_info">Username:</string>
     <string name="update_old_password">Old Password</string>
     <string name="update_new_password">New Password</string>
     <string name="update_submit">Submit</string>
@@ -28,7 +29,16 @@
     <string name="add_room_create">Create</string>
 
     <!--  wait game activity  -->
-    <string name="wait_game_promt">Waiting for other player…</string>
+    <string name="wait_game_prompt">Waiting for other player…</string>
+
+    <!--  select territory activity  -->
+    <string name="select_territory_next">Next</string>
+    <string name="select_territory_finish">Finish</string>
+    <string name="select_territory_step1">Step1:&#160;Please choose a group of territory</string>
+    <string name="select_territory_step2">Step2:&#160;Please assign units to your territories</string>
+    <string name="select_territory_unit_info">Units you have:</string>
+    <string name="select_territory_territory_name">territory</string>
+    <string name="select_territory_territory_units">units assign</string>
 
     <!--  play game activity  -->
     <string name="play_game_move_attack">Move/\nAttack</string>
@@ -37,10 +47,14 @@
     <string name="play_game_confirm">Confirm</string>
     <string name="play_game_decline">Decline</string>
 
+    <!--  move & attack activity  -->
+    <string name="move_attack_unit_info">Units info:</string>
+
     <string name="menu_home">Home</string>
     <string name="menu_update">Change Password</string>
     <string name="menu_about">About</string>
 
+    <string name="nav_header_hello">Hello,&#160;</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

@@ -8,7 +8,7 @@
     android:orientation="vertical"
     tools:context="edu.duke.ece651.riskclient.activity.SignUpActivity">
 
-    <include layout="@layout/app_bar"/>
+    <include layout="@layout/widget_app_bar"/>
 
     <ScrollView
         android:layout_width="match_parent"

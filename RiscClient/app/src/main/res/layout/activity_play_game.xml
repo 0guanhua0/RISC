@@ -9,7 +9,7 @@
 
     <include
         android:id="@+id/app_bar"
-        layout="@layout/app_bar"/>
+        layout="@layout/widget_app_bar"/>
 
     <ImageView
         android:id="@+id/img_map"
@@ -22,6 +22,7 @@
         app:layout_constraintEnd_toEndOf="parent"/>
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_territory_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_margin="@dimen/normal_margin"
@@ -42,7 +43,7 @@
         app:layout_constraintBottom_toBottomOf="parent">
 
         <Button
-            android:id="@+id/bt_move"
+            android:id="@+id/bt_move_attack"
             android:layout_width="@dimen/small_button_width"
             android:layout_height="match_parent"
             android:layout_marginHorizontal="@dimen/normal_margin"
@@ -57,7 +58,7 @@
             android:layout_height="match_parent"
             android:text="@string/play_game_upgrade"
             style="@style/Widget.Button"
-            app:layout_constraintStart_toEndOf="@id/bt_move"
+            app:layout_constraintStart_toEndOf="@id/bt_move_attack"
             app:layout_constraintEnd_toStartOf="@id/bt_done"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
@@ -72,15 +73,5 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Pretend we are playing game."
-        android:layout_margin="@dimen/normal_margin"
-        app:layout_constraintTop_toBottomOf="@id/app_bar"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

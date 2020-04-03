@@ -11,17 +11,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.duke.ece651.risk.shared.map.Unit;
 import edu.duke.ece651.riskclient.R;
 import edu.duke.ece651.riskclient.listener.onClickListener;
-import edu.duke.ece651.riskclient.objects.Room;
 
 public class UnitAdapter extends RecyclerView.Adapter<UnitAdapter.RoomViewHolder> {
 
-    private List<Room> rooms;
+    private List<Unit> units;
     private onClickListener listener;
 
     public UnitAdapter(){
-        rooms = new ArrayList<>();
+        units = new ArrayList<>();
     }
 
     @NonNull
@@ -34,7 +34,7 @@ public class UnitAdapter extends RecyclerView.Adapter<UnitAdapter.RoomViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull RoomViewHolder holder, int position) {
-        Room room = rooms.get(position);
+        Unit unit = units.get(position);
 
         holder.tvUnitInfo.setText("nothing for now");
         holder.itemView.setOnClickListener(v -> {
@@ -46,16 +46,16 @@ public class UnitAdapter extends RecyclerView.Adapter<UnitAdapter.RoomViewHolder
 
     @Override
     public int getItemCount() {
-        return rooms.size();
+        return units.size();
     }
 
     public void setListener(onClickListener listener){
         this.listener = listener;
     }
 
-    public void setRooms(List<Room> rooms){
-        this.rooms.clear();
-        this.rooms.addAll(rooms);
+    public void setUnits(List<Unit> units){
+        this.units.clear();
+        this.units.addAll(units);
         notifyDataSetChanged();
     }
 

@@ -8,11 +8,93 @@
     tools:context="edu.duke.ece651.riskclient.activity.MoveAttackActivity">
 
     <include
-        android:id="@+id/toolbar"
-        layout="@layout/app_bar" />
+        android:id="@+id/app_bar"
+        layout="@layout/widget_app_bar" />
+
+    <include
+        android:id="@+id/action_dropdown"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/small_margin_vertical"
+        android:layout_marginHorizontal="@dimen/normal_margin"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/app_bar"
+        layout="@layout/widget_dropdown" />
+
+    <include
+        layout="@layout/widget_territory_units_list"
+        android:id="@+id/src_territory"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/normal_margin"
+        android:layout_marginHorizontal="@dimen/normal_margin"
+        app:layout_constraintTop_toBottomOf="@id/action_dropdown"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <include
+        layout="@layout/widget_territory_units_list"
+        android:id="@+id/dest_territory"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/normal_margin"
+        android:layout_marginHorizontal="@dimen/normal_margin"
+        app:layout_constraintTop_toBottomOf="@id/src_territory"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <LinearLayout
+        android:id="@+id/ll_prompt"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:orientation="horizontal"
+        android:layout_marginHorizontal="@dimen/normal_margin"
+        android:layout_marginVertical="@dimen/small_margin_vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/dest_territory">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/move_attack_unit_info"
+            android:textSize="@dimen/large_text_size"
+            android:textColor="@color/text_color"/>
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/img_add_unit"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginHorizontal="@dimen/small_margin_horizontal"
+            android:layout_gravity="center_vertical"
+            android:paddingVertical="2dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/add"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_units_info"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:text="test\n\n\n\n\n\n\n\nttest"
+        android:textSize="@dimen/normal_text_size"
+        android:scrollbars="vertical"
+        android:layout_marginVertical="@dimen/small_margin_vertical"
+        android:layout_marginHorizontal="@dimen/normal_margin"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ll_prompt"
+        app:layout_constraintBottom_toTopOf="@id/bt_group"/>
 
     <include
         android:id="@+id/bt_group"
-        layout="@layout/confirm_decline_button" />
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/small_margin_vertical"
+        android:layout_marginHorizontal="@dimen/normal_margin"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        layout="@layout/widget_confirm_decline_button" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
