@@ -81,7 +81,7 @@ public class SocketRedirect {
                 //go to the room
                 //find that player
                 Player currPlayer = rooms.get(roomID).getPlayer(userName);
-                currPlayer.reConnect(user.getIn(), user.getOut());
+                //currPlayer.reConnect(user.getIn(), user.getOut());
             }
 
 

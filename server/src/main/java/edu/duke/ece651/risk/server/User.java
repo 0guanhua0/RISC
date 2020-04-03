@@ -40,35 +40,53 @@ public class User {
 
     //rm room info
     public void rmRoom(Integer roomID) {
-        roomList.add(roomID);
+        roomList.remove(roomID);
     }
 
     public List<Integer> getRoomList() {
         return roomList;
     }
 
+    public boolean isInRoom(int roomID) {
+        return roomList.contains(roomID);
+    }
+
     public String getUserName() {
         return userName;
     }
 
-    public void send(Object data) throws IOException {
-        out.writeObject(data);
-        out.flush();
+    /**
+     * io
+     *
+     * @param data recv
+     */
+    public void send(Object data) {
+        try {
+            out.writeObject(data);
+            out.flush();
+        } catch (IOException ignored) {
+
+        }
     }
 
     public Object recv() throws IOException, ClassNotFoundException {
-        return in.readObject();
+
+        Object object = new Object();
+        try {
+            object = in.readObject();
+        } catch (IOException ignored) {
+
+        }
+        return object;
+
+
     }
 
-    public ObjectInputStream getIn() {
-        return in;
+    public void setIn(InputStream in) throws IOException {
+        this.in = new ObjectInputStream(in);
     }
 
-    public ObjectOutputStream getOut() {
-        return out;
-    }
-
-    public boolean isInRoom(int roomID) {
-        return roomList.contains(roomID);
+    public void setOut(OutputStream out) throws IOException {
+        this.out = new ObjectOutputStream(out);
     }
 }
