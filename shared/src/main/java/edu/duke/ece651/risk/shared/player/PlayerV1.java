@@ -63,6 +63,6 @@ public class PlayerV1<T> extends Player<T> {
 
     @Override
     public int getTechLevel() {
-        return 0;
+        return 1;
     }
 }

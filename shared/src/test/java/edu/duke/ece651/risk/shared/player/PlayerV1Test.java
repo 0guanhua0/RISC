@@ -43,4 +43,15 @@ class PlayerV1Test {
         playerV1.updateState();
         assertEquals(1,storm.getBasicUnitsNum());
     }
+    @Test
+    void testOthers() throws IOException {
+        PlayerV1<String> playerV1 = new PlayerV1<String>(Mock.setupMockInput(Arrays.asList()),new ByteArrayOutputStream());
+        playerV1.setId(1);
+        assertDoesNotThrow(()->{playerV1.useFood(1);});
+        assertDoesNotThrow(()->{playerV1.useTech(1);});
+        assertDoesNotThrow(()->{playerV1.upMaxTech();});
+        assertEquals(1,playerV1.getTechLevel());
+
+
+    }
 }

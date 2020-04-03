@@ -193,6 +193,8 @@ class TerritoryV2Test {
         stormTerr.addUnits(2,1);
         assertFalse(stormTerr.canUpUnit(0,0,1));
         assertTrue(stormTerr.canUpUnit(5,0,1));
+        assertFalse(stormTerr.canUpUnit(5,0,Utils.getMaxKey(UNIT_BONUS)+1));
+
         assertFalse(stormTerr.canUpUnit(6,0,1));
         assertFalse(stormTerr.canUpUnit(1,1,0));
         assertFalse(stormTerr.canUpUnit(1, Utils.getMaxKey(UNIT_BONUS),0));
@@ -211,4 +213,6 @@ class TerritoryV2Test {
         assertEquals(2,stormTerr.getBasicUnitsNum());
         assertEquals(7,stormTerr.getUnitsNum(1));
     }
+
+
 }

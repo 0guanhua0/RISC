@@ -59,32 +59,32 @@ public abstract class Territory implements Serializable {
         status.setOwnerId(0);
     }
 
-    //helper function to check if two territories are adjacent to each other
-    private boolean DFSHelper(Territory current, Territory target, Set<Territory> visited) {
-        if (visited.contains(current) || current.getOwner() != this.getOwner()) {
-            return false;
-        } else if (current == target) {
-            return true;
-        } else {
-            visited.add(current);
-            for (Territory neigh : current.getNeigh()) {
-                if (DFSHelper(neigh, target, visited)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-    }
-
-    //return true only when there is path from current territory to the target territory,
-    //and all territories along the path should under the control of owner of current territory
-    public boolean hasPathTo(Territory target) {
-        if (this == target || target.getOwner() != this.getOwner()) {//a territory is not adjacent to itself
-            return false;
-        }
-        Set<Territory> visited = new HashSet<>();
-        return DFSHelper(this, target, visited);
-    }
+//    //helper function to check if two territories are adjacent to each other
+//    private boolean DFSHelper(Territory current, Territory target, Set<Territory> visited) {
+//        if (visited.contains(current) || current.getOwner() != this.getOwner()) {
+//            return false;
+//        } else if (current == target) {
+//            return true;
+//        } else {
+//            visited.add(current);
+//            for (Territory neigh : current.getNeigh()) {
+//                if (DFSHelper(neigh, target, visited)) {
+//                    return true;
+//                }
+//            }
+//            return false;
+//        }
+//    }
+//
+//    //return true only when there is path from current territory to the target territory,
+//    //and all territories along the path should under the control of owner of current territory
+//    public boolean hasPathTo(Territory target) {
+//        if (this == target || target.getOwner() != this.getOwner()) {//a territory is not adjacent to itself
+//            return false;
+//        }
+//        Set<Territory> visited = new HashSet<>();
+//        return DFSHelper(this, target, visited);
+//    }
 
     /**
      * This function will resolve all combats happen in current territory.

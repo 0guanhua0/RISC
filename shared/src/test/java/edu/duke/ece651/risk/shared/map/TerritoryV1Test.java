@@ -97,43 +97,6 @@ class TerritoryV1Test {
         assertTrue(stormKindom.getNeigh().contains(n2));
     }
 
-    @Test
-    void hasPathTo() throws IOException {
-        MapDataBase<String> mapDataBase = new MapDataBase<String>();
-        //prepare the world
-        WorldMap<String> worldMap = mapDataBase.getMap("a clash of kings");
-        Territory storm = worldMap.getTerritory("the storm kingdom");
-        Territory reach = worldMap.getTerritory("kingdom of the reach");
-        Territory rock = worldMap.getTerritory("kingdom of the rock");
-        Territory vale = worldMap.getTerritory("kingdom of mountain and vale");
-        Territory north = worldMap.getTerritory("kingdom of the north");
-        Territory dorne = worldMap.getTerritory("principality of dorne");
-        //two players join this game
-        Player<String> p1 = new PlayerV1<String>("Red", 1);
-        Player<String> p2 = new PlayerV1<String>("Blue", 2);
-        //assign some territories to each player
-        p1.addTerritory(north);
-        p1.addTerritory(vale);
-        p1.addTerritory(rock);
-        p1.addTerritory(dorne);
-        p2.addTerritory(storm);
-        p2.addTerritory(reach);
-
-        assertTrue(storm.hasPathTo(reach));
-        assertTrue(reach.hasPathTo(storm));
-        assertTrue(north.hasPathTo(vale));
-        assertFalse(storm.hasPathTo(storm));
-        assertFalse(storm.hasPathTo(vale));
-        assertFalse(storm.hasPathTo(dorne));
-
-        //change the ownership of reach to p1
-        p2.loseTerritory(reach);
-        p1.addTerritory(reach);
-        assertEquals(1, reach.getOwner());
-        assertTrue(north.hasPathTo(dorne));
-        assertFalse(north.hasPathTo(storm));
-
-    }
 
     @Test
     void testResolveCombat() throws IOException {
@@ -253,5 +216,12 @@ class TerritoryV1Test {
     }
 
 
+    @Test
+    void getUnitsNum() {
+        TerritoryV1 name = new TerritoryV1("name");
+        name.addBasicUnits(1);
+        assertEquals(0,name.getUnitsNum(1));
+        assertEquals(1,name.getUnitsNum(0));
 
+    }
 }
