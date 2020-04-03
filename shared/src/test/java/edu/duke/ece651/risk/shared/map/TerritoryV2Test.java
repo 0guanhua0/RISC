@@ -125,8 +125,6 @@ class TerritoryV2Test {
         Player<String> p2 = new PlayerV2<>(Mock.setupMockInput(Arrays.asList()),new ByteArrayOutputStream());
         p2.setId(2);
 
-        //assign some territories to each player
-        //player1
         p1.addTerritory(northTerr);
         p1.addTerritory(valeTerr);
         p1.addTerritory(rockTerr);
@@ -134,16 +132,15 @@ class TerritoryV2Test {
         //player2
         p2.addTerritory(stormTerr);
         p2.addTerritory(reachTerr);
-
-        //assign some units to each player
+        //assign some units to each territory, 5 units for each player
         //player 1
-        northTerr.addBasicUnits(7);
+        northTerr.addBasicUnits(2);
         valeTerr.addBasicUnits(2);
         rockTerr.addBasicUnits(10);
-        dorneTerr.addBasicUnits(2);
+        dorneTerr.addBasicUnits(5);
         //player2
-        stormTerr.addBasicUnits(3);
-        reachTerr.addBasicUnits(3);
+        stormTerr.addBasicUnits(10);
+        reachTerr.addBasicUnits(10);
 
         //player 1 multiple place attack(10 + 5)
         AttackAction a10 = new AttackAction(rock, reach, 1, 10);
@@ -157,20 +154,23 @@ class TerritoryV2Test {
         assertTrue(a11.perform(worldState1));
         assertTrue(a12.perform(worldState1));
 
-        //player 2 attack to empty territory
-        AttackAction a20 = new AttackAction("kingdom of the reach", "kingdom of the rock", 2, 2);
+        //player 2 attack to territory without units
+        AttackAction a20 = new AttackAction(reach, rock, 2, 2);
         assertTrue(a20.perform(worldState2));
 
         //perform
         List<AttackResult> resultList0 = reachTerr.resolveCombats();
+
         // attacker: 10 + 5, defender 10
-        AttackResult r = new AttackResult(1, 2, new ArrayList<>(Arrays.asList("kingdom of the rock")), "kingdom of the reach", true);
+        AttackResult r = new AttackResult(1, 2,
+                new ArrayList<String>(Arrays.asList(rock,dorne)), reach, true);
+
 
         AttackResult r0 = resultList0.get(0);
-        assertEquals(r0.getAttackerID(), r.getAttackerID());
-        assertEquals(r0.getDefenderID(), r.getDefenderID());
-        assertEquals(r0.getDestTerritory(), r.getDestTerritory());
-        assertEquals(r0.isAttackerWin(), r.isAttackerWin());
+        boolean attackerWin = r0.isAttackerWin();
+        boolean attackerWin1 = r.isAttackerWin();
+        assertEquals(r0,r);
+
 
         //check result
         assertEquals(1, reachTerr.getOwner());
@@ -180,7 +180,7 @@ class TerritoryV2Test {
         assertEquals(2, rockTerr.getOwner());
         assertEquals(2, rockTerr.getBasicUnitsNum());
 
-        // lose
+        //lose
         assertFalse(stormTerr.resolveCombats().get(0).isAttackerWin());
     }
     @Test

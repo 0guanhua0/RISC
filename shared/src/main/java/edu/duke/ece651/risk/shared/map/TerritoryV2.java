@@ -3,6 +3,8 @@ package edu.duke.ece651.risk.shared.map;
 import edu.duke.ece651.risk.shared.action.AttackResult;
 
 import java.util.*;
+import java.util.stream.Collectors;
+
 import static edu.duke.ece651.risk.shared.Constant.UNIT_BONUS;
 import static edu.duke.ece651.risk.shared.Utils.getMaxKey;
 import static edu.duke.ece651.risk.shared.Utils.getMinKey;
@@ -45,12 +47,13 @@ public class TerritoryV2 extends TerritoryV1 {
         return techYield;
     }
 
-
+    //TODO test the correctness of this data
     @Override
     AttackResult resolveCombat(int attackerID, List<Army> armies, Random diceAttack, Random diceDefend) {
+        System.out.println(this.getName());
         // retrieve the attack info
         int defenderID = getOwner();
-        List<String> srcNames = new ArrayList<>();
+        List<String> srcNames = armies.stream().map(Army::getSrc).collect(Collectors.toList());
         String destName = getName();
 
         //get all forces that this enemy has
@@ -67,7 +70,6 @@ public class TerritoryV2 extends TerritoryV1 {
             //select the unit for attacker and defender
             int attackLevel = isOwnTurn? getMinKey(enemy): getMaxKey(enemy);
             int defendLevel = isOwnTurn? getMaxKey(unitGroup): getMinKey(unitGroup);
-
             int i1 = diceAttack.nextInt(20)+UNIT_BONUS.get(attackLevel); // attacker dice
             int i2 = diceDefend.nextInt(20)+UNIT_BONUS.get(defendLevel); // defender dice
             // the one with lower roll loss one unit(tie, defender win)
@@ -78,9 +80,10 @@ public class TerritoryV2 extends TerritoryV1 {
                 }
             } else {//defender loses
                 List<Unit> units = unitGroup.get(defendLevel);
-                units.remove(units.size()-1);
-                if (units.isEmpty()){
+                if (1==units.size()){
                     unitGroup.remove(defendLevel);
+                }else{
+                    units.remove(units.size()-1);
                 }
             }
             isOwnTurn = !isOwnTurn;
@@ -98,7 +101,7 @@ public class TerritoryV2 extends TerritoryV1 {
                 unitGroup.put(entry.getKey(),units);
             }
         }
-        return new AttackResult(attackerID, defenderID, srcNames, destName, !unitGroup.isEmpty());
+        return new AttackResult(attackerID, defenderID, srcNames, destName, !enemy.isEmpty());
     }
 
 
@@ -153,11 +156,15 @@ public class TerritoryV2 extends TerritoryV1 {
         if (!canLoseUnits(num, level)){
             throw new IllegalArgumentException("invalid input arguments");
         }
-        List<Unit> units = unitGroup.get(level);
-        for (int i = 0; i < num; i++) {
-            units.remove(units.size()-1);
+        if (unitGroup.get(level).size()==num){
+            unitGroup.remove(level);
+        }else{
+            List<Unit> units = unitGroup.get(level);
+            for (int i = 0; i < num; i++) {
+                units.remove(units.size()-1);
+            }
+            unitGroup.put(level,units);
         }
-        unitGroup.put(level,units);
     }
 
     @Override
