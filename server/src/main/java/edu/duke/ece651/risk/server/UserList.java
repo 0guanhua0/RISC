@@ -24,7 +24,7 @@ public class UserList {
        return false;
    }
 
-   public User findUser(String userName) {
+   public User getUser(String userName) {
        for (User u : userList) {
            if (u.getUserName().equals(userName)) {
                return u;

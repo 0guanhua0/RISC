@@ -20,11 +20,11 @@ class UserListTest {
         userList.addUser(user1);
         assertTrue(userList.hasUser(user1.getUserName()));
 
-        User user3 = userList.findUser(user1.getUserName());
+        User user3 = userList.getUser(user1.getUserName());
         userList.rmUser(user3);
         assertFalse(userList.hasUser(user1.getUserName()));
 
-        User user4 = userList.findUser(user1.getUserName());
+        User user4 = userList.getUser(user1.getUserName());
         assertNull(user4);
 
     }
