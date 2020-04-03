@@ -81,14 +81,15 @@ public class GameServer {
         String userName = obj.getString(USER_NAME);
         String action = obj.getString(ACTION);
 
-        //check user is try to login/sign up
-        if (action.equals(LOGIN)) {
-            UserValidation.validate(user, db, obj);
+        //user try to login
+        if (action.equals(SIGNUP)) {
+            UserValidation.signUp(user, db, obj);
             return;
         }
 
-        if (action.equals(SIGNUP)) {
-            if (UserValidation.validate(user,db, obj) && !userList.hasUser(userName)) {
+        //sign up
+        if (action.equals(LOGIN)) {
+            if (UserValidation.logIn(user,db, obj) && !userList.hasUser(userName)) {
                 userList.addUser(user);
             }
             return;
@@ -105,29 +106,33 @@ public class GameServer {
 
         //if yes, proceed
         //according to actual action to redirect
-        //create new room
-        if (action.equals(CREATE_GAME)) {
-            //proceed to original process
-            return;
-
-        }
-
+        //the available room
         if (action.equals(GET_WAIT_ROOM)) {
             user.send(getRoomList());
             return;
         }
 
 
-        //todo; return the room user has join
+        //the room user has joined
         if (action.equals(GET_IN_ROOM)) {
             user.send(user.getRoomList());
             return;
         }
 
+
+        //create new room
+        if (action.equals(CREATE_GAME) || action.equals(JOIN_GAME)) {
+            //proceed to original process
+            createPlayer(socket, user);
+            return;
+
+        }
+
+
         //join the existing game
         //if new player, then just new player
         //if existing player, then plug in the stream
-        if (action.equals(JOIN_GAME)) {
+        if (action.equals(RECONNECT_ROOM)) {
             int roomID = obj.getInt("roomID");
             // user is a player already in room
             // redirect io
@@ -142,7 +147,6 @@ public class GameServer {
 
 
     }
-
 
 
 
