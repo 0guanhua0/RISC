@@ -50,14 +50,13 @@ public class TerritoryV2 extends TerritoryV1 {
     //TODO test the correctness of this data
     @Override
     AttackResult resolveCombat(int attackerID, List<Army> armies, Random diceAttack, Random diceDefend) {
-        System.out.println(this.getName());
         // retrieve the attack info
         int defenderID = getOwner();
         List<String> srcNames = armies.stream().map(Army::getSrc).collect(Collectors.toList());
         String destName = getName();
 
         //get all forces that this enemy has
-        Map<Integer,Integer> enemy = new HashMap<>();
+        Map<Integer,Integer> enemy = new HashMap<Integer, Integer>();
         for (Army army : armies){
             Map<Integer, Integer> troops = army.getTroops();
             for (Map.Entry<Integer, Integer> entry : troops.entrySet()) {
@@ -91,7 +90,7 @@ public class TerritoryV2 extends TerritoryV1 {
         // update the ownership only if attacker has units left
         if (!enemy.isEmpty()) {
             setOwner(attackerID);
-            this.unitGroup = new HashMap<>();
+            this.unitGroup = new HashMap<Integer, List<Unit>>();
             for (Map.Entry<Integer, Integer> entry : enemy.entrySet()) {
                 int num = entry.getValue();
                 List<Unit> units = new ArrayList<>();
