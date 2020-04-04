@@ -34,6 +34,8 @@ public class Constant {
     public static final int INITIAL_TECH_NUM = 50;
 
     //for networking info
+    public static final String ROOM_ID = "roomID";
+
     //JSON communicate format
     public static final String USER_NAME = "userName";
     public static final String USER_PASSWORD = "userPassword";

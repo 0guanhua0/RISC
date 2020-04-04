@@ -69,10 +69,6 @@ public class GameServer {
         //treat new connection as new user
         User user = new User(socket.getInputStream(), socket.getOutputStream());
 
-        String helloInfo = "Welcome to the fancy RISK game!!!";
-        user.send(helloInfo);
-
-
         //header info from client
         String msg = (String) user.recv();
         JSONObject obj = new JSONObject(msg);
@@ -132,7 +128,7 @@ public class GameServer {
         //if new player, then just new player
         //if existing player, then plug in the stream
         if (action.equals(RECONNECT_ROOM)) {
-            int roomID = obj.getInt("roomID");
+            int roomID = obj.getInt(ROOM_ID);
             // user is a player already in room
             // redirect io
             if (user.isInRoom(roomID)) {
