@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -34,6 +35,8 @@ public class PlayGameActivity extends AppCompatActivity {
     private String roomName;
     private List<Territory> territories;
     private TerritoryAdapter territoryAdapter;
+
+    private TextView tvActionInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,6 +139,8 @@ public class PlayGameActivity extends AppCompatActivity {
         rvTerritoryList.setAdapter(territoryAdapter);
 
         territoryAdapter.setTerritories(territories);
+
+        tvActionInfo = findViewById(R.id.tv_action_info);
     }
 
     private void showTerritoryDialog(Territory territory){

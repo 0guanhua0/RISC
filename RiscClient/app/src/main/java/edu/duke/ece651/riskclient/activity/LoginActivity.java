@@ -17,7 +17,7 @@ import java.util.Objects;
 
 import edu.duke.ece651.riskclient.objects.Player;
 import edu.duke.ece651.riskclient.R;
-import edu.duke.ece651.riskclient.listener.onResultListener;
+import edu.duke.ece651.riskclient.listener.onReceiveListener;
 
 import static edu.duke.ece651.riskclient.Constant.USER_NAME;
 import static edu.duke.ece651.riskclient.Constant.USER_PASSWORD;
@@ -121,7 +121,7 @@ public class LoginActivity extends AppCompatActivity {
             // make the button un-clickable(prevent multiple request)
             btLogin.setClickable(false);
 
-            authUser(new Player(userName, userPassword), new onResultListener() {
+            authUser(new Player(userName, userPassword), new onReceiveListener() {
                 @Override
                 public void onFailure(String error) {
                     btLogin.setClickable(true);

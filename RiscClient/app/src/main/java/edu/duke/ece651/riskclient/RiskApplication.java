@@ -2,12 +2,19 @@ package edu.duke.ece651.riskclient;
 
 import android.app.Application;
 import android.content.Context;
+import android.util.Log;
 
 import java.io.IOException;
-import java.net.InetAddress;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.net.UnknownHostException;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
+import edu.duke.ece651.riskclient.listener.onReceiveListener;
+import edu.duke.ece651.riskclient.listener.onSendListener;
 import edu.duke.ece651.riskclient.objects.Player;
 
 import static edu.duke.ece651.riskclient.Constant.HOST;
@@ -22,16 +29,32 @@ public class RiskApplication extends Application {
     // will be initialized once you join(or create) a room
     // will be closed once you leave a room
     private static Socket gameSocket;
-
+    private static ObjectInputStream in;
+    private static ObjectOutputStream out;
+    // this is the thread pool which dedicate for network communication
+    private static ThreadPoolExecutor threadPool;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        RiskApplication.context = getApplicationContext();
+        context = getApplicationContext();
+        // here we only need a relative very small thread pool, since it's almost impossible we will send two request at the same time
+        BlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<>(3);
+        threadPool = new ThreadPoolExecutor(1, 3, 5, TimeUnit.SECONDS, workQueue);
+        // warm up one core thread
+        threadPool.prestartCoreThread();
     }
 
     public static Context getContext() {
-        return RiskApplication.context;
+        return context;
+    }
+
+    /**
+     * Get a thread pool to execute some time-consuming task.
+     * @return the global thread pool
+     */
+    public static ThreadPoolExecutor getThreadPool(){
+        return threadPool;
     }
 
     public static Player getPlayer() {
@@ -63,15 +86,50 @@ public class RiskApplication extends Application {
     public static void initGameSocket() throws IOException {
         releaseGameSocket();
         gameSocket = new Socket(HOST, PORT);
+        /*
+          WARNING!!! here you should initialize "out-in" in this order!!! Otherwise, it will
+          cause deadlock.(Because server will initialize in "in-out" order.
+          https://stackoverflow.com/questions/21075453/objectinputstream-from-socket-getinputstream
+         */
+        out = new ObjectOutputStream(gameSocket.getOutputStream());
+        in = new ObjectInputStream(gameSocket.getInputStream());
     }
 
     /**
-     * This function will return the game socket.
-     * which used to perform a whole game i.e. keep alive for a long time
-     * @return the game socket
+     * Send data to remote server.
+     * Because android doesn't allow networking operation on the main thread.
+     * We should use a thread pool to send info.
+     * @param object object going to be sent
+     * @param listener send result listener
      */
-    public static Socket getGameSocket(){
-        return gameSocket;
+    public static void send(Object object, onSendListener listener) {
+        threadPool.execute(() -> {
+            try {
+                out.writeObject(object);
+                out.flush();
+                listener.onSuccessful();
+            }catch (IOException e){
+                Log.e(TAG, "send error: " + e.toString());
+                listener.onFailure(e.toString());
+            }
+        });
+    }
+
+    /**
+     * Receive data from remote server.
+     * We can't use return value here because android won't allow blocking on the main thread.
+     * Also, this function should catch all exception and use the listener to notify main thread.
+     */
+    public static void recv(onReceiveListener listener) {
+        threadPool.execute(() -> {
+            try {
+                Object o = in.readObject();
+                listener.onSuccessful(o);
+            }catch (IOException | ClassNotFoundException e){
+                Log.e(TAG, "receiver error: " + e.toString());
+                listener.onFailure(e.toString());
+            }
+        });
     }
 
     /**

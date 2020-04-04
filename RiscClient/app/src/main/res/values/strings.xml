@@ -48,7 +48,7 @@
     <string name="play_game_decline">Decline</string>
 
     <!--  move & attack activity  -->
-    <string name="move_attack_unit_info">Units info:</string>
+    <string name="move_attack_unit_info">The Units you sent:</string>
 
     <string name="menu_home">Home</string>
     <string name="menu_update">Change Password</string>

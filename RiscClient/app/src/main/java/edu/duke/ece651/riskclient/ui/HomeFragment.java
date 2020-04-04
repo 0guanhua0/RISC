@@ -20,8 +20,7 @@ import java.util.List;
 
 import edu.duke.ece651.risk.shared.Room;
 import edu.duke.ece651.riskclient.adapter.RoomAdapter;
-import edu.duke.ece651.riskclient.listener.onResultListener;
-import edu.duke.ece651.riskclient.objects.Player;
+import edu.duke.ece651.riskclient.listener.onReceiveListener;
 import edu.duke.ece651.riskclient.R;
 import edu.duke.ece651.riskclient.activity.NewRoomActivity;
 
@@ -116,7 +115,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void updateData(){
-        getRoomList(isRoomWait, new onResultListener() {
+        getRoomList(isRoomWait, new onReceiveListener() {
             @Override
             public void onFailure(String error) {
                 showToastUI(getActivity(), error);

@@ -57,5 +57,6 @@ public class PasswordFragment extends Fragment {
 
     private void setUpUI(){
         tvUserName.setText(getPlayerName());
+        // TODO: implement logic here
     }
 }
