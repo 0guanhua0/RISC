@@ -189,9 +189,38 @@ public class GameServerTest {
 
 
         //6 login user get available room
+        outputStream.reset();
+
+        String s6 = "{\"" + USER_NAME + "\": \"" + userName2 + "\",\n" +
+                "\"" + USER_PASSWORD +"\": \"" + userPassword2 + "\",\n" +
+                "\"" + ACTION + "\": \"" + GET_WAIT_ROOM + "\" }";
+
+        Socket socket6 = mock(Socket.class);
+        when(socket6.getInputStream())
+                .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList(s6))));
+        when(socket6.getOutputStream()).thenReturn(outputStream);
+
+        gameServer.handleIncomeRequest(socket6);
+        assertEquals("", readAllStringFromObjectStream(outputStream));
+
 
 
         //7 login user get room he is in
+        outputStream.reset();
+
+        String s7 = "{\"" + USER_NAME + "\": \"" + userName2 + "\",\n" +
+                "\"" + USER_PASSWORD +"\": \"" + userPassword2 + "\",\n" +
+                "\"" + ACTION + "\": \"" + GET_IN_ROOM + "\" }";
+
+        Socket socket7 = mock(Socket.class);
+        when(socket7.getInputStream())
+                .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList(s7))));
+        when(socket7.getOutputStream()).thenReturn(outputStream);
+
+        gameServer.handleIncomeRequest(socket7);
+        assertEquals("", readAllStringFromObjectStream(outputStream));
+
+
 
 
     }
