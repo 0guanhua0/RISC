@@ -18,7 +18,7 @@ class PlayerV2Test {
 
 
     @Test
-    void updateResource() throws IOException {
+    void updateState() throws IOException {
         MapDataBase<String> mapDataBase = new MapDataBase<String>();
         WorldMap<String> worldMap = mapDataBase.getMap("a clash of kings");
         Territory storm = worldMap.getTerritory("the storm kingdom");
@@ -33,12 +33,23 @@ class PlayerV2Test {
         player.addTerritory(reach);
         player.addTerritory(vale);
 
+        int techLevel = player.getTechLevel();
+        player.upMaxTech();
+        assertFalse(player.canUpMaxTech());
+        player.updateState();
+        assertEquals(techLevel+1,player.getTechLevel());
+
+        int foodNum = player.getFoodNum();
+        int techNum = player.getTechNum();
+
         for (int i = 1; i <= 10; i++) {
             player.updateState();
+            int level = player.getTechLevel();
             int foodYield = (storm.getFoodYield()+reach.getFoodYield()+vale.getFoodYield())*i;
             int techYield = (storm.getTechYield()+reach.getTechYield()+vale.getTechYield())*i;
-            assertEquals(player.food.getRemain(), foodYield+INITIAL_FOOD_NUM);
-            assertEquals(player.tech.getRemain(),techYield+INITIAL_TECH_NUM);
+            assertEquals(player.food.getRemain(), foodYield+foodNum);
+            assertEquals(player.tech.getRemain(),techYield+techNum);
+            assertEquals(level,player.getTechLevel());
         }
 
     }
@@ -125,23 +136,23 @@ class PlayerV2Test {
         player.setId(1);
         player.addTerritory(storm);
 
-        assertTrue(player.canUpTech());
-        player.upTech();//after this operation is level 2
-        assertFalse(player.canUpTech());//test can only upgrade technology once during every single round of game
+        assertTrue(player.canUpMaxTech());
+        player.upMaxTech();//after this operation is level 2
+        assertFalse(player.canUpMaxTech());//test can only upgrade technology once during every single round of game
         player.updateState();
-        assertFalse(player.canUpTech());//test don't have enough resources
+        assertFalse(player.canUpMaxTech());//test don't have enough resources
         for (int i=1;i<100;i++){
             player.updateState();
         }
-        player.upTech();//after this operation is level 3
+        player.upMaxTech();//after this operation is level 3
         player.updateState();
-        player.upTech();//after this operation is level 4
+        player.upMaxTech();//after this operation is level 4
         player.updateState();
-        player.upTech();//after this operation is level 5
+        player.upMaxTech();//after this operation is level 5
         player.updateState();
-        player.upTech();//after this operation is level 6
+        player.upMaxTech();//after this operation is level 6
         player.updateState();
-        assertFalse(player.canUpTech());//test at the maximum level
+        assertFalse(player.canUpMaxTech());//test at the maximum level
     }
 
     @Test
@@ -156,9 +167,26 @@ class PlayerV2Test {
         player.setId(1);
         player.addTerritory(storm);
 
-        player.upTech();
-        assertEquals(2,player.techLevel);
+        player.upMaxTech();
+        assertEquals(1,player.techLevel);
         assertFalse(player.upTechRight);
         assertEquals(player.tech.getRemain(),INITIAL_TECH_NUM-TECH_MAP.get(1));
+        player.updateState();
+        assertEquals(2,player.techLevel);
+        assertTrue(player.upTechRight);
+    }
+
+    @Test
+    void upMaxTech() throws IOException {
+        MapDataBase<String> mapDataBase = new MapDataBase<String>();
+        WorldMap<String> worldMap = mapDataBase.getMap("a clash of kings");
+        Territory storm = worldMap.getTerritory("the storm kingdom");
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        PlayerV2<String> player = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),out);
+        player.setId(1);
+
+        assertDoesNotThrow(()->{player.upMaxTech();});
+        assertThrows(IllegalArgumentException.class,()->{player.upMaxTech();});
     }
 }

@@ -200,10 +200,6 @@ public class Room {
      * of current map after the end of each single round of game
      */
     void updateWorld(){
-        //add one units to all territory
-        for (Territory territory : map.getAtlas().values()){
-            territory.addNUnits(1);
-        }
         //update tech&food resources for every player
         for (Player<String> player : players) {
             player.updateState();

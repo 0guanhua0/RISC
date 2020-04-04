@@ -23,12 +23,12 @@ class PlayerInputTest {
     static void beforeAll(){
         //TODO note that it's not the correct way to test this code
         //who writes the code here should refactor it
-        t1.setIsFree();
-        t2.setIsFree();
+        t1.setFree();
+        t2.setFree();
         t3.setOwner(1);
 
-        t1.addNUnits(10);
-        t2.addNUnits(10);
+        t1.addBasicUnits(10);
+        t2.addBasicUnits(10);
 
         territories.add(t1);
         territories.add(t2);

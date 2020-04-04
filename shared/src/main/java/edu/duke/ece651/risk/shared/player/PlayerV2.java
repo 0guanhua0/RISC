@@ -1,6 +1,5 @@
 package edu.duke.ece651.risk.shared.player;
 
-import edu.duke.ece651.risk.shared.Constant;
 import edu.duke.ece651.risk.shared.map.BasicResource;
 import edu.duke.ece651.risk.shared.map.Territory;
 
@@ -34,16 +33,21 @@ public class PlayerV2<T> extends PlayerV1<T> {
         initResource();
     }
 
+    //TODO add more testing for this method
     @Override
     public void updateState() {
-        for (Object o : territories) {
-            Territory territory = (Territory)o;
+        for (Territory territory : territories) {
+            territory.addBasicUnits(1);
             int foodYield = territory.getFoodYield();
             int techYield = territory.getTechYield();
             tech.addResource(techYield);
             food.addResource(foodYield);
         }
-        this.upTechRight = true;
+        if (!upTechRight){//note that we only update the max tech level after a round of game
+            this.upTechRight = true;
+            techLevel++;
+        }
+
     }
 
     @Override
@@ -75,13 +79,10 @@ public class PlayerV2<T> extends PlayerV1<T> {
     }
 
     @Override
-    public boolean canUpTech() {
+    public boolean canUpMaxTech() {
         if (upTechRight&&TECH_MAP.containsKey(techLevel)&&TECH_MAP.get(techLevel)<=getTechNum()){
             return true;
         }else{
-//            System.out.println(upTechRight);
-//            System.out.println(TECH_MAP.containsKey(techLevel));
-//            System.out.println(TECH_MAP.get(techLevel)<=getTechNum());
             return false;
         }
     }
@@ -90,13 +91,18 @@ public class PlayerV2<T> extends PlayerV1<T> {
      * this method should always be called after canUpTech
      */
     @Override
-    public void upTech() {
-        if (!canUpTech()){
+    public void upMaxTech() {
+        if (!canUpMaxTech()){
             throw new IllegalArgumentException("Can't up tech now!");
         }
         this.useTech(TECH_MAP.get(techLevel));
-        this.techLevel++;
         upTechRight = false;
     }
 
+
+
+    @Override
+    public int getTechLevel() {
+        return this.techLevel;
+    }
 }

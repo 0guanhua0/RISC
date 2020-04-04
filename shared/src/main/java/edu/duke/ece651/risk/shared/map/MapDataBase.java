@@ -16,7 +16,6 @@ import java.util.*;
  * @create: 2020-03-09 10:20
  **/
 
-//TODO: do we really need T here? since we hard code the map, we already know the type
 public class MapDataBase<T extends Serializable> implements Serializable{
     Map<String, WorldMap<T>> mapHub;
     private String baseDirStr = "../config_file/MapDB_config/";

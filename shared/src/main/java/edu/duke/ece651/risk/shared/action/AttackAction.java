@@ -1,28 +1,47 @@
 package edu.duke.ece651.risk.shared.action;
 
 import edu.duke.ece651.risk.shared.WorldState;
+import edu.duke.ece651.risk.shared.map.Army;
 import edu.duke.ece651.risk.shared.map.Territory;
+import edu.duke.ece651.risk.shared.map.Unit;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.risk.shared.player.Player;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+
 
 public class AttackAction implements Action, Serializable {
     String src;
     String dest;
     int playerId;
+    //key is technology level of corresponding units, value is number of units
+    Map<Integer,Integer> levelToNum;
     int unitsNum;
+
+
+    public AttackAction(String src, String dest, int playerId, Map<Integer,Integer> levelToNum) {
+        this.src = src;
+        this.dest = dest;
+        this.playerId = playerId;
+        this.levelToNum = levelToNum;
+        this.unitsNum = levelToNum.values().stream().mapToInt(a -> a).sum();
+    }
 
     public AttackAction(String src, String dest, int playerId, int unitsNum) {
         this.src = src.toLowerCase();
         this.dest = dest.toLowerCase();
         this.playerId = playerId;
+        this.levelToNum = new HashMap<Integer, Integer>(){{
+            put(0,unitsNum);
+        }};
         this.unitsNum = unitsNum;
     }
 
+
     /**
      * validate the attack move
-     *
      * @param worldState WorldState object
      * @return true if valid, false if invalid
      */
@@ -33,7 +52,7 @@ public class AttackAction implements Action, Serializable {
         Player<String> player = worldState.getPlayer();
 
         //validate src & dst & unit num
-        if (!worldMap.hasTerritory(this.src) || !worldMap.hasTerritory(this.dest) || this.unitsNum <= 0) {
+        if (!worldMap.hasTerritory(this.src) || !worldMap.hasTerritory(this.dest)) {
             return false;
         }
 
@@ -43,15 +62,17 @@ public class AttackAction implements Action, Serializable {
             return false;
         }
 
-        //validate src has enough unit
-        if (src.getUnitsNum() < this.unitsNum) {
-            return false;
-        }
-
         //validate dst owns by opponent
         Territory dst = worldMap.getTerritory(this.dest);
         if (dst.getOwner() == this.playerId) {
             return false;
+        }
+
+        for (Map.Entry<Integer, Integer> entry : this.levelToNum.entrySet()) {
+            //validate src has enough unit
+            if (!src.canLoseUnits(entry.getValue(),entry.getKey())) {
+                return false;
+            }
         }
 
         //validate food storage
@@ -68,7 +89,6 @@ public class AttackAction implements Action, Serializable {
 
     /**
      * following function perform single attack update, add update to territory map
-     *
      * @param worldState WorldState object
      * @return true, if valid
      */
@@ -84,10 +104,13 @@ public class AttackAction implements Action, Serializable {
         int foodCost = unitsNum;
         player.useFood(unitsNum);
 
-        // reduce src units
-        worldMap.getTerritory(src).lossNUnits(unitsNum);
+        for (Map.Entry<Integer, Integer> entry : levelToNum.entrySet()) {
+            // reduce src units
+            worldMap.getTerritory(src).loseUnits(entry.getValue(),entry.getKey());
+        }
+
         // add attack units to target territory's attack buffer
-        worldMap.getTerritory(dest).addAttack(playerId, new Army(playerId, src, unitsNum));
+        worldMap.getTerritory(dest).addAttack(playerId, new Army(playerId, src,levelToNum));
 
         return true;
     }
@@ -96,7 +119,7 @@ public class AttackAction implements Action, Serializable {
     public boolean equals(Object obj) {
         if (obj instanceof AttackAction) {
             AttackAction attackAction1 = (AttackAction) obj;
-            return attackAction1.src.equals(this.src) && attackAction1.dest.equals(this.dest) && attackAction1.unitsNum == this.unitsNum && attackAction1.playerId == this.playerId;
+            return attackAction1.src.equals(this.src) && attackAction1.dest.equals(this.dest) && attackAction1.playerId == this.playerId;
         }
         return false;
     }
