@@ -45,7 +45,7 @@ public class Constant {
     //constant for info send to client
     public static final String INVALID_LOGIN = "invalid name/password";
     public static final String INVALID_SIGNUP = "user name already exists";
-    public static final String INVALID_VALIDATE = "invalid validation";
+    public static final String INVALID_VALIDATION_ACTION = "invalid validation action";
     public static final String VALIDATE_SUCCESSFUL = "SUCCESSFUL";
     public static final String INVALID_USER = "invalid user / not login";
     public static final String INVALID_RECONNECT = "the room ID you want to reconnect is invalid";
@@ -61,9 +61,11 @@ public class Constant {
 
     //client requiring gaming info
     public static final String GET_WAIT_ROOM = "getWaitRoom";
-    public static final String GET_IN_ROOM = "getWaitRoom";
+    public static final String GET_IN_ROOM = "getInRoom";
     public static final String JOIN_GAME = "joinGame";
     public static final String CREATE_GAME = "createGame";
+    public static final String RECONNECT_ROOM = "reconnect room";
+
 
     //time when player offline others have to wait
     public static final int WAIT_TIME = 60000;

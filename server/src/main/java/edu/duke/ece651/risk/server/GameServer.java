@@ -142,6 +142,9 @@ public class GameServer {
                 Player currPlayer = rooms.get(roomID).getPlayer(userName);
                 currPlayer.reConnect(socket.getInputStream(), socket.getOutputStream());
             }
+            else {
+                user.send(INVALID_RECONNECT);
+            }
 
         }
 
