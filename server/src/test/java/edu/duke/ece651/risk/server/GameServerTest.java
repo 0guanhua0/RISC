@@ -104,7 +104,7 @@ public class GameServerTest {
         String user1Password = "1";
         assertFalse(gameServer.db.authUser(user1Name, user1Password));
 
-        String s1 = "{\" " + USER_NAME + "\": \"" + user1Name + "\",\n" +
+        String s1 = "{\"" + USER_NAME + "\": \"" + user1Name + "\",\n" +
                 "\"" + USER_PASSWORD +"\": \"" + user1Password + "\",\n" +
                 "\"" + ACTION + "\": \"" + SIGNUP + "\" }";
 
@@ -124,7 +124,7 @@ public class GameServerTest {
         String userName2 = "1";
         String userPassword2 = "1";
 
-        String s2 = "{\" " + USER_NAME + "\": \"" + user1Name + "\",\n" +
+        String s2 = "{\"" + USER_NAME + "\": \"" + user1Name + "\",\n" +
                 "\"" + USER_PASSWORD +"\": \"" + user1Password + "\",\n" +
                 "\"" + ACTION + "\": \"" + LOGIN + "\" }";
 
@@ -140,7 +140,7 @@ public class GameServerTest {
         String userName3 = "1";
         String userPassword3 = "3";
 
-        String s3 = "{\" " + USER_NAME + "\": \"" + userName3 + "\",\n" +
+        String s3 = "{\"" + USER_NAME + "\": \"" + userName3 + "\",\n" +
                 "\"" + USER_PASSWORD +"\": \"" + userPassword3 + "\",\n" +
                 "\"" + ACTION + "\": \"" + SIGNUP + "\" }";
 
@@ -158,7 +158,7 @@ public class GameServerTest {
         String userName4 = "4";
         String userPassword4 = "4";
 
-        String s4 = "{\" " + USER_NAME + "\": \"" + userName4 + "\",\n" +
+        String s4 = "{\"" + USER_NAME + "\": \"" + userName4 + "\",\n" +
                 "\"" + USER_PASSWORD +"\": \"" + userPassword4 + "\",\n" +
                 "\"" + ACTION + "\": \"" + LOGIN + "\" }";
 
@@ -175,13 +175,13 @@ public class GameServerTest {
         String userName5 = "5";
         String userPassword5 = "5";
 
-        String s5 = "{\" " + USER_NAME + "\": \"" + userName4 + "\",\n" +
-                "\"" + USER_PASSWORD +"\": \"" + userPassword4 + "\",\n" +
+        String s5 = "{\"" + USER_NAME + "\": \"" + userName5 + "\",\n" +
+                "\"" + USER_PASSWORD +"\": \"" + userPassword5 + "\",\n" +
                 "\"" + ACTION + "\": \"" + "xxx" + "\" }";
 
         Socket socket5 = mock(Socket.class);
         when(socket5.getInputStream())
-                .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList(s4))));
+                .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList(s5))));
         when(socket5.getOutputStream()).thenReturn(outputStream);
 
         gameServer.handleIncomeRequest(socket5);

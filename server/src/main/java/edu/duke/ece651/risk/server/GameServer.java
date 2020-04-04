@@ -76,6 +76,8 @@ public class GameServer {
         String userName = obj.getString(USER_NAME);
         String action = obj.getString(ACTION);
 
+        user.setUserName(userName);
+
         //user try to login
         if (action.equals(SIGNUP)) {
             UserValidation.signUp(user, db, obj);
