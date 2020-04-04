@@ -41,6 +41,7 @@ public class GameServerTest {
         client.init("127.0.0.1", 8000);
     }
 
+    /*
     @Test
     public void testRun() throws IOException, InterruptedException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -85,6 +86,14 @@ public class GameServerTest {
         verify(server, atLeast(3)).accept();
     }
 
+     */
+
+    /**
+     * short socket
+     * @throws IOException
+     * @throws ClassNotFoundException
+     * @throws SQLException
+     */
     @Test
     public void testHandleIncomeRequest() throws IOException, ClassNotFoundException, SQLException {
         GameServer gameServer = new GameServer(null);
@@ -184,12 +193,20 @@ public class GameServerTest {
 
         //7 login user get room he is in
 
-        //8 login user create room
+
+    }
+
+    /**
+     * long socket
+     */
+    @Test
+    public void testLongSocket() {
+        //1 login user create room
 
 
-        //9 login user join existing room
+        //2 login user join existing room
 
-        //10 login user reconnect to room
+        //3 login user reconnect to room
 
     }
 
@@ -234,6 +251,7 @@ public class GameServerTest {
         assertEquals(2, gameServer.rooms.size()); // the room finished is removed
     }
 
+    /*
     @Test
     public void testMain() throws IOException, InterruptedException, ClassNotFoundException {
         Thread th = new Thread(() -> {
@@ -257,6 +275,8 @@ public class GameServerTest {
         th.interrupt();
         th.join();
     }
+
+     */
 
     @Test
     void createPlayer() throws IOException, SQLException, ClassNotFoundException {
