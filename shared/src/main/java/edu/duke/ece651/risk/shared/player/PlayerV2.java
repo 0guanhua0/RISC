@@ -36,8 +36,7 @@ public class PlayerV2<T> extends PlayerV1<T> {
     //TODO add more testing for this method
     @Override
     public void updateState() {
-        for (Object o : territories) {
-            Territory territory = (Territory)o;
+        for (Territory territory : territories) {
             territory.addBasicUnits(1);
             int foodYield = territory.getFoodYield();
             int techYield = territory.getTechYield();

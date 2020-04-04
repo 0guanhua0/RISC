@@ -45,7 +45,7 @@ public class UpUnitAction implements Action{
             return false;
         }
 
-        //check if territory has enough number of units with specified technology level
+        //check if a territory can support such a upgrade action
         Territory srcNode = map.getTerritory(terr);
         if (!srcNode.canUpUnit(this.unitsNum,this.srcLevel,this.targetLevel)){
             return false;
