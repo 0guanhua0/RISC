@@ -18,7 +18,7 @@ class PlayerV2Test {
 
 
     @Test
-    void updateResource() throws IOException {
+    void updateState() throws IOException {
         MapDataBase<String> mapDataBase = new MapDataBase<String>();
         WorldMap<String> worldMap = mapDataBase.getMap("a clash of kings");
         Territory storm = worldMap.getTerritory("the storm kingdom");
@@ -33,12 +33,23 @@ class PlayerV2Test {
         player.addTerritory(reach);
         player.addTerritory(vale);
 
+        int techLevel = player.getTechLevel();
+        player.upMaxTech();
+        assertFalse(player.canUpMaxTech());
+        player.updateState();
+        assertEquals(techLevel+1,player.getTechLevel());
+
+        int foodNum = player.getFoodNum();
+        int techNum = player.getTechNum();
+
         for (int i = 1; i <= 10; i++) {
             player.updateState();
+            int level = player.getTechLevel();
             int foodYield = (storm.getFoodYield()+reach.getFoodYield()+vale.getFoodYield())*i;
             int techYield = (storm.getTechYield()+reach.getTechYield()+vale.getTechYield())*i;
-            assertEquals(player.food.getRemain(), foodYield+INITIAL_FOOD_NUM);
-            assertEquals(player.tech.getRemain(),techYield+INITIAL_TECH_NUM);
+            assertEquals(player.food.getRemain(), foodYield+foodNum);
+            assertEquals(player.tech.getRemain(),techYield+techNum);
+            assertEquals(level,player.getTechLevel());
         }
 
     }
