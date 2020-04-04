@@ -90,7 +90,7 @@ public abstract class Player<T> {
             throw new IllegalArgumentException("the territory doesn't belong to this user!");
         }
         territories.remove(territory);
-        territory.setIsFree();
+        territory.setFree();
     }
 
     public void send(Object data) throws IOException {
@@ -133,10 +133,12 @@ public abstract class Player<T> {
 
     public abstract void useTech(int techUse);
 
-    public abstract boolean canUpTech();
+    public abstract boolean canUpMaxTech();
 
-    public abstract void upTech();
+    public abstract void upMaxTech();
 
 
+
+    public abstract int getTechLevel();
 
 }

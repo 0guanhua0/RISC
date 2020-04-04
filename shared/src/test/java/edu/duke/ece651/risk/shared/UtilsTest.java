@@ -1,7 +1,11 @@
 package edu.duke.ece651.risk.shared;
 
+import static edu.duke.ece651.risk.shared.Constant.UNIT_BONUS;
 import static org.junit.jupiter.api.Assertions.*;
 
+import edu.duke.ece651.risk.shared.map.MapDataBase;
+import edu.duke.ece651.risk.shared.map.Territory;
+import edu.duke.ece651.risk.shared.map.WorldMap;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 
@@ -118,5 +122,58 @@ public class UtilsTest {
             put("kingdom of the north",5);
         }};
         assertEquals(map,stringIntegerMap);
+    }
+
+    @Test
+    void testClone() throws IOException, ClassNotFoundException {
+        MapDataBase<String> mapDataBase = new MapDataBase<>();
+        WorldMap<String> worldMap = mapDataBase.getMap("a clash of kings");
+        Territory storm = worldMap.getTerritory("the storm kingdom");
+        storm.setOwner(2);
+        storm.addBasicUnits(5);
+        Territory north = worldMap.getTerritory("kingdom of the north");
+        north.setOwner(3);
+
+
+        WorldMap<String> cloneRes = (WorldMap)Utils.clone(worldMap);
+        Territory stormClone = cloneRes.getTerritory("the storm kingdom");
+        Territory northClone = cloneRes.getTerritory("kingdom of the north");
+        Territory rockClone = cloneRes.getTerritory("kingdom of the rock");
+        assertEquals(2,stormClone.getOwner());
+        assertEquals(5,stormClone.getBasicUnitsNum());
+        assertEquals(3,northClone.getOwner());
+        assertEquals(0,northClone.getBasicUnitsNum());
+        assertEquals(0,rockClone.getOwner());
+
+        assertFalse(stormClone==storm);
+        assertFalse(cloneRes==worldMap);
+    }
+
+    @Test
+    void getUnitUpCost() {
+        int maxLevel = Utils.getMaxKey(UNIT_BONUS);
+        assertThrows(IllegalArgumentException.class,()->{Utils.getUnitUpCost(1,0);});
+        assertThrows(IllegalArgumentException.class,()->{Utils.getUnitUpCost(maxLevel,maxLevel+1);});
+        assertThrows(IllegalArgumentException.class,()->{Utils.getUnitUpCost(-1,1);});
+
+        assertEquals(3, Utils.getUnitUpCost(0, 1));
+        assertEquals(140,Utils.getUnitUpCost(0,6));
+        assertEquals(85,Utils.getUnitUpCost(4,6));
+    }
+
+    @Test
+    void getMaxLevel() {
+        HashMap<Integer, Integer> map = new HashMap<>();
+        map.put(1,7);
+        map.put(2,4);
+        assertEquals(2,Utils.getMaxKey(map));
+    }
+
+    @Test
+    void getMinLevel() {
+        HashMap<Integer, Integer> map = new HashMap<>();
+        map.put(1,7);
+        map.put(2,0);
+        assertEquals(1,Utils.getMinKey(map));
     }
 }

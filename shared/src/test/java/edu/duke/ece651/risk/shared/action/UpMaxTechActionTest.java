@@ -31,7 +31,7 @@ class UpMaxTechActionTest {
 
         UpMaxTechAction upMaxTechAction = new UpMaxTechAction();
         assertTrue(upMaxTechAction.isValid(worldState));
-        player.upTech();
+        player.upMaxTech();
         assertFalse(upMaxTechAction.isValid(worldState));
 
     }

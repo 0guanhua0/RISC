@@ -1,6 +1,5 @@
 package edu.duke.ece651.risk.shared.map;
 
-import edu.duke.ece651.risk.shared.action.Army;
 import edu.duke.ece651.risk.shared.action.AttackResult;
 import org.json.JSONObject;
 
@@ -56,36 +55,36 @@ public abstract class Territory implements Serializable {
         return status.isFree();
     }
 
-    public void setIsFree() {
+    public void setFree() {
         status.setOwnerId(0);
     }
 
-    //helper function to check if two territories are adjacent to each other
-    private boolean DFSHelper(Territory current, Territory target, Set<Territory> visited) {
-        if (visited.contains(current) || current.getOwner() != this.getOwner()) {
-            return false;
-        } else if (current == target) {
-            return true;
-        } else {
-            visited.add(current);
-            for (Territory neigh : current.getNeigh()) {
-                if (DFSHelper(neigh, target, visited)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-    }
-
-    //return true only when there is path from current territory to the target territory,
-    //and all territories along the path should under the control of owner of current territory
-    public boolean hasPathTo(Territory target) {
-        if (this == target || target.getOwner() != this.getOwner()) {//a territory is not adjacent to itself
-            return false;
-        }
-        Set<Territory> visited = new HashSet<>();
-        return DFSHelper(this, target, visited);
-    }
+//    //helper function to check if two territories are adjacent to each other
+//    private boolean DFSHelper(Territory current, Territory target, Set<Territory> visited) {
+//        if (visited.contains(current) || current.getOwner() != this.getOwner()) {
+//            return false;
+//        } else if (current == target) {
+//            return true;
+//        } else {
+//            visited.add(current);
+//            for (Territory neigh : current.getNeigh()) {
+//                if (DFSHelper(neigh, target, visited)) {
+//                    return true;
+//                }
+//            }
+//            return false;
+//        }
+//    }
+//
+//    //return true only when there is path from current territory to the target territory,
+//    //and all territories along the path should under the control of owner of current territory
+//    public boolean hasPathTo(Territory target) {
+//        if (this == target || target.getOwner() != this.getOwner()) {//a territory is not adjacent to itself
+//            return false;
+//        }
+//        Set<Territory> visited = new HashSet<>();
+//        return DFSHelper(this, target, visited);
+//    }
 
     /**
      * This function will resolve all combats happen in current territory.
@@ -102,17 +101,69 @@ public abstract class Territory implements Serializable {
         for (Map.Entry<Integer, List<Army>> entry : attackAct.entrySet()) {
             attackResults.add(resolveCombat(entry.getKey(), entry.getValue(), diceAttack, diceDefend));
         }
-
         // clean up attackMap
         attackAct.clear();
         return attackResults;
     }
 
-    public abstract int getUnitsNum();
+    /**
+     * @return the number of basic units
+     */
+    public abstract int getBasicUnitsNum();
 
-    public abstract void addNUnits(int num) throws IllegalArgumentException;
+    /**
+     * get the number of units with certain tech level
+     * @param level: technology level for units you want
+     * @return number of units, 0 when level not exist
+     */
+    public abstract int getUnitsNum(int level);
 
-    public abstract void lossNUnits(int num);
+
+    /**
+     * add some basic units into this territory
+     * @param num： number of level0 units
+     * @throws IllegalArgumentException
+     */
+    public abstract void addBasicUnits(int num) throws IllegalArgumentException;
+
+    /**
+     * add some units with specified level into this territory
+     * @param num: number of units to move
+     * @param level: technology level of this units
+     */
+    public abstract void addUnits(int num, int level);
+
+    /**
+     * let this territory lose some basic units
+     * @param num： number of level0 units
+     * @throws IllegalArgumentException
+     */
+    public abstract void loseBasicUnits(int num);
+
+    /**
+     * lose some units with specified level
+     * @param num: number of units to move
+     * @param level: technology level of this units
+     */
+    public abstract void loseUnits(int num,int level);
+
+    /**
+     * check if its a legal units group to add, also help ensure Liskov substitution
+     * this method should ba called before any adding and losing operation
+     * @param num: number of units for a add/lose operation
+     * @param level: technology level for this set of units
+     * @return whether such operation is legality or not
+     */
+    public abstract boolean canAddUnits(int num, int level);
+
+    /**
+     * check if its a legal units group to lose, also help ensure Liskov substitution
+     * this method should ba called before any adding and losing operation
+     * @param num: number of units for a add/lose operation
+     * @param level: technology level for this set of units
+     * @return whether such operation is legality or not
+     */
+    public abstract boolean canLoseUnits(int num, int level);
 
     public abstract void addAttack(int playerId, Army army);
 
@@ -122,5 +173,23 @@ public abstract class Territory implements Serializable {
 
     abstract public int getFoodYield();
     abstract public int getTechYield();
+
+
+    /**
+     * @param num: number of units to update
+     * @param curLevel: cur level of units
+     * @param targetLevel: target level of units
+     * @return can update or not
+     */
+    public abstract boolean canUpUnit(int num, int curLevel,int targetLevel);
+
+
+    /**
+     * update some units within certain territory from source level to target level
+     * @param num: number of units to update
+     * @param curLevel: cur level of units
+     * @param targetLevel: target level of units
+     */
+    public abstract void upUnit(int num, int curLevel,int targetLevel);
 
 }

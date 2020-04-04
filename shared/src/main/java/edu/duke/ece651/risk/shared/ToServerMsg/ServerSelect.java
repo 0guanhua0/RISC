@@ -55,7 +55,7 @@ public class ServerSelect implements Serializable {
         }
         for (String terrName : chosen.keySet()) {
             Territory territory = worldMap.getTerritory(terrName);
-            territory.addNUnits(chosen.get(terrName));
+            territory.addBasicUnits(chosen.get(terrName));
             player.addTerritory(territory);
         }
     }

@@ -7,6 +7,9 @@ import java.util.*;
 import java.util.stream.Stream;
 import java.io.*;
 
+import static edu.duke.ece651.risk.shared.Constant.UNIT_BONUS;
+import static edu.duke.ece651.risk.shared.Constant.UP_UNIT_COST;
+
 public class Utils {
     public static String readFileToString(String fileName) throws IOException {
         StringBuilder contentBuilder = new StringBuilder();
@@ -77,22 +80,37 @@ public class Utils {
         }
         return res;
     }
+    public static int getUnitUpCost(int cur,int target){
+        if (cur>target||!UNIT_BONUS.containsKey(cur)||!UNIT_BONUS.containsKey(target)){
+            throw new IllegalArgumentException("invalid input argument");
+        }else{
+            int start = UP_UNIT_COST.get(cur);
+            int end = UP_UNIT_COST.get(target);
+            return end-start;
+        }
+    }
 
+    public static <T extends Serializable> T clone(T obj) throws IOException, ClassNotFoundException {
+        T cloneObj = null;
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ObjectOutputStream obs = new ObjectOutputStream(out);
+        obs.writeObject(obj);
+        obs.close();
 
-//    //TODO test the correctness of this method
-//    public static <T extends Serializable> T clone(T obj) throws IOException, ClassNotFoundException {
-//        T cloneObj = null;
-//        ByteArrayOutputStream out = new ByteArrayOutputStream();
-//        ObjectOutputStream obs = new ObjectOutputStream(out);
-//        obs.writeObject(obj);
-//        obs.close();
-//
-//        ByteArrayInputStream ios = new ByteArrayInputStream(out.toByteArray());
-//        ObjectInputStream ois = new ObjectInputStream(ios);
-//
-//        cloneObj = (T) ois.readObject();
-//        ois.close();
-//
-//        return cloneObj;
-//    }
+        ByteArrayInputStream ios = new ByteArrayInputStream(out.toByteArray());
+        ObjectInputStream ois = new ObjectInputStream(ios);
+
+        cloneObj = (T) ois.readObject();
+        ois.close();
+
+        return cloneObj;
+    }
+
+    public static int getMaxKey(Map<Integer,?> map){
+        return map.keySet().stream().max(Integer::compareTo).get();
+    }
+
+    public static int getMinKey(Map<Integer,?> map){
+        return map.keySet().stream().min(Integer::compareTo).get();
+    }
 }
