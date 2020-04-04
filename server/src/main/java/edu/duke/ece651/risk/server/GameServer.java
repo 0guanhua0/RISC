@@ -88,7 +88,7 @@ public class GameServer {
 
         //sign up
         if (action.equals(LOGIN)) {
-            if (UserValidation.logIn(user,db, obj) && !userList.hasUser(userName)) {
+            if (UserValidation.logIn(user, db, obj) && !userList.hasUser(userName)) {
                 userList.addUser(user);
             }
             return;
@@ -140,8 +140,7 @@ public class GameServer {
                 //find that player
                 Player currPlayer = rooms.get(roomID).getPlayer(userName);
                 currPlayer.reConnect(socket.getInputStream(), socket.getOutputStream());
-            }
-            else {
+            } else {
                 user.send(INVALID_RECONNECT);
             }
 
@@ -149,8 +148,6 @@ public class GameServer {
 
 
     }
-
-
 
 
     /**
@@ -177,6 +174,7 @@ public class GameServer {
         }
 
     }
+
     /**
      * This function asks the player whether he/she want to start a new room or join an existing room.
      *
@@ -223,6 +221,14 @@ public class GameServer {
 
         for (int id : finishedRoom) {
             rooms.remove(id, rooms.get(id));
+
+            //clear done room from user list
+            for (User u : userList.getUserList()) {
+                if (u.isInRoom(id)) {
+                    u.rmRoom(id);
+                }
+
+            }
         }
 
         return roomList;

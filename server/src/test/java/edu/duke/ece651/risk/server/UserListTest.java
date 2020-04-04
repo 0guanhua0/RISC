@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import static edu.duke.ece651.risk.shared.Mock.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -14,6 +15,9 @@ class UserListTest {
     @Test
     void addRmUser() throws IOException {
         UserList userList = new UserList();
+        List list = new ArrayList();
+        assertEquals(userList.getUserList(), list);
+
         User user1 = new User("user1", setupMockInput(new ArrayList<Object>()), new ByteArrayOutputStream());
 
         assertFalse(userList.hasUser(user1.userName));

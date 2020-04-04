@@ -33,4 +33,8 @@ public class UserList {
 
        return null;
    }
+
+    public List<User> getUserList() {
+        return userList;
+    }
 }
