@@ -60,6 +60,8 @@ class UserTest {
 
          */
 
+        User user3 = new User("3");
+        assertEquals("3", user3.getUserName());
 
     }
 

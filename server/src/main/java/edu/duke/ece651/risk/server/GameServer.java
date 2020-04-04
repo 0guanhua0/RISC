@@ -65,7 +65,6 @@ public class GameServer {
      *
      * @param socket represent a newly accept player
      */
-    //todo: a class handle different socket
     void handleIncomeRequest(Socket socket) throws IOException, ClassNotFoundException, SQLException {
         //treat new connection as new user
         User user = new User(socket.getInputStream(), socket.getOutputStream());
@@ -185,8 +184,6 @@ public class GameServer {
      * @return room number/ID, e.g. -1(or any negative number) stands for a new room, > 0 stands for an existing room
      */
     int askValidRoomNum(Player<?> player) throws IOException {
-        player.send(getRoomList());
-
         while (true) {
             try {
                 String choice = (String) player.recv();

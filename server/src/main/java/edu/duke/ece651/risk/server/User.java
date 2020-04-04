@@ -31,6 +31,10 @@ public class User {
         this.userName = userName;
     }
 
+    public User(String userName) {
+        this.userName = userName;
+    }
+
 
     //update the room info
     public void addRoom(Integer roomID) {
