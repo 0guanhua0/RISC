@@ -8,7 +8,6 @@ import edu.duke.ece651.risk.shared.player.PlayerV1;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
-import java.io.EOFException;
 import java.io.IOException;
 import java.net.Socket;
 import java.sql.SQLException;
@@ -19,7 +18,8 @@ import static edu.duke.ece651.risk.shared.Constant.*;
 import static edu.duke.ece651.risk.shared.Mock.readAllStringFromObjectStream;
 import static edu.duke.ece651.risk.shared.Mock.setupMockInput;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class GameServerTest {
 
@@ -124,8 +124,8 @@ public class GameServerTest {
         String userName2 = "1";
         String userPassword2 = "1";
 
-        String s2 = "{\"" + USER_NAME + "\": \"" + user1Name + "\",\n" +
-                "\"" + USER_PASSWORD +"\": \"" + user1Password + "\",\n" +
+        String s2 = "{\"" + USER_NAME + "\": \"" + userName2 + "\",\n" +
+                "\"" + USER_PASSWORD +"\": \"" + userPassword2 + "\",\n" +
                 "\"" + ACTION + "\": \"" + LOGIN + "\" }";
 
         when(socket2.getInputStream())
