@@ -8,7 +8,10 @@ import org.json.JSONObject;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
+import edu.duke.ece651.risk.shared.Room;
 import edu.duke.ece651.risk.shared.action.Action;
 import edu.duke.ece651.riskclient.listener.onNewPlayerListener;
 import edu.duke.ece651.riskclient.listener.onReceiveListener;
@@ -102,27 +105,31 @@ public class HTTPUtils {
      * @param listener result listener
      */
     public static void getRoomList(boolean isRoomIn, onReceiveListener listener){
-        try {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put(USER_NAME, getPlayerName());
-            jsonObject.put(ACTION_TYPE, isRoomIn ? ACTION_GET_IN_ROOM : ACTION_GET_WAIT_ROOM);
-            send(jsonObject.toString(), new onSendListener() {
-                @Override
-                public void onFailure(String error) {
-                    listener.onFailure(error);
-                }
-
-                @Override
-                public void onSuccessful() {
-                    // receive the room list
-                    recv(listener);
-                }
-            });
-        }catch (JSONException e){
-            Log.e(TAG, e.toString());
-            listener.onFailure("JSON error(should not happen");
+        List<Room> rooms = new ArrayList<>();
+        for (int i = 0; i < 30; i++){
+            rooms.add(new Room(i, isRoomIn ? "roomIn" + (i + 1) : "roomWait" + (i + 1)));
         }
-
+        listener.onSuccessful(rooms);
+//        try {
+//            JSONObject jsonObject = new JSONObject();
+//            jsonObject.put(USER_NAME, getPlayerName());
+//            jsonObject.put(ACTION_TYPE, isRoomIn ? ACTION_GET_IN_ROOM : ACTION_GET_WAIT_ROOM);
+//            send(jsonObject.toString(), new onSendListener() {
+//                @Override
+//                public void onFailure(String error) {
+//                    listener.onFailure(error);
+//                }
+//
+//                @Override
+//                public void onSuccessful() {
+//                    // receive the room list
+//                    recv(listener);
+//                }
+//            });
+//        }catch (JSONException e){
+//            Log.e(TAG, e.toString());
+//            listener.onFailure("JSON error(should not happen");
+//        }
     }
 
     // receive the MapDataBase
@@ -178,26 +185,26 @@ public class HTTPUtils {
      * @param listener result listener
      */
     static void sendAndCheckSuccess(String request, onReceiveListener listener) {
-//        listener.onSuccessful(null);
+        listener.onSuccessful(null);
         // use the global thread pool to execute
-        getThreadPool().execute(() -> {
-            try {
-                Socket socket = getTmpSocket();
-                ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-                ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
-                out.writeObject(request);
-                out.flush();
-                String res = (String) in.readObject();
-                if (res.equals(SUCCESSFUL)) {
-                    listener.onSuccessful(null);
-                } else {
-                    listener.onFailure(res);
-                }
-            } catch (Exception e) {
-                Log.e(TAG, e.toString());
-                listener.onFailure("server is not running");
-            }
-        });
+//        getThreadPool().execute(() -> {
+//            try {
+//                Socket socket = getTmpSocket();
+//                ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+//                ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+//                out.writeObject(request);
+//                out.flush();
+//                String res = (String) in.readObject();
+//                if (res.equals(SUCCESSFUL)) {
+//                    listener.onSuccessful(null);
+//                } else {
+//                    listener.onFailure(res);
+//                }
+//            } catch (Exception e) {
+//                Log.e(TAG, e.toString());
+//                listener.onFailure("server is not running");
+//            }
+//        });
     }
 
     /**

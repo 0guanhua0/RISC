@@ -213,7 +213,7 @@ public class MoveAttackActivity extends AppCompatActivity {
         // TODO: replace with real data
         srcUnits = new ArrayList<>();
         for (int i = 0; i < 30; i++){
-            srcUnits.add(new Unit("unit" + (i + 1)));
+            srcUnits.add(new Unit());
         }
 
         srcUnitAdapter = new UnitAdapter();
@@ -254,7 +254,7 @@ public class MoveAttackActivity extends AppCompatActivity {
         // TODO: replace with real data
         destUnits = new ArrayList<>();
         for (int i = 0; i < 30; i++){
-            destUnits.add(new Unit("unit" + (i + 1)));
+            destUnits.add(new Unit());
         }
 
         destUnitAdapter = new UnitAdapter();

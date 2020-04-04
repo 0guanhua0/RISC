@@ -13,7 +13,7 @@
     <string name="signup_password2_hint">Again</string>
 
     <!--  home fragment  -->
-    <string name="home_all_room">available rooms</string>
+    <string name="home_all_room">rooms waiting for players</string>
     <string name="home_room_in">rooms you in</string>
 
     <!--  update fragment  -->

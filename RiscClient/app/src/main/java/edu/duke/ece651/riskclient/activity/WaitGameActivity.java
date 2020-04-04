@@ -15,9 +15,11 @@ import java.util.TimerTask;
 
 import edu.duke.ece651.riskclient.R;
 
+import static edu.duke.ece651.riskclient.Constant.ROOM_NAME;
+import static edu.duke.ece651.riskclient.RiskApplication.getRoomName;
+
 public class WaitGameActivity extends AppCompatActivity {
 
-    private String roomName;
     private int playerTotal;
 
     @Override
@@ -27,12 +29,11 @@ public class WaitGameActivity extends AppCompatActivity {
 
         // TODO: should pass the player number into this activity
         playerTotal = new Random(System.currentTimeMillis()).nextInt(5) + 1;
-        roomName = "room1";
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null){
-            getSupportActionBar().setTitle(roomName);
+            getSupportActionBar().setTitle(getRoomName());
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 

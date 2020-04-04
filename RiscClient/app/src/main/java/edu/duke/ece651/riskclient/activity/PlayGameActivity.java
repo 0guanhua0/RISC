@@ -25,14 +25,14 @@ import edu.duke.ece651.riskclient.R;
 import edu.duke.ece651.riskclient.adapter.TerritoryAdapter;
 import edu.duke.ece651.riskclient.adapter.UnitAdapter;
 
+import static edu.duke.ece651.riskclient.Constant.ROOM_NAME;
+import static edu.duke.ece651.riskclient.RiskApplication.getRoomName;
 import static edu.duke.ece651.riskclient.utils.UIUtils.showToastUI;
 
 public class PlayGameActivity extends AppCompatActivity {
-    private static final String ROOM_NAME = "edu.duke.ece651.riskclient.playgame.roomname";
     private static final int ACTION_MOVE_ATTACK = 1;
     private static final int ACTION_UPGRADE = 2;
 
-    private String roomName;
     private List<Territory> territories;
     private TerritoryAdapter territoryAdapter;
 
@@ -43,30 +43,14 @@ public class PlayGameActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play_game);
 
-        // TODO: pass room name inside
-        roomName = "Room Name Here";
-
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null){
-            getSupportActionBar().setTitle(roomName);
+            getSupportActionBar().setTitle(getRoomName());
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
         setUpUI();
-    }
-
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putString(ROOM_NAME, roomName);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        roomName = savedInstanceState.getString(ROOM_NAME);
-        Objects.requireNonNull(getSupportActionBar()).setTitle(roomName);
     }
 
     @Override

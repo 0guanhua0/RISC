@@ -50,6 +50,10 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.RoomViewHolder
         return rooms.size();
     }
 
+    public Room getRoom(int index){
+        return rooms.get(index);
+    }
+
     public void setListener(onClickListener listener){
         this.listener = listener;
     }

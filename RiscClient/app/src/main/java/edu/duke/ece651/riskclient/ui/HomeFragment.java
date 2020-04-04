@@ -19,11 +19,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.duke.ece651.risk.shared.Room;
+import edu.duke.ece651.riskclient.activity.PlayGameActivity;
+import edu.duke.ece651.riskclient.activity.WaitGameActivity;
 import edu.duke.ece651.riskclient.adapter.RoomAdapter;
 import edu.duke.ece651.riskclient.listener.onReceiveListener;
 import edu.duke.ece651.riskclient.R;
 import edu.duke.ece651.riskclient.activity.NewRoomActivity;
 
+import static edu.duke.ece651.riskclient.Constant.ROOM_NAME;
+import static edu.duke.ece651.riskclient.RiskApplication.getRoomName;
+import static edu.duke.ece651.riskclient.RiskApplication.setRoom;
 import static edu.duke.ece651.riskclient.utils.HTTPUtils.getRoomList;
 import static edu.duke.ece651.riskclient.utils.UIUtils.showToastUI;
 
@@ -40,7 +45,7 @@ public class HomeFragment extends Fragment {
     /**
      * Variable
      */
-    private boolean isRoomWait;
+    private boolean isInRoom;
     private RoomAdapter roomAdapter;
 
     public HomeFragment() {
@@ -63,7 +68,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        isRoomWait = false;
+        isInRoom = false;
     }
 
     @Override
@@ -72,6 +77,7 @@ public class HomeFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         setUpUI(view);
+        updateData();
         return view;
     }
 
@@ -89,18 +95,25 @@ public class HomeFragment extends Fragment {
             }else {
                 showToastUI(getActivity(), "click room all");
             }
-            isRoomWait = (id == R.id.chip_room_in);
+            isInRoom = (id == R.id.chip_room_in);
             updateData();
         });
 
-        List<Room> rooms = new ArrayList<>();
-        for (int i = 0; i < 30; i++){
-            rooms.add(new Room(i, "room" + (i + 1)));
-        }
         roomAdapter = new RoomAdapter();
         roomAdapter.setListener(position -> {
-            Room room = rooms.get(position);
-            showToastUI(getActivity(), "you click" + room.getRoomName());
+            setRoom(roomAdapter.getRoom(position));
+            // TODO: remove this before delivery
+            showToastUI(getActivity(), "you click " + getRoomName());
+            Intent intent = null;
+            if (isInRoom){
+                // if click the room already in, redirect to PlayGame page
+                intent = new Intent(getActivity(), PlayGameActivity.class);
+
+            }else {
+                // if want to join a room, redirect to WaitGame page
+                intent = new Intent(getActivity(), WaitGameActivity.class);
+            }
+            startActivity(intent);
         });
 
         RecyclerView rcRoomList = view.findViewById(R.id.rv_room_list);
@@ -108,14 +121,12 @@ public class HomeFragment extends Fragment {
         rcRoomList.setHasFixedSize(true);
         rcRoomList.setAdapter(roomAdapter);
 
-        roomAdapter.setRooms(rooms);
-
         swipeRefreshLayout = view.findViewById(R.id.swr_layout);
         swipeRefreshLayout.setOnRefreshListener(this::updateData);
     }
 
     private void updateData(){
-        getRoomList(isRoomWait, new onReceiveListener() {
+        getRoomList(isInRoom, new onReceiveListener() {
             @Override
             public void onFailure(String error) {
                 showToastUI(getActivity(), error);
