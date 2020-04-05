@@ -11,10 +11,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
+import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.riskclient.R;
 import edu.duke.ece651.riskclient.listener.onClickListener;
-import edu.duke.ece651.riskclient.objects.WorldMap;
 
 public class MapAdapter extends RecyclerView.Adapter<MapAdapter.MapViewHolder> {
 
@@ -39,7 +40,7 @@ public class MapAdapter extends RecyclerView.Adapter<MapAdapter.MapViewHolder> {
     public void onBindViewHolder(@NonNull MapViewHolder holder, int position) {
         WorldMap map = mapList.get(position);
 
-        holder.tvMapName.setText(map.getName());
+        holder.tvMapName.setText(String.format(Locale.US,"%s (support %d players)", map.getName(), map.getColorList().size()));
 
         if (position == selectedPosition){
             holder.background.setSelected(true);
@@ -71,6 +72,10 @@ public class MapAdapter extends RecyclerView.Adapter<MapAdapter.MapViewHolder> {
         mapList.clear();
         mapList.addAll(maps);
         notifyDataSetChanged();
+    }
+
+    public WorldMap<?> getMap(int index){
+        return mapList.get(index);
     }
 
     static class MapViewHolder extends RecyclerView.ViewHolder{

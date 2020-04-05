@@ -18,6 +18,7 @@ import edu.duke.ece651.riskclient.R;
 import static edu.duke.ece651.riskclient.RiskApplication.getRoomName;
 
 public class WaitGameActivity extends AppCompatActivity {
+    public final static String PLAYER_CNT = "playerCnt";
 
     private int playerTotal;
 
@@ -26,8 +27,10 @@ public class WaitGameActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wait_game);
 
-        // TODO: should pass the player number into this activity
-        playerTotal = new Random(System.currentTimeMillis()).nextInt(5) + 1;
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null){
+            playerTotal = bundle.getInt(PLAYER_CNT);
+        }
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

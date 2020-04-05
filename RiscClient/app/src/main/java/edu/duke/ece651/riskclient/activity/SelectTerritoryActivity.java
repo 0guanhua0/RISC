@@ -23,22 +23,31 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import edu.duke.ece651.risk.shared.ToClientMsg.ClientSelect;
+import edu.duke.ece651.risk.shared.map.Territory;
+import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.riskclient.R;
 import edu.duke.ece651.riskclient.adapter.TerritoryGroupAdapter;
+import edu.duke.ece651.riskclient.listener.onReceiveListener;
 import pl.polak.clicknumberpicker.ClickNumberPickerView;
 
+import static edu.duke.ece651.riskclient.Constant.MAP_NAME_TO_RESOURCE_ID;
+import static edu.duke.ece651.riskclient.RiskApplication.recv;
 import static edu.duke.ece651.riskclient.utils.UIUtils.showToastUI;
 
 public class SelectTerritoryActivity extends AppCompatActivity {
 
+    /**
+     * UI variable
+     */
     private LinearLayout layoutSelect;
     private LinearLayout layoutAssign;
     private TextView tvUnitsInfo;
+    private ImageView imgMap;
 
     private boolean finishSelect;
     private TerritoryGroupAdapter territoryGroupAdapter;
     private Set<String> selectedGroup;
-    private List<Set<String>> groups;
     private int unitTotal;
     private int unitLeft;
 
@@ -54,20 +63,46 @@ public class SelectTerritoryActivity extends AppCompatActivity {
         }
 
         finishSelect = false;
-        unitTotal = 10;
-        unitLeft = unitTotal;
-        groups = new ArrayList<>();
-        for (int i = 0; i < 30; i++){
-            Set<String> group = new HashSet<>();
-            group.add(i + "t1");
-            group.add(i + "t2");
-            group.add(i + "t3");
-            groups.add(group);
-        }
-        // set default selected group
-        selectedGroup = groups.get(0);
 
         setUpUI();
+        init();
+    }
+
+    /**
+     * Receive the select info from server and update UI.
+     */
+    private void init(){
+        recv(new onReceiveListener() {
+            @Override
+            public void onFailure(String error) {
+
+            }
+
+            @Override
+            public void onSuccessful(Object object) {
+//                ClientSelect select = (ClientSelect) object;
+//                unitTotal = select.getUnitsTotal();
+//                unitLeft = unitTotal;
+//                WorldMap map = select.getMap();
+//                // TODO: set resource based on the map name
+//                imgMap.setImageResource(MAP_NAME_TO_RESOURCE_ID.get(map.getName()));
+//                territoryGroupAdapter.setTerritories(new ArrayList<>(map.getGroups().keySet()));
+
+                unitTotal = 10;
+                unitLeft = unitTotal;
+                List<Set<String>> groups = new ArrayList<>();
+                for (int i = 0; i < 30; i++){
+                    Set<String> group = new HashSet<>();
+                    group.add(i + "t1");
+                    group.add(i + "t2");
+                    group.add(i + "t3");
+                    groups.add(group);
+                }
+                // set default selected group
+                selectedGroup = groups.get(0);
+                territoryGroupAdapter.setTerritories(groups);
+            }
+        });
     }
 
     /**
@@ -127,13 +162,13 @@ public class SelectTerritoryActivity extends AppCompatActivity {
      */
     private void setUpSelectTerritory(){
         // TODO: update image based on map name
-        ImageView imgMap = findViewById(R.id.img_map);
+        imgMap = findViewById(R.id.img_map);
 
         RecyclerView rvTerritories = findViewById(R.id.rv_territory_group);
 
         territoryGroupAdapter = new TerritoryGroupAdapter();
         territoryGroupAdapter.setListener(position -> {
-            selectedGroup = groups.get(position);
+            selectedGroup = territoryGroupAdapter.getGroup(position);
             showToastUI(SelectTerritoryActivity.this, "you click item");
         });
 
@@ -141,8 +176,6 @@ public class SelectTerritoryActivity extends AppCompatActivity {
         rvTerritories.setLayoutManager(new LinearLayoutManager(this));
         rvTerritories.setHasFixedSize(true);
         rvTerritories.setAdapter(territoryGroupAdapter);
-
-        territoryGroupAdapter.setTerritories(groups);
     }
 
     /* ====== below are the functions responsible for assign units ====== */

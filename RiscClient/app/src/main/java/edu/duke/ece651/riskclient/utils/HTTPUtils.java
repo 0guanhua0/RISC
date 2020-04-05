@@ -19,15 +19,19 @@ import edu.duke.ece651.riskclient.listener.onResultListener;
 import edu.duke.ece651.riskclient.objects.Player;
 
 import static edu.duke.ece651.riskclient.Constant.ACTION_CHANGE_PASSWORD;
+import static edu.duke.ece651.riskclient.Constant.ACTION_CREATE_NEW_ROOM;
 import static edu.duke.ece651.riskclient.Constant.ACTION_LOGIN;
 import static edu.duke.ece651.riskclient.Constant.ACTION_SIGN_UP;
 import static edu.duke.ece651.riskclient.Constant.ACTION_TYPE;
 import static edu.duke.ece651.riskclient.Constant.FAIL_TO_SEND;
+import static edu.duke.ece651.riskclient.Constant.MAP_NAME;
 import static edu.duke.ece651.riskclient.Constant.PASSWORD_NEW;
 import static edu.duke.ece651.riskclient.Constant.PASSWORD_OLD;
+import static edu.duke.ece651.riskclient.Constant.ROOM_NAME;
 import static edu.duke.ece651.riskclient.Constant.USER_NAME;
 import static edu.duke.ece651.riskclient.Constant.USER_PASSWORD;
 import static edu.duke.ece651.riskclient.RiskApplication.checkResult;
+import static edu.duke.ece651.riskclient.RiskApplication.getPlayerName;
 import static edu.duke.ece651.riskclient.RiskApplication.getThreadPool;
 import static edu.duke.ece651.riskclient.RiskApplication.getTmpSocket;
 import static edu.duke.ece651.riskclient.RiskApplication.recv;
@@ -46,7 +50,7 @@ public class HTTPUtils {
      * @param player player to be authenticated
      * @param listener result listener
      */
-    public static void authUser(Player player, onReceiveListener listener){
+    public static void authUser(Player player, onResultListener listener){
         try {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put(USER_NAME, player.getName());
@@ -64,7 +68,7 @@ public class HTTPUtils {
      * * @param player player to be add
      * @param listener result listener
      */
-    public static void addUser(Player player, onReceiveListener listener){
+    public static void addUser(Player player, onResultListener listener){
         try {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put(USER_NAME, player.getName());
@@ -83,7 +87,7 @@ public class HTTPUtils {
      * @param newPass new password
      * @param listener result listener
      */
-    public static void changePassword(Player player, String newPass, onReceiveListener listener){
+    public static void changePassword(Player player, String newPass, onResultListener listener){
         try {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put(USER_NAME, player.getName());
@@ -135,9 +139,24 @@ public class HTTPUtils {
 
     }
 
-    // send info of the new room
-    public static void createNewRoom(String roomName, String mapName, onReceiveListener listener){
-
+    /**
+     * Send the new room info(room name + map name) to server and then check whether create successful.
+     * @param roomName room name
+     * @param mapName map name
+     * @param listener result listener
+     */
+    public static void createNewRoom(String roomName, String mapName, onResultListener listener){
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put(USER_NAME, getPlayerName());
+            jsonObject.put(ROOM_NAME, roomName);
+            jsonObject.put(MAP_NAME, mapName);
+            jsonObject.put(ACTION_TYPE, ACTION_CREATE_NEW_ROOM);
+            sendAndCheckSuccess(jsonObject.toString(), listener);
+        }catch (JSONException e){
+            Log.e(TAG, e.toString());
+            listener.onFailure("JSON error(should not happen");
+        }
     }
 
     /**
@@ -213,8 +232,8 @@ public class HTTPUtils {
      * @param request the request string
      * @param listener result listener
      */
-    static void sendAndCheckSuccess(String request, onReceiveListener listener) {
-        listener.onSuccessful(null);
+    static void sendAndCheckSuccess(String request, onResultListener listener) {
+        listener.onSuccessful();
         // use the global thread pool to execute
 //        getThreadPool().execute(() -> {
 //            try {

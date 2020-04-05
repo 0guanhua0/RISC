@@ -15,6 +15,7 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.Objects;
 
+import edu.duke.ece651.riskclient.listener.onResultListener;
 import edu.duke.ece651.riskclient.objects.Player;
 import edu.duke.ece651.riskclient.R;
 import edu.duke.ece651.riskclient.listener.onReceiveListener;
@@ -121,7 +122,7 @@ public class LoginActivity extends AppCompatActivity {
             // make the button un-clickable(prevent multiple request)
             btLogin.setClickable(false);
 
-            authUser(new Player(userName, userPassword), new onReceiveListener() {
+            authUser(new Player(userName, userPassword), new onResultListener() {
                 @Override
                 public void onFailure(String error) {
                     btLogin.setClickable(true);
@@ -130,7 +131,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void onSuccessful(Object o) {
+                public void onSuccessful() {
                     btLogin.setClickable(true);
                     showToastUI(LoginActivity.this, "Login successful.");
                     // initialize and set the global player object(only after successfully verify)
