@@ -15,9 +15,10 @@ import java.util.concurrent.TimeUnit;
 
 import edu.duke.ece651.risk.shared.Room;
 import edu.duke.ece651.riskclient.listener.onReceiveListener;
-import edu.duke.ece651.riskclient.listener.onSendListener;
+import edu.duke.ece651.riskclient.listener.onResultListener;
 import edu.duke.ece651.riskclient.objects.Player;
 
+import static edu.duke.ece651.risk.shared.Constant.SUCCESSFUL;
 import static edu.duke.ece651.riskclient.Constant.HOST;
 import static edu.duke.ece651.riskclient.Constant.PORT;
 
@@ -66,12 +67,12 @@ public class RiskApplication extends Application {
         player = p;
     }
 
-    public static Player getPlayer() {
-        return player;
-    }
-
     public static String getPlayerName() {
         return player.getName();
+    }
+
+    public static int getPlayerID() {
+        return player.getId();
     }
 
     public static void setRoom(Room r){
@@ -114,19 +115,35 @@ public class RiskApplication extends Application {
 
     /**
      * Send data to remote server.
+     * @param object object going to be sent
+     */
+    public static void send(Object object) {
+        threadPool.execute(() -> {
+            try {
+                out.writeObject(object);
+                out.flush();
+            }catch (Exception e){
+                Log.e(TAG, "send error: " + e.toString());
+            }
+        });
+    }
+
+    /**
+     * Send data to remote server, and check whether send successful.
      * Because android doesn't allow networking operation on the main thread.
      * We should use a thread pool to send info.
      * @param object object going to be sent
      * @param listener send result listener
      */
-    public static void send(Object object, onSendListener listener) {
+    public static void send(Object object, onResultListener listener) {
         listener.onSuccessful();
+
         threadPool.execute(() -> {
             try {
                 out.writeObject(object);
                 out.flush();
                 listener.onSuccessful();
-            }catch (IOException e){
+            }catch (Exception e){
                 Log.e(TAG, "send error: " + e.toString());
                 listener.onFailure(e.toString());
             }
@@ -139,12 +156,12 @@ public class RiskApplication extends Application {
      * Also, this function should catch all exception and use the listener to notify main thread.
      */
     public static void recv(onReceiveListener listener) {
-        listener.onSuccessful("success");
+        listener.onSuccessful(SUCCESSFUL);
         threadPool.execute(() -> {
             try {
                 Object o = in.readObject();
                 listener.onSuccessful(o);
-            }catch (IOException | ClassNotFoundException e){
+            }catch (Exception e){
                 Log.e(TAG, "receiver error: " + e.toString());
                 listener.onFailure(e.toString());
             }
@@ -159,5 +176,30 @@ public class RiskApplication extends Application {
         if (gameSocket != null && !gameSocket.isClosed()){
             gameSocket.close();
         }
+    }
+
+    /**
+     * This function will receive a result message from server, and return the error message if fail.
+     */
+    public static void checkResult(onResultListener listener){
+        recv(new onReceiveListener() {
+            @Override
+            public void onFailure(String error) {
+                listener.onFailure(error);
+            }
+
+            @Override
+            public void onSuccessful(Object object) {
+                if (object instanceof String){
+                    if (object.equals(SUCCESSFUL)){
+                        listener.onSuccessful();
+                    }else{
+                        listener.onFailure((String) object);
+                    }
+                }else {
+                    listener.onFailure("");
+                }
+            }
+        });
     }
 }

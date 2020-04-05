@@ -3,7 +3,7 @@ package edu.duke.ece651.riskclient.objects;
 import java.io.Serializable;
 
 public class Player implements Serializable {
-    long id;
+    int id;
     String name;
     String password;
 
@@ -18,11 +18,11 @@ public class Player implements Serializable {
         this.password = password;
     }
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 

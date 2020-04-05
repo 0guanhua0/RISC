@@ -1,6 +1,6 @@
 package edu.duke.ece651.riskclient.listener;
 
-public interface onSendListener {
+public interface onResultListener {
     /**
      * Error happen when sendign the message.
      * @param error error message

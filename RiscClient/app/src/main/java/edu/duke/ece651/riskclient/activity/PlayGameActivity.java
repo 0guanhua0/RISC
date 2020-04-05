@@ -25,10 +25,11 @@ import edu.duke.ece651.risk.shared.map.Unit;
 import edu.duke.ece651.riskclient.R;
 import edu.duke.ece651.riskclient.adapter.TerritoryAdapter;
 import edu.duke.ece651.riskclient.listener.onReceiveListener;
-import edu.duke.ece651.riskclient.listener.onSendListener;
+import edu.duke.ece651.riskclient.listener.onResultListener;
 
 import static edu.duke.ece651.risk.shared.Constant.ACTION_DONE;
 import static edu.duke.ece651.risk.shared.Constant.ROUND_OVER;
+import static edu.duke.ece651.riskclient.Constant.ACTION_PERFORMED;
 import static edu.duke.ece651.riskclient.RiskApplication.getRoomName;
 import static edu.duke.ece651.riskclient.RiskApplication.recv;
 import static edu.duke.ece651.riskclient.RiskApplication.send;
@@ -91,7 +92,8 @@ public class PlayGameActivity extends AppCompatActivity {
             case ACTION_MOVE_ATTACK:
             case ACTION_UPGRADE:
                 if (resultCode == RESULT_OK){
-                    // TODO: fetch the data
+                    performedActions.add((Action) data.getSerializableExtra(ACTION_PERFORMED));
+                    showActions();
                 }
                 break;
         }
@@ -188,7 +190,7 @@ public class PlayGameActivity extends AppCompatActivity {
         isRoundOver = true;
         // disable all buttons
         setAllButtonClickable(false);
-        send(ACTION_DONE, new onSendListener() {
+        send(ACTION_DONE, new onResultListener() {
             @Override
             public void onFailure(String error) {
                 showToastUI(PlayGameActivity.this, "Network problem, please retry.");
@@ -253,8 +255,10 @@ public class PlayGameActivity extends AppCompatActivity {
         if (performedActions.isEmpty()){
             builder.append("no action performed for now");
         }else {
+            int index = 1;
             for (Action action : performedActions){
-                builder.append(action.toString());
+                builder.append(index).append(". ").append(action.toString());
+                index ++;
             }
         }
         tvActionInfo.setText(builder);

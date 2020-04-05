@@ -25,4 +25,6 @@ public class Constant {
 
     public static final String ACTION_PERFORMED = "actionPerformed";
 
+    public static final String FAIL_TO_SEND = "Fail to send the data, check your network connection.";
+
 }

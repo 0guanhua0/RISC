@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,26 +19,27 @@ import android.widget.TextView;
 
 import com.google.android.material.textfield.TextInputLayout;
 
-import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
 import edu.duke.ece651.risk.shared.action.Action;
+import edu.duke.ece651.risk.shared.action.AttackAction;
 import edu.duke.ece651.risk.shared.action.MoveAction;
 import edu.duke.ece651.risk.shared.map.Unit;
 import edu.duke.ece651.riskclient.R;
 import edu.duke.ece651.riskclient.adapter.UnitAdapter;
+import edu.duke.ece651.riskclient.listener.onResultListener;
 
 import static edu.duke.ece651.riskclient.Constant.ACTION_PERFORMED;
+import static edu.duke.ece651.riskclient.RiskApplication.getPlayerID;
+import static edu.duke.ece651.riskclient.utils.HTTPUtils.sendAction;
 import static edu.duke.ece651.riskclient.utils.UIUtils.showToastUI;
 
 public class MoveAttackActivity extends AppCompatActivity {
+    private static final String ACTION_MOVE = "move";
+    private static final String ACTION_ATTACK = "attack";
 
     /**
      * UI variable
@@ -54,6 +54,9 @@ public class MoveAttackActivity extends AppCompatActivity {
     private List<Unit> srcUnits;
     private List<Unit> destUnits;
     private String actionType;
+    // parameters of the action
+    private String srcTerritory;
+    private String destTerritory;
     private Map<Integer, Integer> units;
 
     @Override
@@ -68,7 +71,9 @@ public class MoveAttackActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        actionType = "move";
+        actionType = ACTION_MOVE;
+        srcTerritory = "";
+        destTerritory = "";
         units = new TreeMap<>();
         setUpUI();
     }
@@ -90,13 +95,36 @@ public class MoveAttackActivity extends AppCompatActivity {
         Button btDecline = findViewById(R.id.bt_decline);
 
         btConfirm.setOnClickListener(v -> {
-            // TODO: communicate with server
+            if (validateAction()){
+                Action action = null;
+                if (actionType.equals(ACTION_MOVE)){
+                    action = new MoveAction(srcTerritory, destTerritory, getPlayerID(), units);
+                }else {
+                    action = new AttackAction(srcTerritory, destTerritory, getPlayerID(), units);
+                }
+                // TODO: communicate with server
+                Action finalAction = action;
+                sendAction(finalAction, new onResultListener() {
+                    @Override
+                    public void onFailure(String error) {
+                        // either invalid action or networking problem
+                        showToastUI(MoveAttackActivity.this, error);
+                    }
 
-
-            Intent data = new Intent();
-            data.putExtra(ACTION_PERFORMED, action);
-            setResult(RESULT_OK, data);
-            finish();
+                    @Override
+                    public void onSuccessful() {
+                        // valid action, return to play game page
+                        Intent data = new Intent();
+                        if (finalAction instanceof MoveAction){
+                            data.putExtra(ACTION_PERFORMED, (MoveAction) finalAction);
+                        }else {
+                            data.putExtra(ACTION_PERFORMED, (AttackAction) finalAction);
+                        }
+                        setResult(RESULT_OK, data);
+                        finish();
+                    }
+                });
+            }
         });
         btDecline.setOnClickListener(v -> {
             onBackPressed();
@@ -212,6 +240,7 @@ public class MoveAttackActivity extends AppCompatActivity {
         dropdownSrcTerritory.setOnItemClickListener((parent, v, position, id) -> {
             // TODO: update units
             showToastUI(MoveAttackActivity.this, "src: " + items[position]);
+            srcTerritory = items[position];
         });
 
         // setup recycler view
@@ -253,6 +282,7 @@ public class MoveAttackActivity extends AppCompatActivity {
         dropdownDestTerritory.setOnItemClickListener((parent, v, position, id) -> {
             // TODO: update units
             showToastUI(MoveAttackActivity.this, "dest: " + items[position]);
+            destTerritory = items[position];
         });
 
         // setup recycler view
@@ -280,5 +310,17 @@ public class MoveAttackActivity extends AppCompatActivity {
             builder.append(entry.getValue()).append(" units of level ").append(entry.getKey()).append("\n");
         }
         tvUnitsInfo.setText(builder.toString());
+    }
+
+    private boolean validateAction(){
+        if (units.isEmpty()){
+            showToastUI(MoveAttackActivity.this, "You send 0 unit.");
+            return false;
+        }
+        if (srcTerritory.equals(destTerritory)){
+            showToastUI(MoveAttackActivity.this, "Src and dest are the same.");
+            return false;
+        }
+        return true;
     }
 }

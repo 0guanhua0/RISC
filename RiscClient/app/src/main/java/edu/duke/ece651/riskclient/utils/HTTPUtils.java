@@ -15,21 +15,19 @@ import edu.duke.ece651.risk.shared.Room;
 import edu.duke.ece651.risk.shared.action.Action;
 import edu.duke.ece651.riskclient.listener.onNewPlayerListener;
 import edu.duke.ece651.riskclient.listener.onReceiveListener;
-import edu.duke.ece651.riskclient.listener.onSendListener;
+import edu.duke.ece651.riskclient.listener.onResultListener;
 import edu.duke.ece651.riskclient.objects.Player;
 
 import static edu.duke.ece651.riskclient.Constant.ACTION_CHANGE_PASSWORD;
-import static edu.duke.ece651.riskclient.Constant.ACTION_GET_IN_ROOM;
-import static edu.duke.ece651.riskclient.Constant.ACTION_GET_WAIT_ROOM;
 import static edu.duke.ece651.riskclient.Constant.ACTION_LOGIN;
 import static edu.duke.ece651.riskclient.Constant.ACTION_SIGN_UP;
 import static edu.duke.ece651.riskclient.Constant.ACTION_TYPE;
+import static edu.duke.ece651.riskclient.Constant.FAIL_TO_SEND;
 import static edu.duke.ece651.riskclient.Constant.PASSWORD_NEW;
 import static edu.duke.ece651.riskclient.Constant.PASSWORD_OLD;
-import static edu.duke.ece651.riskclient.Constant.SUCCESSFUL;
 import static edu.duke.ece651.riskclient.Constant.USER_NAME;
 import static edu.duke.ece651.riskclient.Constant.USER_PASSWORD;
-import static edu.duke.ece651.riskclient.RiskApplication.getPlayerName;
+import static edu.duke.ece651.riskclient.RiskApplication.checkResult;
 import static edu.duke.ece651.riskclient.RiskApplication.getThreadPool;
 import static edu.duke.ece651.riskclient.RiskApplication.getTmpSocket;
 import static edu.duke.ece651.riskclient.RiskApplication.recv;
@@ -173,8 +171,39 @@ public class HTTPUtils {
         recv(listener);
     }
 
-    public static void sendAction(Action action, onSendListener listener){
-        send(action, listener);
+    /**
+     * This function will send an action to the server, and receive the validation result.
+     * @param action action to be sent
+     * @param listener result listener
+     */
+    public static void sendAction(Action action, onResultListener listener){
+        listener.onSuccessful();
+
+//        send(action, new onResultListener() {
+//            @Override
+//            public void onFailure(String error) {
+//                // fail to send the action
+//                listener.onFailure(FAIL_TO_SEND);
+//            }
+//
+//            @Override
+//            public void onSuccessful() {
+//                // successful send the action, receive the result
+//                checkResult(new onResultListener() {
+//                    @Override
+//                    public void onFailure(String error) {
+//                        // invalid action
+//                        listener.onFailure(error);
+//                    }
+//
+//                    @Override
+//                    public void onSuccessful() {
+//                        // valid action
+//                        listener.onSuccessful();
+//                    }
+//                });
+//            }
+//        });
     }
 
     /**
