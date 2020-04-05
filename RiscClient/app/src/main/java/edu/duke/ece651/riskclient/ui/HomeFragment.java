@@ -99,8 +99,6 @@ public class HomeFragment extends Fragment {
         roomAdapter = new RoomAdapter();
         roomAdapter.setListener(position -> {
             setRoom(roomAdapter.getRoom(position));
-            // TODO: remove this before delivery
-            showToastUI(getActivity(), "you click " + getRoomName());
             Intent intent = null;
             if (isInRoom){
                 // if click the room already in, redirect to PlayGame page

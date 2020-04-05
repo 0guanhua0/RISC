@@ -137,17 +137,16 @@ public class RiskApplication extends Application {
      */
     public static void send(Object object, onResultListener listener) {
         listener.onSuccessful();
-
-        threadPool.execute(() -> {
-            try {
-                out.writeObject(object);
-                out.flush();
-                listener.onSuccessful();
-            }catch (Exception e){
-                Log.e(TAG, "send error: " + e.toString());
-                listener.onFailure(e.toString());
-            }
-        });
+//        threadPool.execute(() -> {
+//            try {
+//                out.writeObject(object);
+//                out.flush();
+//                listener.onSuccessful();
+//            }catch (Exception e){
+//                Log.e(TAG, "send error: " + e.toString());
+//                listener.onFailure(e.toString());
+//            }
+//        });
     }
 
     /**
@@ -157,15 +156,15 @@ public class RiskApplication extends Application {
      */
     public static void recv(onReceiveListener listener) {
         listener.onSuccessful(SUCCESSFUL);
-        threadPool.execute(() -> {
-            try {
-                Object o = in.readObject();
-                listener.onSuccessful(o);
-            }catch (Exception e){
-                Log.e(TAG, "receiver error: " + e.toString());
-                listener.onFailure(e.toString());
-            }
-        });
+//        threadPool.execute(() -> {
+//            try {
+//                Object o = in.readObject();
+//                listener.onSuccessful(o);
+//            }catch (Exception e){
+//                Log.e(TAG, "receiver error: " + e.toString());
+//                listener.onFailure(e.toString());
+//            }
+//        });
     }
 
     /**

@@ -35,9 +35,12 @@ public class TerritoryAdapter extends RecyclerView.Adapter<TerritoryAdapter.Room
     @Override
     public void onBindViewHolder(@NonNull RoomViewHolder holder, int position) {
         Territory territory = territories.get(position);
+        StringBuilder builder = new StringBuilder();
+        builder.append("Own by: ").append(territory.getOwner()).append("; ");
+        builder.append("Produce ").append(territory.getFoodYield()).append(" food and ").append(territory.getTechYield()).append(" tech");
 
         holder.tvTerritoryName.setText(territory.getName());
-        holder.tvTerritoryInfo.setText("Own by: " + territory.getOwner());
+        holder.tvTerritoryInfo.setText(builder.toString());
         holder.itemView.setOnClickListener(v -> {
             if (listener != null){
                 listener.onClick(position);

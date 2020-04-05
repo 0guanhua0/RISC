@@ -15,21 +15,31 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
+import edu.duke.ece651.risk.shared.ToClientMsg.RoundInfo;
 import edu.duke.ece651.risk.shared.action.Action;
+import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.TerritoryV2;
 import edu.duke.ece651.risk.shared.map.Unit;
+import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.riskclient.R;
 import edu.duke.ece651.riskclient.adapter.TerritoryAdapter;
 import edu.duke.ece651.riskclient.listener.onReceiveListener;
 import edu.duke.ece651.riskclient.listener.onResultListener;
 
 import static edu.duke.ece651.risk.shared.Constant.ACTION_DONE;
+import static edu.duke.ece651.risk.shared.Constant.GAME_OVER;
 import static edu.duke.ece651.risk.shared.Constant.ROUND_OVER;
 import static edu.duke.ece651.riskclient.Constant.ACTION_PERFORMED;
+import static edu.duke.ece651.riskclient.Constant.FAIL_TO_SEND;
+import static edu.duke.ece651.riskclient.Constant.NETWORK_PROBLEM;
 import static edu.duke.ece651.riskclient.RiskApplication.getRoomName;
 import static edu.duke.ece651.riskclient.RiskApplication.recv;
 import static edu.duke.ece651.riskclient.RiskApplication.send;
@@ -38,9 +48,6 @@ import static edu.duke.ece651.riskclient.utils.UIUtils.showToastUI;
 public class PlayGameActivity extends AppCompatActivity {
     private static final int ACTION_MOVE_ATTACK = 1;
     private static final int ACTION_UPGRADE = 2;
-
-    private List<Territory> territories;
-    private TerritoryAdapter territoryAdapter;
 
     /**
      * UI variable
@@ -53,8 +60,10 @@ public class PlayGameActivity extends AppCompatActivity {
     /**
      * Variable
      */
+    private TerritoryAdapter territoryAdapter;
     private List<Action> performedActions;
-    private boolean isRoundOver;
+    private WorldMap<String> map;
+    private int roundNum;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,9 +78,12 @@ public class PlayGameActivity extends AppCompatActivity {
         }
 
         performedActions = new ArrayList<>();
-        isRoundOver = false;
 
         setUpUI();
+
+        // make sure user can't do anything before we receive the data
+        setAllButtonClickable(false);
+        newRound();
     }
 
     @Override
@@ -137,11 +149,6 @@ public class PlayGameActivity extends AppCompatActivity {
     private void setUpTerritoryList(){
         RecyclerView rvTerritoryList = findViewById(R.id.rv_territory_list);
 
-        territories = new ArrayList<>();
-        for (int i = 0; i < 30; i++){
-            territories.add(new TerritoryV2("t" + i, 1, 1, 1));
-        }
-
         territoryAdapter = new TerritoryAdapter();
         territoryAdapter.setListener(position -> {
             showTerritoryDetailDialog(territoryAdapter.getTerritory(position));
@@ -150,8 +157,6 @@ public class PlayGameActivity extends AppCompatActivity {
         rvTerritoryList.setLayoutManager(new LinearLayoutManager(PlayGameActivity.this));
         rvTerritoryList.setHasFixedSize(true);
         rvTerritoryList.setAdapter(territoryAdapter);
-
-        territoryAdapter.setTerritories(territories);
 
         tvActionInfo = findViewById(R.id.tv_action_info);
     }
@@ -187,7 +192,6 @@ public class PlayGameActivity extends AppCompatActivity {
      * The function will be executed at the end of each round.
      */
     private void roundOver(){
-        isRoundOver = true;
         // disable all buttons
         setAllButtonClickable(false);
         send(ACTION_DONE, new onResultListener() {
@@ -211,10 +215,12 @@ public class PlayGameActivity extends AppCompatActivity {
      */
     private void receiveAttackResult(){
         StringBuilder results = new StringBuilder();
+        // TODO: keep receiving until over, now it will only receive once
         recv(new onReceiveListener() {
             @Override
             public void onFailure(String error) {
-
+                showToastUI(PlayGameActivity.this, NETWORK_PROBLEM);
+                setAllButtonClickable(true);
             }
 
             @Override
@@ -224,9 +230,7 @@ public class PlayGameActivity extends AppCompatActivity {
                     String result = (String) object;
                     // received all attack result, start a new round
                     if (result.equals(ROUND_OVER)){
-                        isRoundOver = false;
-                        setAllButtonClickable(true);
-                        showToastUI(PlayGameActivity.this, "Start new round.");
+                        checkGameEnd();
                     }else {
                         results.append(object);
                         tvActionInfo.setText(results.toString());
@@ -234,6 +238,68 @@ public class PlayGameActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    /**
+     * This function should be called at the end of each round, to check whether the game is finished.
+     */
+    private void checkGameEnd(){
+        recv(new onReceiveListener() {
+            @Override
+            public void onFailure(String error) {
+                showToastUI(PlayGameActivity.this, NETWORK_PROBLEM);
+                setAllButtonClickable(true);
+            }
+
+            @Override
+            public void onSuccessful(Object object) {
+                if (object instanceof String){
+                    String result = (String) object;
+                    if (result.equals(GAME_OVER)){
+                        endGame();
+                    }else {
+                        newRound();
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * This function will receive the new round info from server.
+     */
+    private void newRound(){
+        recv(new onReceiveListener() {
+            @Override
+            public void onFailure(String error) {
+                showToastUI(PlayGameActivity.this, NETWORK_PROBLEM);
+                setAllButtonClickable(true);
+            }
+
+            @Override
+            public void onSuccessful(Object object) {
+//                RoundInfo info = (RoundInfo) object;
+//                roundNum = info.getRoundNum();
+//                map = info.getMap();
+//                showToastUI(PlayGameActivity.this, String.format(Locale.US,"start round %d", roundNum));
+                updateTerritories();
+                setAllButtonClickable(true);
+            }
+        });
+    }
+
+    /**
+     * Update the territory list based on the latest map.
+     */
+    private void updateTerritories(){
+        List<Territory> territories = new ArrayList<>();
+//        for (Map.Entry<String, Territory> entry : map.getAtlas().entrySet()){
+//            territories.add(entry.getValue());
+//        }
+        for (int i = 0; i < 20; i++){
+            territories.add(new TerritoryV2("t" + i, 1, 1, 1));
+        }
+        territoryAdapter.setTerritories(territories);
     }
 
     /**
@@ -262,6 +328,36 @@ public class PlayGameActivity extends AppCompatActivity {
             }
         }
         tvActionInfo.setText(builder);
+    }
+
+    private void endGame(){
+        // TODO: receive the winner info
+        recv(new onReceiveListener() {
+            @Override
+            public void onFailure(String error) {
+
+            }
+
+            @Override
+            public void onSuccessful(Object object) {
+                String winnerInfo = (String) object;
+                // popup the game result and close the game after 3 seconds
+                AlertDialog.Builder builder = new AlertDialog.Builder(PlayGameActivity.this);
+                builder.setCancelable(false);
+                builder.setTitle("Result");
+                builder.setMessage(winnerInfo + "\n(this page will closed after 3 seconds)");
+                builder.show();
+
+                Timer timer = new Timer();
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        // kill this activity
+                        finish();
+                    }
+                }, 3000);
+            }
+        });
     }
 
     // probably want to extract this into constant
