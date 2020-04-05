@@ -2,6 +2,7 @@ package edu.duke.ece651.riskclient.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.TextureView;
 import android.view.View;
@@ -11,6 +12,9 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,15 +29,17 @@ import edu.duke.ece651.riskclient.listener.onNewPlayerListener;
 import edu.duke.ece651.riskclient.listener.onReceiveListener;
 import edu.duke.ece651.riskclient.objects.Player;
 
+import static edu.duke.ece651.risk.shared.Constant.PLAYER_ID;
 import static edu.duke.ece651.riskclient.RiskApplication.getPlayerName;
 import static edu.duke.ece651.riskclient.RiskApplication.getRoomName;
 import static edu.duke.ece651.riskclient.RiskApplication.recv;
+import static edu.duke.ece651.riskclient.RiskApplication.setPlayerID;
 import static edu.duke.ece651.riskclient.RiskApplication.setRoom;
 import static edu.duke.ece651.riskclient.utils.HTTPUtils.waitAllPlayers;
 import static edu.duke.ece651.riskclient.utils.UIUtils.showToastUI;
 
 public class WaitGameActivity extends AppCompatActivity {
-    public final static String PLAYER_CNT = "playerCnt";
+    private final static String TAG = WaitGameActivity.class.getSimpleName();
 
     private List<TextView> tvPlayers;
     private int playerIn;
@@ -50,6 +56,8 @@ public class WaitGameActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
+        // get the player info first, and then get the room info
+        initPlayerInfo();
         getRoomInfo();
     }
 
@@ -64,6 +72,26 @@ public class WaitGameActivity extends AppCompatActivity {
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void initPlayerInfo(){
+        recv(new onReceiveListener() {
+            @Override
+            public void onFailure(String error) {
+
+            }
+
+            @Override
+            public void onSuccessful(Object object) {
+                try {
+                    String playerInfo = (String) object;
+                    JSONObject jsonObject = new JSONObject(playerInfo);
+                    setPlayerID(jsonObject.optInt(PLAYER_ID, 1));
+                }catch (JSONException e){
+                    Log.e(TAG, "initPlayerInfo: " + e.toString());
+                }
+            }
+        });
     }
 
     // each time enter this activity, should fetch the latest room info from the server

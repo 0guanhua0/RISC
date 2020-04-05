@@ -68,6 +68,10 @@ public class RiskApplication extends Application {
         player = p;
     }
 
+    public static void setPlayerID(int id){
+        player.setId(id);
+    }
+
     public static Player getPlayer() {
         return player;
     }
