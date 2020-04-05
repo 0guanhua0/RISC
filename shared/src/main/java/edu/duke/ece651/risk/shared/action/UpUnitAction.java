@@ -77,18 +77,17 @@ public class UpUnitAction implements Action{
             throw new IllegalArgumentException("Invalid input argument");
         }
         Territory territory = worldState.getMap().getTerritory(this.terr);
+
+        Player<String> player = worldState.getPlayer();
+        int cost = Utils.getUnitUpCost(srcLevel,targetLevel)*unitsNum;
+        player.useTech(cost);
+
         territory.upUnit(this.unitsNum,this.srcLevel,this.targetLevel);
         return true;
     }
 
     @Override
     public String toString() {
-        String terr;
-        int playerId;
-
-        int srcLevel;
-        int targetLevel;
-        int unitsNum;
         StringBuilder sb = new StringBuilder();
         sb.append("Upgrade Unit(Number: ").append(this.unitsNum).append(", ");
         sb.append("Territory: ").append(this.terr).append(", ");

@@ -1,9 +1,12 @@
 package edu.duke.ece651.risk.shared.action;
 
+import edu.duke.ece651.risk.shared.Constant;
 import edu.duke.ece651.risk.shared.Mock;
+import edu.duke.ece651.risk.shared.Utils;
 import edu.duke.ece651.risk.shared.WorldState;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.map.Territory;
+import edu.duke.ece651.risk.shared.map.Unit;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.risk.shared.player.Player;
 import edu.duke.ece651.risk.shared.player.PlayerV2;
@@ -12,6 +15,8 @@ import org.junit.jupiter.api.Test;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -129,14 +134,23 @@ class UpUnitActionTest {
         stormTerr.addBasicUnits(3);
         reachTerr.addBasicUnits(3);
 
+
+
         //test invalid territory name
         UpUnitAction action1 = new UpUnitAction("test", 0, 1, 1,1);
         assertThrows(IllegalArgumentException.class,()->{action1.perform(worldState1);});
 
+        int start = Constant.INITIAL_TECH_NUM;
+        assertEquals(p1.getTechNum(),Constant.INITIAL_TECH_NUM);
+
         //test correct case
         UpUnitAction action2 = new UpUnitAction(vale, 0, 1, 1, 1);
         assertDoesNotThrow(()->{action2.perform(worldState1);});
-        assertTrue(action2.perform(worldState1));
+        assertEquals(start-Utils.getUnitUpCost(0,1),p1.getTechNum());
+
+        assertEquals(1,valeTerr.getUnitsNum(1));
+        assertEquals(1,valeTerr.getUnitsNum(0));
+
     }
 
     @Test
