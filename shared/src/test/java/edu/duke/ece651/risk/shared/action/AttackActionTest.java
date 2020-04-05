@@ -6,12 +6,13 @@ import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.risk.shared.player.Player;
-import edu.duke.ece651.risk.shared.player.PlayerV1;
 import edu.duke.ece651.risk.shared.player.PlayerV2;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,6 +23,21 @@ class AttackActionTest {
     private static final String vale = "kingdom of mountain and vale";
     private static final String north = "kingdom of the north";
     private static final String dorne = "principality of dorne";
+
+    @Test
+    void testConstructor(){
+        HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
+        map.put(0,2);
+        map.put(1,3);
+        map.put(4,7);
+        AttackAction attackAction = new AttackAction("src", "dest", 1, map);
+        assertEquals(attackAction.src,"src");
+        assertEquals("dest",attackAction.dest);
+        assertEquals(1,attackAction.playerId);
+        assertEquals(map,attackAction.levelToNum);
+        assertEquals(12,attackAction.unitsNum);
+    }
+
 
     @Test
     void isValid() throws IOException {
@@ -52,13 +68,13 @@ class AttackActionTest {
         p2.addTerritory(reach);
         //assign some units to each territory, 5 units for each player
         //player 1
-        north.addNUnits(2);
-        vale.addNUnits(2);
-        rock.addNUnits(1);
-        dorne.addNUnits(1);
+        north.addBasicUnits(2);
+        vale.addBasicUnits(2);
+        rock.addBasicUnits(1);
+        dorne.addBasicUnits(1);
         //player2
-        storm.addNUnits(2);
-        reach.addNUnits(10);
+        storm.addBasicUnits(2);
+        reach.addBasicUnits(10);
 
         WorldState worldState1 = new WorldState(p1, worldMap);
         WorldState worldState2 = new WorldState(p2, worldMap);
@@ -95,10 +111,6 @@ class AttackActionTest {
         assertTrue(a7.isValid(worldState2));
         AttackAction a8 = new AttackAction("kingdom of the reach","kingdom of the rock",  2, 3);
         assertFalse(a8.isValid(worldState2));
-
-
-
-
 
 
 
@@ -139,13 +151,13 @@ class AttackActionTest {
         p2.addTerritory(reach);
         //assign some units to each territory, 5 units for each player
         //player 1
-        north.addNUnits(2);
-        vale.addNUnits(2);
-        rock.addNUnits(1);
-        dorne.addNUnits(1);
+        north.addBasicUnits(2);
+        vale.addBasicUnits(2);
+        rock.addBasicUnits(1);
+        dorne.addBasicUnits(1);
         //player2
-        storm.addNUnits(2);
-        reach.addNUnits(2);
+        storm.addBasicUnits(2);
+        reach.addBasicUnits(2);
 
         WorldState worldState2 = new WorldState(p2, worldMap);
 
@@ -171,5 +183,17 @@ class AttackActionTest {
         assertFalse(a0.equals(a2));
         AttackAction a3 = new AttackAction("kingdom of the north", "kingdom of mountain and vale", 2, 1);
         assertFalse(a0.equals(a3));
+    }
+
+    @Test
+    void testToString() {
+        AttackAction a0 = new AttackAction("kingdom of the north", "kingdom of mountain and vale", 1, 1);
+        System.out.println(a0.toString());
+        Map<Integer, Integer> map = new HashMap<>();
+        map.put(1,1);
+        map.put(0,4);
+        map.put(2,1);
+        AttackAction a1 = new AttackAction("kingdom of the north", "kingdom of mountain and vale", 1, map);
+        System.out.println(a1.toString());
     }
 }

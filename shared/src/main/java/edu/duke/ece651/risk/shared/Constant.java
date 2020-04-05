@@ -87,23 +87,26 @@ public class Constant {
     };
     //key is the level of units, value is the name of corresponding units
     public static final Map<Integer, String> UNIT_NAME = new HashMap<Integer, String>() {{
-        put(0, "Light infantry");
-        put(1, "infantry");
+        put(0, "Light Infantry");
+        put(1, "Infantry");
         put(2, "Hussar");
-        put(3, "cavalry");
-        put(4, "Heavy cavalry");
-        put(5, "tank");
-        put(6, "fighter jet");
+        put(3, "Cavalry");
+        put(4, "Heavy Cavalry");
+        put(5, "Elite Cavalry");
+        put(6, "Cavalry Commander");
     }};
-    //key is the current level of units, value is the cost of tech resources to upgrade this unit to the next technical level
-    public static final Map<Integer, Integer> UP_UNIT_COST = new HashMap<Integer, Integer>() {
+
+    //key is the target level of a unit
+    //value is the cost of tech resources to upgrade this unit from level 0 to level specified in key
+    public static final Map<Integer,Integer> UP_UNIT_COST = new HashMap<Integer,Integer>(){
         {
-            put(0, 3);
-            put(1, 8);
-            put(2, 19);
-            put(3, 25);
-            put(4, 35);
-            put(5, 50);
+            put(0,0);
+            put(1,3);
+            put(2,11);
+            put(3,30);
+            put(4,55);
+            put(5,90);
+            put(6,140);
         }
     };
     //key is the current level of units, value is the extra bonus for a fight

@@ -12,18 +12,16 @@ import android.widget.TextView;
 import edu.duke.ece651.riskclient.objects.Player;
 import edu.duke.ece651.riskclient.R;
 
+import static edu.duke.ece651.riskclient.RiskApplication.getPlayerName;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link PasswordFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
 public class PasswordFragment extends Fragment {
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_ITEM_PLAYER = "player";
 
     private TextView tvUserName;
-
-    private Player player;
 
     public PasswordFragment() {
         // Required empty public constructor
@@ -33,13 +31,11 @@ public class PasswordFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param player player object
      * @return A new instance of fragment UpdateFragment.
      */
-    public static PasswordFragment newInstance(Player player) {
+    public static PasswordFragment newInstance() {
         PasswordFragment fragment = new PasswordFragment();
         Bundle args = new Bundle();
-        args.putSerializable(ARG_ITEM_PLAYER, player);
         fragment.setArguments(args);
         return fragment;
     }
@@ -47,10 +43,6 @@ public class PasswordFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (getArguments() != null) {
-            player = (Player) getArguments().getSerializable(ARG_ITEM_PLAYER);
-        }
     }
 
     @Override
@@ -64,10 +56,7 @@ public class PasswordFragment extends Fragment {
     }
 
     private void setUpUI(){
-        if (player != null){
-            tvUserName.setText(player.getName());
-        }else {
-            tvUserName.setText("");
-        }
+        tvUserName.setText(getPlayerName());
+        // TODO: implement logic here
     }
 }

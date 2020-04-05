@@ -10,13 +10,15 @@ import edu.duke.ece651.risk.shared.player.Player;
  * @create: 2020-03-30 17:33
  **/
 public class UpMaxTechAction implements Action{
+
+    public UpMaxTechAction(){}
     /**
      * Check the validation of current action.
      * @return true if valid
      */
     public boolean isValid(WorldState worldState){
         Player<String> player = worldState.getPlayer();
-        return player.canUpTech();
+        return player.canUpMaxTech();
     }
 
     /**
@@ -28,7 +30,12 @@ public class UpMaxTechAction implements Action{
             throw new IllegalArgumentException("Invalid action");
         }
         Player<String> player = worldState.getPlayer();
-        player.upTech();
+        player.upMaxTech();
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return "You successfully upgrade your maximum technology level!";
     }
 }

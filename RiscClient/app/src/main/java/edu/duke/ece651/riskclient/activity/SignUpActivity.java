@@ -12,9 +12,10 @@ import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.Objects;
 
+import edu.duke.ece651.riskclient.listener.onResultListener;
 import edu.duke.ece651.riskclient.objects.Player;
 import edu.duke.ece651.riskclient.R;
-import edu.duke.ece651.riskclient.listener.onResultListener;
+import edu.duke.ece651.riskclient.listener.onReceiveListener;
 
 import static edu.duke.ece651.riskclient.utils.HTTPUtils.addUser;
 import static edu.duke.ece651.riskclient.utils.UIUtils.showToastUI;

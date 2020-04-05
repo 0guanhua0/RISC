@@ -1,7 +1,7 @@
 package edu.duke.ece651.risk.server;
 
 import edu.duke.ece651.risk.shared.ToServerMsg.ServerSelect;
-import edu.duke.ece651.risk.shared.action.Army;
+import edu.duke.ece651.risk.shared.map.Army;
 import edu.duke.ece651.risk.shared.action.AttackAction;
 import edu.duke.ece651.risk.shared.action.MoveAction;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
@@ -152,10 +152,10 @@ public class RoomTest {
         String t5 = "principality of dorne";
         String t6 = "kingdom of the north";
 
-        room.map.getTerritory(t1).addNUnits(8);
-        room.map.getTerritory(t2).addNUnits(10);
-        room.map.getTerritory(t3).addNUnits(15);
-        room.map.getTerritory(t5).addNUnits(2);
+        room.map.getTerritory(t1).addBasicUnits(8);
+        room.map.getTerritory(t2).addBasicUnits(10);
+        room.map.getTerritory(t3).addBasicUnits(15);
+        room.map.getTerritory(t5).addBasicUnits(2);
 
         player1.addTerritory(room.map.getTerritory(t2));
         player1.addTerritory(room.map.getTerritory(t3));
@@ -170,6 +170,7 @@ public class RoomTest {
         assertEquals(2, player1.getTerrNum());
         assertEquals(2, player2.getTerrNum());
         room.resolveCombats();
+        //TODO double  check the legality of this action
         assertEquals(3, player1.getTerrNum());
         assertEquals(1, player2.getTerrNum());
     }

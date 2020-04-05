@@ -8,13 +8,13 @@
     android:orientation="vertical"
     tools:context="edu.duke.ece651.riskclient.activity.WaitGameActivity">
 
-    <include layout="@layout/app_bar" />
+    <include layout="@layout/widget_app_bar" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/normal_margin"
-        android:text="@string/wait_game_promt"
+        android:text="@string/wait_game_prompt"
         android:textSize="@dimen/normal_text_size"
         android:textColor="@color/text_color"/>
 

@@ -11,19 +11,21 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
+import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.riskclient.R;
 import edu.duke.ece651.riskclient.listener.onClickListener;
-import edu.duke.ece651.riskclient.objects.WorldMap;
 
 public class MapAdapter extends RecyclerView.Adapter<MapAdapter.MapViewHolder> {
 
     private List<WorldMap> mapList;
     private onClickListener listener;
-    private View oldView;
+    private int selectedPosition;
 
     public MapAdapter(){
         mapList = new ArrayList<>();
+        selectedPosition = 0;
     }
 
     @NonNull
@@ -38,14 +40,22 @@ public class MapAdapter extends RecyclerView.Adapter<MapAdapter.MapViewHolder> {
     public void onBindViewHolder(@NonNull MapViewHolder holder, int position) {
         WorldMap map = mapList.get(position);
 
-        holder.tvMapName.setText(map.getName());
-        holder.background.setOnClickListener(v -> {
-            listener.onClick(position);
+        holder.tvMapName.setText(String.format(Locale.US,"%s (support %d players)", map.getName(), map.getColorList().size()));
+
+        if (position == selectedPosition){
             holder.background.setSelected(true);
-            if (oldView != null && oldView != holder.background){
-                oldView.setSelected(false);
+        }else {
+            holder.background.setSelected(false);
+        }
+
+        holder.background.setOnClickListener(v -> {
+            if (listener != null){
+                listener.onClick(position);
             }
-            oldView = holder.background;
+            int previousPosition = selectedPosition;
+            selectedPosition = position;
+            notifyItemChanged(previousPosition);
+            notifyItemChanged(selectedPosition);
         });
     }
 
@@ -62,6 +72,10 @@ public class MapAdapter extends RecyclerView.Adapter<MapAdapter.MapViewHolder> {
         mapList.clear();
         mapList.addAll(maps);
         notifyDataSetChanged();
+    }
+
+    public WorldMap<?> getMap(int index){
+        return mapList.get(index);
     }
 
     static class MapViewHolder extends RecyclerView.ViewHolder{

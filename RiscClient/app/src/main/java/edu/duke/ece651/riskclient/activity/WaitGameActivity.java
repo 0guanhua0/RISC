@@ -1,13 +1,13 @@
 package edu.duke.ece651.riskclient.activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import java.util.Random;
 import java.util.Timer;
@@ -15,9 +15,11 @@ import java.util.TimerTask;
 
 import edu.duke.ece651.riskclient.R;
 
-public class WaitGameActivity extends AppCompatActivity {
+import static edu.duke.ece651.riskclient.RiskApplication.getRoomName;
 
-    private String roomName;
+public class WaitGameActivity extends AppCompatActivity {
+    public final static String PLAYER_CNT = "playerCnt";
+
     private int playerTotal;
 
     @Override
@@ -25,14 +27,15 @@ public class WaitGameActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wait_game);
 
-        // TODO: should pass the player number into this activity
-        playerTotal = new Random(System.currentTimeMillis()).nextInt(5) + 1;
-        roomName = "room1";
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null){
+            playerTotal = bundle.getInt(PLAYER_CNT);
+        }
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null){
-            getSupportActionBar().setTitle(roomName);
+            getSupportActionBar().setTitle(getRoomName());
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
@@ -48,7 +51,7 @@ public class WaitGameActivity extends AppCompatActivity {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                Intent intent = new Intent(WaitGameActivity.this, PlayGameActivity.class);
+                Intent intent = new Intent(WaitGameActivity.this, SelectTerritoryActivity.class);
                 startActivity(intent);
                 finish();
             }

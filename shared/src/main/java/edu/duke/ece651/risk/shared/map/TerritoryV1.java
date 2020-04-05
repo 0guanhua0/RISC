@@ -1,12 +1,8 @@
 package edu.duke.ece651.risk.shared.map;
 
-import edu.duke.ece651.risk.shared.action.Army;
 import edu.duke.ece651.risk.shared.action.AttackResult;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 /**
  * @program: risk-Map
@@ -18,32 +14,38 @@ import java.util.Random;
  **/
 public class TerritoryV1 extends Territory{
 
-    List<Unit> units;
+    List<Unit> unitsV1;
 
     public TerritoryV1(String name) {
        super(name);
-       this.units = new ArrayList<Unit>();
+       this.unitsV1 = new LinkedList<Unit>();//use linked list since there will be some remove operation
     }
 
-    public void addNUnits(int num) throws IllegalArgumentException {
-        if (num<0){
+    public void addBasicUnits(int num) throws IllegalArgumentException {
+        if (!canAddUnits(num,0)){
             throw new IllegalArgumentException("Input number can't be negative");
         }
         for (int i = 0; i < num; i++) {
-            units.add(new Unit("soldier"));
+            unitsV1.add(new Unit());
         }
     }
-    public void lossNUnits(int num) throws IllegalArgumentException{
-        if (num > units.size() || num < 0){
+    public void loseBasicUnits(int num) throws IllegalArgumentException{
+        if (!canLoseUnits(num,0)){
             throw new IllegalArgumentException("Invalid input number");
         }
         for (int i = 0; i < num; i++) {
-            units.remove(units.size() - 1);
+            unitsV1.remove(unitsV1.size() - 1);
         }
     }
 
-    public int getUnitsNum(){
-        return units.size();
+    @Override
+    public int getUnitsNum(int level) {
+        return (0==level)? unitsV1.size():0;
+    }
+
+    @Override
+    public int getBasicUnitsNum(){
+        return unitsV1.size();
     }
 
     public void addAttack(int playerId, Army army) {
@@ -62,37 +64,39 @@ public class TerritoryV1 extends Territory{
      * @param diceDefend 20 side dice for defender
      * @return combat result
      */
+    //temporarily commented
     AttackResult resolveCombat(int attackerID, List<Army> armies, Random diceAttack, Random diceDefend){
-        // the attack info
-        int defenderID = getOwner();
-        List<String> srcNames = new ArrayList<String>();
-        int attackUnits = 0;
-        String destName = getName();
-
-        for (Army army : armies){
-            attackUnits += army.getUnitNums();
-            srcNames.add(army.getSrc());
-        }
-
-        // start combat
-        while (attackUnits > 0 && this.getUnitsNum() > 0) {
-            int i1 = diceAttack.nextInt(20); // attacker dice
-            int i2 = diceDefend.nextInt(20); // defender dice
-
-            // the one with lower roll loss one unit(tie, defender win)
-            if (i1 <= i2) {
-                attackUnits--;
-            } else {
-                this.lossNUnits(1);
-            }
-        }
-        // update the ownership only if attacker has units left
-        if (attackUnits > 0) {
-            setOwner(attackerID);
-            // left units will remain in this territory
-            addNUnits(attackUnits);
-        }
-        return new AttackResult(attackerID, defenderID, srcNames, destName, attackUnits > 0);
+        return null;
+//        // the attack info
+//        int defenderID = getOwner();
+//        List<String> srcNames = new ArrayList<>();
+//        int attackUnits = 0;
+//        String destName = getName();
+//
+//        for (Army army : armies){
+//            attackUnits += army.getUnitNums();
+//            srcNames.add(army.getSrc());
+//        }
+//
+//        // start combat
+//        while (attackUnits > 0 && this.getBasicUnitsNum() > 0) {
+//            int i1 = diceAttack.nextInt(20); // attacker dice
+//            int i2 = diceDefend.nextInt(20); // defender dice
+//
+//            // the one with lower roll loss one unit(tie, defender win)
+//            if (i1 <= i2) {
+//                attackUnits--;
+//            } else {
+//                this.loseBasicUnits(1);
+//            }
+//        }
+//        // update the ownership only if attacker has units left
+//        if (attackUnits > 0) {
+//            setOwner(attackerID);
+//            // left units will remain in this territory
+//            addBasicUnits(attackUnits);
+//        }
+//        return new AttackResult(attackerID, defenderID, srcNames, destName, attackUnits > 0);
     }
 
     public int getSize(){
@@ -108,4 +112,51 @@ public class TerritoryV1 extends Territory{
     public int getTechYield(){
         return 0;
     }
+
+    @Override
+    public Map<Integer, List<Unit>> getUnitGroup() {
+        return null;
+    }
+
+    @Override
+    public boolean canAddUnits(int num, int level) {
+        if (level!=0||num<=0){
+            return false;
+        }else{
+            return true;
+        }
+    }
+
+    @Override
+    public boolean canLoseUnits(int num, int level) {
+        if (level!=0||num<=0||num> unitsV1.size()){
+            return false;
+        }else{
+            return true;
+        }
+    }
+
+    @Override
+    public void addUnits(int num, int level) {
+        if (!canAddUnits(num,level)){
+            throw new IllegalArgumentException("invalid!");
+        }
+        addBasicUnits(num);
+    }
+
+    @Override
+    public void loseUnits(int num, int level) {
+        if (!canLoseUnits(num,level)){
+            throw new IllegalArgumentException("invalid");
+        }
+        loseBasicUnits(num);
+    }
+
+    @Override
+    public boolean canUpUnit(int num, int curLevel, int targetLevel) {
+        return false;
+    }
+
+    @Override
+    public void upUnit(int num, int curLevel, int targetLevel) { }
 }

@@ -81,7 +81,7 @@ class SceneCLI implements Scene {
      * @param territory Territory object
      */
     static void showTerritory(Territory territory){
-        int unitNum = territory.getUnitsNum();
+        int unitNum = territory.getBasicUnitsNum();
         String name = territory.getName();
         List<String> neighNames = new ArrayList<>();
         for (Territory neigh : territory.getNeigh()){

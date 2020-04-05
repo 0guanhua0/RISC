@@ -1,5 +1,7 @@
 package edu.duke.ece651.risk.shared.player;
 
+import edu.duke.ece651.risk.shared.map.Territory;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,7 +35,11 @@ public class PlayerV1<T> extends Player<T> {
     }
 
     @Override
-    public void updateState() {}
+    public void updateState() {
+        for (Territory territory : territories) {
+            territory.addBasicUnits(1);
+        }
+    }
 
     @Override
     public int getFoodNum() { return Integer.MAX_VALUE; }
@@ -48,12 +54,15 @@ public class PlayerV1<T> extends Player<T> {
     public void useTech(int techUse) {}
 
     @Override
-    public boolean canUpTech() {
+    public boolean canUpMaxTech() {
         return false;
     }
 
     @Override
-    public void upTech() {}
+    public void upMaxTech() {}
 
-
+    @Override
+    public int getTechLevel() {
+        return 1;
+    }
 }

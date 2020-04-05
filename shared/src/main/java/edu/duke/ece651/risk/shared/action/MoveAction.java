@@ -6,6 +6,11 @@ import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.risk.shared.player.Player;
 
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
+import static edu.duke.ece651.risk.shared.Constant.UNIT_NAME;
 
 public class MoveAction implements Action, Serializable {
     String src;
@@ -13,13 +18,30 @@ public class MoveAction implements Action, Serializable {
     int playerId;
     int unitsNum;
 
+    //key is technology level of corresponding units, value is number of units
+    Map<Integer,Integer> levelToNum;
+
 
     public MoveAction(String src, String dest,
                       int playerId, int unitsNum) {
         this.src = src.toLowerCase();
         this.dest = dest.toLowerCase();
         this.playerId = playerId;
+        this.levelToNum = new HashMap<Integer, Integer>(){{
+            put(0,unitsNum);
+        }};
         this.unitsNum = unitsNum;
+    }
+
+    //TODO make sure that client part use this moveAction instead of previous one
+    public MoveAction(String src, String dest,
+                      int playerId,Map<Integer,Integer> levelToNum) {
+        this.src = src.toLowerCase();
+        this.dest = dest.toLowerCase();
+        this.playerId = playerId;
+        this.levelToNum = levelToNum;
+        this.unitsNum = levelToNum.values().stream().mapToInt(a -> a).sum();
+
     }
 
 
@@ -36,18 +58,25 @@ public class MoveAction implements Action, Serializable {
 
         int dist = map.getMinCtrlDist(src,dest);
 
-        //TODO note that I should test for whether the player is able to move to an uncontrolled area
+        //check ownerId
         if (srcNode.getOwner() != playerId){
             return false;
-        }else if (srcNode.getUnitsNum() < unitsNum || unitsNum <= 0){
-            return false;
-        }else if (Integer.MAX_VALUE==dist){//when there is no such path under the control of current user
-            return false;
-        }else if (player.getFoodNum()<dist*unitsNum){
-            return false;
-        }else {
-            return true;
         }
+        //check whether there is no such path under the control of current user
+        if (Integer.MAX_VALUE==dist){
+            return false;
+        }
+
+        if (player.getFoodNum()<dist*unitsNum){
+            return false;
+        }
+        for (Map.Entry<Integer, Integer> entry : this.levelToNum.entrySet()) {
+            if (!srcNode.canLoseUnits(entry.getValue(),entry.getKey())) {
+                return false;
+            }
+        }
+        return true;
+
     }
     @Override
     public boolean perform(WorldState worldState) {
@@ -60,8 +89,10 @@ public class MoveAction implements Action, Serializable {
         //update the state of src and target territory
         Territory srcNode = map.getTerritory(src);
         Territory destNode = map.getTerritory(dest);
-        srcNode.lossNUnits(unitsNum);
-        destNode.addNUnits(unitsNum);
+        for (Map.Entry<Integer, Integer> entry : levelToNum.entrySet()) {
+            srcNode.loseUnits(entry.getValue(),entry.getKey());
+            destNode.addUnits(entry.getValue(),entry.getKey());
+        }
         //update the food storage
         int foodCost = map.getMinCtrlDist(src,dest)*unitsNum;
         player.useFood(foodCost);
@@ -82,5 +113,18 @@ public class MoveAction implements Action, Serializable {
                     src.equals(that.src) &&
                     dest.equals(that.dest);
         }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Move(").append(this.src).append("---->").append(this.dest);
+        for (Map.Entry<Integer, Integer> entry : this.levelToNum.entrySet()) {
+            String name = UNIT_NAME.get(entry.getKey());
+            int number = entry.getValue();
+            sb.append(", ").append(number).append(" ").append(name);
+        }
+        sb.append(")");
+        return sb.toString();
     }
 }

@@ -11,33 +11,36 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.riskclient.R;
 import edu.duke.ece651.riskclient.listener.onClickListener;
-import edu.duke.ece651.riskclient.objects.Room;
 
 public class TerritoryAdapter extends RecyclerView.Adapter<TerritoryAdapter.RoomViewHolder> {
 
-    private List<Room> rooms;
+    private List<Territory> territories;
     private onClickListener listener;
 
     public TerritoryAdapter(){
-        rooms = new ArrayList<>();
+        territories = new ArrayList<>();
     }
 
     @NonNull
     @Override
     public RoomViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.listitem_room, parent, false);
+                .inflate(R.layout.listitem_territory, parent, false);
         return new RoomViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull RoomViewHolder holder, int position) {
-        Room room = rooms.get(position);
+        Territory territory = territories.get(position);
+        StringBuilder builder = new StringBuilder();
+        builder.append("Own by: ").append(territory.getOwner()).append("; ");
+        builder.append("Produce ").append(territory.getFoodYield()).append(" food and ").append(territory.getTechYield()).append(" tech");
 
-        holder.tvRoomName.setText(room.getRoomName());
-        holder.tvRoomInfo.setText("nothing for now");
+        holder.tvTerritoryName.setText(territory.getName());
+        holder.tvTerritoryInfo.setText(builder.toString());
         holder.itemView.setOnClickListener(v -> {
             if (listener != null){
                 listener.onClick(position);
@@ -47,30 +50,34 @@ public class TerritoryAdapter extends RecyclerView.Adapter<TerritoryAdapter.Room
 
     @Override
     public int getItemCount() {
-        return rooms.size();
+        return territories.size();
     }
 
     public void setListener(onClickListener listener){
         this.listener = listener;
     }
 
-    public void setRooms(List<Room> rooms){
-        this.rooms.clear();
-        this.rooms.addAll(rooms);
+    public void setTerritories(List<Territory> territories){
+        this.territories.clear();
+        this.territories.addAll(territories);
         notifyDataSetChanged();
+    }
+
+    public Territory getTerritory(int index){
+        return territories.get(index);
     }
 
     static class RoomViewHolder extends RecyclerView.ViewHolder{
 
         View itemView;
-        TextView tvRoomName;
-        TextView tvRoomInfo;
+        TextView tvTerritoryName;
+        TextView tvTerritoryInfo;
 
         RoomViewHolder(@NonNull View itemView) {
             super(itemView);
             this.itemView = itemView;
-            this.tvRoomName = itemView.findViewById(R.id.room_name);
-            this.tvRoomInfo = itemView.findViewById(R.id.room_info);
+            this.tvTerritoryName = itemView.findViewById(R.id.territory_name);
+            this.tvTerritoryInfo = itemView.findViewById(R.id.territory_info);
         }
     }
 }

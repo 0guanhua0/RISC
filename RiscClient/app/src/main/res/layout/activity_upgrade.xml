@@ -7,11 +7,11 @@
     tools:context="edu.duke.ece651.riskclient.activity.UpgradeActivity">
 
     <include
-        android:id="@+id/toolbar"
-        layout="@layout/app_bar" />
+        android:id="@+id/app_bar"
+        layout="@layout/widget_app_bar" />
 
     <include
         android:id="@+id/bt_group"
-        layout="@layout/confirm_decline_button" />
+        layout="@layout/widget_confirm_decline_button" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

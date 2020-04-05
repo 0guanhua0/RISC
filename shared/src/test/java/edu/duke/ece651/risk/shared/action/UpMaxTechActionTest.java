@@ -31,7 +31,7 @@ class UpMaxTechActionTest {
 
         UpMaxTechAction upMaxTechAction = new UpMaxTechAction();
         assertTrue(upMaxTechAction.isValid(worldState));
-        player.upTech();
+        player.upMaxTech();
         assertFalse(upMaxTechAction.isValid(worldState));
 
     }
@@ -51,5 +51,11 @@ class UpMaxTechActionTest {
         assertDoesNotThrow(()->{upMaxTechAction.perform(worldState);});
         assertThrows(IllegalArgumentException.class,()->{upMaxTechAction.perform(worldState);});
 
+    }
+
+    @Test
+    void testToString() {
+        UpMaxTechAction action = new UpMaxTechAction();
+        System.out.println(action.toString());
     }
 }
