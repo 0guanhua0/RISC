@@ -87,7 +87,8 @@ public class Room {
                     }
                 }).start();
             } else {
-                player.send(String.format("Please wait other players to join th game(need %d, joined %d)", colorList.size(), players.size()));
+                //broadcast all info to other players
+                sendAll(String.format("Please wait other players to join th game(need %d, joined %d)", colorList.size(), players.size()));
             }
         }
     }
@@ -114,15 +115,10 @@ public class Room {
      */
     void sendAll(Object data) throws IOException {
         for (Player<String> player : players) {
-            try {
-                if (player.isConnect()) {
-                    player.send(data);
-                }
-
-            } catch (IOException e) {
-                //player disconnect
-                player.setConnect(false);
+            if (player.isConnect()) {
+                player.send(data);
             }
+
         }
     }
 

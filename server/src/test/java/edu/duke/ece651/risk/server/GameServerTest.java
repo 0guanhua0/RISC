@@ -337,11 +337,11 @@ public class GameServerTest {
         GameServer gameServer = new GameServer(null);
         assertEquals(0, gameServer.rooms.size());
 
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        ByteArrayOutputStream outputStream1 = new ByteArrayOutputStream();
         Socket socket1 = mock(Socket.class);
         when(socket1.getInputStream())
                 .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList("-1", "test"))));
-        when(socket1.getOutputStream()).thenReturn(outputStream);
+        when(socket1.getOutputStream()).thenReturn(outputStream1);
         Player p1 = new PlayerV2(socket1.getInputStream(), socket1.getOutputStream());
 
         User u1 = new User("1", "1");
@@ -353,12 +353,12 @@ public class GameServerTest {
         assertEquals(0, gameServer.rooms.get(0).roomID);
 
         //prepare for the second player who joins in this room
-        outputStream.reset();
+        ByteArrayOutputStream outputStream2 = new ByteArrayOutputStream();
         Socket socket2 = mock(Socket.class);
 
         when(socket2.getInputStream())
                 .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList("0", "0"))));
-        when(socket2.getOutputStream()).thenReturn(outputStream);
+        when(socket2.getOutputStream()).thenReturn(outputStream2);
         //handle the request for second player
         Player p2 = new PlayerV2(socket2.getInputStream(), socket2.getOutputStream());
         User u2 = new User("2", "2");
@@ -368,17 +368,17 @@ public class GameServerTest {
         gameServer.startGame(p2);
         assertEquals(1, gameServer.rooms.size());
         assertEquals(SUCCESSFUL + "{\"playerColor\":\"blue\",\"playerID\":2}" + "Please wait other players to join th game(need 3, joined 2)",
-                readAllStringFromObjectStream(outputStream)
+                readAllStringFromObjectStream(outputStream2)
         );
         assertEquals(2, gameServer.rooms.get(0).players.size());
         assertEquals(0, gameServer.rooms.get(0).roomID);
 
         //prepare for the third player who joins in this room
-        outputStream.reset();
+        ByteArrayOutputStream outputStream3 = new ByteArrayOutputStream();
         Socket socket3 = mock(Socket.class);
         when(socket3.getInputStream())
                 .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList("0", "0"))));
-        when(socket3.getOutputStream()).thenReturn(outputStream);
+        when(socket3.getOutputStream()).thenReturn(outputStream3);
         // handle the request for third player
         Player p3 = new PlayerV2(socket3.getInputStream(), socket3.getOutputStream());
         p3.setName("3");
