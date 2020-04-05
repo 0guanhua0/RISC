@@ -7,7 +7,6 @@ import edu.duke.ece651.risk.shared.player.PlayerV2;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.net.Socket;
 import java.security.InvalidKeyException;
 import java.sql.SQLException;
@@ -68,31 +67,40 @@ public class GameServer {
      */
     void handleIncomeRequest(Socket socket) throws IOException, ClassNotFoundException, SQLException {
         //treat new connection as new user
-        User user = new User(socket.getInputStream(), socket.getOutputStream());
+        Player player = new PlayerV2(socket.getInputStream(), socket.getOutputStream());
 
-        ObjectInputStream m = new ObjectInputStream(socket.getInputStream());
-        String msg = (String) m.readObject();
+
         //header info from client
-        //String msg = (String) user.recv();
+        String msg = (String) player.recv();
         JSONObject obj = new JSONObject(msg);
 
         String userName = obj.getString(USER_NAME);
+        String userPassword = obj.getString(USER_PASSWORD);
         String action = obj.getString(ACTION);
 
-        user.setUserName(userName);
 
         //user try to login
         if (action.equals(SIGNUP)) {
-            UserValidation.signUp(user, db, obj);
-            return;
+            if (db.addUser(userName, userPassword)) {
+                player.send(SUCCESSFUL);
+            } else {
+                player.send(INVALID_SIGNUP);
+            }
         }
 
         //sign up
         if (action.equals(LOGIN)) {
-            if (UserValidation.logIn(user, db, obj) && !userList.hasUser(userName)) {
-                userList.addUser(user);
+            if (db.authUser(userName, userPassword)) {
+                player.send(SUCCESSFUL);
+
+                //add to active user & keep tracking room info
+                if (!userList.hasUser(userName)) {
+                    User user = new User(userName, userPassword);
+                    userList.addUser(user);
+                }
+            } else {
+                player.send(INVALID_LOGIN);
             }
-            return;
         }
 
         //user try to play game
@@ -100,7 +108,7 @@ public class GameServer {
         //if no, return error
         if (!userList.hasUser(userName)) {
             //invalid user
-            user.send(INVALID_USER);
+            player.send(INVALID_USER);
             return;
         }
 
@@ -108,14 +116,14 @@ public class GameServer {
         //according to actual action to redirect
         //the available room
         if (action.equals(GET_WAIT_ROOM)) {
-            user.send(getRoomList());
+            player.send(getRoomList());
             return;
         }
 
 
         //the room user has joined
         if (action.equals(GET_IN_ROOM)) {
-            user.send(user.getRoomList());
+            player.send(userList.getUser(userName).getRoomList());
             return;
         }
 
@@ -123,7 +131,7 @@ public class GameServer {
         //create new room
         if (action.equals(CREATE_GAME) || action.equals(JOIN_GAME)) {
             //proceed to original process
-            createPlayer(socket, user);
+            startGame(player);
             return;
 
         }
@@ -136,13 +144,13 @@ public class GameServer {
             int roomID = obj.getInt(ROOM_ID);
             // user is a player already in room
             // redirect io
-            if (user.isInRoom(roomID)) {
+            if (userList.getUser(userName).isInRoom(roomID)) {
                 //go to the room
                 //find that player
                 Player currPlayer = rooms.get(roomID).getPlayer(userName);
                 currPlayer.reConnect(socket.getInputStream(), socket.getOutputStream());
             } else {
-                user.send(INVALID_RECONNECT);
+                player.send(INVALID_RECONNECT);
             }
 
         }
@@ -153,24 +161,21 @@ public class GameServer {
 
     /**
      * user want to create a room or add a room
-     * create new player
      */
 
-    void createPlayer(Socket socket, User user) throws IOException, ClassNotFoundException {
-        Player<String> player = new PlayerV2<>(socket.getInputStream(), socket.getOutputStream());
+    void startGame(Player player) throws IOException, ClassNotFoundException {
         int choice = askValidRoomNum(player);
         synchronized (this) {
             if (choice < 0) {
                 // create a new room
                 int roomID = rooms.size();
                 rooms.put(roomID, new Room(roomID, player, new MapDataBase<>()));
-
                 //add the roomID to the user list
-                user.addRoom(roomID);
+                userList.getUser((String) player.getColor()).addRoom(roomID);
             } else {
                 // join an existing room
                 rooms.get(choice).addPlayer(player);
-                user.addRoom(choice);
+                userList.getUser((String) player.getColor()).addRoom(choice);
             }
         }
 

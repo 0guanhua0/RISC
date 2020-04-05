@@ -235,7 +235,7 @@ public class GameServerTest {
         //1 login user create room
         String userName1 = "1";
         String userPassword1 = "1";
-        User user1 = new User(userName1);
+        User user1 = new User(userName1, userPassword1);
         gameServer.db.addUser(userName1, userPassword1);
         gameServer.userList.addUser(user1);
 
@@ -330,6 +330,7 @@ public class GameServerTest {
 
      */
 
+    /*
     @Test
     void createPlayer() throws IOException, SQLException, ClassNotFoundException {
         GameServer gameServer = new GameServer(null);
@@ -381,4 +382,6 @@ public class GameServerTest {
         assertEquals(0, gameServer.rooms.get(0).roomID);
         assertTrue(user3.isInRoom(0));
     }
+
+     */
 }

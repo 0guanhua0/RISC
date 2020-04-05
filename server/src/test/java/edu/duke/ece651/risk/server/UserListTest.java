@@ -2,12 +2,10 @@ package edu.duke.ece651.risk.server;
 
 import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static edu.duke.ece651.risk.shared.Mock.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class UserListTest {
@@ -18,7 +16,7 @@ class UserListTest {
         List list = new ArrayList();
         assertEquals(userList.getUserList(), list);
 
-        User user1 = new User("user1", setupMockInput(new ArrayList<Object>()), new ByteArrayOutputStream());
+        User user1 = new User("1", "1");
 
         assertFalse(userList.hasUser(user1.userName));
         userList.addUser(user1);
@@ -28,8 +26,7 @@ class UserListTest {
         userList.rmUser(user3);
         assertFalse(userList.hasUser(user1.getUserName()));
 
-        User user4 = userList.getUser(user1.getUserName());
-        assertNull(user4);
+        assertNull(userList.getUser("4"));
 
     }
 
