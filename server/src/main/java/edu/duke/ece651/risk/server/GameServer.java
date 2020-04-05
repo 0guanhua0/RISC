@@ -78,6 +78,7 @@ public class GameServer {
         String userPassword = obj.getString(USER_PASSWORD);
         String action = obj.getString(ACTION);
 
+        player.setName(userName);
 
         //user try to login
         if (action.equals(SIGNUP)) {
