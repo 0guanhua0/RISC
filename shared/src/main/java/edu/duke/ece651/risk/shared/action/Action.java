@@ -19,4 +19,6 @@ public interface Action {
      * @return true if perform successful
      */
     boolean perform(WorldState worldState);
+
+    String toString();
 }

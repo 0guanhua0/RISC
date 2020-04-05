@@ -11,6 +11,8 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import static edu.duke.ece651.risk.shared.Constant.UNIT_NAME;
+
 
 public class AttackAction implements Action, Serializable {
     String src;
@@ -122,5 +124,18 @@ public class AttackAction implements Action, Serializable {
             return attackAction1.src.equals(this.src) && attackAction1.dest.equals(this.dest) && attackAction1.playerId == this.playerId;
         }
         return false;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Attack(").append(this.src).append("---->").append(this.dest);
+        for (Map.Entry<Integer, Integer> entry : this.levelToNum.entrySet()) {
+            String name = UNIT_NAME.get(entry.getKey());
+            int number = entry.getValue();
+            sb.append(", ").append(number).append(" ").append(name);
+        }
+        sb.append(")");
+        return sb.toString();
     }
 }

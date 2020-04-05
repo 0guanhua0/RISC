@@ -13,6 +13,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -196,5 +197,17 @@ class MoveActionTest {
         assertNotEquals(a0, a2);
         AttackAction a3 = new AttackAction("kingdom of the north", "kingdom of mountain and vale", 1, 1);
         assertNotEquals(a0, a3);
+    }
+
+    @Test
+    void testString() {
+        MoveAction a0 = new MoveAction("kingdom of the north", "kingdom of mountain and vale", 1, 1);
+        System.out.println(a0.toString());
+        Map<Integer, Integer> map = new HashMap<>();
+        map.put(1,1);
+        map.put(0,4);
+        map.put(2,1);
+        MoveAction a1 = new MoveAction("kingdom of the north", "kingdom of mountain and vale", 1, map);
+        System.out.println(a1.toString());
     }
 }

@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import java.io.*;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -113,10 +114,6 @@ class AttackActionTest {
 
 
 
-
-
-
-
         //valid
         AttackAction b1 = new AttackAction("kingdom of the reach","kingdom of the rock",  2, 1);
         assertTrue(b1.isValid(worldState2));
@@ -186,5 +183,17 @@ class AttackActionTest {
         assertFalse(a0.equals(a2));
         AttackAction a3 = new AttackAction("kingdom of the north", "kingdom of mountain and vale", 2, 1);
         assertFalse(a0.equals(a3));
+    }
+
+    @Test
+    void testToString() {
+        AttackAction a0 = new AttackAction("kingdom of the north", "kingdom of mountain and vale", 1, 1);
+        System.out.println(a0.toString());
+        Map<Integer, Integer> map = new HashMap<>();
+        map.put(1,1);
+        map.put(0,4);
+        map.put(2,1);
+        AttackAction a1 = new AttackAction("kingdom of the north", "kingdom of mountain and vale", 1, map);
+        System.out.println(a1.toString());
     }
 }

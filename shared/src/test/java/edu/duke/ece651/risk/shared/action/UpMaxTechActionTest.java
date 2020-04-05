@@ -52,4 +52,10 @@ class UpMaxTechActionTest {
         assertThrows(IllegalArgumentException.class,()->{upMaxTechAction.perform(worldState);});
 
     }
+
+    @Test
+    void testToString() {
+        UpMaxTechAction action = new UpMaxTechAction();
+        System.out.println(action.toString());
+    }
 }

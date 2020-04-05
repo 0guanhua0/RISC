@@ -138,4 +138,10 @@ class UpUnitActionTest {
         assertDoesNotThrow(()->{action2.perform(worldState1);});
         assertTrue(action2.perform(worldState1));
     }
+
+    @Test
+    void testToString() {
+        UpUnitAction action0 = new UpUnitAction(vale, 0, 1, 1, 1);
+        System.out.println(action0.toString());
+    }
 }
