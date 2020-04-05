@@ -61,13 +61,13 @@ public class Constant {
     };
     //key is the level of units, value is the name of corresponding units
     public static final Map<Integer, String> UNIT_NAME = new HashMap<Integer, String>() {{
-        put(0, "Light infantry");
-        put(1, "infantry");
+        put(0, "Light Infantry");
+        put(1, "Infantry");
         put(2, "Hussar");
-        put(3, "cavalry");
-        put(4, "Heavy cavalry");
-        put(5, "elite cavalry");
-        put(6, "cavalry commander");
+        put(3, "Cavalry");
+        put(4, "Heavy Cavalry");
+        put(5, "Elite Cavalry");
+        put(6, "Cavalry Commander");
     }};
 
     //key is the target level of a unit

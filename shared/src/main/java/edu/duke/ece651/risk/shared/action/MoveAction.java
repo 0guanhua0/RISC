@@ -10,6 +10,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import static edu.duke.ece651.risk.shared.Constant.UNIT_NAME;
+
 public class MoveAction implements Action, Serializable {
     String src;
     String dest;
@@ -111,5 +113,18 @@ public class MoveAction implements Action, Serializable {
                     src.equals(that.src) &&
                     dest.equals(that.dest);
         }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Move(").append(this.src).append("---->").append(this.dest);
+        for (Map.Entry<Integer, Integer> entry : this.levelToNum.entrySet()) {
+            String name = UNIT_NAME.get(entry.getKey());
+            int number = entry.getValue();
+            sb.append(", ").append(number).append(" ").append(name);
+        }
+        sb.append(")");
+        return sb.toString();
     }
 }
