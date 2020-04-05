@@ -100,26 +100,23 @@ public abstract class Player<T> {
     }
 
     public void send(Object data) {
-
         try {
-
             out.writeObject(data);
             out.flush();
-        } catch (IOException e) {
+        } catch (IOException ignored) {
+            System.out.println(ignored.toString());
             this.setConnect(false);
         }
     }
 
     public Object recv() throws ClassNotFoundException {
         Object o = new Object();
-
         try {
             o =  in.readObject();
         }
         catch (IOException ignored) {
             this.setConnect(false);
         }
-
         return o;
     }
 

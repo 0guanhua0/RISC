@@ -28,8 +28,10 @@ import edu.duke.ece651.riskclient.listener.onResultListener;
 
 import static edu.duke.ece651.riskclient.RiskApplication.initGameSocket;
 import static edu.duke.ece651.riskclient.RiskApplication.setRoom;
+import static edu.duke.ece651.riskclient.utils.HTTPUtils.backGame;
 import static edu.duke.ece651.riskclient.utils.HTTPUtils.createNewRoom;
 import static edu.duke.ece651.riskclient.utils.HTTPUtils.getRoomList;
+import static edu.duke.ece651.riskclient.utils.HTTPUtils.joinGame;
 import static edu.duke.ece651.riskclient.utils.UIUtils.showToastUI;
 
 /**
@@ -138,16 +140,35 @@ public class HomeFragment extends Fragment {
 
                 @Override
                 public void onSuccessful() {
-                    Intent intent = null;
                     if (isInRoom){
-                        // if click the room already in, redirect to PlayGame page
-                        intent = new Intent(getActivity(), PlayGameActivity.class);
+                        // want to go back to the game
+                        backGame(new onResultListener() {
+                            @Override
+                            public void onFailure(String error) {
 
+                            }
+
+                            @Override
+                            public void onSuccessful() {
+                                Intent intent = new Intent(getActivity(), PlayGameActivity.class);
+                                startActivity(intent);
+                            }
+                        });
                     }else {
-                        // if want to join a room, redirect to WaitGame page
-                        intent = new Intent(getActivity(), WaitGameActivity.class);
+                        // want to join a new room
+                        joinGame(new onResultListener() {
+                            @Override
+                            public void onFailure(String error) {
+
+                            }
+
+                            @Override
+                            public void onSuccessful() {
+                                Intent intent = new Intent(getActivity(), WaitGameActivity.class);
+                                startActivity(intent);
+                            }
+                        });
                     }
-                    startActivity(intent);
                 }
             });
         });

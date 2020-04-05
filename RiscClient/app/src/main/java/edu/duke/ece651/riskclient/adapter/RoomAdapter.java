@@ -34,10 +34,10 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.RoomViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull RoomViewHolder holder, int position) {
-        RoomInfo room = rooms.get(position);
+        RoomInfo roomInfo = rooms.get(position);
 
-        holder.tvRoomName.setText(room.getRoomName());
-        holder.tvRoomInfo.setText("nothing for now");
+        holder.tvRoomName.setText(roomInfo.getRoomName());
+        holder.tvRoomInfo.setText(roomInfo.getDetailInfo());
         holder.itemView.setOnClickListener(v -> {
             if (listener != null){
                 listener.onClick(position);

@@ -201,6 +201,7 @@ public class NewRoomActivity extends AppCompatActivity {
 
             @Override
             public void onSuccessful() {
+                // set a temporary roomInfo object
                 setRoom(new RoomInfo(1, roomName));
                 showToastUI(NewRoomActivity.this, "Create new room successful.");
                 Intent intent = new Intent(NewRoomActivity.this, WaitGameActivity.class);

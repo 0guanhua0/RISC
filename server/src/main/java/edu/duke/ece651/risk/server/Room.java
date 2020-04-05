@@ -1,5 +1,6 @@
 package edu.duke.ece651.risk.server;
 
+import edu.duke.ece651.risk.shared.RoomInfo;
 import edu.duke.ece651.risk.shared.action.AttackResult;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.map.Territory;
@@ -50,10 +51,14 @@ public class Room {
         // let the beginner choose map & specify room name
         initGame(mapDataBase);
 
-        List<String> colorList = map.getColorList();
-        // assign the color
-        player.setColor(colorList.get(0));
-        player.sendPlayerInfo();
+        System.out.println("send new room info");
+        player.send(new RoomInfo(roomID, roomName, map, players));
+
+        // probably don't need this part(we don't care the color and id should be global)
+//        List<String> colorList = map.getColorList();
+//        // assign the color
+//        player.setColor(colorList.get(0));
+//        player.sendPlayerInfo();
 
         // don't need this message anymore
 //        player.send(String.format("Please wait other players to join th game(need %d, joined %d)", colorList.size(), players.size()));
@@ -77,18 +82,22 @@ public class Room {
         if (players.size() < map.getColorList().size()) {
             players.add(player);
 
-            List<String> colorList = map.getColorList();
             player.setId(players.size());
-            player.setColor(colorList.get(players.size() - 1));
-            player.sendPlayerInfo();
+            // send the latest room info
+            player.send(new RoomInfo(roomID, roomName, map, players));
+
+//            List<String> colorList = map.getColorList();
+//            player.setId(players.size());
+//            player.setColor(colorList.get(players.size() - 1));
+//            player.sendPlayerInfo();
 
             gameInfo.addPlayer(player.getId(), player.getColor());
 
             // broadcast the newly joined player info
-            sendAll(player.getName());
+            sendAllExcept(player.getName(), player);
 
             // check whether has enough player to start the game
-            if (players.size() == colorList.size()) {
+            if (players.size() == map.getColorList().size()) {
                 // broadcast enough players join the game
                 sendAll(INFO_ALL_PLAYER);
                 // use a separate thread to run the game
@@ -129,6 +138,15 @@ public class Room {
     void sendAll(Object data) throws IOException {
         for (Player<String> player : players) {
             if (player.isConnect()) {
+                player.send(data);
+            }
+
+        }
+    }
+
+    void sendAllExcept(Object data, Player<String> p) throws IOException {
+        for (Player<String> player : players) {
+            if (player.isConnect() && player != p) {
                 player.send(data);
             }
 

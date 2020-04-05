@@ -16,6 +16,8 @@ import edu.duke.ece651.riskclient.listener.onResultListener;
 import edu.duke.ece651.riskclient.objects.Player;
 
 import static edu.duke.ece651.risk.shared.Constant.ACTION_CREATE_GAME;
+import static edu.duke.ece651.risk.shared.Constant.ACTION_JOIN_GAME;
+import static edu.duke.ece651.risk.shared.Constant.ACTION_RECONNECT_ROOM;
 import static edu.duke.ece651.riskclient.Constant.ACTION_CHANGE_PASSWORD;
 import static edu.duke.ece651.riskclient.Constant.ACTION_CREATE_NEW_ROOM;
 import static edu.duke.ece651.riskclient.Constant.ACTION_GET_IN_ROOM;
@@ -33,6 +35,7 @@ import static edu.duke.ece651.riskclient.Constant.USER_NAME;
 import static edu.duke.ece651.riskclient.Constant.USER_PASSWORD;
 import static edu.duke.ece651.riskclient.RiskApplication.checkResult;
 import static edu.duke.ece651.riskclient.RiskApplication.getPlayerName;
+import static edu.duke.ece651.riskclient.RiskApplication.getRoomID;
 import static edu.duke.ece651.riskclient.RiskApplication.getThreadPool;
 import static edu.duke.ece651.riskclient.RiskApplication.getTmpSocket;
 import static edu.duke.ece651.riskclient.RiskApplication.recv;
@@ -134,11 +137,6 @@ public class HTTPUtils {
         }
     }
 
-    // receive the MapDataBase
-    public static void getMapList(onReceiveListener listener){
-
-    }
-
     /* ====== the functions below should use the game socket rather than a temporary socket ====== */
     /**
      * Tell the server we want to create a new room rather than join in an existing room(use game socket).
@@ -213,6 +211,8 @@ public class HTTPUtils {
                     }else {
                         try {
                             listener.onNewPlayer(new Player((String) object, ""));
+                            // give the UI some time to refresh
+                            Thread.sleep(100);
                             waitAllPlayers(listener);
                         }catch (Exception e){
                             Log.e(TAG, "waitAllPlayers: " + e.toString());
@@ -222,6 +222,42 @@ public class HTTPUtils {
                 }
             }
         });
+    }
+
+    /**
+     * A new player want to join an existing room.
+     * @param listener result listener
+     */
+    public static void joinGame(onResultListener listener){
+        try {
+            // information header(tell serve what we want to do)
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put(USER_NAME, getPlayerName());
+            jsonObject.put(ACTION_TYPE, ACTION_JOIN_GAME);
+            send(jsonObject.toString());
+            // join in an existing room
+            sendAndCheckSuccessG(String.valueOf(getRoomID()), listener);
+        }catch (JSONException e){
+            Log.e(TAG, "joinRoom: " + e.toString());
+        }
+    }
+
+    /**
+     * A player want to back to one game he was playing but not finish.
+     * @param listener result listener
+     */
+    public static void backGame(onResultListener listener){
+        try {
+            // information header(tell serve what we want to do)
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put(USER_NAME, getPlayerName());
+            jsonObject.put(ACTION_TYPE, ACTION_RECONNECT_ROOM);
+            send(jsonObject.toString());
+            // join in an existing room
+            sendAndCheckSuccessG(String.valueOf(getRoomID()), listener);
+        }catch (JSONException e){
+            Log.e(TAG, "backGame: " + e.toString());
+        }
     }
 
     public static void getRoundInfo(onReceiveListener listener){

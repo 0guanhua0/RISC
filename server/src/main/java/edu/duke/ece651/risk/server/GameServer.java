@@ -40,6 +40,7 @@ public class GameServer {
 
         // TODO: debug info
         db.addUser("xkw", "1234");
+        db.addUser("xkx", "1234");
     }
 
     /**
@@ -257,7 +258,7 @@ public class GameServer {
         List<RoomInfo> roomInfoList = new ArrayList<>();
         for (Room room : rooms.values()) {
             if (!room.hasStarted()) {
-                roomInfoList.add(new RoomInfo(room.roomID, room.roomName));
+                roomInfoList.add(new RoomInfo(room.roomID, room.roomName, room.map, room.players));
             }
 
         }
