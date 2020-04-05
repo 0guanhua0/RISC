@@ -88,12 +88,6 @@ public class UpUnitAction implements Action{
 
     @Override
     public String toString() {
-        String terr;
-        int playerId;
-
-        int srcLevel;
-        int targetLevel;
-        int unitsNum;
         StringBuilder sb = new StringBuilder();
         sb.append("Upgrade Unit(Number: ").append(this.unitsNum).append(", ");
         sb.append("Territory: ").append(this.terr).append(", ");
