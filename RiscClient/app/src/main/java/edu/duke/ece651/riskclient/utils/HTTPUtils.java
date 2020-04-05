@@ -28,6 +28,7 @@ import static edu.duke.ece651.riskclient.Constant.MAP_NAME;
 import static edu.duke.ece651.riskclient.Constant.PASSWORD_NEW;
 import static edu.duke.ece651.riskclient.Constant.PASSWORD_OLD;
 import static edu.duke.ece651.riskclient.Constant.ROOM_NAME;
+import static edu.duke.ece651.riskclient.Constant.SUCCESSFUL;
 import static edu.duke.ece651.riskclient.Constant.USER_NAME;
 import static edu.duke.ece651.riskclient.Constant.USER_PASSWORD;
 import static edu.duke.ece651.riskclient.RiskApplication.checkResult;
@@ -233,26 +234,27 @@ public class HTTPUtils {
      * @param listener result listener
      */
     static void sendAndCheckSuccess(String request, onResultListener listener) {
-        listener.onSuccessful();
+//        listener.onSuccessful();
         // use the global thread pool to execute
-//        getThreadPool().execute(() -> {
-//            try {
-//                Socket socket = getTmpSocket();
-//                ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-//                ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
-//                out.writeObject(request);
-//                out.flush();
-//                String res = (String) in.readObject();
-//                if (res.equals(SUCCESSFUL)) {
-//                    listener.onSuccessful(null);
-//                } else {
-//                    listener.onFailure(res);
-//                }
-//            } catch (Exception e) {
-//                Log.e(TAG, e.toString());
-//                listener.onFailure("server is not running");
-//            }
-//        });
+        getThreadPool().execute(() -> {
+            try {
+                Socket socket = getTmpSocket();
+                ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+                ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+                out.writeObject(request);
+                out.flush();
+                String res = (String) in.readObject();
+                if (res.equals(SUCCESSFUL)) {
+                    listener.onSuccessful();
+                } else {
+                    listener.onFailure(res);
+                }
+                socket.close();
+            } catch (Exception e) {
+                Log.e(TAG, e.toString());
+                listener.onFailure("server is not running");
+            }
+        });
     }
 
     /**
