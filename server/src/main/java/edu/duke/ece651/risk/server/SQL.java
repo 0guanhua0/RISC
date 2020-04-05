@@ -50,7 +50,7 @@ public class SQL {
         // ask postgres to crypt the password
 
         //check if user already exists
-        if (authUserName(name)) {
+        if (isNameExist(name)) {
             return false;
         }
         Statement statement = conn.createStatement();
@@ -80,7 +80,7 @@ public class SQL {
 
     }
 
-    public boolean authUserName(String name) throws SQLException, ClassNotFoundException {
+    public boolean isNameExist(String name) throws SQLException, ClassNotFoundException {
 
         Class.forName("org.postgresql.Driver");
         Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);

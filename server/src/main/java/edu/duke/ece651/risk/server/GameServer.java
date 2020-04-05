@@ -4,6 +4,7 @@ import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.network.Server;
 import edu.duke.ece651.risk.shared.player.Player;
 import edu.duke.ece651.risk.shared.player.PlayerV2;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -14,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
 
-import static edu.duke.ece651.risk.shared.Constant.SUCCESSFUL;
+import static edu.duke.ece651.risk.shared.Constant.*;
 
 public class GameServer {
     // the server object, use to communicate with all players
@@ -23,8 +24,7 @@ public class GameServer {
     ThreadPoolExecutor threadPool;
     // list of all rooms(each room represent a running game)
 
-    // list of connected player
-    Map<String, UserInfo> connectedUser;
+    UserList userList;
     // db for user name & password
     SQL db;
     Map<Integer, Room> rooms;
@@ -34,8 +34,8 @@ public class GameServer {
         BlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<>(32);
         this.threadPool = new ThreadPoolExecutor(4, 16, 5, TimeUnit.SECONDS, workQueue);
         this.rooms = new ConcurrentHashMap<>();
-        this.connectedUser = new ConcurrentHashMap<>();
         this.db = new SQL();
+        this.userList = new UserList();
     }
 
     /**
@@ -51,6 +51,10 @@ public class GameServer {
                         handleIncomeRequest(socket);
                     } catch (IOException | ClassNotFoundException | SQLException e) {
                         // IO Exception, probably a bette way is write to log file
+                        try {
+                            socket.close();
+                        } catch (IOException ignored) {
+                        }
                     }
                 });
             }
@@ -65,36 +69,122 @@ public class GameServer {
      *
      * @param socket represent a newly accept player
      */
-    //todo: a class handle different socket
     void handleIncomeRequest(Socket socket) throws IOException, ClassNotFoundException, SQLException {
-        // here we wrap the socket with player object ASAP(i.e. decouple socket with stream)
-        Player<String> player = new PlayerV2<>(socket.getInputStream(), socket.getOutputStream());
+        //treat new connection as new user
+        Player player = new PlayerV2(socket.getInputStream(), socket.getOutputStream());
 
-        String helloInfo = "Welcome to the fancy RISK game!!!";
-        player.send(helloInfo);
 
-        //tmp validation
-        while (true) {
-            if (UserValidation.validate(player, db)) {
-                break;
+        //header info from client
+        String msg = (String) player.recv();
+        JSONObject obj = new JSONObject(msg);
+
+        String userName = obj.getString(USER_NAME);
+        String userPassword = obj.getString(USER_PASSWORD);
+        String action = obj.getString(ACTION);
+
+        player.setName(userName);
+
+        //user try to sign up
+        if (action.equals(SIGNUP)) {
+            if (db.addUser(userName, userPassword)) {
+                player.send(SUCCESSFUL);
+            } else {
+                player.send(INVALID_SIGNUP);
             }
+            return;
+        }
+
+        //login
+        if (action.equals(LOGIN)) {
+            if (db.authUser(userName, userPassword)) {
+                player.send(SUCCESSFUL);
+
+                //add to active user & keep tracking room info
+                if (!userList.hasUser(userName)) {
+                    User user = new User(userName, userPassword);
+                    userList.addUser(user);
+                }
+            } else {
+                player.send(INVALID_LOGIN);
+            }
+            return;
+        }
+
+        //user try to play game
+        //check user is in validate list
+        //if no, return error
+        if (!userList.hasUser(userName)) {
+            //invalid user
+            player.send(INVALID_USER);
+            return;
+        }
+
+        //if yes, proceed
+        //according to actual action to redirect
+        //the available room
+        if (action.equals(GET_WAIT_ROOM)) {
+            player.send(getRoomList());
+            return;
         }
 
 
+        //the room user has joined
+        if (action.equals(GET_IN_ROOM)) {
+            player.send(userList.getUser(userName).getRoomList());
+            return;
+        }
 
-        //todo: change room controller, to allow user switch different room
 
+        //create new room
+        if (action.equals(CREATE_GAME) || action.equals(JOIN_GAME)) {
+            //proceed to original process
+            startGame(player);
+            return;
+
+        }
+
+
+        //join the existing game
+        //if new player, then just new player
+        //if existing player, then plug in the stream
+        if (action.equals(RECONNECT_ROOM)) {
+            int roomID = obj.getInt(ROOM_ID);
+            // user is a player already in room
+            // redirect io
+            if (userList.getUser(userName).isInRoom(roomID)) {
+                //go to the room
+                //find that player
+                Player currPlayer = rooms.get(roomID).getPlayer(userName);
+            } else {
+                player.send(INVALID_RECONNECT);
+            }
+
+        }
+
+
+    }
+
+
+    /**
+     * user want to create a room or add a room
+     */
+
+    void startGame(Player player) throws IOException, ClassNotFoundException {
         int choice = askValidRoomNum(player);
         synchronized (this) {
             if (choice < 0) {
                 // create a new room
                 int roomID = rooms.size();
                 rooms.put(roomID, new Room(roomID, player, new MapDataBase<>()));
-            }else {
+                //add the roomID to the user list
+                userList.getUser(player.getName()).addRoom(roomID);
+            } else {
                 // join an existing room
                 rooms.get(choice).addPlayer(player);
+                userList.getUser(player.getName()).addRoom(choice);
             }
         }
+
     }
 
     /**
@@ -104,9 +194,7 @@ public class GameServer {
      * @return room number/ID, e.g. -1(or any negative number) stands for a new room, > 0 stands for an existing room
      */
     int askValidRoomNum(Player<?> player) throws IOException {
-        player.send(getRoomList());
-
-        while (true){
+        while (true) {
             try {
                 String choice = (String) player.recv();
                 int num = Integer.parseInt(choice);
@@ -123,7 +211,31 @@ public class GameServer {
     }
 
 
+    /**
+     * clear finish room
+     */
 
+    void clearRoom() {
+        List<Integer> finishedRoom = new ArrayList<>();
+        for (Room room : rooms.values()) {
+            if (room.hasFinished()) {
+                finishedRoom.add(room.roomID);
+            }
+        }
+
+        for (int id : finishedRoom) {
+            rooms.remove(id, rooms.get(id));
+            //clear done room from user list
+            for (User u : userList.getUserList()) {
+                if (u.isInRoom(id)) {
+                    u.rmRoom(id);
+                }
+
+            }
+        }
+
+
+    }
 
     /**
      * This function will return the current running room list.
@@ -131,23 +243,18 @@ public class GameServer {
      * @return List of room object
      */
 
-    List<edu.duke.ece651.risk.shared.Room> getRoomList(){
+    List<edu.duke.ece651.risk.shared.Room> getRoomList() {
+        clearRoom();
         // clear any finished room
-        List<Integer> finishedRoom = new ArrayList<>();
         List<edu.duke.ece651.risk.shared.Room> roomList = new ArrayList<>();
-        for (Room room : rooms.values()){
-            if (room.hasFinished()){
-                finishedRoom.add(room.roomID);
-            }else {
-                if (!room.hasStarted()){
-                    roomList.add(new edu.duke.ece651.risk.shared.Room(room.roomID, ""));
-                }
+        for (Room room : rooms.values()) {
+
+            if (!room.hasStarted()) {
+                roomList.add(new edu.duke.ece651.risk.shared.Room(room.roomID, ""));
             }
+
         }
 
-        for (int id : finishedRoom) {
-            rooms.remove(id, rooms.get(id));
-        }
 
         return roomList;
     }

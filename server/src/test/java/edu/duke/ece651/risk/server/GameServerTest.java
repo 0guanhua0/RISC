@@ -5,22 +5,22 @@ import edu.duke.ece651.risk.shared.network.Client;
 import edu.duke.ece651.risk.shared.network.Server;
 import edu.duke.ece651.risk.shared.player.Player;
 import edu.duke.ece651.risk.shared.player.PlayerV1;
+import edu.duke.ece651.risk.shared.player.PlayerV2;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
-import java.io.EOFException;
 import java.io.IOException;
 import java.net.Socket;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import static edu.duke.ece651.risk.shared.Constant.SUCCESSFUL;
+import static edu.duke.ece651.risk.shared.Constant.*;
 import static edu.duke.ece651.risk.shared.Mock.readAllStringFromObjectStream;
 import static edu.duke.ece651.risk.shared.Mock.setupMockInput;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class GameServerTest {
 
@@ -42,6 +42,7 @@ public class GameServerTest {
         client.init("127.0.0.1", 8000);
     }
 
+    /*
     @Test
     public void testRun() throws IOException, InterruptedException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -86,64 +87,180 @@ public class GameServerTest {
         verify(server, atLeast(3)).accept();
     }
 
+     */
+
+    /**
+     * short socket
+     * @throws IOException
+     * @throws ClassNotFoundException
+     * @throws SQLException
+     */
     @Test
     public void testHandleIncomeRequest() throws IOException, ClassNotFoundException, SQLException {
-        //prepare for the first player who creates a new room
+        GameServer gameServer = new GameServer(null);
+
+        //1 valid signup
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        String user1Name = "1";
+        String user1Password = "1";
+        assertFalse(gameServer.db.authUser(user1Name, user1Password));
+
+        String s1 = "{\"" + USER_NAME + "\": \"" + user1Name + "\",\n" +
+                "\"" + USER_PASSWORD +"\": \"" + user1Password + "\",\n" +
+                "\"" + ACTION + "\": \"" + SIGNUP + "\" }";
+
+        Socket socket1 = mock(Socket.class);
+        when(socket1.getInputStream())
+                .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList(s1))));
+        when(socket1.getOutputStream()).thenReturn(outputStream);
+
+        gameServer.handleIncomeRequest(socket1);
+        assertTrue(gameServer.db.authUser(user1Name, user1Password));
+        assertEquals(SUCCESSFUL, readAllStringFromObjectStream(outputStream));
+
+
+        //2 valid login
+        outputStream.reset();
+        Socket socket2 = mock(Socket.class);
+        String userName2 = "1";
+        String userPassword2 = "1";
+
+        String s2 = "{\"" + USER_NAME + "\": \"" + userName2 + "\",\n" +
+                "\"" + USER_PASSWORD +"\": \"" + userPassword2 + "\",\n" +
+                "\"" + ACTION + "\": \"" + LOGIN + "\" }";
+
+        when(socket2.getInputStream())
+                .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList(s2))));
+        when(socket2.getOutputStream()).thenReturn(outputStream);
+
+        gameServer.handleIncomeRequest(socket2);
+        assertEquals(SUCCESSFUL, readAllStringFromObjectStream(outputStream));
+
+        //3 invalid signup, same name
+        outputStream.reset();
+        String userName3 = "1";
+        String userPassword3 = "3";
+
+        String s3 = "{\"" + USER_NAME + "\": \"" + userName3 + "\",\n" +
+                "\"" + USER_PASSWORD +"\": \"" + userPassword3 + "\",\n" +
+                "\"" + ACTION + "\": \"" + SIGNUP + "\" }";
+
+        Socket socket3 = mock(Socket.class);
+        when(socket3.getInputStream())
+                .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList(s3))));
+        when(socket3.getOutputStream()).thenReturn(outputStream);
+
+        gameServer.handleIncomeRequest(socket3);
+        assertTrue(gameServer.db.authUser(user1Name, user1Password));
+        assertEquals(INVALID_SIGNUP, readAllStringFromObjectStream(outputStream));
+
+        //4 invalid login
+        outputStream.reset();
+        String userName4 = "4";
+        String userPassword4 = "4";
+
+        String s4 = "{\"" + USER_NAME + "\": \"" + userName4 + "\",\n" +
+                "\"" + USER_PASSWORD +"\": \"" + userPassword4 + "\",\n" +
+                "\"" + ACTION + "\": \"" + LOGIN + "\" }";
+
+        Socket socket4 = mock(Socket.class);
+        when(socket4.getInputStream())
+                .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList(s4))));
+        when(socket4.getOutputStream()).thenReturn(outputStream);
+
+        gameServer.handleIncomeRequest(socket4);
+        assertEquals(INVALID_LOGIN, readAllStringFromObjectStream(outputStream));
+
+        //5 invalid user with strange action
+        outputStream.reset();
+        String userName5 = "5";
+        String userPassword5 = "5";
+
+        String s5 = "{\"" + USER_NAME + "\": \"" + userName5 + "\",\n" +
+                "\"" + USER_PASSWORD +"\": \"" + userPassword5 + "\",\n" +
+                "\"" + ACTION + "\": \"" + "xxx" + "\" }";
+
+        Socket socket5 = mock(Socket.class);
+        when(socket5.getInputStream())
+                .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList(s5))));
+        when(socket5.getOutputStream()).thenReturn(outputStream);
+
+        gameServer.handleIncomeRequest(socket5);
+        assertEquals(INVALID_USER, readAllStringFromObjectStream(outputStream));
+
+
+        //6 login user get available room
+        outputStream.reset();
+
+        String s6 = "{\"" + USER_NAME + "\": \"" + userName2 + "\",\n" +
+                "\"" + USER_PASSWORD +"\": \"" + userPassword2 + "\",\n" +
+                "\"" + ACTION + "\": \"" + GET_WAIT_ROOM + "\" }";
+
+        Socket socket6 = mock(Socket.class);
+        when(socket6.getInputStream())
+                .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList(s6))));
+        when(socket6.getOutputStream()).thenReturn(outputStream);
+
+        gameServer.handleIncomeRequest(socket6);
+        assertEquals("", readAllStringFromObjectStream(outputStream));
+
+
+
+        //7 login user get room he is in
+        outputStream.reset();
+
+        String s7 = "{\"" + USER_NAME + "\": \"" + userName2 + "\",\n" +
+                "\"" + USER_PASSWORD +"\": \"" + userPassword2 + "\",\n" +
+                "\"" + ACTION + "\": \"" + GET_IN_ROOM + "\" }";
+
+        Socket socket7 = mock(Socket.class);
+        when(socket7.getInputStream())
+                .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList(s7))));
+        when(socket7.getOutputStream()).thenReturn(outputStream);
+
+        gameServer.handleIncomeRequest(socket7);
+        assertEquals("", readAllStringFromObjectStream(outputStream));
+
+
+
+
+    }
+
+    /**
+     * long socket
+     */
+    @Test
+    public void testLongSocket() throws SQLException, ClassNotFoundException, IOException {
+        GameServer gameServer = new GameServer(null);
+
+        //1 login user create room
+        String userName1 = "1";
+        String userPassword1 = "1";
+        User user1 = new User(userName1, userPassword1);
+        gameServer.db.addUser(userName1, userPassword1);
+        gameServer.userList.addUser(user1);
+
+        String s11 = "{\"" + USER_NAME + "\": \"" + userName1 + "\",\n" +
+                "\"" + USER_PASSWORD +"\": \"" + userPassword1 + "\",\n" +
+                "\"" + ACTION + "\": \"" + CREATE_GAME + "\" }";
+        String s12 = "-1";
+        String s13 = "test";
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         Socket socket1 = mock(Socket.class);
         when(socket1.getInputStream())
-                .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList("{\"userName\": \"name\",\n" +
-                        "\"userPassword\": \"password\",\n" +
-                        "\"action\": \"login\" }", "{\"userName\": \"name\",\n" +
-                        "\"userPassword\": \"password\",\n" +
-                        "\"action\": \"signup\" }",  "-1", "test"))));
+                .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList(s11, s12, s13))));
         when(socket1.getOutputStream()).thenReturn(outputStream);
 
-        //handle the request for first player
-        GameServer gameServer = new GameServer(null);
-        assertEquals(0, gameServer.rooms.size());
         gameServer.handleIncomeRequest(socket1);
         assertEquals(1, gameServer.rooms.size());
         assertEquals(1, gameServer.rooms.get(0).players.size());
         assertEquals(0, gameServer.rooms.get(0).roomID);
+        assertTrue(user1.isInRoom(0));
 
-        //prepare for the second player who joins in this room
-        outputStream.reset();
-        Socket socket2 = mock(Socket.class);
-        when(socket2.getInputStream())
-                .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList("{\"userName\": \"name2\",\n" +
-                        "\"userPassword\": \"password\",\n" +
-                        "\"action\": \"signup\" }", "0", "0"))));
-        when(socket2.getOutputStream()).thenReturn(outputStream);
-        //handle the request for second player
-        assertEquals(1, gameServer.rooms.size());
-        gameServer.handleIncomeRequest(socket2);
-        assertEquals(1, gameServer.rooms.size());
-        assertEquals(
-                "Welcome to the fancy RISK game!!!" + SUCCESSFUL.repeat(2) + "{\"playerColor\":\"blue\",\"playerID\":2}" + "Please wait other players to join th game(need 3, joined 2)",
-                readAllStringFromObjectStream(outputStream)
-        );
-        assertEquals(2, gameServer.rooms.get(0).players.size());
-        assertEquals(0, gameServer.rooms.get(0).roomID);
+        //2 login user join existing room
 
-        //prepare for the third player who joins in this room
-        outputStream.reset();
-        Socket socket3 = mock(Socket.class);
-        when(socket3.getInputStream())
-                .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList("{\"userName\": \"name3\",\n" +
-                        "\"userPassword\": \"password\",\n" +
-                        "\"action\": \"signup\" }", "0", "0"))));
-        when(socket3.getOutputStream()).thenReturn(outputStream);
-        // handle the request for third player
-        assertEquals(1, gameServer.rooms.size());
-        try {
-            gameServer.handleIncomeRequest(socket3);
-        } catch (EOFException ignored) {
-            // here we only want to test addPlayer function, don't test the selectTerritory or others
-        }
-        assertEquals(1, gameServer.rooms.size());
-        assertEquals(3, gameServer.rooms.get(0).players.size());
-        assertEquals(0, gameServer.rooms.get(0).roomID);
+        //3 login user reconnect to room
+
     }
 
     @Test
@@ -187,6 +304,7 @@ public class GameServerTest {
         assertEquals(2, gameServer.rooms.size()); // the room finished is removed
     }
 
+    /*
     @Test
     public void testMain() throws IOException, InterruptedException, ClassNotFoundException {
         Thread th = new Thread(() -> {
@@ -210,5 +328,68 @@ public class GameServerTest {
         th.interrupt();
         th.join();
     }
+
+     */
+
+
+    @Test
+    void testStartGame() throws IOException, SQLException, ClassNotFoundException {
+        GameServer gameServer = new GameServer(null);
+        assertEquals(0, gameServer.rooms.size());
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        Socket socket1 = mock(Socket.class);
+        when(socket1.getInputStream())
+                .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList("-1", "test"))));
+        when(socket1.getOutputStream()).thenReturn(outputStream);
+        Player p1 = new PlayerV2(socket1.getInputStream(), socket1.getOutputStream());
+
+        User u1 = new User("1", "1");
+        gameServer.userList.addUser(u1);
+        p1.setName("1");
+        gameServer.startGame(p1);
+        assertEquals(1, gameServer.rooms.size());
+        assertEquals(1, gameServer.rooms.get(0).players.size());
+        assertEquals(0, gameServer.rooms.get(0).roomID);
+
+        //prepare for the second player who joins in this room
+        outputStream.reset();
+        Socket socket2 = mock(Socket.class);
+
+        when(socket2.getInputStream())
+                .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList("0", "0"))));
+        when(socket2.getOutputStream()).thenReturn(outputStream);
+        //handle the request for second player
+        Player p2 = new PlayerV2(socket2.getInputStream(), socket2.getOutputStream());
+        User u2 = new User("2", "2");
+        gameServer.userList.addUser(u2);
+        p2.setName("2");
+        assertEquals(1, gameServer.rooms.size());
+        gameServer.startGame(p2);
+        assertEquals(1, gameServer.rooms.size());
+        assertEquals(SUCCESSFUL + "{\"playerColor\":\"blue\",\"playerID\":2}" + "Please wait other players to join th game(need 3, joined 2)",
+                readAllStringFromObjectStream(outputStream)
+        );
+        assertEquals(2, gameServer.rooms.get(0).players.size());
+        assertEquals(0, gameServer.rooms.get(0).roomID);
+
+        //prepare for the third player who joins in this room
+        outputStream.reset();
+        Socket socket3 = mock(Socket.class);
+        when(socket3.getInputStream())
+                .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList("0", "0"))));
+        when(socket3.getOutputStream()).thenReturn(outputStream);
+        // handle the request for third player
+        Player p3 = new PlayerV2(socket3.getInputStream(), socket3.getOutputStream());
+        p3.setName("3");
+        User u3 = new User("3", "3");
+        gameServer.userList.addUser(u3);
+        assertEquals(1, gameServer.rooms.size());
+        gameServer.startGame(p3);
+        assertEquals(1, gameServer.rooms.size());
+        assertEquals(3, gameServer.rooms.get(0).players.size());
+        assertEquals(0, gameServer.rooms.get(0).roomID);
+    }
+
 
 }

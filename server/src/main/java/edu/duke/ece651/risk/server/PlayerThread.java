@@ -101,6 +101,13 @@ public class PlayerThread extends Thread{
         //if player hasn't losed yet, let him or her play another round of game
         if (player.getTerrNum() > 0){
             while (true){
+                //if player disconnect, simply sleep for 60s
+                if (!player.isConnect()) {
+                    Thread.sleep(WAIT_TIME);
+                    break;
+                }
+
+
                 Object recvRes = player.recv();
                 if (recvRes instanceof Action){
                     Action action = (Action) recvRes;
