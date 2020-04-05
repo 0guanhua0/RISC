@@ -4,7 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -18,24 +18,26 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
 import edu.duke.ece651.risk.shared.ToClientMsg.ClientSelect;
-import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.riskclient.R;
 import edu.duke.ece651.riskclient.adapter.TerritoryGroupAdapter;
 import edu.duke.ece651.riskclient.listener.onReceiveListener;
+import edu.duke.ece651.riskclient.listener.onResultListener;
 import pl.polak.clicknumberpicker.ClickNumberPickerView;
 
 import static edu.duke.ece651.riskclient.Constant.MAP_NAME_TO_RESOURCE_ID;
 import static edu.duke.ece651.riskclient.RiskApplication.recv;
+import static edu.duke.ece651.riskclient.utils.HTTPUtils.verifySelectGroup;
 import static edu.duke.ece651.riskclient.utils.UIUtils.showToastUI;
 
 public class SelectTerritoryActivity extends AppCompatActivity {
+
+    private final static String TAG = SelectTerritoryActivity.class.getSimpleName();
 
     /**
      * UI variable
@@ -80,27 +82,32 @@ public class SelectTerritoryActivity extends AppCompatActivity {
 
             @Override
             public void onSuccessful(Object object) {
-//                ClientSelect select = (ClientSelect) object;
-//                unitTotal = select.getUnitsTotal();
-//                unitLeft = unitTotal;
-//                WorldMap map = select.getMap();
-//                // TODO: set resource based on the map name
-//                imgMap.setImageResource(MAP_NAME_TO_RESOURCE_ID.get(map.getName()));
-//                territoryGroupAdapter.setTerritories(new ArrayList<>(map.getGroups().keySet()));
-
-                unitTotal = 10;
+                ClientSelect select = (ClientSelect) object;
+                unitTotal = select.getUnitsTotal();
                 unitLeft = unitTotal;
-                List<Set<String>> groups = new ArrayList<>();
-                for (int i = 0; i < 30; i++){
-                    Set<String> group = new HashSet<>();
-                    group.add(i + "t1");
-                    group.add(i + "t2");
-                    group.add(i + "t3");
-                    groups.add(group);
-                }
-                // set default selected group
-                selectedGroup = groups.get(0);
-                territoryGroupAdapter.setTerritories(groups);
+                WorldMap map = select.getMap();
+                // TODO: set resource based on the map name
+                runOnUiThread(() -> {
+                    imgMap.setImageResource(MAP_NAME_TO_RESOURCE_ID.get(map.getName()));
+                    List<Set<String>> groups = new ArrayList<>(map.getGroups().keySet());
+                    // set default selected group
+                    selectedGroup = groups.get(0);
+                    territoryGroupAdapter.setTerritories(groups);
+                });
+
+//                unitTotal = 10;
+//                unitLeft = unitTotal;
+//                List<Set<String>> groups = new ArrayList<>();
+//                for (int i = 0; i < 30; i++){
+//                    Set<String> group = new HashSet<>();
+//                    group.add(i + "t1");
+//                    group.add(i + "t2");
+//                    group.add(i + "t3");
+//                    groups.add(group);
+//                }
+//                // set default selected group
+//                selectedGroup = groups.get(0);
+//                territoryGroupAdapter.setTerritories(groups);
             }
         });
     }
@@ -122,23 +129,36 @@ public class SelectTerritoryActivity extends AppCompatActivity {
                 return;
             }
             if (!finishSelect){
-                // TODO: verify group validation before switch
-                finishSelect = true;
-                btNext.setText(R.string.select_territory_finish);
+                // select territory
+                verifySelectGroup(selectedGroup, new onResultListener() {
+                    @Override
+                    public void onFailure(String error) {
+                        Log.e(TAG, "verify group: " + error);
+                        // invalid group selection
+                        showToastUI(SelectTerritoryActivity.this, error);
+                    }
 
-                layoutSelect.animate()
-                        .alpha(0.0f)
-                        .setDuration(500)
-                        .setListener(new AnimatorListenerAdapter() {
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-                                layoutSelect.setVisibility(View.GONE);
-                                layoutAssign.setVisibility(View.VISIBLE);
-                            }
+                    @Override
+                    public void onSuccessful() {
+                        runOnUiThread(() -> {
+                            finishSelect = true;
+                            btNext.setText(R.string.select_territory_finish);
+                            layoutSelect.animate()
+                                    .alpha(0.0f)
+                                    .setDuration(500)
+                                    .setListener(new AnimatorListenerAdapter() {
+                                        @Override
+                                        public void onAnimationEnd(Animator animation) {
+                                            layoutSelect.setVisibility(View.GONE);
+                                            layoutAssign.setVisibility(View.VISIBLE);
+                                        }
+                                    });
+                            setUpAssignUnits();
                         });
-
-                setUpAssignUnits();
+                    }
+                });
             }else {
+                // assign units
                 if (unitLeft > 0){
                     showToastUI(this, "Please assign all units before submit.");
                     return;
@@ -161,7 +181,6 @@ public class SelectTerritoryActivity extends AppCompatActivity {
      * set up the UI for selecting territory
      */
     private void setUpSelectTerritory(){
-        // TODO: update image based on map name
         imgMap = findViewById(R.id.img_map);
 
         RecyclerView rvTerritories = findViewById(R.id.rv_territory_group);
@@ -169,9 +188,7 @@ public class SelectTerritoryActivity extends AppCompatActivity {
         territoryGroupAdapter = new TerritoryGroupAdapter();
         territoryGroupAdapter.setListener(position -> {
             selectedGroup = territoryGroupAdapter.getGroup(position);
-            showToastUI(SelectTerritoryActivity.this, "you click item");
         });
-
 
         rvTerritories.setLayoutManager(new LinearLayoutManager(this));
         rvTerritories.setHasFixedSize(true);
@@ -187,8 +204,8 @@ public class SelectTerritoryActivity extends AppCompatActivity {
         tvUnitsInfo = findViewById(R.id.tv_units_info);
         updateUnitInfo();
         LinearLayout layout = findViewById(R.id.layout_assign_units);
-        for (int i = 0; i < 5; i++){
-            layout.addView(inflateTerritory("territory " + i, layout));
+        for (String tName : selectedGroup){
+            layout.addView(inflateTerritory(tName, layout));
         }
     }
 

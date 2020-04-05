@@ -8,6 +8,7 @@ import org.json.JSONObject;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.Set;
 
 import edu.duke.ece651.risk.shared.action.Action;
 import edu.duke.ece651.riskclient.listener.onNewPlayerListener;
@@ -212,7 +213,7 @@ public class HTTPUtils {
                         try {
                             listener.onNewPlayer(new Player((String) object, ""));
                             // give the UI some time to refresh
-                            Thread.sleep(100);
+                            Thread.sleep(500);
                             waitAllPlayers(listener);
                         }catch (Exception e){
                             Log.e(TAG, "waitAllPlayers: " + e.toString());
@@ -258,6 +259,25 @@ public class HTTPUtils {
         }catch (JSONException e){
             Log.e(TAG, "backGame: " + e.toString());
         }
+    }
+
+    /**
+     * Send the territory group to server to verify, return success or fail message.
+     * @param group the territory group you choose
+     * @param listener result listener
+     */
+    public static void verifySelectGroup(Set<String> group, onResultListener listener){
+        send(group, new onResultListener() {
+            @Override
+            public void onFailure(String error) {
+
+            }
+
+            @Override
+            public void onSuccessful() {
+                checkResult(listener);
+            }
+        });
     }
 
     public static void getRoundInfo(onReceiveListener listener){

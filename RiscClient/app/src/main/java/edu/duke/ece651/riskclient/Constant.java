@@ -37,7 +37,9 @@ public class Constant {
     public static final String NETWORK_PROBLEM = "Network problem";
 
     public static final Map<String, Integer> MAP_NAME_TO_RESOURCE_ID = new HashMap<String, Integer>() {{
-        put("t1", R.drawable.risk_img);
+        put("a clash of kings", R.drawable.map_clash);
+        put("ring", R.drawable.map_ring);
+        put("test", R.drawable.map_test);
     }};
 
 }

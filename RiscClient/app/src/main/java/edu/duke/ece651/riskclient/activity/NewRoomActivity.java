@@ -31,6 +31,7 @@ import edu.duke.ece651.riskclient.listener.onReceiveListener;
 import edu.duke.ece651.riskclient.listener.onResultListener;
 import edu.duke.ece651.riskclient.utils.HTTPUtils;
 
+import static edu.duke.ece651.riskclient.Constant.MAP_NAME_TO_RESOURCE_ID;
 import static edu.duke.ece651.riskclient.RiskApplication.recv;
 import static edu.duke.ece651.riskclient.RiskApplication.setRoom;
 import static edu.duke.ece651.riskclient.activity.WaitGameActivity.PLAYER_CNT;
@@ -46,7 +47,8 @@ public class NewRoomActivity extends AppCompatActivity {
     /**
      * UI variable
      */
-    TextView tvMapName;
+    private TextView tvMapName;
+    private ImageView imgMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,8 +114,7 @@ public class NewRoomActivity extends AppCompatActivity {
             newRoom(roomName);
         });
 
-        ImageView imgMap = findViewById(R.id.img_map);
-        imgMap.setImageResource(R.drawable.risk_img);
+        imgMap = findViewById(R.id.img_map);
 
         tvMapName = findViewById(R.id.tv_map_name);
 
@@ -125,6 +126,7 @@ public class NewRoomActivity extends AppCompatActivity {
         mapAdapter.setListener(position -> {
             selectedMap = mapAdapter.getMap(position);
             tvMapName.setText(selectedMap.getName());
+            imgMap.setImageResource(MAP_NAME_TO_RESOURCE_ID.get(selectedMap.getName()));
         });
         RecyclerView rvMapList = findViewById(R.id.rv_map_list);
         rvMapList.setHasFixedSize(true);
@@ -187,6 +189,7 @@ public class NewRoomActivity extends AppCompatActivity {
                     // set default selected map
                     selectedMap = mapAdapter.getMap(0);
                     tvMapName.setText(selectedMap.getName());
+                    imgMap.setImageResource(MAP_NAME_TO_RESOURCE_ID.get(selectedMap.getName()));
                 });
             }
         });
