@@ -185,7 +185,6 @@ public abstract class Player<T> implements Serializable{
      * reset connection handle connection
      */
 
-
     //todo: redirect the round info to a log file
     public void setName(String name) {
         this.name = name;

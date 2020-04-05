@@ -78,6 +78,7 @@ public class SignUpActivity extends AppCompatActivity {
                 });
             }else {
                 showToastUI(SignUpActivity.this, "Two password mismatch.");
+                signUp.setClickable(true);
             }
         });
     }

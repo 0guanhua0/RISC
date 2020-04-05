@@ -81,7 +81,7 @@ public class PlayerV2<T> extends PlayerV1<T> implements Serializable {
 
     @Override
     public boolean canUpMaxTech() {
-        if (upTechRight&&TECH_MAP.containsKey(techLevel)&&TECH_MAP.get(techLevel)<=getTechNum()){
+        if (upTechRight&&TECH_MAP.containsKey(techLevel)&&TECH_MAP.get(techLevel)<=this.getTechNum()){
             return true;
         }else{
             return false;
