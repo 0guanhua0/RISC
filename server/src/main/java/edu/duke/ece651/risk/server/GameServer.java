@@ -148,7 +148,6 @@ public class GameServer {
                 //go to the room
                 //find that player
                 Player currPlayer = rooms.get(roomID).getPlayer(userName);
-                currPlayer.reConnect(socket.getInputStream(), socket.getOutputStream());
             } else {
                 player.send(INVALID_RECONNECT);
             }
@@ -171,11 +170,11 @@ public class GameServer {
                 int roomID = rooms.size();
                 rooms.put(roomID, new Room(roomID, player, new MapDataBase<>()));
                 //add the roomID to the user list
-                userList.getUser((String) player.getColor()).addRoom(roomID);
+                userList.getUser(player.getName()).addRoom(roomID);
             } else {
                 // join an existing room
                 rooms.get(choice).addPlayer(player);
-                userList.getUser((String) player.getColor()).addRoom(choice);
+                userList.getUser(player.getName()).addRoom(choice);
             }
         }
 

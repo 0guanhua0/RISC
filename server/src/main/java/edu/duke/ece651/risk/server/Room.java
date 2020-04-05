@@ -115,13 +115,13 @@ public class Room {
     void sendAll(Object data) throws IOException {
         for (Player<String> player : players) {
             try {
-                if (player.isConnect) {
+                if (player.isConnect()) {
                     player.send(data);
                 }
 
             } catch (IOException e) {
                 //player disconnect
-                player.disConnect();
+                player.setConnect(false);
             }
         }
     }

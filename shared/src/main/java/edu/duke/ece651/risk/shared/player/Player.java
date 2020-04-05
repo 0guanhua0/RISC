@@ -27,7 +27,8 @@ public abstract class Player<T> {
     Set<Territory> territories;
 
     //status mark connected / dis
-    public boolean isConnect;
+    private boolean isConnect;
+    private String name;
 
     public Player(InputStream in, OutputStream out) throws IOException {
         this.territories = new HashSet<>();
@@ -143,27 +144,27 @@ public abstract class Player<T> {
 
     public abstract void upTech();
 
+    public boolean isConnect() {
+        return isConnect;
+    }
+
+    public void setConnect(boolean connect) {
+        isConnect = connect;
+    }
+
     /**
      * reset connection handle connection
      */
-    public void setIn(InputStream in) throws IOException {
-        this.in = new ObjectInputStream(in);
-    }
 
-    public void setOut(OutputStream out) throws IOException {
-        this.out = new ObjectOutputStream(out);
-    }
 
     //todo: redirect the round info to a log file
-    public void disConnect() throws IOException {
-        this.isConnect = false;
 
+
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public void reConnect(InputStream in, OutputStream out) throws IOException {
-        this.isConnect = true;
-        setIn(in);
-        setOut(out);
-
+    public String getName() {
+        return name;
     }
 }

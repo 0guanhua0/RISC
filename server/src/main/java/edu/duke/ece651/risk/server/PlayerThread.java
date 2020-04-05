@@ -102,7 +102,7 @@ public class PlayerThread extends Thread{
         if (player.getTerrNum() > 0){
             while (true){
                 //if player disconnect, simply sleep for 60s
-                if (!player.isConnect) {
+                if (!player.isConnect()) {
                     Thread.sleep(WAIT_TIME);
                     break;
                 }

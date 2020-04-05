@@ -5,6 +5,7 @@ import edu.duke.ece651.risk.shared.network.Client;
 import edu.duke.ece651.risk.shared.network.Server;
 import edu.duke.ece651.risk.shared.player.Player;
 import edu.duke.ece651.risk.shared.player.PlayerV1;
+import edu.duke.ece651.risk.shared.player.PlayerV2;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -330,9 +331,9 @@ public class GameServerTest {
 
      */
 
-    /*
+
     @Test
-    void createPlayer() throws IOException, SQLException, ClassNotFoundException {
+    void testStartGame() throws IOException, SQLException, ClassNotFoundException {
         GameServer gameServer = new GameServer(null);
         assertEquals(0, gameServer.rooms.size());
 
@@ -341,47 +342,54 @@ public class GameServerTest {
         when(socket1.getInputStream())
                 .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList("-1", "test"))));
         when(socket1.getOutputStream()).thenReturn(outputStream);
-        User user1 = new User("1");
+        Player p1 = new PlayerV2(socket1.getInputStream(), socket1.getOutputStream());
 
-        gameServer.createPlayer(socket1, user1);
+        User u1 = new User("1", "1");
+        gameServer.userList.addUser(u1);
+        p1.setName("1");
+        gameServer.startGame(p1);
         assertEquals(1, gameServer.rooms.size());
         assertEquals(1, gameServer.rooms.get(0).players.size());
         assertEquals(0, gameServer.rooms.get(0).roomID);
-        assertTrue(user1.isInRoom(0));
 
         //prepare for the second player who joins in this room
         outputStream.reset();
         Socket socket2 = mock(Socket.class);
-        User user2 = new User("2");
+
         when(socket2.getInputStream())
                 .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList("0", "0"))));
         when(socket2.getOutputStream()).thenReturn(outputStream);
         //handle the request for second player
+        Player p2 = new PlayerV2(socket2.getInputStream(), socket2.getOutputStream());
+        User u2 = new User("2", "2");
+        gameServer.userList.addUser(u2);
+        p2.setName("2");
         assertEquals(1, gameServer.rooms.size());
-        gameServer.createPlayer(socket2, user2);
+        gameServer.startGame(p2);
         assertEquals(1, gameServer.rooms.size());
         assertEquals(SUCCESSFUL + "{\"playerColor\":\"blue\",\"playerID\":2}" + "Please wait other players to join th game(need 3, joined 2)",
                 readAllStringFromObjectStream(outputStream)
         );
         assertEquals(2, gameServer.rooms.get(0).players.size());
         assertEquals(0, gameServer.rooms.get(0).roomID);
-        assertTrue(user2.isInRoom(0));
 
         //prepare for the third player who joins in this room
         outputStream.reset();
         Socket socket3 = mock(Socket.class);
-        User user3 = new User("3");
         when(socket3.getInputStream())
                 .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList("0", "0"))));
         when(socket3.getOutputStream()).thenReturn(outputStream);
         // handle the request for third player
+        Player p3 = new PlayerV2(socket3.getInputStream(), socket3.getOutputStream());
+        p3.setName("3");
+        User u3 = new User("3", "3");
+        gameServer.userList.addUser(u3);
         assertEquals(1, gameServer.rooms.size());
-        gameServer.createPlayer(socket3, user3);
+        gameServer.startGame(p3);
         assertEquals(1, gameServer.rooms.size());
         assertEquals(3, gameServer.rooms.get(0).players.size());
         assertEquals(0, gameServer.rooms.get(0).roomID);
-        assertTrue(user3.isInRoom(0));
     }
 
-     */
+
 }
