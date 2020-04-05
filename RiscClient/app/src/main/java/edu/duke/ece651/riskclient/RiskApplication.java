@@ -120,6 +120,7 @@ public class RiskApplication extends Application {
      * @param listener send result listener
      */
     public static void send(Object object, onSendListener listener) {
+        listener.onSuccessful();
         threadPool.execute(() -> {
             try {
                 out.writeObject(object);
@@ -138,6 +139,7 @@ public class RiskApplication extends Application {
      * Also, this function should catch all exception and use the listener to notify main thread.
      */
     public static void recv(onReceiveListener listener) {
+        listener.onSuccessful("success");
         threadPool.execute(() -> {
             try {
                 Object o = in.readObject();

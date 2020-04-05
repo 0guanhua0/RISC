@@ -1,13 +1,13 @@
 package edu.duke.ece651.riskclient.activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import java.util.Random;
 import java.util.Timer;
@@ -15,7 +15,6 @@ import java.util.TimerTask;
 
 import edu.duke.ece651.riskclient.R;
 
-import static edu.duke.ece651.riskclient.Constant.ROOM_NAME;
 import static edu.duke.ece651.riskclient.RiskApplication.getRoomName;
 
 public class WaitGameActivity extends AppCompatActivity {

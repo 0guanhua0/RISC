@@ -30,10 +30,13 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
+import edu.duke.ece651.risk.shared.action.Action;
+import edu.duke.ece651.risk.shared.action.MoveAction;
 import edu.duke.ece651.risk.shared.map.Unit;
 import edu.duke.ece651.riskclient.R;
 import edu.duke.ece651.riskclient.adapter.UnitAdapter;
 
+import static edu.duke.ece651.riskclient.Constant.ACTION_PERFORMED;
 import static edu.duke.ece651.riskclient.utils.UIUtils.showToastUI;
 
 public class MoveAttackActivity extends AppCompatActivity {
@@ -88,7 +91,10 @@ public class MoveAttackActivity extends AppCompatActivity {
 
         btConfirm.setOnClickListener(v -> {
             // TODO: communicate with server
+
+
             Intent data = new Intent();
+            data.putExtra(ACTION_PERFORMED, action);
             setResult(RESULT_OK, data);
             finish();
         });

@@ -23,6 +23,6 @@ public class Constant {
     public static final String RESULT = "result";
     public static final String SUCCESSFUL = "successful";
 
-    public static final String ROOM_NAME = "roomName";
+    public static final String ACTION_PERFORMED = "actionPerformed";
 
 }

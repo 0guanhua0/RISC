@@ -211,10 +211,7 @@ class TerritoryV1Test {
         name.addUnits(1,0);
         assertThrows(IllegalArgumentException.class,()->{name.loseUnits(1,1);});
         assertDoesNotThrow(()->{name.loseUnits(1,0);});
-
-
     }
-
 
     @Test
     void getUnitsNum() {
@@ -222,6 +219,11 @@ class TerritoryV1Test {
         name.addBasicUnits(1);
         assertEquals(0,name.getUnitsNum(1));
         assertEquals(1,name.getUnitsNum(0));
+    }
 
+    @Test
+    void getDetailInfo(){
+        TerritoryV1 t1 = new TerritoryV1("name");
+        assertNull(t1.getUnitGroup());
     }
 }

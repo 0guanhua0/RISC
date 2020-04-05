@@ -60,6 +60,10 @@ public class TerritoryAdapter extends RecyclerView.Adapter<TerritoryAdapter.Room
         notifyDataSetChanged();
     }
 
+    public Territory getTerritory(int index){
+        return territories.get(index);
+    }
+
     static class RoomViewHolder extends RecyclerView.ViewHolder{
 
         View itemView;

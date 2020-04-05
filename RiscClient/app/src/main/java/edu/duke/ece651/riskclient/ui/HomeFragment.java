@@ -2,31 +2,28 @@ package edu.duke.ece651.riskclient.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import edu.duke.ece651.risk.shared.Room;
+import edu.duke.ece651.riskclient.R;
+import edu.duke.ece651.riskclient.activity.NewRoomActivity;
 import edu.duke.ece651.riskclient.activity.PlayGameActivity;
 import edu.duke.ece651.riskclient.activity.WaitGameActivity;
 import edu.duke.ece651.riskclient.adapter.RoomAdapter;
 import edu.duke.ece651.riskclient.listener.onReceiveListener;
-import edu.duke.ece651.riskclient.R;
-import edu.duke.ece651.riskclient.activity.NewRoomActivity;
 
-import static edu.duke.ece651.riskclient.Constant.ROOM_NAME;
 import static edu.duke.ece651.riskclient.RiskApplication.getRoomName;
 import static edu.duke.ece651.riskclient.RiskApplication.setRoom;
 import static edu.duke.ece651.riskclient.utils.HTTPUtils.getRoomList;
