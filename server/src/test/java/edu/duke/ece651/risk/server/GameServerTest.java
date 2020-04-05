@@ -229,9 +229,32 @@ public class GameServerTest {
      * long socket
      */
     @Test
-    public void testLongSocket() {
-        //1 login user create room
+    public void testLongSocket() throws SQLException, ClassNotFoundException, IOException {
+        GameServer gameServer = new GameServer(null);
 
+        //1 login user create room
+        String userName1 = "1";
+        String userPassword1 = "1";
+        User user1 = new User(userName1);
+        gameServer.db.addUser(userName1, userPassword1);
+        gameServer.userList.addUser(user1);
+
+        String s11 = "{\"" + USER_NAME + "\": \"" + userName1 + "\",\n" +
+                "\"" + USER_PASSWORD +"\": \"" + userPassword1 + "\",\n" +
+                "\"" + ACTION + "\": \"" + CREATE_GAME + "\" }";
+        String s12 = "-1";
+        String s13 = "test";
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        Socket socket1 = mock(Socket.class);
+        when(socket1.getInputStream())
+                .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList(s11, s12, s13))));
+        when(socket1.getOutputStream()).thenReturn(outputStream);
+
+        gameServer.handleIncomeRequest(socket1);
+        assertEquals(1, gameServer.rooms.size());
+        assertEquals(1, gameServer.rooms.get(0).players.size());
+        assertEquals(0, gameServer.rooms.get(0).roomID);
+        assertTrue(user1.isInRoom(0));
 
         //2 login user join existing room
 

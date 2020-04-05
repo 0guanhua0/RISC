@@ -7,6 +7,7 @@ import edu.duke.ece651.risk.shared.player.PlayerV2;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.net.Socket;
 import java.security.InvalidKeyException;
 import java.sql.SQLException;
@@ -69,8 +70,10 @@ public class GameServer {
         //treat new connection as new user
         User user = new User(socket.getInputStream(), socket.getOutputStream());
 
+        ObjectInputStream m = new ObjectInputStream(socket.getInputStream());
+        String msg = (String) m.readObject();
         //header info from client
-        String msg = (String) user.recv();
+        //String msg = (String) user.recv();
         JSONObject obj = new JSONObject(msg);
 
         String userName = obj.getString(USER_NAME);
@@ -198,28 +201,19 @@ public class GameServer {
 
 
     /**
-     * This function will return the current running room list.
-     *
-     * @return List of room object
+     * clear finish room
      */
 
-    List<edu.duke.ece651.risk.shared.Room> getRoomList() {
-        // clear any finished room
+    void clearRoom() {
         List<Integer> finishedRoom = new ArrayList<>();
-        List<edu.duke.ece651.risk.shared.Room> roomList = new ArrayList<>();
         for (Room room : rooms.values()) {
             if (room.hasFinished()) {
                 finishedRoom.add(room.roomID);
-            } else {
-                if (!room.hasStarted()) {
-                    roomList.add(new edu.duke.ece651.risk.shared.Room(room.roomID, ""));
-                }
             }
         }
 
         for (int id : finishedRoom) {
             rooms.remove(id, rooms.get(id));
-
             //clear done room from user list
             for (User u : userList.getUserList()) {
                 if (u.isInRoom(id)) {
@@ -228,6 +222,28 @@ public class GameServer {
 
             }
         }
+
+
+    }
+
+    /**
+     * This function will return the current running room list.
+     *
+     * @return List of room object
+     */
+
+    List<edu.duke.ece651.risk.shared.Room> getRoomList() {
+        clearRoom();
+        // clear any finished room
+        List<edu.duke.ece651.risk.shared.Room> roomList = new ArrayList<>();
+        for (Room room : rooms.values()) {
+
+            if (!room.hasStarted()) {
+                roomList.add(new edu.duke.ece651.risk.shared.Room(room.roomID, ""));
+            }
+
+        }
+
 
         return roomList;
     }
