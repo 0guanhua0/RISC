@@ -87,6 +87,7 @@ public class GameServer {
             } else {
                 player.send(INVALID_SIGNUP);
             }
+            return;
         }
 
         //sign up
@@ -102,6 +103,7 @@ public class GameServer {
             } else {
                 player.send(INVALID_LOGIN);
             }
+            return;
         }
 
         //user try to play game
