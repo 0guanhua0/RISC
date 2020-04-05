@@ -51,6 +51,10 @@ public class GameServer {
                         handleIncomeRequest(socket);
                     } catch (IOException | ClassNotFoundException | SQLException e) {
                         // IO Exception, probably a bette way is write to log file
+                        try {
+                            socket.close();
+                        } catch (IOException ignored) {
+                        }
                     }
                 });
             }
@@ -80,7 +84,7 @@ public class GameServer {
 
         player.setName(userName);
 
-        //user try to login
+        //user try to sign up
         if (action.equals(SIGNUP)) {
             if (db.addUser(userName, userPassword)) {
                 player.send(SUCCESSFUL);
@@ -90,7 +94,7 @@ public class GameServer {
             return;
         }
 
-        //sign up
+        //login
         if (action.equals(LOGIN)) {
             if (db.authUser(userName, userPassword)) {
                 player.send(SUCCESSFUL);
