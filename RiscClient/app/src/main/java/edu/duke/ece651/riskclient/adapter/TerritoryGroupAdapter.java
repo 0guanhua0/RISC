@@ -89,6 +89,10 @@ public class TerritoryGroupAdapter extends RecyclerView.Adapter<TerritoryGroupAd
         notifyDataSetChanged();
     }
 
+    public Set<String> getGroup(int index) {
+        return groups.get(index);
+    }
+
     static class RoomViewHolder extends RecyclerView.ViewHolder{
 
         View background;

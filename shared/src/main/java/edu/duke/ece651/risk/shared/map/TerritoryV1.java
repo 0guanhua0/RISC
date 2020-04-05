@@ -113,6 +113,10 @@ public class TerritoryV1 extends Territory{
         return 0;
     }
 
+    @Override
+    public Map<Integer, List<Unit>> getUnitGroup() {
+        return null;
+    }
 
     @Override
     public boolean canAddUnits(int num, int level) {

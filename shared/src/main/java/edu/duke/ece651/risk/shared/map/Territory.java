@@ -173,6 +173,7 @@ public abstract class Territory implements Serializable {
 
     abstract public int getFoodYield();
     abstract public int getTechYield();
+    abstract public Map<Integer, List<Unit>> getUnitGroup();
 
 
     /**

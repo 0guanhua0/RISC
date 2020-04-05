@@ -15,12 +15,14 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.Objects;
 
+import edu.duke.ece651.riskclient.listener.onResultListener;
 import edu.duke.ece651.riskclient.objects.Player;
 import edu.duke.ece651.riskclient.R;
-import edu.duke.ece651.riskclient.listener.onResultListener;
+import edu.duke.ece651.riskclient.listener.onReceiveListener;
 
 import static edu.duke.ece651.riskclient.Constant.USER_NAME;
 import static edu.duke.ece651.riskclient.Constant.USER_PASSWORD;
+import static edu.duke.ece651.riskclient.RiskApplication.setPlayer;
 import static edu.duke.ece651.riskclient.utils.HTTPUtils.authUser;
 import static edu.duke.ece651.riskclient.utils.UIUtils.showToastUI;
 
@@ -119,6 +121,7 @@ public class LoginActivity extends AppCompatActivity {
 
             // make the button un-clickable(prevent multiple request)
             btLogin.setClickable(false);
+
             authUser(new Player(userName, userPassword), new onResultListener() {
                 @Override
                 public void onFailure(String error) {
@@ -128,14 +131,14 @@ public class LoginActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void onSuccessful(Object o) {
+                public void onSuccessful() {
                     btLogin.setClickable(true);
                     showToastUI(LoginActivity.this, "Login successful.");
-                    // login successful
+                    // initialize and set the global player object(only after successfully verify)
+                    Player player = new Player(1, userName, userPassword);
+                    setPlayer(player);
+                    // switch to MainActivity
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    intent.putExtra(MainActivity.LOGIN_NAME, userName);
-                    // TODO: pass the user id to Main
-                    intent.putExtra(MainActivity.LOGIN_ID, 1);
                     startActivity(intent);
                     // save user name & password
                     saveUserData();
