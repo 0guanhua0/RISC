@@ -179,9 +179,11 @@ public class HTTPUtils {
                         listener.onAllPlayer();
                     }else {
                         listener.onFailure((String) object);
+                        waitAllPlayers(listener);
                     }
                 }else {
                     listener.onNewPlayer((Player) object);
+                    waitAllPlayers(listener);
                 }
             }
         });
