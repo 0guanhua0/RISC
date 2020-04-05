@@ -78,13 +78,13 @@ public class GameServer {
         JSONObject obj = new JSONObject(msg);
 
         String userName = obj.getString(USER_NAME);
-        String userPassword = obj.getString(USER_PASSWORD);
         String action = obj.getString(ACTION);
 
         player.setName(userName);
 
         //user try to sign up
         if (action.equals(SIGNUP)) {
+            String userPassword = obj.getString(USER_PASSWORD);
             if (db.addUser(userName, userPassword)) {
                 player.send(SUCCESSFUL);
             } else {
@@ -95,6 +95,7 @@ public class GameServer {
 
         //login
         if (action.equals(LOGIN)) {
+            String userPassword = obj.getString(USER_PASSWORD);
             if (db.authUser(userName, userPassword)) {
                 player.send(SUCCESSFUL);
 
