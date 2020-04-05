@@ -10,6 +10,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.Set;
 
+import edu.duke.ece651.risk.shared.ToServerMsg.ServerSelect;
 import edu.duke.ece651.risk.shared.action.Action;
 import edu.duke.ece651.riskclient.listener.onNewPlayerListener;
 import edu.duke.ece651.riskclient.listener.onReceiveListener;
@@ -270,7 +271,26 @@ public class HTTPUtils {
         send(group, new onResultListener() {
             @Override
             public void onFailure(String error) {
+                Log.e(TAG, "verifySelectGroup: " + error);
+            }
 
+            @Override
+            public void onSuccessful() {
+                checkResult(listener);
+            }
+        });
+    }
+
+    /**
+     * Send the result of assigning units to verify.
+     * @param selection result of assigning units
+     * @param listener result listener
+     */
+    public static void verifyAssignUnits(ServerSelect selection, onResultListener listener){
+        send(selection, new onResultListener() {
+            @Override
+            public void onFailure(String error) {
+                Log.e(TAG, "verifyAssignUnits: " + error);
             }
 
             @Override

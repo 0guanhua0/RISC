@@ -83,6 +83,7 @@ public class PlayGameActivity extends AppCompatActivity {
 
         // make sure user can't do anything before we receive the data
         setAllButtonClickable(false);
+
         newRound();
     }
 
@@ -157,8 +158,6 @@ public class PlayGameActivity extends AppCompatActivity {
         rvTerritoryList.setLayoutManager(new LinearLayoutManager(PlayGameActivity.this));
         rvTerritoryList.setHasFixedSize(true);
         rvTerritoryList.setAdapter(territoryAdapter);
-
-        tvActionInfo = findViewById(R.id.tv_action_info);
     }
 
     /**
@@ -272,18 +271,20 @@ public class PlayGameActivity extends AppCompatActivity {
         recv(new onReceiveListener() {
             @Override
             public void onFailure(String error) {
-                showToastUI(PlayGameActivity.this, NETWORK_PROBLEM);
+                showToastUI(PlayGameActivity.this, error);
                 setAllButtonClickable(true);
             }
 
             @Override
             public void onSuccessful(Object object) {
-//                RoundInfo info = (RoundInfo) object;
-//                roundNum = info.getRoundNum();
-//                map = info.getMap();
-//                showToastUI(PlayGameActivity.this, String.format(Locale.US,"start round %d", roundNum));
-                updateTerritories();
-                setAllButtonClickable(true);
+                RoundInfo info = (RoundInfo) object;
+                roundNum = info.getRoundNum();
+                map = info.getMap();
+                showToastUI(PlayGameActivity.this, String.format(Locale.US,"start round %d", roundNum));
+                runOnUiThread(() -> {
+                    updateTerritories();
+                    setAllButtonClickable(true);
+                });
             }
         });
     }
@@ -293,11 +294,8 @@ public class PlayGameActivity extends AppCompatActivity {
      */
     private void updateTerritories(){
         List<Territory> territories = new ArrayList<>();
-//        for (Map.Entry<String, Territory> entry : map.getAtlas().entrySet()){
-//            territories.add(entry.getValue());
-//        }
-        for (int i = 0; i < 20; i++){
-            territories.add(new TerritoryV2("t" + i, 1, 1, 1));
+        for (Map.Entry<String, Territory> entry : map.getAtlas().entrySet()){
+            territories.add(entry.getValue());
         }
         territoryAdapter.setTerritories(territories);
     }
