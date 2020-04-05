@@ -9,6 +9,7 @@ import edu.duke.ece651.risk.shared.player.Player;
 import java.util.Map;
 
 import static edu.duke.ece651.risk.shared.Constant.UNIT_BONUS;
+import static edu.duke.ece651.risk.shared.Constant.UNIT_NAME;
 import static edu.duke.ece651.risk.shared.Utils.getUnitUpCost;
 
 /**
@@ -78,5 +79,21 @@ public class UpUnitAction implements Action{
         Territory territory = worldState.getMap().getTerritory(this.terr);
         territory.upUnit(this.unitsNum,this.srcLevel,this.targetLevel);
         return true;
+    }
+
+    @Override
+    public String toString() {
+        String terr;
+        int playerId;
+
+        int srcLevel;
+        int targetLevel;
+        int unitsNum;
+        StringBuilder sb = new StringBuilder();
+        sb.append("Upgrade Unit(Number: ").append(this.unitsNum).append(", ");
+        sb.append("Territory: ").append(this.terr).append(", ");
+        sb.append(UNIT_NAME.get(this.srcLevel)).append("---->");
+        sb.append(UNIT_NAME.get(this.targetLevel)).append(")");
+        return sb.toString();
     }
 }

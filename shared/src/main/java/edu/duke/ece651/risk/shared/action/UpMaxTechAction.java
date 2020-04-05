@@ -10,6 +10,8 @@ import edu.duke.ece651.risk.shared.player.Player;
  * @create: 2020-03-30 17:33
  **/
 public class UpMaxTechAction implements Action{
+
+    public UpMaxTechAction(){}
     /**
      * Check the validation of current action.
      * @return true if valid
@@ -30,5 +32,10 @@ public class UpMaxTechAction implements Action{
         Player<String> player = worldState.getPlayer();
         player.upMaxTech();
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return "You successfully upgrade your maximum technology level!";
     }
 }
