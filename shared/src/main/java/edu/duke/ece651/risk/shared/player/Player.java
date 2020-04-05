@@ -137,8 +137,6 @@ public abstract class Player<T> {
 
     public abstract void upMaxTech();
 
-
-
     public abstract int getTechLevel();
 
 }

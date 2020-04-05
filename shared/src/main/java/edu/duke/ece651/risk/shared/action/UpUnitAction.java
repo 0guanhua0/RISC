@@ -77,6 +77,11 @@ public class UpUnitAction implements Action{
             throw new IllegalArgumentException("Invalid input argument");
         }
         Territory territory = worldState.getMap().getTerritory(this.terr);
+
+        Player<String> player = worldState.getPlayer();
+        int cost = Utils.getUnitUpCost(srcLevel,targetLevel)*unitsNum;
+        player.useTech(cost);
+
         territory.upUnit(this.unitsNum,this.srcLevel,this.targetLevel);
         return true;
     }
