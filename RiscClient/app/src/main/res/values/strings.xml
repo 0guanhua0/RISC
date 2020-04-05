@@ -13,7 +13,7 @@
     <string name="signup_password2_hint">Again</string>
 
     <!--  home fragment  -->
-    <string name="home_all_room">available rooms</string>
+    <string name="home_all_room">rooms waiting for players</string>
     <string name="home_room_in">rooms you in</string>
 
     <!--  update fragment  -->
@@ -48,7 +48,7 @@
     <string name="play_game_decline">Decline</string>
 
     <!--  move & attack activity  -->
-    <string name="move_attack_unit_info">Units info:</string>
+    <string name="move_attack_unit_info">The Units you sent:</string>
 
     <string name="menu_home">Home</string>
     <string name="menu_update">Change Password</string>

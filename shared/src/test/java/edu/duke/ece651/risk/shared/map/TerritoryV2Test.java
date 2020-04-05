@@ -214,5 +214,9 @@ class TerritoryV2Test {
         assertEquals(7,stormTerr.getUnitsNum(1));
     }
 
-
+    @Test
+    void getDetailInfo(){
+        TerritoryV2 t2 = new TerritoryV2("name", 1, 1, 1);
+        assertNotNull(t2.getUnitGroup());
+    }
 }

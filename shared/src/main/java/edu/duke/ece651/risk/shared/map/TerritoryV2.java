@@ -35,8 +35,6 @@ public class TerritoryV2 extends TerritoryV1 {
         return size;
     }
 
-
-
     @Override
     public int getFoodYield(){
         return foodYield;
@@ -102,7 +100,6 @@ public class TerritoryV2 extends TerritoryV1 {
         }
         return new AttackResult(attackerID, defenderID, srcNames, destName, !enemy.isEmpty());
     }
-
 
     @Override
     public boolean canAddUnits(int num, int level) {
@@ -176,7 +173,6 @@ public class TerritoryV2 extends TerritoryV1 {
         return unitGroup.getOrDefault(level,new ArrayList<>()).size();
     }
 
-
     @Override
     public boolean canUpUnit(int unitsNum, int srcLevel, int targetLevel) {
         //check if the number of units with source tech level is valid
@@ -204,5 +200,10 @@ public class TerritoryV2 extends TerritoryV1 {
         }
         unitGroup.put(curLevel, source);
         unitGroup.put(targetLevel,target);
+    }
+
+    @Override
+    public Map<Integer, List<Unit>> getUnitGroup() {
+        return unitGroup;
     }
 }

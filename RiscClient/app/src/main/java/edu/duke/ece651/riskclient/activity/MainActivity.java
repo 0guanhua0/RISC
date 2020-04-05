@@ -21,13 +21,9 @@ import edu.duke.ece651.riskclient.ui.AboutFragment;
 import edu.duke.ece651.riskclient.ui.HomeFragment;
 import edu.duke.ece651.riskclient.ui.PasswordFragment;
 
-public class MainActivity extends AppCompatActivity {
+import static edu.duke.ece651.riskclient.RiskApplication.getPlayerName;
 
-    /**
-     *  constant value
-     */
-    public final static String LOGIN_ID = "edu.duke.ece651.risk.LOGIN_ID";
-    public final static String LOGIN_NAME = "edu.duke.ece651.risk.LOGIN_NAME";
+public class MainActivity extends AppCompatActivity {
 
     /**
      * UI variable
@@ -35,20 +31,10 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout drawer;
     private ActionBarDrawerToggle toggle;
 
-    /**
-     * variable
-     */
-    private Player player;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        final Intent intent = getIntent();
-        int userID = intent.getIntExtra(LOGIN_ID, 1);
-        String userName = intent.getStringExtra(LOGIN_NAME);
-        player = new Player(userID, userName);
 
         // setup toolBar
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
@@ -57,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
         // load default fragment
         if (savedInstanceState == null){
-            replaceFragment(HomeFragment.newInstance(player));
+            replaceFragment(HomeFragment.newInstance());
         }
 
         setUpDrawer(toolbar);
@@ -97,16 +83,16 @@ public class MainActivity extends AppCompatActivity {
             Fragment fragment;
             switch (menuItem.getItemId()){
                 case R.id.nav_home:
-                    fragment = HomeFragment.newInstance(player);
+                    fragment = HomeFragment.newInstance();
                     break;
                 case R.id.nav_update:
-                    fragment = PasswordFragment.newInstance(player);
+                    fragment = PasswordFragment.newInstance();
                     break;
                 case R.id.nav_about:
                     fragment = AboutFragment.newInstance();
                     break;
                 default:
-                    fragment = HomeFragment.newInstance(player);
+                    fragment = HomeFragment.newInstance();
             }
             replaceFragment(fragment);
             menuItem.setChecked(true);
@@ -118,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
         });
         View headView = navigationView.getHeaderView(0);
         TextView tvName = headView.findViewById(R.id.tv_user_name);
-        tvName.setText(player.getName());
+        tvName.setText(getPlayerName());
     }
 
     private void replaceFragment(Fragment fragment){
