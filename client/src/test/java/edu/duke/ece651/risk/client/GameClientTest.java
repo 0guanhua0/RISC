@@ -1,6 +1,6 @@
 package edu.duke.ece651.risk.client;
 
-import edu.duke.ece651.risk.shared.Room;
+import edu.duke.ece651.risk.shared.RoomInfo;
 import edu.duke.ece651.risk.shared.ToClientMsg.ClientSelect;
 import edu.duke.ece651.risk.shared.ToClientMsg.RoundInfo;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
@@ -73,11 +73,11 @@ public class GameClientTest {
         map.getTerritory(t6).setOwner(3);
 
         // mock data to be sent
-        List<Room> fakeRooms = new ArrayList<>(Arrays.asList(
-                new Room(0, "room0"),
-                new Room(1, "room1"),
-                new Room(2, "room2"),
-                new Room(3, "room3")
+        List<RoomInfo> fakeRoomInfos = new ArrayList<>(Arrays.asList(
+                new RoomInfo(0, "room0"),
+                new RoomInfo(1, "room1"),
+                new RoomInfo(2, "room2"),
+                new RoomInfo(3, "room3")
                 ));
         idToColor.put(1, "Green");
         idToColor.put(2, "Blue");
@@ -101,7 +101,7 @@ public class GameClientTest {
                     Player<String> player = new PlayerV1<>(PLAYER_COLOR, PLAYER_ID, socket.getInputStream(), socket.getOutputStream());
                     player.send("Hello");
                     // 2) ask room number
-                    player.send(fakeRooms);
+                    player.send(fakeRoomInfos);
                     String choice = (String) player.recv();
                     player.send(SUCCESSFUL);
                     // 3) ask map(if create a new room)
@@ -225,14 +225,14 @@ public class GameClientTest {
 
     @Test
     public void testChooseRoom() throws IOException, ClassNotFoundException {
-        List<Room> rooms = new ArrayList<>(Arrays.asList(
-                new Room(1, "room1"),
-                new Room(2, "room2"),
-                new Room(3, "room3")
+        List<RoomInfo> roomInfos = new ArrayList<>(Arrays.asList(
+                new RoomInfo(1, "room1"),
+                new RoomInfo(2, "room2"),
+                new RoomInfo(3, "room3")
         ));
         Client client = mock(Client.class);
         when(client.recv())
-                .thenReturn(rooms)
+                .thenReturn(roomInfos)
                 .thenReturn("Invalid choice, try again.")
                 .thenReturn(SUCCESSFUL);
 

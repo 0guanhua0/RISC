@@ -70,12 +70,11 @@ public class Constant {
 
     public static final String ROOM_NAME = "roomName";
     public static final String MAP_NAME = "mapName";
+    public static final String INFO_ALL_PLAYER = "allPlayer";
 
 
     //time when player offline others have to wait
     public static final int WAIT_TIME = 60000;
-
-
 
 
     //the key is current technical level, value is the cost of tech resources to upgrade maximum tech level to the next technical level

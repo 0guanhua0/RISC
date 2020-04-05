@@ -11,13 +11,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.duke.ece651.risk.shared.Room;
+import edu.duke.ece651.risk.shared.RoomInfo;
 import edu.duke.ece651.riskclient.R;
 import edu.duke.ece651.riskclient.listener.onClickListener;
 
 public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.RoomViewHolder> {
 
-    private List<Room> rooms;
+    private List<RoomInfo> rooms;
     private onClickListener listener;
 
     public RoomAdapter(){
@@ -34,7 +34,7 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.RoomViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull RoomViewHolder holder, int position) {
-        Room room = rooms.get(position);
+        RoomInfo room = rooms.get(position);
 
         holder.tvRoomName.setText(room.getRoomName());
         holder.tvRoomInfo.setText("nothing for now");
@@ -50,7 +50,7 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.RoomViewHolder
         return rooms.size();
     }
 
-    public Room getRoom(int index){
+    public RoomInfo getRoom(int index){
         return rooms.get(index);
     }
 
@@ -58,7 +58,7 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.RoomViewHolder
         this.listener = listener;
     }
 
-    public void setRooms(List<Room> rooms){
+    public void setRooms(List<RoomInfo> rooms){
         this.rooms.clear();
         this.rooms.addAll(rooms);
         notifyDataSetChanged();

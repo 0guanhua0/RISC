@@ -5,11 +5,11 @@ import java.io.Serializable;
 /**
  * This class stands for one room of the game.(mostly for evolution 2)
  */
-public class Room implements Serializable {
+public class RoomInfo implements Serializable {
     int roomID;
     String roomName;
 
-    public Room(int roomID, String roomName) {
+    public RoomInfo(int roomID, String roomName) {
         this.roomID = roomID;
         this.roomName = roomName;
     }

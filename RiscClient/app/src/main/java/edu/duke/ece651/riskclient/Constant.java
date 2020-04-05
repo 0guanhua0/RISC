@@ -31,6 +31,7 @@ public class Constant {
     public static final String SUCCESSFUL = "successful";
 
     public static final String ACTION_PERFORMED = "actionPerformed";
+    public static final String INFO_ALL_PLAYER = "allPlayer";
 
     public static final String FAIL_TO_SEND = "Fail to send the data, check your network connection";
     public static final String NETWORK_PROBLEM = "Network problem";

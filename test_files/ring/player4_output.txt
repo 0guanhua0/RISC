@@ -10,11 +10,11 @@ Starting a Gradle Daemon, 3 busy and 3 stopped Daemons could not be reused, use 
 > Task :client:run
 Welcome to the fancy RISK game!!!
 What do you want to do?
-J(oin) an existing room
-C(reate) a new room
-All rooms:
-room 1: 
-room 3: 
+J(oin) an existing roomInfo
+C(reate) a new roomInfo
+All roomInfos:
+roomInfo 1:
+roomInfo 3:
 Which one do you want to join?
 Please wait other players to join th game(need 4, joined 3)
 0 units in a (next to: h, b)

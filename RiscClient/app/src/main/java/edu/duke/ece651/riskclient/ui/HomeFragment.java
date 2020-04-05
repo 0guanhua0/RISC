@@ -17,7 +17,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
 
-import edu.duke.ece651.risk.shared.Room;
+import edu.duke.ece651.risk.shared.RoomInfo;
 import edu.duke.ece651.riskclient.R;
 import edu.duke.ece651.riskclient.activity.NewRoomActivity;
 import edu.duke.ece651.riskclient.activity.PlayGameActivity;
@@ -177,7 +177,7 @@ public class HomeFragment extends Fragment {
                 getActivity().runOnUiThread(() -> {
                     swipeRefreshLayout.setRefreshing(false);
                     if (o instanceof List<?>){
-                        roomAdapter.setRooms((List<Room>) o);
+                        roomAdapter.setRooms((List<RoomInfo>) o);
                     }
                     if (roomAdapter.getItemCount() == 0){
                         tvRoomInfo.setVisibility(View.VISIBLE);

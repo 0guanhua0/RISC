@@ -1,5 +1,6 @@
 package edu.duke.ece651.risk.server;
 
+import edu.duke.ece651.risk.shared.RoomInfo;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.network.Server;
 import edu.duke.ece651.risk.shared.player.Player;
@@ -247,24 +248,20 @@ public class GameServer {
 
     /**
      * This function will return the current running room list.
-     *
      * @return List of room object
      */
 
-    List<edu.duke.ece651.risk.shared.Room> getRoomList() {
+    List<RoomInfo> getRoomList() {
         clearRoom();
         // clear any finished room
-        List<edu.duke.ece651.risk.shared.Room> roomList = new ArrayList<>();
+        List<RoomInfo> roomInfoList = new ArrayList<>();
         for (Room room : rooms.values()) {
-
             if (!room.hasStarted()) {
-                roomList.add(new edu.duke.ece651.risk.shared.Room(room.roomID, ""));
+                roomInfoList.add(new RoomInfo(room.roomID, room.roomName));
             }
 
         }
-
-
-        return roomList;
+        return roomInfoList;
     }
 
     public static void main(String[] args) throws IOException, SQLException, ClassNotFoundException {

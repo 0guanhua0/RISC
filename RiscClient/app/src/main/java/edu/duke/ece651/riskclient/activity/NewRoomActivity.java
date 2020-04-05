@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -21,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Objects;
 
-import edu.duke.ece651.risk.shared.Room;
+import edu.duke.ece651.risk.shared.RoomInfo;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.riskclient.adapter.MapAdapter;
@@ -36,6 +37,8 @@ import static edu.duke.ece651.riskclient.activity.WaitGameActivity.PLAYER_CNT;
 import static edu.duke.ece651.riskclient.utils.UIUtils.showToastUI;
 
 public class NewRoomActivity extends AppCompatActivity {
+
+    private final static String TAG = NewRoomActivity.class.getSimpleName();
 
     private MapAdapter mapAdapter;
     private WorldMap selectedMap;
@@ -193,17 +196,18 @@ public class NewRoomActivity extends AppCompatActivity {
         HTTPUtils.sendNewRoomInfo(roomName, selectedMap.getName(), new onResultListener() {
             @Override
             public void onFailure(String error) {
-
+                Log.e(TAG, "newRoom: " + error);
             }
 
             @Override
             public void onSuccessful() {
-                setRoom(new Room(1, roomName));
+                setRoom(new RoomInfo(1, roomName));
                 showToastUI(NewRoomActivity.this, "Create new room successful.");
                 Intent intent = new Intent(NewRoomActivity.this, WaitGameActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putInt(PLAYER_CNT, selectedMap.getColorList().size());
-                startActivity(intent, bundle);
+                intent.putExtras(bundle);
+                startActivity(intent);
                 // kill current activity, user can't go back
                 finish();
             }

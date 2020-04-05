@@ -1,7 +1,6 @@
 package edu.duke.ece651.risk.client;
 
-import edu.duke.ece651.risk.shared.Room;
-import edu.duke.ece651.risk.shared.map.MapDataBase;
+import edu.duke.ece651.risk.shared.RoomInfo;
 import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 
@@ -19,10 +18,10 @@ class InsPrompt {
                 "C(reate) a new room");
     }
 
-    public static void insShowRooms(List<Room> roomList){
+    public static void insShowRooms(List<RoomInfo> roomInfoList){
         System.out.println("All rooms:");
-        for (Room room : roomList){
-            System.out.println(String.format("room %d: %s", room.getRoomID(), room.getRoomName()));
+        for (RoomInfo roomInfo : roomInfoList){
+            System.out.println(String.format("room %d: %s", roomInfo.getRoomID(), roomInfo.getRoomName()));
         }
         System.out.println("Which one do you want to join?");
     }

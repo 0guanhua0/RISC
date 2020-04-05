@@ -23,6 +23,7 @@ import static edu.duke.ece651.riskclient.Constant.ACTION_GET_WAIT_ROOM;
 import static edu.duke.ece651.riskclient.Constant.ACTION_LOGIN;
 import static edu.duke.ece651.riskclient.Constant.ACTION_SIGN_UP;
 import static edu.duke.ece651.riskclient.Constant.ACTION_TYPE;
+import static edu.duke.ece651.riskclient.Constant.INFO_ALL_PLAYER;
 import static edu.duke.ece651.riskclient.Constant.MAP_NAME;
 import static edu.duke.ece651.riskclient.Constant.PASSWORD_NEW;
 import static edu.duke.ece651.riskclient.Constant.PASSWORD_OLD;
@@ -193,6 +194,7 @@ public class HTTPUtils {
 
     /**
      * Set a listener to listen for new player.
+     * This function will continue call itself(endless) until receive
      * @param listener new player listener
      */
     public static void waitAllPlayers(onNewPlayerListener listener){
@@ -206,15 +208,17 @@ public class HTTPUtils {
             public void onSuccessful(Object object) {
                 if (object instanceof String){
                     // do something
-                    if (object.equals("all")){
+                    if (object.equals(INFO_ALL_PLAYER)){
                         listener.onAllPlayer();
                     }else {
-                        listener.onFailure((String) object);
-                        waitAllPlayers(listener);
+                        try {
+                            listener.onNewPlayer(new Player((String) object, ""));
+                            waitAllPlayers(listener);
+                        }catch (Exception e){
+                            Log.e(TAG, "waitAllPlayers: " + e.toString());
+                            listener.onFailure(e.toString());
+                        }
                     }
-                }else {
-                    listener.onNewPlayer((Player) object);
-                    waitAllPlayers(listener);
                 }
             }
         });

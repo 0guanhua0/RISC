@@ -13,7 +13,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import edu.duke.ece651.risk.shared.Room;
+import edu.duke.ece651.risk.shared.RoomInfo;
 import edu.duke.ece651.riskclient.listener.onReceiveListener;
 import edu.duke.ece651.riskclient.listener.onResultListener;
 import edu.duke.ece651.riskclient.objects.Player;
@@ -30,7 +30,7 @@ public class RiskApplication extends Application {
 
     private static Player player;
     // one player can only in one room at the same time
-    private static Room room;
+    private static RoomInfo room;
     // this socket is used to play a game
     // will be initialized once you join(or create) a room
     // will be closed once you leave a room
@@ -80,7 +80,7 @@ public class RiskApplication extends Application {
         return player.getId();
     }
 
-    public static void setRoom(Room r){
+    public static void setRoom(RoomInfo r){
         room = r;
     }
 

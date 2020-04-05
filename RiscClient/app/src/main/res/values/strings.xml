@@ -13,10 +13,10 @@
     <string name="signup_password2_hint">Again</string>
 
     <!--  home fragment  -->
-    <string name="home_all_room">rooms waiting for players</string>
-    <string name="home_room_in">rooms you in</string>
-    <string name="home_no_room_wait">Currently there are no rooms waiting for new player.</string>
-    <string name="home_no_room_in">Currently you don\'t have any playing rooms.</string>
+    <string name="home_all_room">roomInfos waiting for players</string>
+    <string name="home_room_in">roomInfos you in</string>
+    <string name="home_no_room_wait">Currently there are no roomInfos waiting for new player.</string>
+    <string name="home_no_room_in">Currently you don\'t have any playing roomInfos.</string>
 
     <!--  update fragment  -->
     <string name="update_name_info">Username:</string>
@@ -24,7 +24,7 @@
     <string name="update_new_password">New Password</string>
     <string name="update_submit">Submit</string>
 
-    <!--  add room activity  -->
+    <!--  add roomInfo activity  -->
     <string name="add_room_name">Room Name</string>
     <string name="add_room_selected_map">Selected map:</string>
     <string name="add_room_unselected_map">not selected yet</string>

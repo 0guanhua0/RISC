@@ -5,6 +5,7 @@ import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.risk.shared.player.Player;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.*;
@@ -17,6 +18,7 @@ import static edu.duke.ece651.risk.shared.Constant.*;
 //TODO for every method that have networking, handle some exceptions rather than just throwing it
 public class Room {
     int roomID;
+    String roomName;
     // all players in current room
     List<Player<String>> players;
     // the map this room is playing
@@ -39,23 +41,28 @@ public class Room {
             throw new IllegalArgumentException("Invalid value of Room Id");
         }
         this.roomID = roomID;
+        this.roomName = "";
 
         players = new ArrayList<>();
         players.add(player);
         player.setId(players.size());
 
-        // let the beginner determine the map
-        askForMap(mapDataBase);
+        // let the beginner choose map & specify room name
+        initGame(mapDataBase);
 
         List<String> colorList = map.getColorList();
         // assign the color
         player.setColor(colorList.get(0));
         player.sendPlayerInfo();
 
-        player.send(String.format("Please wait other players to join th game(need %d, joined %d)", colorList.size(), players.size()));
+        // don't need this message anymore
+//        player.send(String.format("Please wait other players to join th game(need %d, joined %d)", colorList.size(), players.size()));
 
         gameInfo = new GameInfo(-1, 1);
         gameInfo.addPlayer(player.getId(), player.getColor());
+
+        System.out.println("successfully init the game");
+        System.out.println("room name: " + this.roomName);
     }
 
     /**
@@ -77,29 +84,35 @@ public class Room {
 
             gameInfo.addPlayer(player.getId(), player.getColor());
 
+            // broadcast the newly joined player info
+            sendAll(player.getName());
+
             // check whether has enough player to start the game
             if (players.size() == colorList.size()) {
-                player.send("You are the last player, game will start now.");
+                // broadcast enough players join the game
+                sendAll(INFO_ALL_PLAYER);
+                // use a separate thread to run the game
                 new Thread(() -> {
                     try {
                         runGame();
                     } catch (Exception ignored) {
                     }
                 }).start();
-            } else {
-                //broadcast all info to other players
-                sendAll(String.format("Please wait other players to join th game(need %d, joined %d)", colorList.size(), players.size()));
             }
         }
     }
 
-    void askForMap(MapDataBase<String> mapDataBase) throws IOException, ClassNotFoundException {
+    void initGame(MapDataBase<String> mapDataBase) throws ClassNotFoundException {
         Player<String> firstPlayer = players.get(0);
         firstPlayer.send(mapDataBase);
         while (true) {
-            String mapName = (String) firstPlayer.recv();
+            String json = (String) firstPlayer.recv();
+            JSONObject jsonObject = new JSONObject(json);
+            String mapName = jsonObject.optString(MAP_NAME, "test");
+            String roomName = jsonObject.optString(ROOM_NAME, "fancy room");
             if (mapDataBase.containsMap(mapName)) {
                 map = mapDataBase.getMap(mapName);
+                this.roomName = roomName;
                 break;
             } else {
                 firstPlayer.send(SELECT_MAP_ERROR);
