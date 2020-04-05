@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -29,6 +30,7 @@ import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.TerritoryV2;
 import edu.duke.ece651.risk.shared.map.Unit;
 import edu.duke.ece651.risk.shared.map.WorldMap;
+import edu.duke.ece651.risk.shared.player.Player;
 import edu.duke.ece651.riskclient.R;
 import edu.duke.ece651.riskclient.adapter.TerritoryAdapter;
 import edu.duke.ece651.riskclient.listener.onReceiveListener;
@@ -39,6 +41,7 @@ import static edu.duke.ece651.risk.shared.Constant.GAME_OVER;
 import static edu.duke.ece651.risk.shared.Constant.ROUND_OVER;
 import static edu.duke.ece651.riskclient.Constant.ACTION_PERFORMED;
 import static edu.duke.ece651.riskclient.Constant.FAIL_TO_SEND;
+import static edu.duke.ece651.riskclient.Constant.MAP_NAME_TO_RESOURCE_ID;
 import static edu.duke.ece651.riskclient.Constant.NETWORK_PROBLEM;
 import static edu.duke.ece651.riskclient.RiskApplication.getRoomName;
 import static edu.duke.ece651.riskclient.RiskApplication.recv;
@@ -46,16 +49,20 @@ import static edu.duke.ece651.riskclient.RiskApplication.send;
 import static edu.duke.ece651.riskclient.utils.UIUtils.showToastUI;
 
 public class PlayGameActivity extends AppCompatActivity {
+    public static final String PLAYING_MAP = "playingMap";
+
     private static final int ACTION_MOVE_ATTACK = 1;
     private static final int ACTION_UPGRADE = 2;
 
     /**
      * UI variable
      */
+    private TextView tvPlayerInfo;
     private TextView tvActionInfo;
     private Button btMoveAttack;
     private Button btUpgrade;
     private Button btDone;
+    private ImageView imgMap;
 
     /**
      * Variable
@@ -63,6 +70,7 @@ public class PlayGameActivity extends AppCompatActivity {
     private TerritoryAdapter territoryAdapter;
     private List<Action> performedActions;
     private WorldMap<String> map;
+    private Player player;
     private int roundNum;
 
     @Override
@@ -120,11 +128,17 @@ public class PlayGameActivity extends AppCompatActivity {
 
         btMoveAttack.setOnClickListener(v -> {
             Intent intent = new Intent(PlayGameActivity.this, MoveAttackActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putSerializable(PLAYING_MAP, map);
+            intent.putExtras(bundle);
             startActivityForResult(intent, ACTION_MOVE_ATTACK);
         });
 
         btUpgrade.setOnClickListener(v -> {
             Intent intent = new Intent(PlayGameActivity.this, UpgradeActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putSerializable(PLAYING_MAP, map);
+            intent.putExtras(bundle);
             startActivityForResult(intent, ACTION_UPGRADE);
         });
 
@@ -140,6 +154,10 @@ public class PlayGameActivity extends AppCompatActivity {
             }));
             builder.show();
         });
+
+        tvPlayerInfo = findViewById(R.id.tv_player_info);
+
+        imgMap = findViewById(R.id.img_map);
 
         tvActionInfo = findViewById(R.id.tv_action_info);
         tvActionInfo.setMovementMethod(new ScrollingMovementMethod());
@@ -231,7 +249,7 @@ public class PlayGameActivity extends AppCompatActivity {
                     if (result.equals(ROUND_OVER)){
                         checkGameEnd();
                     }else {
-                        results.append(object);
+                        results.append(object).append("\n");
                         tvActionInfo.setText(results.toString());
                     }
                 }
@@ -280,8 +298,13 @@ public class PlayGameActivity extends AppCompatActivity {
                 RoundInfo info = (RoundInfo) object;
                 roundNum = info.getRoundNum();
                 map = info.getMap();
+                player = info.getPlayer();
+                // clear all actions in the last round
+                performedActions.clear();
                 showToastUI(PlayGameActivity.this, String.format(Locale.US,"start round %d", roundNum));
                 runOnUiThread(() -> {
+                    imgMap.setImageResource(MAP_NAME_TO_RESOURCE_ID.get(map.getName()));
+                    updatePlayerInfo();
                     updateTerritories();
                     setAllButtonClickable(true);
                 });
@@ -298,6 +321,18 @@ public class PlayGameActivity extends AppCompatActivity {
             territories.add(entry.getValue());
         }
         territoryAdapter.setTerritories(territories);
+    }
+
+    private void updatePlayerInfo(){
+        StringBuilder builder = new StringBuilder();
+        builder.append("Player ").append(player.getName())
+                .append("(id: ").append(player.getId()).append(")")
+                .append("   ").append("Max Tech Level: ").append(player.getTechLevel())
+                .append("\n");
+        builder.append("Food resource: ").append(player.getFoodNum())
+                .append("; Tech resource: ").append(player.getTechNum())
+                .append("\n");
+        tvPlayerInfo.setText(builder);
     }
 
     /**
@@ -321,7 +356,7 @@ public class PlayGameActivity extends AppCompatActivity {
         }else {
             int index = 1;
             for (Action action : performedActions){
-                builder.append(index).append(". ").append(action.toString());
+                builder.append(index).append(". ").append(action.toString()).append("\n");
                 index ++;
             }
         }
@@ -363,7 +398,7 @@ public class PlayGameActivity extends AppCompatActivity {
         // TODO: change text to save & exit
         AlertDialog.Builder builder = new AlertDialog.Builder(PlayGameActivity.this);
         builder.setPositiveButton("Save", (dialog1, which) -> {
-            showToastUI(PlayGameActivity.this, "Sava room");
+            showToastUI(PlayGameActivity.this, "Save room");
             // TODO: communicate with the server, send the exit info
             onBackPressed();
         });

@@ -47,7 +47,7 @@ public class RoundInfoTest {
         players.put(2, "Blue");
         players.put(3, "Red");
 
-        roundInfo = new RoundInfo(1, map, players);
+        roundInfo = new RoundInfo(1, map, players, null);
     }
 
     @Test

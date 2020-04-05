@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 import edu.duke.ece651.risk.shared.RoomInfo;
 import edu.duke.ece651.riskclient.listener.onReceiveListener;
 import edu.duke.ece651.riskclient.listener.onResultListener;
-import edu.duke.ece651.riskclient.objects.Player;
+import edu.duke.ece651.riskclient.objects.SimplePlayer;
 
 import static edu.duke.ece651.risk.shared.Constant.SUCCESSFUL;
 import static edu.duke.ece651.riskclient.Constant.HOST;
@@ -28,7 +28,7 @@ public class RiskApplication extends Application {
     private static Context context;
     /* ====== below are the parameters that need in one game(only need one copy in the whole program) ====== */
 
-    private static Player player;
+    private static SimplePlayer player;
     // one player can only in one room at the same time
     private static RoomInfo room;
     // this socket is used to play a game
@@ -64,7 +64,7 @@ public class RiskApplication extends Application {
         return threadPool;
     }
 
-    public static void setPlayer(Player p) {
+    public static void setPlayer(SimplePlayer p) {
         player = p;
     }
 
@@ -72,7 +72,7 @@ public class RiskApplication extends Application {
         player.setId(id);
     }
 
-    public static Player getPlayer() {
+    public static SimplePlayer getPlayer() {
         return player;
     }
 

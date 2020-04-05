@@ -19,6 +19,7 @@ import static edu.duke.ece651.risk.shared.Utils.getUnitUpCost;
  * @create: 2020-03-30 21:35
  **/
 public class UpUnitAction implements Action{
+    private static final long serialVersionUID = 4L;
 
     String terr;
     int playerId;

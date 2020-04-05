@@ -71,7 +71,7 @@ public class PlayerThread extends Thread{
             ServerSelect serverSelect = (ServerSelect)player.recv();
             synchronized (this) {
                 if(serverSelect.isValid(map, totalUnits, terrPerUsr)){
-                    //if valid, update the map
+                    // if valid, update the map
                     for (String terrName : serverSelect.getAllName()) {
                         Territory territory = map.getTerritory(terrName);
                         territory.addBasicUnits(serverSelect.getUnitsNum(terrName));
@@ -93,7 +93,7 @@ public class PlayerThread extends Thread{
         // 1. latest WorldMap
         // 2. mapping between id and color
         // 3. round number
-        RoundInfo roundInfo = new RoundInfo(gameInfo.getRoundNum(), map, gameInfo.getIdToName());
+        RoundInfo roundInfo = new RoundInfo(gameInfo.getRoundNum(), map, gameInfo.getIdToName(), player);
 
         player.send(roundInfo);
         //build the current state of game
@@ -103,14 +103,17 @@ public class PlayerThread extends Thread{
             while (true){
                 //if player disconnect, simply sleep for 60s
                 if (!player.isConnect()) {
+                    System.out.println("start sleeping");
                     Thread.sleep(WAIT_TIME);
                     break;
                 }
 
-
+                System.out.println("start receiving");
                 Object recvRes = player.recv();
                 if (recvRes instanceof Action){
                     Action action = (Action) recvRes;
+                    System.out.println("receive action");
+                    System.out.println(action);
                     synchronized (this) {
                         // act accordingly based on whether the input actions are valid or not
                         if (action.isValid(worldState)){

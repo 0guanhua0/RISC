@@ -2,17 +2,17 @@ package edu.duke.ece651.riskclient.objects;
 
 import java.io.Serializable;
 
-public class Player implements Serializable {
+public class SimplePlayer implements Serializable {
     private int id;
     private String name;
     private String password;
 
-    public Player(String name, String password) {
+    public SimplePlayer(String name, String password) {
         this.name = name;
         this.password = password;
     }
 
-    public Player(int id, String name, String password){
+    public SimplePlayer(int id, String name, String password){
         this.id = id;
         this.name = name;
         this.password = password;

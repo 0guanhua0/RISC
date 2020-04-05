@@ -10,6 +10,7 @@ import edu.duke.ece651.risk.shared.player.Player;
  * @create: 2020-03-30 17:33
  **/
 public class UpMaxTechAction implements Action{
+    private static final long serialVersionUID = 3L;
 
     public UpMaxTechAction(){}
     /**

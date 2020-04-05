@@ -11,13 +11,26 @@
         android:id="@+id/app_bar"
         layout="@layout/widget_app_bar"/>
 
+    <TextView
+        android:id="@+id/tv_player_info"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:textSize="@dimen/normal_text_size"
+        android:textColor="@color/text_color"
+        android:layout_marginHorizontal="@dimen/normal_margin"
+        android:layout_marginVertical="@dimen/small_margin_vertical"
+        app:layout_constraintTop_toBottomOf="@id/app_bar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
     <ImageView
         android:id="@+id/img_map"
         android:layout_width="match_parent"
         android:layout_height="@dimen/image_height"
-        android:layout_margin="@dimen/normal_margin"
+        android:layout_marginHorizontal="@dimen/normal_margin"
+        android:layout_marginVertical="@dimen/small_margin_vertical"
         android:src="@drawable/risk_img"
-        app:layout_constraintTop_toBottomOf="@id/app_bar"
+        app:layout_constraintTop_toBottomOf="@id/tv_player_info"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
@@ -25,7 +38,8 @@
         android:id="@+id/rv_territory_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_margin="@dimen/normal_margin"
+        android:layout_marginHorizontal="@dimen/normal_margin"
+        android:layout_marginVertical="@dimen/small_margin_vertical"
         android:background="@drawable/border"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -37,7 +51,7 @@
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:layout_marginHorizontal="@dimen/normal_margin"
-        android:layout_marginBottom="@dimen/normal_margin"
+        android:layout_marginBottom="@dimen/small_margin_vertical"
         android:text="You perform:\n1. move(a ---> c, 10 level 1 units)\n2. upgrade max level"
         android:scrollbars="vertical"
         app:layout_constraintStart_toStartOf="parent"

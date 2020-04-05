@@ -4,6 +4,7 @@ import edu.duke.ece651.risk.shared.Utils;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.WorldMap;
+import edu.duke.ece651.risk.shared.player.Player;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -14,10 +15,13 @@ public class RoundInfo implements Serializable {
     WorldMap<String> map;
     // for now we use player color to represent player name
     Map<Integer, String> idToName;
+    // current player object(record the resource information)
+    Player<String> player;
 
-    public RoundInfo(int roundNum, WorldMap<String> map, Map<Integer, String> idToName) throws IOException, ClassNotFoundException {
+    public RoundInfo(int roundNum, WorldMap<String> map, Map<Integer, String> idToName, Player<String> player) throws IOException, ClassNotFoundException {
         this.roundNum = roundNum;
         this.idToName = idToName;
+        this.player = player;
         copyMap(map);
     }
 
@@ -31,6 +35,10 @@ public class RoundInfo implements Serializable {
 
     public int getRoundNum() {
         return roundNum;
+    }
+
+    public Player<String> getPlayer(){
+        return player;
     }
 
     //TODO based on our previous experience, I am not sure whether using ObjectStream will bring some unexpected result
