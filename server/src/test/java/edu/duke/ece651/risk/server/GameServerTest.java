@@ -194,7 +194,7 @@ public class GameServerTest {
 
         String s6 = "{\"" + USER_NAME + "\": \"" + userName2 + "\",\n" +
                 "\"" + USER_PASSWORD +"\": \"" + userPassword2 + "\",\n" +
-                "\"" + ACTION + "\": \"" + GET_WAIT_ROOM + "\" }";
+                "\"" + ACTION + "\": \"" + ACTION_GET_WAIT_ROOM + "\" }";
 
         Socket socket6 = mock(Socket.class);
         when(socket6.getInputStream())
@@ -211,7 +211,7 @@ public class GameServerTest {
 
         String s7 = "{\"" + USER_NAME + "\": \"" + userName2 + "\",\n" +
                 "\"" + USER_PASSWORD +"\": \"" + userPassword2 + "\",\n" +
-                "\"" + ACTION + "\": \"" + GET_IN_ROOM + "\" }";
+                "\"" + ACTION + "\": \"" + ACTION_GET_IN_ROOM + "\" }";
 
         Socket socket7 = mock(Socket.class);
         when(socket7.getInputStream())
@@ -242,7 +242,7 @@ public class GameServerTest {
 
         String s11 = "{\"" + USER_NAME + "\": \"" + userName1 + "\",\n" +
                 "\"" + USER_PASSWORD +"\": \"" + userPassword1 + "\",\n" +
-                "\"" + ACTION + "\": \"" + CREATE_GAME + "\" }";
+                "\"" + ACTION + "\": \"" + ACTION_CREATE_GAME + "\" }";
         String s12 = "-1";
         String s13 = "test";
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

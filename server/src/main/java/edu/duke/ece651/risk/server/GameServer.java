@@ -36,6 +36,9 @@ public class GameServer {
         this.rooms = new ConcurrentHashMap<>();
         this.db = new SQL();
         this.userList = new UserList();
+
+        // TODO: debug info
+        db.addUser("xkw", "1234");
     }
 
     /**
@@ -73,8 +76,10 @@ public class GameServer {
         //treat new connection as new user
         Player player = new PlayerV2(socket.getInputStream(), socket.getOutputStream());
 
+        System.out.println("new connection");
         //header info from client
         String msg = (String) player.recv();
+        System.out.println("recv: " + msg);
         JSONObject obj = new JSONObject(msg);
 
         String userName = obj.getString(USER_NAME);
@@ -122,21 +127,21 @@ public class GameServer {
         //if yes, proceed
         //according to actual action to redirect
         //the available room
-        if (action.equals(GET_WAIT_ROOM)) {
+        if (action.equals(ACTION_GET_WAIT_ROOM)) {
             player.send(getRoomList());
             return;
         }
 
 
         //the room user has joined
-        if (action.equals(GET_IN_ROOM)) {
+        if (action.equals(ACTION_GET_IN_ROOM)) {
             player.send(userList.getUser(userName).getRoomList());
             return;
         }
 
 
         //create new room
-        if (action.equals(CREATE_GAME) || action.equals(JOIN_GAME)) {
+        if (action.equals(ACTION_CREATE_GAME) || action.equals(ACTION_JOIN_GAME)) {
             //proceed to original process
             startGame(player);
             return;
@@ -147,7 +152,7 @@ public class GameServer {
         //join the existing game
         //if new player, then just new player
         //if existing player, then plug in the stream
-        if (action.equals(RECONNECT_ROOM)) {
+        if (action.equals(ACTION_RECONNECT_ROOM)) {
             int roomID = obj.getInt(ROOM_ID);
             // user is a player already in room
             // redirect io

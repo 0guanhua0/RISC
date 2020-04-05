@@ -8,22 +8,21 @@ import org.json.JSONObject;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
 
-import edu.duke.ece651.risk.shared.Room;
 import edu.duke.ece651.risk.shared.action.Action;
 import edu.duke.ece651.riskclient.listener.onNewPlayerListener;
 import edu.duke.ece651.riskclient.listener.onReceiveListener;
 import edu.duke.ece651.riskclient.listener.onResultListener;
 import edu.duke.ece651.riskclient.objects.Player;
 
+import static edu.duke.ece651.risk.shared.Constant.ACTION_CREATE_GAME;
 import static edu.duke.ece651.riskclient.Constant.ACTION_CHANGE_PASSWORD;
 import static edu.duke.ece651.riskclient.Constant.ACTION_CREATE_NEW_ROOM;
+import static edu.duke.ece651.riskclient.Constant.ACTION_GET_IN_ROOM;
+import static edu.duke.ece651.riskclient.Constant.ACTION_GET_WAIT_ROOM;
 import static edu.duke.ece651.riskclient.Constant.ACTION_LOGIN;
 import static edu.duke.ece651.riskclient.Constant.ACTION_SIGN_UP;
 import static edu.duke.ece651.riskclient.Constant.ACTION_TYPE;
-import static edu.duke.ece651.riskclient.Constant.FAIL_TO_SEND;
 import static edu.duke.ece651.riskclient.Constant.MAP_NAME;
 import static edu.duke.ece651.riskclient.Constant.PASSWORD_NEW;
 import static edu.duke.ece651.riskclient.Constant.PASSWORD_OLD;
@@ -57,7 +56,7 @@ public class HTTPUtils {
             jsonObject.put(USER_NAME, player.getName());
             jsonObject.put(USER_PASSWORD, player.getPassword());
             jsonObject.put(ACTION_TYPE, ACTION_LOGIN);
-            sendAndCheckSuccess(jsonObject.toString(), listener);
+            sendAndCheckSuccessT(jsonObject.toString(), listener);
         } catch (JSONException e){
             Log.e(TAG, e.toString());
             listener.onFailure("JSON error(should not happen");
@@ -75,7 +74,7 @@ public class HTTPUtils {
             jsonObject.put(USER_NAME, player.getName());
             jsonObject.put(USER_PASSWORD, player.getPassword());
             jsonObject.put(ACTION_TYPE, ACTION_SIGN_UP);
-            sendAndCheckSuccess(jsonObject.toString(), listener);
+            sendAndCheckSuccessT(jsonObject.toString(), listener);
         }catch (JSONException e){
             Log.e(TAG, e.toString());
             listener.onFailure("JSON error(should not happen");
@@ -95,7 +94,7 @@ public class HTTPUtils {
             jsonObject.put(PASSWORD_OLD, player.getPassword());
             jsonObject.put(PASSWORD_NEW, newPass);
             jsonObject.put(ACTION_TYPE, ACTION_CHANGE_PASSWORD);
-            sendAndCheckSuccess(jsonObject.toString(), listener);
+            sendAndCheckSuccessT(jsonObject.toString(), listener);
         }catch (JSONException e){
             Log.e(TAG, e.toString());
             listener.onFailure("JSON error(should not happen");
@@ -108,16 +107,55 @@ public class HTTPUtils {
      * @param listener result listener
      */
     public static void getRoomList(boolean isRoomIn, onReceiveListener listener){
-        List<Room> rooms = new ArrayList<>();
-        for (int i = 0; i < 30; i++){
-            rooms.add(new Room(i, isRoomIn ? "roomIn" + (i + 1) : "roomWait" + (i + 1)));
+//        List<Room> rooms = new ArrayList<>();
+//        for (int i = 0; i < 30; i++){
+//            rooms.add(new Room(i, isRoomIn ? "roomIn" + (i + 1) : "roomWait" + (i + 1)));
+//        }
+//        listener.onSuccessful(rooms);
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put(USER_NAME, getPlayerName());
+            jsonObject.put(ACTION_TYPE, isRoomIn ? ACTION_GET_IN_ROOM : ACTION_GET_WAIT_ROOM);
+            sendAndRec(jsonObject.toString(), new onReceiveListener() {
+                @Override
+                public void onFailure(String error) {
+                    listener.onFailure(error);
+                }
+
+                @Override
+                public void onSuccessful(Object object) {
+                    listener.onSuccessful(object);
+                }
+            });
+        }catch (JSONException e){
+            Log.e(TAG, e.toString());
+            listener.onFailure("JSON error(should not happen");
         }
-        listener.onSuccessful(rooms);
-//        try {
-//            JSONObject jsonObject = new JSONObject();
-//            jsonObject.put(USER_NAME, getPlayerName());
-//            jsonObject.put(ACTION_TYPE, isRoomIn ? ACTION_GET_IN_ROOM : ACTION_GET_WAIT_ROOM);
-//            send(jsonObject.toString(), new onSendListener() {
+    }
+
+    // receive the MapDataBase
+    public static void getMapList(onReceiveListener listener){
+
+    }
+
+    /* ====== the functions below should use the game socket rather than a temporary socket ====== */
+    /**
+     * Tell the server we want to create a new room rather than join in an existing room(use game socket).
+     * @param listener result listener
+     */
+    public static void createNewRoom(onResultListener listener){
+        try {
+            // information header(tell serve what we want to do)
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put(USER_NAME, getPlayerName());
+            jsonObject.put(ACTION_TYPE, ACTION_CREATE_GAME);
+            send(jsonObject.toString());
+            // create a new room
+            sendAndCheckSuccessG("-1", listener);
+
+//            send("-1");
+//            // receive the confirm message
+//            checkResult(new onResultListener() {
 //                @Override
 //                public void onFailure(String error) {
 //                    listener.onFailure(error);
@@ -125,19 +163,12 @@ public class HTTPUtils {
 //
 //                @Override
 //                public void onSuccessful() {
-//                    // receive the room list
-//                    recv(listener);
+//                    listener.onSuccessful();
 //                }
 //            });
-//        }catch (JSONException e){
-//            Log.e(TAG, e.toString());
-//            listener.onFailure("JSON error(should not happen");
-//        }
-    }
-
-    // receive the MapDataBase
-    public static void getMapList(onReceiveListener listener){
-
+        }catch (JSONException e){
+            Log.e(TAG, "createNewRoom: " + e.toString());
+        }
     }
 
     /**
@@ -146,14 +177,14 @@ public class HTTPUtils {
      * @param mapName map name
      * @param listener result listener
      */
-    public static void createNewRoom(String roomName, String mapName, onResultListener listener){
+    public static void sendNewRoomInfo(String roomName, String mapName, onResultListener listener){
         try {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put(USER_NAME, getPlayerName());
             jsonObject.put(ROOM_NAME, roomName);
             jsonObject.put(MAP_NAME, mapName);
             jsonObject.put(ACTION_TYPE, ACTION_CREATE_NEW_ROOM);
-            sendAndCheckSuccess(jsonObject.toString(), listener);
+            sendAndCheckSuccessG(jsonObject.toString(), listener);
         }catch (JSONException e){
             Log.e(TAG, e.toString());
             listener.onFailure("JSON error(should not happen");
@@ -228,14 +259,15 @@ public class HTTPUtils {
 //        });
     }
 
+    /* ====== helper function ====== */
     /**
-     * Send the request string and check the response is successful or not.
+     * Send the request string and check the response is successful or not(using a tmp socket).
      * This function is used in the case you don't care the return value, just care about whether
      * success or not.
      * @param request the request string
      * @param listener result listener
      */
-    static void sendAndCheckSuccess(String request, onResultListener listener) {
+    static void sendAndCheckSuccessT(String request, onResultListener listener) {
 //        listener.onSuccessful();
         // use the global thread pool to execute
         getThreadPool().execute(() -> {
@@ -273,7 +305,6 @@ public class HTTPUtils {
                 Socket socket = getTmpSocket();
                 ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
                 ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
-                in.readObject();
                 out.writeObject(request);
                 out.flush();
                 Object res = in.readObject();
@@ -285,4 +316,14 @@ public class HTTPUtils {
         });
     }
 
+    /**
+     * This function has the same effect as sendAndCheckSuccessT, but using the game socket.
+     * @param object object to be sent
+     * @param listener result listener
+     */
+    static void sendAndCheckSuccessG(Object object, onResultListener listener){
+        send(object);
+        checkResult(listener);
+    }
 }
+

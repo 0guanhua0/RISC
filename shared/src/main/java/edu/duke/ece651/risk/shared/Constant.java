@@ -62,11 +62,14 @@ public class Constant {
 
 
     //client requiring gaming info
-    public static final String GET_WAIT_ROOM = "getWaitRoom";
-    public static final String GET_IN_ROOM = "getInRoom";
-    public static final String JOIN_GAME = "joinGame";
-    public static final String CREATE_GAME = "createGame";
-    public static final String RECONNECT_ROOM = "reconnect room";
+    public static final String ACTION_GET_WAIT_ROOM = "getWaitRoom";
+    public static final String ACTION_GET_IN_ROOM = "getInRoom";
+    public static final String ACTION_JOIN_GAME = "joinGame";
+    public static final String ACTION_CREATE_GAME = "createGame";
+    public static final String ACTION_RECONNECT_ROOM = "reconnect room";
+
+    public static final String ROOM_NAME = "roomName";
+    public static final String MAP_NAME = "mapName";
 
 
     //time when player offline others have to wait
