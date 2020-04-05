@@ -99,13 +99,28 @@ public abstract class Player<T> {
         territory.setFree();
     }
 
-    public void send(Object data) throws IOException {
-        out.writeObject(data);
-        out.flush();
+    public void send(Object data) {
+
+        try {
+
+            out.writeObject(data);
+            out.flush();
+        } catch (IOException e) {
+            this.setConnect(false);
+        }
     }
 
-    public Object recv() throws IOException, ClassNotFoundException {
-        return in.readObject();
+    public Object recv() throws ClassNotFoundException {
+        Object o = new Object();
+
+        try {
+            o =  in.readObject();
+        }
+        catch (IOException ignored) {
+            this.setConnect(false);
+        }
+
+        return o;
     }
 
     /**
@@ -115,11 +130,12 @@ public abstract class Player<T> {
      *
      * @throws IOException probably because of stream closed
      */
-    public void sendPlayerInfo() throws IOException {
+    public void sendPlayerInfo() {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put(PLAYER_ID, id);
         jsonObject.put(PLAYER_COLOR, color);
         send(jsonObject.toString());
+
     }
 
     public int getTerrNum() {
@@ -152,14 +168,28 @@ public abstract class Player<T> {
         isConnect = connect;
     }
 
+    public ObjectOutputStream getOut() {
+        return out;
+    }
+
+    public ObjectInputStream getIn() {
+        return in;
+    }
+
+    public void setOut(ObjectOutputStream out) {
+        this.out = out;
+    }
+
+    public void setIn(ObjectInputStream in) {
+        this.in = in;
+    }
+
     /**
      * reset connection handle connection
      */
 
 
     //todo: redirect the round info to a log file
-
-
     public void setName(String name) {
         this.name = name;
     }

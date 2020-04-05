@@ -73,7 +73,6 @@ public class GameServer {
         //treat new connection as new user
         Player player = new PlayerV2(socket.getInputStream(), socket.getOutputStream());
 
-
         //header info from client
         String msg = (String) player.recv();
         JSONObject obj = new JSONObject(msg);
@@ -155,6 +154,9 @@ public class GameServer {
                 //go to the room
                 //find that player
                 Player currPlayer = rooms.get(roomID).getPlayer(userName);
+                currPlayer.setIn(player.getIn());
+                currPlayer.setOut(player.getOut());
+                currPlayer.setConnect(true);
             } else {
                 player.send(INVALID_RECONNECT);
             }
