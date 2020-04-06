@@ -17,7 +17,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -27,9 +26,7 @@ import java.util.TimerTask;
 import edu.duke.ece651.risk.shared.ToClientMsg.RoundInfo;
 import edu.duke.ece651.risk.shared.WorldState;
 import edu.duke.ece651.risk.shared.action.Action;
-import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.map.Territory;
-import edu.duke.ece651.risk.shared.map.TerritoryV2;
 import edu.duke.ece651.risk.shared.map.Unit;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.risk.shared.player.Player;
@@ -41,9 +38,7 @@ import edu.duke.ece651.riskclient.listener.onResultListener;
 
 import static edu.duke.ece651.risk.shared.Constant.ACTION_DONE;
 import static edu.duke.ece651.risk.shared.Constant.GAME_OVER;
-import static edu.duke.ece651.risk.shared.Constant.ROUND_OVER;
 import static edu.duke.ece651.riskclient.Constant.ACTION_PERFORMED;
-import static edu.duke.ece651.riskclient.Constant.FAIL_TO_SEND;
 import static edu.duke.ece651.riskclient.Constant.MAP_NAME_TO_RESOURCE_ID;
 import static edu.duke.ece651.riskclient.Constant.NETWORK_PROBLEM;
 import static edu.duke.ece651.riskclient.RiskApplication.getRoomName;
@@ -129,6 +124,7 @@ public class PlayGameActivity extends AppCompatActivity {
                     // TODO: maybe we can perform the action here
                     performedActions.add(action);
                     showActions();
+                    showPlayerInfo();
                 }
                 break;
         }
@@ -329,9 +325,9 @@ public class PlayGameActivity extends AppCompatActivity {
                     // set the map image
                     imgMap.setImageResource(MAP_NAME_TO_RESOURCE_ID.get(map.getName()));
                     // update player info
-                    updatePlayerInfo();
+                    showPlayerInfo();
                     // update territory list
-                    updateTerritories();
+                    showTerritories();
                     // set all button clickable, let user input
                     setAllButtonClickable(true);
                 });
@@ -342,7 +338,7 @@ public class PlayGameActivity extends AppCompatActivity {
     /**
      * Update the territory list based on the latest map.
      */
-    private void updateTerritories(){
+    private void showTerritories(){
         List<Territory> territories = new ArrayList<>();
         for (Map.Entry<String, Territory> entry : map.getAtlas().entrySet()){
             territories.add(entry.getValue());
@@ -350,7 +346,7 @@ public class PlayGameActivity extends AppCompatActivity {
         territoryAdapter.setTerritories(territories);
     }
 
-    private void updatePlayerInfo(){
+    private void showPlayerInfo(){
         StringBuilder builder = new StringBuilder();
         builder.append("Player ").append(player.getName())
                 .append("(id: ").append(player.getId()).append(")")
