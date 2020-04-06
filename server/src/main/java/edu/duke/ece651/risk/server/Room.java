@@ -316,7 +316,7 @@ public class Room {
     //find certaion player
     public Player getPlayer(String name) {
         for (Player p : players) {
-            if (p.getColor().equals(name)) {
+            if (p.getName().equals(name)) {
                 return p;
             }
         }

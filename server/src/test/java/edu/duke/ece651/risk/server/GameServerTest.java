@@ -255,12 +255,18 @@ public class GameServerTest {
         String s11 = "{\"" + USER_NAME + "\": \"" + userName1 + "\",\n" +
                 "\"" + USER_PASSWORD + "\": \"" + userPassword1 + "\",\n" +
                 "\"" + ACTION + "\": \"" + ACTION_CREATE_GAME + "\" }";
-        String s12 = "-1";
-        String s13 = "test";
+
+
+        String rName = "1";
+
+        String s13 = "{\"" + MAP_NAME + "\": \"" + "test" + "\",\n" +
+                "\"" + ROOM_NAME +"\": \"" + rName + "\" }";
+
+
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         Socket socket1 = mock(Socket.class);
         when(socket1.getInputStream())
-                .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList(s11, s12, s13))));
+                .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList(s11, "-1", s13))));
         when(socket1.getOutputStream()).thenReturn(outputStream);
 
         gameServer.handleIncomeRequest(socket1);
@@ -270,8 +276,46 @@ public class GameServerTest {
         assertTrue(user1.isInRoom(0));
 
         //2 login user join existing room
+        String u2 = "2";
+        String pwd2 = "2";
+        User user2 = new User(u2, pwd2);
+        gameServer.db.addUser(u2, pwd2);
+        gameServer.userList.addUser(user2);
+
+        String s21 = "{\"" + USER_NAME + "\": \"" + u2 + "\",\n" +
+                "\"" + USER_PASSWORD + "\": \"" + pwd2 + "\",\n" +
+                "\"" + ACTION + "\": \"" + ACTION_JOIN_GAME + "\" }";
+
+
+
+        ByteArrayOutputStream o2 = new ByteArrayOutputStream();
+        Socket socket2 = mock(Socket.class);
+        when(socket2.getInputStream())
+                .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList(s21, "0"))));
+        when(socket2.getOutputStream()).thenReturn(o2);
+
+        gameServer.handleIncomeRequest(socket2);
+        assertEquals(1, gameServer.rooms.size());
+        assertEquals(2, gameServer.rooms.get(0).players.size());
+        assertTrue(user2.isInRoom(0));
+
+
 
         //3 login user reconnect to room
+        String s31 = "{\"" + USER_NAME + "\": \"" + userName1 + "\",\n" +
+                "\"" + ROOM_ID + "\": \"" + 0 + "\",\n" +
+                "\"" + ACTION + "\": \"" + ACTION_RECONNECT_ROOM + "\" }";
+
+
+
+        ByteArrayOutputStream o3 = new ByteArrayOutputStream();
+        Socket socket3 = mock(Socket.class);
+        when(socket3.getInputStream())
+                .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList(s31))));
+        when(socket3.getOutputStream()).thenReturn(o3);
+
+        gameServer.handleIncomeRequest(socket3);
+
 
     }
 
