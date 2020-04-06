@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,10 +9,82 @@
 
     <include
         android:id="@+id/app_bar"
-        layout="@layout/widget_app_bar" />
+        layout="@layout/widget_app_bar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <include
-        android:id="@+id/bt_group"
-        layout="@layout/widget_confirm_decline_button" />
+        layout="@layout/widget_territory_units_list"
+        android:id="@+id/src_territory"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/normal_margin"
+        android:layout_marginHorizontal="@dimen/normal_margin"
+        app:layout_constraintTop_toBottomOf="@id/app_bar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <include
+        android:id="@+id/unit_of_level_dropdown"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/small_margin_vertical"
+        android:layout_marginHorizontal="@dimen/normal_margin"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/src_territory"
+        layout="@layout/widget_dropdown" />
+
+    <include
+        android:id="@+id/no_of_units"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/small_margin_vertical"
+        android:layout_marginHorizontal="@dimen/normal_margin"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/unit_of_level_dropdown"
+        layout="@layout/widget_dropdown" />
+
+    <include
+        android:id="@+id/upgrade_to"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/small_margin_vertical"
+        android:layout_marginHorizontal="@dimen/normal_margin"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/no_of_units"
+        layout="@layout/widget_dropdown" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="left"
+        android:text="Total Cost"
+        android:textColor="@color/text_color"
+        android:textSize="@dimen/large_text_size"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/upgrade_to"
+        android:layout_marginVertical="@dimen/small_margin_vertical"
+        android:layout_marginHorizontal="@dimen/normal_margin"
+        android:id="@+id/total_cost" />
+
+    <include
+        android:id="@+id/accept_decline"
+        layout="@layout/widget_confirm_decline_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/small_margin_vertical"
+        android:layout_marginHorizontal="@dimen/normal_margin"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/total_cost" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+

@@ -259,30 +259,6 @@ public class PlayGameActivity extends AppCompatActivity {
                 });
             }
         });
-        // TODO: keep receiving until over, now it will only receive once
-//        recv(new onReceiveListener() {
-//            @Override
-//            public void onFailure(String error) {
-//
-//            }
-//
-//            @Override
-//            public void onSuccessful(Object object) {
-//                runOnUiThread(() -> {
-//                    tvActionInfo.setText("");
-//                    if (object instanceof String){
-//                        String result = (String) object;
-//                        // received all attack result, start a new round
-//                        if (result.equals(ROUND_OVER)){
-//                            checkGameEnd();
-//                        }else {
-//                            results.append(object).append("\n");
-//                            tvActionInfo.setText(results.toString());
-//                        }
-//                    }
-//                });
-//            }
-//        });
     }
 
     /**
@@ -426,7 +402,6 @@ public class PlayGameActivity extends AppCompatActivity {
 
     // probably want to extract this into constant
     private void goBack(){
-        // TODO: change text to save & exit
         AlertDialog.Builder builder = new AlertDialog.Builder(PlayGameActivity.this);
         builder.setPositiveButton("Save", (dialog1, which) -> {
             showToastUI(PlayGameActivity.this, "Save room");
