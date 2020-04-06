@@ -87,6 +87,12 @@ public class HomeFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        updateData();
+        super.onResume();
+    }
+
     private void setUpUI(View view){
         FloatingActionButton fab = view.findViewById(R.id.fab);
         fab.setOnClickListener(v -> {
@@ -119,11 +125,6 @@ public class HomeFragment extends Fragment {
 
         ChipGroup cgRoom = view.findViewById(R.id.cg_room_type);
         cgRoom.setOnCheckedChangeListener((chipGroup, id) -> {
-            if (id == R.id.chip_room_in){
-                showToastUI(getActivity(), "click room in");
-            }else {
-                showToastUI(getActivity(), "click room all");
-            }
             isInRoom = (id == R.id.chip_room_in);
             updateData();
         });

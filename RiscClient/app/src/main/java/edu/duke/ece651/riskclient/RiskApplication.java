@@ -206,6 +206,7 @@ public class RiskApplication extends Application {
             @Override
             public void onFailure(String error) {
                 listener.onFailure(error);
+                Log.e(TAG, "checkResult: " + error);
             }
 
             @Override

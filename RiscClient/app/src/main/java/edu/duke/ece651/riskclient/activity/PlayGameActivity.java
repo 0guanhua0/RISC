@@ -25,6 +25,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import edu.duke.ece651.risk.shared.ToClientMsg.RoundInfo;
+import edu.duke.ece651.risk.shared.WorldState;
 import edu.duke.ece651.risk.shared.action.Action;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.map.Territory;
@@ -47,6 +48,7 @@ import static edu.duke.ece651.riskclient.Constant.MAP_NAME_TO_RESOURCE_ID;
 import static edu.duke.ece651.riskclient.Constant.NETWORK_PROBLEM;
 import static edu.duke.ece651.riskclient.RiskApplication.getRoomName;
 import static edu.duke.ece651.riskclient.RiskApplication.recv;
+import static edu.duke.ece651.riskclient.RiskApplication.releaseGameSocket;
 import static edu.duke.ece651.riskclient.RiskApplication.send;
 import static edu.duke.ece651.riskclient.utils.HTTPUtils.recvAttackResult;
 import static edu.duke.ece651.riskclient.utils.UIUtils.showToastUI;
@@ -75,7 +77,7 @@ public class PlayGameActivity extends AppCompatActivity {
     private TerritoryAdapter territoryAdapter;
     private List<Action> performedActions;
     private WorldMap<String> map;
-    private Player player;
+    private Player<String> player;
     private int roundNum;
 
     @Override
@@ -94,7 +96,7 @@ public class PlayGameActivity extends AppCompatActivity {
 
         setUpUI();
 
-        // make sure user can't do anything before we receive the data
+        // make sure user can't do anything before we receive the first round data
         setAllButtonClickable(false);
 
         newRound();
@@ -119,9 +121,11 @@ public class PlayGameActivity extends AppCompatActivity {
             case ACTION_UPGRADE:
                 if (resultCode == RESULT_OK){
                     Action action = (Action) data.getSerializableExtra(ACTION_PERFORMED);
+                    // server check that the action is valid, so we perform it to update current map
+                    // NOTE: this only update the copy of the map, we will still get the latest map from server at the beginning of each term
+                    action.perform(new WorldState(player, map));
                     // TODO: maybe we can perform the action here
                     performedActions.add(action);
-
                     showActions();
                 }
                 break;
@@ -164,6 +168,7 @@ public class PlayGameActivity extends AppCompatActivity {
         });
 
         tvPlayerInfo = findViewById(R.id.tv_player_info);
+        tvPlayerInfo.setText("Please wait other players to finish assigning units...");
 
         imgMap = findViewById(R.id.img_map);
 
@@ -409,6 +414,7 @@ public class PlayGameActivity extends AppCompatActivity {
         builder.setPositiveButton("Save", (dialog1, which) -> {
             showToastUI(PlayGameActivity.this, "Save room");
             // TODO: communicate with the server, send the exit info
+            releaseGameSocket();
             onBackPressed();
         });
         builder.setNegativeButton("Exit", (dialog2, which) -> {

@@ -21,6 +21,7 @@ import edu.duke.ece651.riskclient.objects.SimplePlayer;
 import static edu.duke.ece651.risk.shared.Constant.ACTION_CREATE_GAME;
 import static edu.duke.ece651.risk.shared.Constant.ACTION_JOIN_GAME;
 import static edu.duke.ece651.risk.shared.Constant.ACTION_RECONNECT_ROOM;
+import static edu.duke.ece651.risk.shared.Constant.ROOM_ID;
 import static edu.duke.ece651.risk.shared.Constant.ROUND_OVER;
 import static edu.duke.ece651.riskclient.Constant.ACTION_CHANGE_PASSWORD;
 import static edu.duke.ece651.riskclient.Constant.ACTION_CREATE_NEW_ROOM;
@@ -238,9 +239,9 @@ public class HTTPUtils {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put(USER_NAME, getPlayerName());
             jsonObject.put(ACTION_TYPE, ACTION_RECONNECT_ROOM);
-            send(jsonObject.toString());
+            jsonObject.put(ROOM_ID, getRoomID());
             // join in an existing room
-            sendAndCheckSuccessG(String.valueOf(getRoomID()), listener);
+            sendAndCheckSuccessG(jsonObject.toString(), listener);
         }catch (JSONException e){
             Log.e(TAG, "backGame: " + e.toString());
         }
