@@ -13,8 +13,8 @@
     <string name="signup_password2_hint">Again</string>
 
     <!--  home fragment  -->
-    <string name="home_all_room">roomInfos waiting for players</string>
-    <string name="home_room_in">roomInfos you in</string>
+    <string name="home_all_room">rooms waiting for players</string>
+    <string name="home_room_in">rooms you in</string>
     <string name="home_no_room_wait">Currently there are no roomInfos waiting for new player.</string>
     <string name="home_no_room_in">Currently you don\'t have any playing roomInfos.</string>
 

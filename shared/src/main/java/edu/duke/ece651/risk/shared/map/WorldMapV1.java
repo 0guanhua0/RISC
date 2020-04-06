@@ -10,6 +10,8 @@ import java.util.*;
  * @create: 2020-03-28 15:00
  **/
 public class WorldMapV1<T extends Serializable> extends WorldMap{
+    private static final long serialVersionUID = 11L;
+
     public WorldMapV1(Map<String, Set<String>> adjaList, List<T> colorList, Map<Set<String>, Boolean> groups) throws IllegalArgumentException {
 
         //check legality of groups

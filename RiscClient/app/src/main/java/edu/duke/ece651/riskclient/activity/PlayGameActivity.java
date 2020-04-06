@@ -353,20 +353,21 @@ public class PlayGameActivity extends AppCompatActivity {
                             dialog.show();
                             hasShowDialog = true;
                         }
+                        // do nothing, just waiting for attack result
+                        receiveAttackResult();
                     }else {
-                        // set the round number
-                        tvRoundNum.setText(String.valueOf(roundNum));
-                        // reset the action info
-//                    showActions();
-                        // set the map image
-                        imgMap.setImageResource(MAP_NAME_TO_RESOURCE_ID.get(map.getName()));
-                        // update player info
-                        showPlayerInfo();
-                        // update territory list
-                        showTerritories();
                         // set all button clickable, let user input
                         setAllButtonClickable(true);
                     }
+                    // as long as the user is in the room, we should update the info
+                    // set the round number
+                    tvRoundNum.setText(String.valueOf(roundNum));
+                    // set the map image
+                    imgMap.setImageResource(MAP_NAME_TO_RESOURCE_ID.get(map.getName()));
+                    // update player info
+                    showPlayerInfo();
+                    // update territory list
+                    showTerritories();
                 });
             }
         });
@@ -474,28 +475,27 @@ public class PlayGameActivity extends AppCompatActivity {
 
     // probably want to extract this into constant
     private void goBack(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(PlayGameActivity.this);
-        builder.setPositiveButton("Save", (dialog1, which) -> {
-            showToastUI(PlayGameActivity.this, "Save room");
-            // TODO: communicate with the server, send the exit info
-            releaseGameSocket();
-            onBackPressed();
-        });
-        builder.setNegativeButton("Exit", (dialog2, which) -> {
-            showToastUI(PlayGameActivity.this, "Exit room");
-            // TODO: communicate with the server, send the exit info
-            onBackPressed();
-        });
+        if (isLose){
+            AlertDialog.Builder builder = new AlertDialog.Builder(PlayGameActivity.this);
+            builder.setPositiveButton("Yes", (dialog1, which) -> {
+                onBackPressed();
+            });
+            builder.setNegativeButton("No", (dialog2, which) -> {
+            });
 
-        builder.setOnCancelListener(dialog -> showToastUI(PlayGameActivity.this, "cancel"));
-        builder.setMessage("Do you want to save the game?");
-        AlertDialog dialog = builder.create();
-        dialog.setOnShowListener(dialog12 -> {
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE)
-                    .setTextColor(
-                            getResources().getColor(R.color.colorPrimary)
-                    );
-        });
-        dialog.show();
+            builder.setTitle("Do you want to leave the game?");
+            builder.setMessage("Since you already lose, once you leave, you can't join this game again.");
+            AlertDialog dialog = builder.create();
+            dialog.setOnShowListener(dialog12 -> {
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                        .setTextColor(
+                                getResources().getColor(R.color.colorPrimary)
+                        );
+            });
+            dialog.show();
+        }else {
+            // if not lose, can go out and come back as you want
+            onBackPressed();
+        }
     }
 }

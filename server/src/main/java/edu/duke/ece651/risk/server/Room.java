@@ -324,9 +324,23 @@ public class Room {
 
     //check if has certain player
     public boolean hasUser(String name) {
-        for (Player p : players) {
+        for (Player<String> p : players) {
             if (p.getName().equals(name)) {
                 return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check whether this player is lose.
+     * @param playerName player name
+     * @return true for lose
+     */
+    public boolean isPlayerLose(String playerName){
+        for (Player<String> p : players) {
+            if (p.getName().equals(playerName)) {
+                return p.getTerrNum() <= 0;
             }
         }
         return false;

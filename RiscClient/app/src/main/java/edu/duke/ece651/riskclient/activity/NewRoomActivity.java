@@ -175,7 +175,7 @@ public class NewRoomActivity extends AppCompatActivity {
         recv(new onReceiveListener() {
             @Override
             public void onFailure(String error) {
-
+                Log.e(TAG, "updateMap: " + error);
             }
 
             @Override

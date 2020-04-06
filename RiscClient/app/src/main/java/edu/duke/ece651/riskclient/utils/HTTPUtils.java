@@ -239,7 +239,7 @@ public class HTTPUtils {
             jsonObject.put(ACTION_TYPE, ACTION_RECONNECT_ROOM);
             jsonObject.put(ROOM_ID, getRoomID());
             // join in an existing room
-            sendAndCheckSuccessG(jsonObject.toString(), listener);
+             sendAndCheckSuccessG(jsonObject.toString(), listener);
         }catch (JSONException e){
             Log.e(TAG, "backGame: " + e.toString());
         }
