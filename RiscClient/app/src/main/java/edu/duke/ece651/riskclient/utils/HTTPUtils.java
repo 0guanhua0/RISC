@@ -14,12 +14,14 @@ import edu.duke.ece651.risk.shared.ToServerMsg.ServerSelect;
 import edu.duke.ece651.risk.shared.action.Action;
 import edu.duke.ece651.riskclient.listener.onNewPlayerListener;
 import edu.duke.ece651.riskclient.listener.onReceiveListener;
+import edu.duke.ece651.riskclient.listener.onRecvAttackResultListener;
 import edu.duke.ece651.riskclient.listener.onResultListener;
 import edu.duke.ece651.riskclient.objects.SimplePlayer;
 
 import static edu.duke.ece651.risk.shared.Constant.ACTION_CREATE_GAME;
 import static edu.duke.ece651.risk.shared.Constant.ACTION_JOIN_GAME;
 import static edu.duke.ece651.risk.shared.Constant.ACTION_RECONNECT_ROOM;
+import static edu.duke.ece651.risk.shared.Constant.ROUND_OVER;
 import static edu.duke.ece651.riskclient.Constant.ACTION_CHANGE_PASSWORD;
 import static edu.duke.ece651.riskclient.Constant.ACTION_CREATE_NEW_ROOM;
 import static edu.duke.ece651.riskclient.Constant.ACTION_GET_IN_ROOM;
@@ -282,10 +284,6 @@ public class HTTPUtils {
         });
     }
 
-    public static void getRoundInfo(onReceiveListener listener){
-        recv(listener);
-    }
-
     /**
      * This function will send an action to the server, and receive the validation result.
      * @param action action to be sent
@@ -315,6 +313,30 @@ public class HTTPUtils {
                         listener.onSuccessful();
                     }
                 });
+            }
+        });
+    }
+
+    public static void recvAttackResult(onRecvAttackResultListener listener){
+        recv(new onReceiveListener() {
+            @Override
+            public void onFailure(String error) {
+                listener.onFailure(error);
+            }
+
+            @Override
+            public void onSuccessful(Object object) {
+                if (object instanceof String){
+                    String result = (String) object;
+                    // received all attack result, start a new round
+                    if (result.equals(ROUND_OVER)){
+                        listener.onOver();
+                    }else {
+                        listener.onNewResult(result);
+                        // keep listening
+                        recvAttackResult(listener);
+                    }
+                }
             }
         });
     }

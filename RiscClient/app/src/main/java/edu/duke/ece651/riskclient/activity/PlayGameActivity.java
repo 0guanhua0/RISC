@@ -3,6 +3,7 @@ package edu.duke.ece651.riskclient.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -34,6 +35,7 @@ import edu.duke.ece651.risk.shared.player.Player;
 import edu.duke.ece651.riskclient.R;
 import edu.duke.ece651.riskclient.adapter.TerritoryAdapter;
 import edu.duke.ece651.riskclient.listener.onReceiveListener;
+import edu.duke.ece651.riskclient.listener.onRecvAttackResultListener;
 import edu.duke.ece651.riskclient.listener.onResultListener;
 
 import static edu.duke.ece651.risk.shared.Constant.ACTION_DONE;
@@ -46,9 +48,12 @@ import static edu.duke.ece651.riskclient.Constant.NETWORK_PROBLEM;
 import static edu.duke.ece651.riskclient.RiskApplication.getRoomName;
 import static edu.duke.ece651.riskclient.RiskApplication.recv;
 import static edu.duke.ece651.riskclient.RiskApplication.send;
+import static edu.duke.ece651.riskclient.utils.HTTPUtils.recvAttackResult;
 import static edu.duke.ece651.riskclient.utils.UIUtils.showToastUI;
 
 public class PlayGameActivity extends AppCompatActivity {
+    private static final String TAG = PlayGameActivity.class.getSimpleName();
+
     public static final String PLAYING_MAP = "playingMap";
 
     private static final int ACTION_MOVE_ATTACK = 1;
@@ -232,29 +237,52 @@ public class PlayGameActivity extends AppCompatActivity {
      */
     private void receiveAttackResult(){
         StringBuilder results = new StringBuilder();
-        // TODO: keep receiving until over, now it will only receive once
-        recv(new onReceiveListener() {
+        recvAttackResult(new onRecvAttackResultListener() {
             @Override
-            public void onFailure(String error) {
-                showToastUI(PlayGameActivity.this, NETWORK_PROBLEM);
-                setAllButtonClickable(true);
+            public void onNewResult(String result) {
+                runOnUiThread(() -> {
+                    results.append(result).append("\n");
+                    tvActionInfo.setText(results.toString());
+                });
             }
 
             @Override
-            public void onSuccessful(Object object) {
-                tvActionInfo.setText("");
-                if (object instanceof String){
-                    String result = (String) object;
-                    // received all attack result, start a new round
-                    if (result.equals(ROUND_OVER)){
-                        checkGameEnd();
-                    }else {
-                        results.append(object).append("\n");
-                        tvActionInfo.setText(results.toString());
-                    }
-                }
+            public void onOver() {
+                checkGameEnd();
+            }
+
+            @Override
+            public void onFailure(String error) {
+                showToastUI(PlayGameActivity.this, NETWORK_PROBLEM);
+                runOnUiThread(() -> {
+                    setAllButtonClickable(true);
+                });
             }
         });
+        // TODO: keep receiving until over, now it will only receive once
+//        recv(new onReceiveListener() {
+//            @Override
+//            public void onFailure(String error) {
+//
+//            }
+//
+//            @Override
+//            public void onSuccessful(Object object) {
+//                runOnUiThread(() -> {
+//                    tvActionInfo.setText("");
+//                    if (object instanceof String){
+//                        String result = (String) object;
+//                        // received all attack result, start a new round
+//                        if (result.equals(ROUND_OVER)){
+//                            checkGameEnd();
+//                        }else {
+//                            results.append(object).append("\n");
+//                            tvActionInfo.setText(results.toString());
+//                        }
+//                    }
+//                });
+//            }
+//        });
     }
 
     /**
@@ -265,7 +293,9 @@ public class PlayGameActivity extends AppCompatActivity {
             @Override
             public void onFailure(String error) {
                 showToastUI(PlayGameActivity.this, NETWORK_PROBLEM);
-                setAllButtonClickable(true);
+                runOnUiThread(() -> {
+                    setAllButtonClickable(true);
+                });
             }
 
             @Override
@@ -303,6 +333,7 @@ public class PlayGameActivity extends AppCompatActivity {
                 performedActions.clear();
                 showToastUI(PlayGameActivity.this, String.format(Locale.US,"start round %d", roundNum));
                 runOnUiThread(() -> {
+                    showActions();
                     imgMap.setImageResource(MAP_NAME_TO_RESOURCE_ID.get(map.getName()));
                     updatePlayerInfo();
                     updateTerritories();
@@ -368,7 +399,7 @@ public class PlayGameActivity extends AppCompatActivity {
         recv(new onReceiveListener() {
             @Override
             public void onFailure(String error) {
-
+                Log.e(TAG, "endGame" + error);
             }
 
             @Override
