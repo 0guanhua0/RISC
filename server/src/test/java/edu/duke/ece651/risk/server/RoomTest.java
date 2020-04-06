@@ -122,7 +122,7 @@ public class RoomTest {
         assertEquals(errorMsg,SELECT_MAP_ERROR);
         assertEquals(SUCCESSFUL, (String)objectInputStream.readObject());
         objectInputStream.readObject(); // this is for player initial message
-        assertThrows(EOFException.class,()->{String res = (String)objectInputStream.readObject();});
+        assertThrows(ClassCastException.class,()->{String res = (String)objectInputStream.readObject();});
     }
 
     @Test
@@ -250,8 +250,9 @@ public class RoomTest {
         s1.readObject(); // mapDataBase
         s1.readObject(); // successful
         s1.readObject(); // player info
+        s1.readObject();
         assertEquals(YOU_WINS, s1.readObject());
-        assertEquals("Winner is the Red player.", s2.readObject());
+        assertEquals("Winner is the red player.", s2.readObject());
     }
 
     @Test
