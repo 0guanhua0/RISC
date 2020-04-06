@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -13,6 +14,8 @@ import java.util.HashSet;
 import static edu.duke.ece651.risk.shared.Mock.readAllStringFromObjectStream;
 import static edu.duke.ece651.risk.shared.Mock.setupMockInput;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class PlayerTest {
     @Test
@@ -107,4 +110,61 @@ class PlayerTest {
                 readAllStringFromObjectStream(outputStream)
         );
     }
+
+    @Test
+    void connect() throws IOException, ClassNotFoundException {
+        String s1 = "1`";
+        String s2 = "2";
+
+        ByteArrayOutputStream outputStream1 = new ByteArrayOutputStream();
+        Socket socket1 = mock(Socket.class);
+        when(socket1.getInputStream())
+                .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList(s1, s2))));
+        when(socket1.getOutputStream()).thenReturn(outputStream1);
+        Player p1 = new PlayerV2(socket1.getInputStream(), socket1.getOutputStream());
+
+        p1.setName("a");
+        assertEquals("a", p1.getName());
+
+        assertTrue(p1.isConnect());
+        p1.setConnect(false);
+        assertFalse(p1.isConnect());
+
+
+
+        ByteArrayOutputStream o2 = new ByteArrayOutputStream();
+        Socket socket2 = mock(Socket.class);
+        when(socket2.getInputStream())
+                .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList(s1, s2))));
+        when(socket2.getOutputStream()).thenReturn(o2);
+        Player p2 = new PlayerV2(socket2.getInputStream(), socket2.getOutputStream());
+
+        p2.setIn(p1.getIn());
+        p2.setOut(p1.getOut());
+        assertEquals(s1, p2.recv());
+
+        p2.send(s2);
+        assertEquals(s2, readAllStringFromObjectStream(outputStream1));
+    }
+
+    /*
+    @Test
+    void IOexption() throws IOException {
+        ServerSocket s = new ServerSocket(12345);
+        Socket server =  s.accept();
+
+        Socket socket1 = new Socket("127.0.0.1", 12345);
+
+        Player p1 = new PlayerV2(socket1.getInputStream(), socket1.getOutputStream());
+        p1.send("hello");
+
+        DataInputStream in = new DataInputStream(server.getInputStream());
+
+        System.out.println(in.readUTF());
+
+
+    }
+
+     */
+
 }
