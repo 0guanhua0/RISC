@@ -4,6 +4,7 @@ import java.sql.*;
 
 //todo: add change password, encrypt password
 public class SQL {
+    // jdbc:postgresql://vcm-12835.vm.duke.edu:5432/risk
     static String dbUrl = "jdbc:postgresql://vcm-12835.vm.duke.edu:5432/risk";
     static String dbUser = "postgres";
     static String dbPassword = "postgres";
@@ -13,8 +14,6 @@ public class SQL {
         dropTable();
         //create table
         createTable();
-
-
     }
 
     public void createTable() throws SQLException, ClassNotFoundException {
