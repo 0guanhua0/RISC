@@ -147,7 +147,6 @@ public class PlayerThread extends Thread{
                         this.player.send(INVALID_ACTION);
                     }
                 }else {
-                    System.out.println("start sleeping");
                     Thread.sleep(1000);
                     checkCnt++;
                     reconnect = true;

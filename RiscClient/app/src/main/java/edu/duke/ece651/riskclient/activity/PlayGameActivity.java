@@ -45,6 +45,7 @@ import static edu.duke.ece651.riskclient.RiskApplication.getRoomName;
 import static edu.duke.ece651.riskclient.RiskApplication.recv;
 import static edu.duke.ece651.riskclient.RiskApplication.releaseGameSocket;
 import static edu.duke.ece651.riskclient.RiskApplication.send;
+import static edu.duke.ece651.riskclient.RiskApplication.setPlayerID;
 import static edu.duke.ece651.riskclient.utils.HTTPUtils.recvAttackResult;
 import static edu.duke.ece651.riskclient.utils.UIUtils.showToastUI;
 
@@ -314,6 +315,7 @@ public class PlayGameActivity extends AppCompatActivity {
                 roundNum = info.getRoundNum();
                 map = info.getMap();
                 player = info.getPlayer();
+                setPlayerID(player.getId());
                 // clear all actions in the last round
                 performedActions.clear();
                 showToastUI(PlayGameActivity.this, String.format(Locale.US,"start round %d", roundNum));
