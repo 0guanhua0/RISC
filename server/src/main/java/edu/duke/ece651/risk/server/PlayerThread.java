@@ -94,22 +94,26 @@ public class PlayerThread extends Thread{
         // 2. mapping between id and color
         // 3. round number
         RoundInfo roundInfo = new RoundInfo(gameInfo.getRoundNum(), map, gameInfo.getIdToName(), player);
-
-        player.send(roundInfo);
+        Player<String> player = roundInfo.getPlayer();
+        int foodNum = player.getFoodNum();
+        System.out.println("foodNum = " + foodNum);
+        int techNum = player.getTechNum();
+        System.out.println("techNum = " + techNum);
+        this.player.send(roundInfo);
         //build the current state of game
         WorldState worldState = new WorldState(this.player, this.map);
         //if player hasn't losed yet, let him or her play another round of game
-        if (player.getTerrNum() > 0){
+        if (this.player.getTerrNum() > 0){
             while (true){
                 //if player disconnect, simply sleep for 60s
-                if (!player.isConnect()) {
+                if (!this.player.isConnect()) {
                     System.out.println("start sleeping");
                     Thread.sleep(WAIT_TIME);
                     break;
                 }
 
                 System.out.println("start receiving");
-                Object recvRes = player.recv();
+                Object recvRes = this.player.recv();
                 if (recvRes instanceof Action){
                     Action action = (Action) recvRes;
                     System.out.println("receive action");
@@ -119,16 +123,16 @@ public class PlayerThread extends Thread{
                         if (action.isValid(worldState)){
                             // if valid, update the state of the world
                             action.perform(worldState);
-                            player.send(SUCCESSFUL);
+                            this.player.send(SUCCESSFUL);
                         }else{
                             // otherwise ask user to resend the information
-                            player.send(INVALID_ACTION);
+                            this.player.send(INVALID_ACTION);
                         }
                     }
                 }else if (recvRes instanceof String && recvRes.equals(ACTION_DONE)){
                     break;
                 }else {
-                    player.send(INVALID_ACTION);
+                    this.player.send(INVALID_ACTION);
                 }
             }
         }
