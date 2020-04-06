@@ -19,8 +19,7 @@ import static edu.duke.ece651.risk.shared.Constant.*;
 import static edu.duke.ece651.risk.shared.Mock.readAllStringFromObjectStream;
 import static edu.duke.ece651.risk.shared.Mock.setupMockInput;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class GameServerTest {
 
@@ -42,29 +41,44 @@ public class GameServerTest {
         client.init("127.0.0.1", 8000);
     }
 
-    /*
+
     @Test
     public void testRun() throws IOException, InterruptedException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         Socket socket1 = mock(Socket.class);
-        when(socket1.getInputStream()).thenReturn(setupMockInput(new ArrayList<>(Arrays.asList("{\"userName\": \"name1\",\n" +
-                "\"userPassword\": \"password\",\n" +
-                "\"action\": \"signup\" }"))));
+
+        String userName1 = "1";
+        String userPassword1 = "1";
+
+        String s11 = "{\"" + USER_NAME + "\": \"" + userName1 + "\",\n" +
+                "\"" + USER_PASSWORD + "\": \"" + userPassword1 + "\",\n" +
+                "\"" + ACTION + "\": \"" + SIGNUP + "\" }";
+
+        when(socket1.getInputStream()).thenReturn(setupMockInput(new ArrayList<>(Arrays.asList(s11))));
         when(socket1.getOutputStream()).thenReturn(outputStream);
 
 
+        String userName2 = "2";
+        String userPassword2 = "2";
+
+        String s21 = "{\"" + USER_NAME + "\": \"" + userName1 + "\",\n" +
+                "\"" + USER_PASSWORD + "\": \"" + userPassword1 + "\",\n" +
+                "\"" + ACTION + "\": \"" + SIGNUP + "\" }";
         Socket socket2 = mock(Socket.class);
-        when(socket2.getInputStream()).thenReturn(setupMockInput(new ArrayList<>(Arrays.asList("{\"userName\": \"name2\",\n" +
-                "\"userPassword\": \"password\",\n" +
-                "\"action\": \"signup\" }"))));
+        when(socket2.getInputStream()).thenReturn(setupMockInput(new ArrayList<>(Arrays.asList(s21))));
         when(socket2.getOutputStream()).thenReturn(new ByteArrayOutputStream());
 
+
+        String userName3 = "3";
+        String userPassword3 = "3";
+
+        String s31 = "{\"" + USER_NAME + "\": \"" + userName1 + "\",\n" +
+                "\"" + USER_PASSWORD + "\": \"" + userPassword1 + "\",\n" +
+                "\"" + ACTION + "\": \"" + SIGNUP + "\" }";
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         stream.close();
         Socket socketError = mock(Socket.class);
-        when(socketError.getInputStream()).thenReturn(setupMockInput(new ArrayList<>(Arrays.asList("{\"userName\": \"name3\",\n" +
-                "\"userPassword\": \"password\",\n" +
-                "\"action\": \"signup\" }"))));
+        when(socketError.getInputStream()).thenReturn(setupMockInput(new ArrayList<>(Arrays.asList(s31))));
         when(socketError.getOutputStream()).thenReturn(stream);
 
         Server server = mock(Server.class);
@@ -87,7 +101,7 @@ public class GameServerTest {
         verify(server, atLeast(3)).accept();
     }
 
-     */
+
 
     /**
      * short socket
@@ -320,7 +334,7 @@ public class GameServerTest {
         assertEquals(2, gameServer.rooms.size()); // the room finished is removed
     }
 
-    /*
+
     @Test
     public void testMain() throws IOException, InterruptedException, ClassNotFoundException {
         Thread th = new Thread(() -> {
@@ -330,22 +344,27 @@ public class GameServerTest {
             }
         });
         th.start();
-        Thread.sleep(100);
+        Thread.sleep(1000);
 
         Client client = new Client();
         client.init("localhost", 12345);
-        assertEquals("Welcome to the fancy RISK game!!!", client.recv());
-        client.send("{\"userName\": \"name3\",\n" +
-                "\"userPassword\": \"password\",\n" +
-                "\"action\": \"signup\" }");
 
+        String userName1 = "1";
+        String userPassword1 = "1";
+
+        String s11 = "{\"" + USER_NAME + "\": \"" + userName1 + "\",\n" +
+                "\"" + USER_PASSWORD + "\": \"" + userPassword1 + "\",\n" +
+                "\"" + ACTION + "\": \"" + SIGNUP + "\" }";
+
+        client.send(s11);
         Thread.sleep(2000);
+        assertEquals(SUCCESSFUL, client.recv());
 
         th.interrupt();
         th.join();
     }
 
-     */
+
 
 
     @Test
