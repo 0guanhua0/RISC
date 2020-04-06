@@ -6,6 +6,7 @@ import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.risk.shared.player.Player;
 
+import java.io.Serializable;
 import java.util.Map;
 
 import static edu.duke.ece651.risk.shared.Constant.UNIT_BONUS;
@@ -18,7 +19,7 @@ import static edu.duke.ece651.risk.shared.Utils.getUnitUpCost;
  * @author: Mr.Wang
  * @create: 2020-03-30 21:35
  **/
-public class UpUnitAction implements Action{
+public class UpUnitAction implements Action, Serializable {
     private static final long serialVersionUID = 4L;
 
     String terr;

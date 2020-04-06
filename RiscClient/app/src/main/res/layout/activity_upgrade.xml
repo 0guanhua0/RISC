@@ -9,24 +9,73 @@
 
     <include
         android:id="@+id/app_bar"
-        layout="@layout/widget_app_bar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent"
+        layout="@layout/widget_app_bar"/>
+
+    <LinearLayout
+        android:id="@+id/ll_max"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginVertical="@dimen/small_margin_vertical"
+        android:layout_marginHorizontal="@dimen/normal_margin"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/app_bar">
+
+        <TextView
+            android:id="@+id/tv_upgrade_max_prompt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/upgrade_upgrade_max_tech"
+            android:textSize="@dimen/large_text_size"
+            android:textColor="@color/text_color"
+            android:layout_gravity="center_vertical|start"/>
+
+        <Button
+            android:id="@+id/bt_max"
+            android:layout_width="@dimen/small_button_width"
+            android:layout_height="wrap_content"
+            android:text="@string/upgrade_upgrade_max_button"
+            android:layout_marginHorizontal="@dimen/small_margin_horizontal"/>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/grey"
+        android:layout_marginVertical="3dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ll_max"/>
+
+    <TextView
+        android:id="@+id/tv_upgrade_unit_prompt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/upgrade_upgrade_unit"
+        android:textSize="@dimen/large_text_size"
+        android:textColor="@color/text_color"
+        android:layout_marginHorizontal="@dimen/normal_margin"
+        android:layout_marginVertical="@dimen/normal_margin"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ll_max"/>
 
     <include
-        layout="@layout/widget_territory_units_list"
         android:id="@+id/src_territory"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginVertical="@dimen/normal_margin"
+        android:layout_marginVertical="@dimen/small_margin_vertical"
         android:layout_marginHorizontal="@dimen/normal_margin"
-        app:layout_constraintTop_toBottomOf="@id/app_bar"
+        app:layout_constraintTop_toBottomOf="@id/tv_upgrade_unit_prompt"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        layout="@layout/widget_territory_units_list" />
 
     <include
-        android:id="@+id/unit_of_level_dropdown"
+        android:id="@+id/dd_unit_level_from"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginVertical="@dimen/small_margin_vertical"
@@ -37,40 +86,50 @@
         layout="@layout/widget_dropdown" />
 
     <include
-        android:id="@+id/no_of_units"
+        android:id="@+id/dd_unit_level_to"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginVertical="@dimen/small_margin_vertical"
         android:layout_marginHorizontal="@dimen/normal_margin"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/unit_of_level_dropdown"
+        app:layout_constraintTop_toBottomOf="@id/dd_unit_level_from"
         layout="@layout/widget_dropdown" />
 
     <include
-        android:id="@+id/upgrade_to"
+        android:id="@+id/dd_unit_number"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginVertical="@dimen/small_margin_vertical"
         android:layout_marginHorizontal="@dimen/normal_margin"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/no_of_units"
+        app:layout_constraintTop_toBottomOf="@id/dd_unit_level_to"
         layout="@layout/widget_dropdown" />
 
     <TextView
+        android:id="@+id/tv_total_cost_prompt"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:gravity="left"
-        android:text="Total Cost"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/normal_margin"
+        android:layout_marginVertical="@dimen/small_margin_vertical"
+        android:text="@string/upgrade_total_cost"
         android:textColor="@color/text_color"
         android:textSize="@dimen/large_text_size"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/upgrade_to"
-        android:layout_marginVertical="@dimen/small_margin_vertical"
+        app:layout_constraintTop_toBottomOf="@id/dd_unit_number" />
+
+    <TextView
+        android:id="@+id/tv_total_cost"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/normal_margin"
-        android:id="@+id/total_cost" />
+        android:layout_marginVertical="@dimen/small_margin_vertical"
+        android:text="test"
+        android:textColor="@color/text_color"
+        android:textSize="@dimen/large_text_size"
+        app:layout_constraintStart_toEndOf="@id/tv_total_cost_prompt"
+        app:layout_constraintTop_toBottomOf="@id/dd_unit_number" />
 
     <include
         android:id="@+id/accept_decline"
@@ -81,7 +140,7 @@
         android:layout_marginHorizontal="@dimen/normal_margin"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/total_cost" />
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 
