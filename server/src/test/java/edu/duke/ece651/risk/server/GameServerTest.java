@@ -151,6 +151,24 @@ public class GameServerTest {
         gameServer.handleIncomeRequest(socket2);
         assertEquals(SUCCESSFUL, readAllStringFromObjectStream(outputStream));
 
+        //2b login again
+        outputStream.reset();
+        Socket socket2b = mock(Socket.class);
+        String userName2b = "1";
+        String userPassword2b = "1";
+
+        String s2b = "{\"" + USER_NAME + "\": \"" + userName2b + "\",\n" +
+                "\"" + USER_PASSWORD + "\": \"" + userPassword2b + "\",\n" +
+                "\"" + ACTION + "\": \"" + LOGIN + "\" }";
+
+        when(socket2b.getInputStream())
+                .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList(s2b))));
+        when(socket2b.getOutputStream()).thenReturn(outputStream);
+
+        gameServer.handleIncomeRequest(socket2b);
+        assertEquals(SUCCESSFUL, readAllStringFromObjectStream(outputStream));
+
+
         //3 invalid signup, same name
         outputStream.reset();
         String userName3 = "1";
@@ -316,6 +334,43 @@ public class GameServerTest {
 
         gameServer.handleIncomeRequest(socket3);
 
+        assertEquals(SUCCESSFUL, readAllStringFromObjectStream(o3));
+
+        //4 invalid reconnect
+        String s41 = "{\"" + USER_NAME + "\": \"" + userName1 + "\",\n" +
+                "\"" + ROOM_ID + "\": \"" + 5 + "\",\n" +
+                "\"" + ACTION + "\": \"" + ACTION_RECONNECT_ROOM + "\" }";
+
+
+
+        ByteArrayOutputStream o4 = new ByteArrayOutputStream();
+        Socket socket4 = mock(Socket.class);
+        when(socket4.getInputStream())
+                .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList(s41))));
+        when(socket4.getOutputStream()).thenReturn(o4);
+
+        gameServer.handleIncomeRequest(socket4);
+
+        assertEquals(INVALID_RECONNECT, readAllStringFromObjectStream(o4));
+
+
+        //5 strange action
+        String s51 = "{\"" + USER_NAME + "\": \"" + userName1 + "\",\n" +
+                "\"" + ROOM_ID + "\": \"" + 5 + "\",\n" +
+                "\"" + ACTION + "\": \"" + "xxx" + "\" }";
+
+
+
+        ByteArrayOutputStream o5 = new ByteArrayOutputStream();
+        Socket socket5 = mock(Socket.class);
+        when(socket5.getInputStream())
+                .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList(s51))));
+        when(socket5.getOutputStream()).thenReturn(o5);
+
+        gameServer.handleIncomeRequest(socket5);
+
+        assertEquals("", readAllStringFromObjectStream(o5));
+
 
     }
 
@@ -477,5 +532,45 @@ public class GameServerTest {
         assertEquals(0, gameServer.rooms.get(0).roomID);
     }
 
+
+    @Test
+    void UserRoom() throws IOException, SQLException, ClassNotFoundException {
+        String r1 = "1";
+
+        String s11 = "{\"" + MAP_NAME + "\": \"" + MAP_0 + "\",\n" +
+                "\"" + ROOM_NAME + "\": \"" + r1 + "\" }";
+
+        Player<String> player = new PlayerV1<>(
+                setupMockInput(
+                        new ArrayList<>(Arrays.asList(
+                                s11, s11, s11
+                        ))), new ByteArrayOutputStream());
+
+        Room room1 = new Room(1, player, new MapDataBase<>()); // waiting
+        Room room2 = new Room(2, player, new MapDataBase<>()); // running
+        Room room3 = new Room(3, player, new MapDataBase<>()); // finish
+
+        room2.players.add(new PlayerV1<>("Green", 1));
+        room3.gameInfo.winnerID = 1;
+
+        Server server = mock(Server.class);
+        GameServer gameServer = new GameServer(server);
+
+        User u1 = new User("1", "1");
+        gameServer.userList.addUser(u1);
+        u1.addRoom(1);
+        u1.addRoom(2);
+        u1.addRoom(3);
+
+
+        gameServer.rooms.put(room1.roomID, room1);
+        gameServer.rooms.put(room2.roomID, room2);
+        gameServer.rooms.put(room3.roomID, room3);
+
+        gameServer.clearRoom();
+
+        assertTrue(u1.isInRoom(2));
+        assertFalse(u1.isInRoom(3));
+        }
 
 }
