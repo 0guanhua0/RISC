@@ -453,7 +453,7 @@ public class GameServerTest {
         assertEquals(1, gameServer.rooms.size());
         gameServer.startGame(p2);
         assertEquals(1, gameServer.rooms.size());
-        assertEquals(SUCCESSFUL,
+        assertEquals(SUCCESSFUL + "{\"playerColor\":\"blue\",\"playerID\":2}",
                 readAllStringFromObjectStream(outputStream2)
         );
         assertEquals(2, gameServer.rooms.get(0).players.size());
