@@ -70,6 +70,20 @@ public class Room {
         System.out.println("room name: " + this.roomName);
     }
 
+    //constructor for testing
+    public Room(int roomID, MapDataBase<String> mapDataBase) throws IllegalArgumentException, ClassNotFoundException {
+        if (roomID < 0) {
+            throw new IllegalArgumentException("Invalid value of Room Id");
+        }
+        this.roomID = roomID;
+        this.roomName = "";
+
+        players = new ArrayList<>();
+
+        System.out.println("send new room info");
+
+        gameInfo = new GameInfo(-1, 1);
+    }
     /**
      * call this method to add a new player into this room
      * after the last player enter the room, game will begin automatically
@@ -135,7 +149,7 @@ public class Room {
      *
      * @param data data to be sent
      */
-    void sendAll(Object data) throws IOException {
+    void sendAll(Object data)  {
         for (Player<String> player : players) {
             if (player.isConnect()) {
                 player.send(data);
@@ -144,7 +158,7 @@ public class Room {
         }
     }
 
-    void sendAllExcept(Object data, Player<String> p) throws IOException {
+    void sendAllExcept(Object data, Player<String> p)  {
         for (Player<String> player : players) {
             if (player.isConnect() && player != p) {
                 player.send(data);
@@ -221,7 +235,7 @@ public class Room {
         }
     }
 
-    void endGame() throws IOException {
+    void endGame() {
         String winnerName = gameInfo.getWinnerName();
         for (Player<String> player : players) {
             if (player.getId() != gameInfo.getWinnerID()) {

@@ -1,21 +1,19 @@
 package edu.duke.ece651.risk.server;
 
 import edu.duke.ece651.risk.shared.ToServerMsg.ServerSelect;
-import edu.duke.ece651.risk.shared.map.Army;
 import edu.duke.ece651.risk.shared.action.AttackAction;
 import edu.duke.ece651.risk.shared.action.MoveAction;
-import edu.duke.ece651.risk.shared.map.MapDataBase;
-import edu.duke.ece651.risk.shared.map.Territory;
-import edu.duke.ece651.risk.shared.map.TerritoryV1;
-import edu.duke.ece651.risk.shared.map.WorldMap;
+import edu.duke.ece651.risk.shared.map.*;
 import edu.duke.ece651.risk.shared.player.Player;
 import edu.duke.ece651.risk.shared.player.PlayerV1;
+import edu.duke.ece651.risk.shared.player.PlayerV2;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
 import java.util.*;
 
 import static edu.duke.ece651.risk.shared.Constant.*;
+import static edu.duke.ece651.risk.shared.Mock.readAllStringFromObjectStream;
 import static edu.duke.ece651.risk.shared.Mock.setupMockInput;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -26,14 +24,30 @@ public class RoomTest {
 
         assertThrows(IllegalArgumentException.class,()->{new Room(-1,null, new MapDataBase<String>());});
 
+        String m1 = "hogwarts";
+        String r1 = "1";
+
+        String s11 = "{\"" + MAP_NAME + "\": \"" + m1 + "\",\n" +
+                "\"" + ROOM_NAME +"\": \"" + r1 + "\" }";
+
+        String m2 = "";
+        String r2 = "1";
+
+        String s12 = "{\"" + MAP_NAME + "\": \"" + m2 + "\",\n" +
+                "\"" + ROOM_NAME +"\": \"" + r2 + "\" }";
+
+        String m3 = "a clash of kings";
+        String r3 = "1";
+
+        String s13 = "{\"" + MAP_NAME + "\": \"" + m3 + "\",\n" +
+                "\"" + ROOM_NAME +"\": \"" + r3 + "\" }";
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        Player<String> player = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList("hogwarts", "", "a clash of kings"))), outputStream);
+        Player<String> player = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList(s11, s12, s13))), outputStream);
         MapDataBase<String> mapDataBase = new MapDataBase<>();
         Room room = new Room(0, player, mapDataBase);
         assertEquals(room.roomID,0);
         assertEquals(room.players.size(),1);
         assertEquals(room.players.get(0).getId(),1);
-        assertEquals(room.players.get(0).getColor(),"red");
         assertEquals(room.map.getAtlas().size(), mapDataBase.getMap("a clash of kings").getAtlas().size());
     }
 
@@ -42,7 +56,14 @@ public class RoomTest {
         // prepare the DataBase
         MapDataBase<String> mapDataBase = new MapDataBase<>();
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        Player<String> player = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList("test"))), stream);
+
+        String m1 = "test";
+        String r1 = "1";
+
+        String s11 = "{\"" + MAP_NAME + "\": \"" + m1 + "\",\n" +
+                "\"" + ROOM_NAME +"\": \"" + r1 + "\" }";
+
+        Player<String> player = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList(s11))), stream);
         Room room = new Room(0, player, mapDataBase);
         room.addPlayer(new PlayerV1<>(setupMockInput(new ArrayList<>()), new ByteArrayOutputStream()));
         room.addPlayer(new PlayerV1<>(setupMockInput(new ArrayList<>()), new ByteArrayOutputStream()));
@@ -51,9 +72,6 @@ public class RoomTest {
         room.addPlayer(new PlayerV1<>(setupMockInput(new ArrayList<>()), new ByteArrayOutputStream()));
 
         assertEquals(room.players.size(),3);
-        assertEquals(room.players.get(0).getColor(),"red");
-        assertEquals(room.players.get(1).getColor(),"blue");
-        assertEquals(room.players.get(2).getColor(),"black");
         assertEquals(room.players.size(), room.map.getColorList().size());
     }
 
@@ -63,7 +81,26 @@ public class RoomTest {
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
-        Player<String> player = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList("hogwarts", "","a clash of kings"))), stream);
+        String m1 = "hogwarts";
+        String r1 = "1";
+
+        String s11 = "{\"" + MAP_NAME + "\": \"" + m1 + "\",\n" +
+                "\"" + ROOM_NAME +"\": \"" + r1 + "\" }";
+
+        String m2 = "";
+        String r2 = "1";
+
+        String s12 = "{\"" + MAP_NAME + "\": \"" + m2 + "\",\n" +
+                "\"" + ROOM_NAME +"\": \"" + r2 + "\" }";
+
+        String m3 = "a clash of kings";
+        String r3 = "1";
+
+        String s13 = "{\"" + MAP_NAME + "\": \"" + m3 + "\",\n" +
+                "\"" + ROOM_NAME +"\": \"" + r3 + "\" }";
+
+
+        Player<String> player = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList(s11, s12, s13))), stream);
         MapDataBase<String> mapDataBase = new MapDataBase<>();
         Room room = new Room(0, player, mapDataBase);
         assertEquals(room.roomID,0);
@@ -85,14 +122,21 @@ public class RoomTest {
         assertEquals(errorMsg,SELECT_MAP_ERROR);
         assertEquals(SUCCESSFUL, (String)objectInputStream.readObject());
         objectInputStream.readObject(); // this is for player initial message
-        objectInputStream.readObject(); // this is for wait info
         assertThrows(EOFException.class,()->{String res = (String)objectInputStream.readObject();});
     }
 
     @Test
     void getWinnerId() throws IOException, ClassNotFoundException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        Player<String> player = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList("a clash of kings"))), outputStream);
+
+        String map = "a clash of kings";
+        String rName = "1";
+
+        String s11 = "{\"" + MAP_NAME + "\": \"" + map + "\",\n" +
+                "\"" + ROOM_NAME +"\": \"" + rName + "\" }";
+
+
+        Player<String> player = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList(s11))), outputStream);
         MapDataBase<String> mapDataBase = new MapDataBase<>();
         WorldMap<String> curMap = mapDataBase.getMap("a clash of kings");
         Room room = new Room(0, player, mapDataBase);
@@ -139,7 +183,14 @@ public class RoomTest {
 
     @Test
     void testResolveCombat() throws IOException, ClassNotFoundException {
-        Player<String> player1 = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList("hogwarts", "", "a clash of kings"))), new ByteArrayOutputStream());
+        String map = "a clash of kings";
+        String rName = "1";
+
+        String s11 = "{\"" + MAP_NAME + "\": \"" + map + "\",\n" +
+                "\"" + ROOM_NAME +"\": \"" + rName + "\" }";
+
+
+        Player<String> player1 = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList(s11))), new ByteArrayOutputStream());
         Player<String> player2 = new PlayerV1<>("Green", 2);
 
         Room room = new Room(0, player1, new MapDataBase<>());
@@ -180,7 +231,14 @@ public class RoomTest {
         ByteArrayOutputStream p1OutStream = new ByteArrayOutputStream();
         ByteArrayOutputStream p2OutStream = new ByteArrayOutputStream();
 
-        Player<String> player1 = new PlayerV1<>("Red", 1, setupMockInput(new ArrayList<>(Arrays.asList("a clash of kings"))), p1OutStream);
+        String map = "a clash of kings";
+        String rName = "1";
+
+        String s11 = "{\"" + MAP_NAME + "\": \"" + map + "\",\n" +
+                "\"" + ROOM_NAME +"\": \"" + rName + "\" }";
+
+
+        Player<String> player1 = new PlayerV1<>("Red", 1, setupMockInput(new ArrayList<>(Arrays.asList(s11))), p1OutStream);
         Player<String> player2 = new PlayerV1<>("Blue", 2, setupMockInput(new ArrayList<>()), p2OutStream);
 
         Room room = new Room(0, player1, new MapDataBase<>());
@@ -192,9 +250,8 @@ public class RoomTest {
         s1.readObject(); // mapDataBase
         s1.readObject(); // successful
         s1.readObject(); // player info
-        s1.readObject(); // wait info
         assertEquals(YOU_WINS, s1.readObject());
-        assertEquals("Winner is the red player.", s2.readObject());
+        assertEquals("Winner is the Red player.", s2.readObject());
     }
 
     @Test
@@ -242,10 +299,15 @@ public class RoomTest {
         AttackAction a22 = new AttackAction("the storm kingdom", "kingdom of the reach", 1, 1);
         AttackAction a23 = new AttackAction("principality of dorne", "kingdom of the reach", 1, 4);
 
+        String map = "a clash of kings";
+        String rName = "1";
+
+        String s11 = "{\"" + MAP_NAME + "\": \"" + map + "\",\n" +
+                "\"" + ROOM_NAME +"\": \"" + rName + "\" }";
         Player<String> player1 = new PlayerV1<>(
                 setupMockInput(
                         new ArrayList<>(Arrays.asList(
-                                "a clash of kings",
+                                s11,
                                 p1Group,
                                 s1,
                                 a11,
@@ -274,5 +336,46 @@ public class RoomTest {
         // player 1 should win the game
         Thread.sleep(500); // because the game will run in a separate thread, we will need to wait some time and then check the result
         assertEquals(1, room.gameInfo.winnerID);
+    }
+
+    @Test
+    void initGame() throws IOException, ClassNotFoundException {
+        MapDataBase<String> mapDataBase = new MapDataBase<>();
+
+        //room 0
+        Room room = new Room(0, mapDataBase);
+
+        ByteArrayOutputStream o1 = new ByteArrayOutputStream();
+        String map = "a clash of kings";
+        String rName = "1";
+
+        String s11 = "{\"" + MAP_NAME + "\": \"" + map + "\",\n" +
+                "\"" + ROOM_NAME +"\": \"" + rName + "\" }";
+        Player<String> p1 = new PlayerV2<>(setupMockInput(new ArrayList<>(Arrays.asList(s11))), o1);
+
+        room.getPlayers().add(p1);
+        room.initGame(mapDataBase);
+
+        assertEquals(SUCCESSFUL, readAllStringFromObjectStream(o1));
+
+        //room 2
+        Room room2 = new Room(0, mapDataBase);
+
+        String map2 = "a clash of kings";
+        String rName2 = "2";
+
+        String s21 = "{\"" + MAP_NAME + "\": \"" + "xxx" + "\",\n" +
+                "\"" + ROOM_NAME +"\": \"" + rName + "\" }";
+
+        String s22 = "{\"" + MAP_NAME + "\": \"" + map2 + "\",\n" +
+                "\"" + ROOM_NAME +"\": \"" + rName2 + "\" }";
+        ByteArrayOutputStream o2 = new ByteArrayOutputStream();
+
+        Player<String> p2 = new PlayerV2<>(setupMockInput(new ArrayList<>(Arrays.asList(s21, s22))), o2);
+
+        room2.getPlayers().add(p2);
+        room2.initGame(mapDataBase);
+
+        assertEquals(SELECT_MAP_ERROR + SUCCESSFUL, readAllStringFromObjectStream(o2));
     }
 }
