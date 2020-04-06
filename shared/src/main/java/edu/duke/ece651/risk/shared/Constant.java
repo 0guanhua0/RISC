@@ -33,6 +33,10 @@ public class Constant {
     public static final int INITIAL_FOOD_NUM = 30;
     public static final int INITIAL_TECH_NUM = 50;
 
+    //map info
+    public static final String MAP_0 = "a clash of kings";
+
+
     //for networking info
     public static final String ROOM_ID = "roomID";
 
