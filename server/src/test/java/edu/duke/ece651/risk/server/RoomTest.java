@@ -379,4 +379,30 @@ public class RoomTest {
 
         assertEquals(SELECT_MAP_ERROR + SUCCESSFUL, readAllStringFromObjectStream(o2));
     }
+
+    @Test
+    void player() throws IOException {
+        MapDataBase<String> mapDataBase = new MapDataBase<>();
+
+        //room 0
+        Room room = new Room(0, mapDataBase);
+        assertNull(room.getPlayer("1"));
+        assertFalse(room.hasUser("1"));
+        assertFalse(room.isPlayerLose("1"));
+
+        ByteArrayOutputStream o1 = new ByteArrayOutputStream();
+        String map = "a clash of kings";
+        String rName = "1";
+
+        String s11 = "{\"" + MAP_NAME + "\": \"" + map + "\",\n" +
+                "\"" + ROOM_NAME +"\": \"" + rName + "\" }";
+        Player<String> p1 = new PlayerV2<>(setupMockInput(new ArrayList<>(Arrays.asList(s11))), o1);
+
+        p1.setName("1");
+        room.getPlayers().add(p1);
+        assertEquals(p1, room.getPlayer("1"));
+        assertTrue(room.hasUser("1"));
+        assertTrue(room.isPlayerLose("1"));
+
+    }
 }
