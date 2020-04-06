@@ -95,11 +95,17 @@ public class PlayerThread extends Thread{
         // 3. round number
         RoundInfo roundInfo = new RoundInfo(gameInfo.getRoundNum(), map, gameInfo.getIdToName(), player);
         Player<String> player = roundInfo.getPlayer();
-        int foodNum = player.getFoodNum();
-        System.out.println("foodNum = " + foodNum);
-        int techNum = player.getTechNum();
-        System.out.println("techNum = " + techNum);
-        this.player.send(roundInfo);
+
+        synchronized (this){
+            this.player.send(roundInfo);
+            int id = player.getId();
+            System.out.println("id = " + id);
+            int foodNum = player.getFoodNum();
+            System.out.println("foodNum = " + foodNum);
+            int techNum = player.getTechNum();
+            System.out.println("techNum = " + techNum);
+        }
+
         //build the current state of game
         WorldState worldState = new WorldState(this.player, this.map);
         //if player hasn't losed yet, let him or her play another round of game

@@ -11,6 +11,9 @@ import java.io.Serializable;
 import java.util.Map;
 
 public class RoundInfo implements Serializable {
+
+    private static final long serialVersionUID = 15L;
+
     int roundNum;
     WorldMap<String> map;
     // for now we use player color to represent player name
@@ -22,7 +25,8 @@ public class RoundInfo implements Serializable {
         this.roundNum = roundNum;
         this.idToName = idToName;
         this.player = player;
-        copyMap(map);
+        this.map = Utils.clone(map);
+        this.player = Utils.clone(player);
     }
 
     public WorldMap<String> getMap() {
@@ -40,14 +44,5 @@ public class RoundInfo implements Serializable {
     public Player<String> getPlayer(){
         return player;
     }
-
-    //TODO based on our previous experience, I am not sure whether using ObjectStream will bring some unexpected result
-    //but it's necessary to have an automatic deep copy method, otherwise, every time we change the field of WorldMap,
-    //we'll need to go back and change this method
-    void copyMap(WorldMap<String> oldMap) throws IOException, ClassNotFoundException {
-        WorldMap<String> clone = Utils.clone(oldMap);
-        this.map = clone;
-    }
-
 
 }
