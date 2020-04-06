@@ -194,11 +194,21 @@ public class TerritoryV2 extends TerritoryV1 {
         List<Unit> source = unitGroup.get(curLevel);
         List<Unit> target = unitGroup.getOrDefault(targetLevel, new ArrayList<Unit>());
 
+
+        //update source territory
+        if (source.size()==num){
+            unitGroup.remove(curLevel);
+        }else{
+            for (int i = 0; i < num; i++) {
+                source.remove(source.size()-1);
+            }
+            unitGroup.put(curLevel, source);
+        }
+        //update target territory
         for (int i = 0; i < num; i++) {
-            source.remove(source.size()-1);
             target.add(new Unit());
         }
-        unitGroup.put(curLevel, source);
+
         unitGroup.put(targetLevel,target);
     }
 

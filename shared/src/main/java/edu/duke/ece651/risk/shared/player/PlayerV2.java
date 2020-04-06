@@ -6,6 +6,7 @@ import edu.duke.ece651.risk.shared.map.Territory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 
 import static edu.duke.ece651.risk.shared.Constant.*;
 
@@ -15,7 +16,7 @@ import static edu.duke.ece651.risk.shared.Constant.*;
  * @author: Chengda Wu
  * @create: 2020-03-28 20:16
  **/
-public class PlayerV2<T> extends PlayerV1<T> {
+public class PlayerV2<T> extends PlayerV1<T> implements Serializable {
     BasicResource tech;
     BasicResource food;
     //this variable marks that this user have right to upgrade her maximum technology
@@ -80,7 +81,7 @@ public class PlayerV2<T> extends PlayerV1<T> {
 
     @Override
     public boolean canUpMaxTech() {
-        if (upTechRight&&TECH_MAP.containsKey(techLevel)&&TECH_MAP.get(techLevel)<=getTechNum()){
+        if (upTechRight&&TECH_MAP.containsKey(techLevel)&&TECH_MAP.get(techLevel)<=this.getTechNum()){
             return true;
         }else{
             return false;

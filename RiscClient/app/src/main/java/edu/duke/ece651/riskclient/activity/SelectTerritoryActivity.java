@@ -18,11 +18,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import edu.duke.ece651.risk.shared.ToClientMsg.ClientSelect;
+import edu.duke.ece651.risk.shared.ToServerMsg.ServerSelect;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.riskclient.R;
 import edu.duke.ece651.riskclient.adapter.TerritoryGroupAdapter;
@@ -32,6 +35,7 @@ import pl.polak.clicknumberpicker.ClickNumberPickerView;
 
 import static edu.duke.ece651.riskclient.Constant.MAP_NAME_TO_RESOURCE_ID;
 import static edu.duke.ece651.riskclient.RiskApplication.recv;
+import static edu.duke.ece651.riskclient.utils.HTTPUtils.verifyAssignUnits;
 import static edu.duke.ece651.riskclient.utils.HTTPUtils.verifySelectGroup;
 import static edu.duke.ece651.riskclient.utils.UIUtils.showToastUI;
 
@@ -47,9 +51,13 @@ public class SelectTerritoryActivity extends AppCompatActivity {
     private TextView tvUnitsInfo;
     private ImageView imgMap;
 
+    /**
+     * Variable
+     */
     private boolean finishSelect;
     private TerritoryGroupAdapter territoryGroupAdapter;
     private Set<String> selectedGroup;
+    private Map<String, Integer> unitsAssigned;
     private int unitTotal;
     private int unitLeft;
 
@@ -94,20 +102,6 @@ public class SelectTerritoryActivity extends AppCompatActivity {
                     selectedGroup = groups.get(0);
                     territoryGroupAdapter.setTerritories(groups);
                 });
-
-//                unitTotal = 10;
-//                unitLeft = unitTotal;
-//                List<Set<String>> groups = new ArrayList<>();
-//                for (int i = 0; i < 30; i++){
-//                    Set<String> group = new HashSet<>();
-//                    group.add(i + "t1");
-//                    group.add(i + "t2");
-//                    group.add(i + "t3");
-//                    groups.add(group);
-//                }
-//                // set default selected group
-//                selectedGroup = groups.get(0);
-//                territoryGroupAdapter.setTerritories(groups);
             }
         });
     }
@@ -167,10 +161,21 @@ public class SelectTerritoryActivity extends AppCompatActivity {
                     showToastUI(this, "You assign more units then you have.");
                     return;
                 }
-                // TODO: send selecting info to server
-                Intent intent = new Intent(SelectTerritoryActivity.this, PlayGameActivity.class);
-                startActivity(intent);
-                finish();
+                ServerSelect serverSelect = new ServerSelect(unitsAssigned);
+                verifyAssignUnits(serverSelect, new onResultListener() {
+                    @Override
+                    public void onFailure(String error) {
+                        showToastUI(SelectTerritoryActivity.this, error);
+                        Log.e(TAG, "verifyAssignUnits: " + error);
+                    }
+
+                    @Override
+                    public void onSuccessful() {
+                        Intent intent = new Intent(SelectTerritoryActivity.this, PlayGameActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                });
             }
         });
 
@@ -201,11 +206,14 @@ public class SelectTerritoryActivity extends AppCompatActivity {
      * set up the UI for assigning units
      */
     private void setUpAssignUnits(){
+        unitsAssigned = new HashMap<>();
         tvUnitsInfo = findViewById(R.id.tv_units_info);
         updateUnitInfo();
         LinearLayout layout = findViewById(R.id.layout_assign_units);
         for (String tName : selectedGroup){
             layout.addView(inflateTerritory(tName, layout));
+            // assign 1 basic unit to each territory
+            unitsAssigned.put(tName, 1);
         }
     }
 
@@ -214,13 +222,15 @@ public class SelectTerritoryActivity extends AppCompatActivity {
         TextView name = view.findViewById(R.id.tv_territory_name);
         name.setText(territoryName);
 
-        ClickNumberPickerView unitsAssigned = view.findViewById(R.id.np_units_picker);
-        unitsAssigned.setPickerValue(1);
+        ClickNumberPickerView numberPicker = view.findViewById(R.id.np_units_picker);
+        numberPicker.setPickerValue(1);
         unitLeft--;
         updateUnitInfo();
-        unitsAssigned.setClickNumberPickerListener((previousValue, currentValue, pickerClickType) -> {
+        numberPicker.setClickNumberPickerListener((previousValue, currentValue, pickerClickType) -> {
             unitLeft -= (currentValue - previousValue);
+            unitsAssigned.replace(territoryName, (int) currentValue);
             if (unitLeft < 0){
+                // a better way is change the value back automatically, but this library doesn't support that
                 showToastUI(this, "You assign more units than you have.");
             }
             updateUnitInfo();

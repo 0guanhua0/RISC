@@ -1,6 +1,5 @@
 package edu.duke.ece651.riskclient.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,7 +14,6 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.navigation.NavigationView;
 
-import edu.duke.ece651.riskclient.objects.Player;
 import edu.duke.ece651.riskclient.R;
 import edu.duke.ece651.riskclient.ui.AboutFragment;
 import edu.duke.ece651.riskclient.ui.HomeFragment;

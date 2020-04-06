@@ -125,7 +125,7 @@ public class GameClientTest {
                     player.send(SUCCESSFUL);
 
                     /* =============== stage 3(playing the game) =============== */
-                    player.send(new RoundInfo(1, map, idToColor));
+                    player.send(new RoundInfo(1, map, idToColor, null));
                     // interact with player to ask all actions
                     while (true){
                         Object object = player.recv(); // receive the action list
@@ -187,7 +187,7 @@ public class GameClientTest {
                 .thenReturn(clientSelect) // select territory & assign units
                 .thenReturn(SUCCESSFUL)//select group valid
                 .thenReturn(SUCCESSFUL) // assign units valid
-                .thenReturn(new RoundInfo(1, map, idToColor))  // round info, map
+                .thenReturn(new RoundInfo(1, map, idToColor, null))  // round info, map
                 .thenReturn(SUCCESSFUL) // action1 valid
                 .thenReturn(SUCCESSFUL) // action2 valid
                 .thenReturn("attack 1") // send out the attack result

@@ -1,12 +1,14 @@
 package edu.duke.ece651.risk.shared.map;
 
+import java.io.Serializable;
+
 /**
  * @program: risk
  * @description: this is class to represent resource for evolution2
  * @author: Chengda Wu
  * @create: 2020-03-28 19:01
  **/
-public class BasicResource {
+public class BasicResource implements Serializable {
     int totalNum;
 
     public BasicResource(int totalNum) {

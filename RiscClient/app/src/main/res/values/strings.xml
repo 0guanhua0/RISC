@@ -52,6 +52,12 @@
     <!--  move & attack activity  -->
     <string name="move_attack_unit_info">The Units you sent:</string>
 
+    <!--  upgrade activity  -->
+    <string name="upgrade_total_cost">Total cost:</string>
+    <string name="upgrade_upgrade_max_tech">Upgrade Max Tech Level:</string>
+    <string name="upgrade_upgrade_unit">Upgrade Unit:</string>
+    <string name="upgrade_upgrade_max_button">Upgrade</string>
+
     <string name="menu_home">Home</string>
     <string name="menu_update">Change Password</string>
     <string name="menu_about">About</string>

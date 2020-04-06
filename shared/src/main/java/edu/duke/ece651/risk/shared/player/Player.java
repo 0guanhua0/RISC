@@ -18,17 +18,17 @@ import static edu.duke.ece651.risk.shared.Constant.PLAYER_ID;
  * @create: 2020-03-09 16:24
  **/
 
-public abstract class Player<T> {
+public abstract class Player<T> implements Serializable{
 
     T color;
     int id;
-    ObjectInputStream in;
-    ObjectOutputStream out;
+    transient ObjectInputStream in;
+    transient ObjectOutputStream out;
     Set<Territory> territories;
 
     //status mark connected / dis
-    private boolean isConnect;
-    private String name;
+    boolean isConnect;
+    String name;
 
     public Player(InputStream in, OutputStream out) throws IOException {
         this.territories = new HashSet<>();
@@ -115,6 +115,7 @@ public abstract class Player<T> {
             o =  in.readObject();
         }
         catch (IOException ignored) {
+            System.out.println(ignored.toString());
             this.setConnect(false);
         }
         return o;
@@ -132,7 +133,6 @@ public abstract class Player<T> {
         jsonObject.put(PLAYER_ID, id);
         jsonObject.put(PLAYER_COLOR, color);
         send(jsonObject.toString());
-
     }
 
     public int getTerrNum() {
@@ -184,7 +184,6 @@ public abstract class Player<T> {
     /**
      * reset connection handle connection
      */
-
 
     //todo: redirect the round info to a log file
     public void setName(String name) {

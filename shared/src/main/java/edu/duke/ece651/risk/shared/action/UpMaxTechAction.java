@@ -3,13 +3,16 @@ package edu.duke.ece651.risk.shared.action;
 import edu.duke.ece651.risk.shared.WorldState;
 import edu.duke.ece651.risk.shared.player.Player;
 
+import java.io.Serializable;
+
 /**
  * @program: risk
  * @description: this class is used to represent up maximum technology level action
  * @author: Chengda Wu
  * @create: 2020-03-30 17:33
  **/
-public class UpMaxTechAction implements Action{
+public class UpMaxTechAction implements Action, Serializable {
+    private static final long serialVersionUID = 3L;
 
     public UpMaxTechAction(){}
     /**

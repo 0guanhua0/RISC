@@ -2,20 +2,21 @@ package edu.duke.ece651.riskclient.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
-import android.view.TextureView;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -23,18 +24,20 @@ import edu.duke.ece651.risk.shared.RoomInfo;
 import edu.duke.ece651.riskclient.R;
 import edu.duke.ece651.riskclient.listener.onNewPlayerListener;
 import edu.duke.ece651.riskclient.listener.onReceiveListener;
-import edu.duke.ece651.riskclient.objects.Player;
+import edu.duke.ece651.riskclient.objects.SimplePlayer;
 
-import static edu.duke.ece651.riskclient.RiskApplication.getPlayerName;
+import static edu.duke.ece651.risk.shared.Constant.PLAYER_ID;
 import static edu.duke.ece651.riskclient.RiskApplication.getRoomName;
 import static edu.duke.ece651.riskclient.RiskApplication.recv;
+import static edu.duke.ece651.riskclient.RiskApplication.setPlayerID;
 import static edu.duke.ece651.riskclient.RiskApplication.setRoom;
 import static edu.duke.ece651.riskclient.utils.HTTPUtils.waitAllPlayers;
 import static edu.duke.ece651.riskclient.utils.UIUtils.showToastUI;
 
 public class WaitGameActivity extends AppCompatActivity {
-    public final static String PLAYER_CNT = "playerCnt";
+    private final static String TAG = WaitGameActivity.class.getSimpleName();
 
+    private TextView tvPlayerTotal;
     private List<TextView> tvPlayers;
     private int playerIn;
 
@@ -47,9 +50,12 @@ public class WaitGameActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null){
             getSupportActionBar().setTitle(getRoomName());
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
+        // each time enter this activity, should fetch the latest room & player info from the server
+        // get the player info first, and then get the room info
+        initPlayerInfo();
         getRoomInfo();
     }
 
@@ -66,7 +72,26 @@ public class WaitGameActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    // each time enter this activity, should fetch the latest room info from the server
+    private void initPlayerInfo(){
+        recv(new onReceiveListener() {
+            @Override
+            public void onFailure(String error) {
+
+            }
+
+            @Override
+            public void onSuccessful(Object object) {
+                try {
+                    String playerInfo = (String) object;
+                    JSONObject jsonObject = new JSONObject(playerInfo);
+                    setPlayerID(jsonObject.optInt(PLAYER_ID, 1));
+                }catch (JSONException e){
+                    Log.e(TAG, "initPlayerInfo: " + e.toString());
+                }
+            }
+        });
+    }
+
     private void getRoomInfo(){
         recv(new onReceiveListener() {
             @Override
@@ -79,7 +104,10 @@ public class WaitGameActivity extends AppCompatActivity {
                 runOnUiThread(() -> {
                     RoomInfo info = (RoomInfo) object;
                     setRoom(info);
-                    showToastUI(WaitGameActivity.this, "player total " + info.getPlayerNeedTotal());
+
+                    tvPlayerTotal = findViewById(R.id.tv_player_in_total);
+                    tvPlayerTotal.setText(String.format(Locale.US, "Player needed in total: %d", info.getPlayerNeedTotal()));
+
                     tvPlayers = new ArrayList<>();
                     // dynamically initialize a list of player
                     LinearLayout llPlayer = findViewById(R.id.ll_player);
@@ -106,8 +134,10 @@ public class WaitGameActivity extends AppCompatActivity {
         // wait for other players
         waitAllPlayers(new onNewPlayerListener() {
             @Override
-            public void onNewPlayer(Player player) {
-                addPlayer(player.getName());
+            public void onNewPlayer(SimplePlayer player) {
+                runOnUiThread(() -> {
+                    addPlayer(player.getName());
+                });
             }
 
             @Override

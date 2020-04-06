@@ -6,6 +6,7 @@ import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.risk.shared.player.Player;
 
+import java.io.Serializable;
 import java.util.Map;
 
 import static edu.duke.ece651.risk.shared.Constant.UNIT_BONUS;
@@ -18,7 +19,8 @@ import static edu.duke.ece651.risk.shared.Utils.getUnitUpCost;
  * @author: Mr.Wang
  * @create: 2020-03-30 21:35
  **/
-public class UpUnitAction implements Action{
+public class UpUnitAction implements Action, Serializable {
+    private static final long serialVersionUID = 4L;
 
     String terr;
     int playerId;
@@ -77,18 +79,17 @@ public class UpUnitAction implements Action{
             throw new IllegalArgumentException("Invalid input argument");
         }
         Territory territory = worldState.getMap().getTerritory(this.terr);
+
+        Player<String> player = worldState.getPlayer();
+        int cost = Utils.getUnitUpCost(srcLevel,targetLevel)*unitsNum;
+        player.useTech(cost);
+
         territory.upUnit(this.unitsNum,this.srcLevel,this.targetLevel);
         return true;
     }
 
     @Override
     public String toString() {
-        String terr;
-        int playerId;
-
-        int srcLevel;
-        int targetLevel;
-        int unitsNum;
         StringBuilder sb = new StringBuilder();
         sb.append("Upgrade Unit(Number: ").append(this.unitsNum).append(", ");
         sb.append("Territory: ").append(this.terr).append(", ");

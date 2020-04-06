@@ -11,9 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import static edu.duke.ece651.risk.shared.Constant.UNIT_BONUS;
 import static org.junit.jupiter.api.Assertions.*;
@@ -206,12 +204,20 @@ class TerritoryV2Test {
         //prepare the world
         WorldMap<String> worldMap = mapDataBase.getMap("a clash of kings");
         Territory stormTerr = worldMap.getTerritory("the storm kingdom");
+
         stormTerr.addBasicUnits(5);
         stormTerr.addUnits(4,1);
         assertThrows(IllegalArgumentException.class,()->{stormTerr.upUnit(6,0,1);});
         stormTerr.upUnit(3,0,1);
         assertEquals(2,stormTerr.getBasicUnitsNum());
         assertEquals(7,stormTerr.getUnitsNum(1));
+
+        Territory northTerr = worldMap.getTerritory(north);
+        northTerr.addBasicUnits(5);
+        northTerr.upUnit(5,0,1);
+        Map<Integer, List<Unit>> unitGroup = northTerr.getUnitGroup();
+        assertFalse(unitGroup.containsKey(0));
+        assertEquals(5,unitGroup.get(1).size());
     }
 
     @Test

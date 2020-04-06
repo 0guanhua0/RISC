@@ -10,15 +10,19 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.Set;
 
+import edu.duke.ece651.risk.shared.ToServerMsg.ServerSelect;
 import edu.duke.ece651.risk.shared.action.Action;
 import edu.duke.ece651.riskclient.listener.onNewPlayerListener;
 import edu.duke.ece651.riskclient.listener.onReceiveListener;
+import edu.duke.ece651.riskclient.listener.onRecvAttackResultListener;
 import edu.duke.ece651.riskclient.listener.onResultListener;
-import edu.duke.ece651.riskclient.objects.Player;
+import edu.duke.ece651.riskclient.objects.SimplePlayer;
 
 import static edu.duke.ece651.risk.shared.Constant.ACTION_CREATE_GAME;
 import static edu.duke.ece651.risk.shared.Constant.ACTION_JOIN_GAME;
 import static edu.duke.ece651.risk.shared.Constant.ACTION_RECONNECT_ROOM;
+import static edu.duke.ece651.risk.shared.Constant.ROOM_ID;
+import static edu.duke.ece651.risk.shared.Constant.ROUND_OVER;
 import static edu.duke.ece651.riskclient.Constant.ACTION_CHANGE_PASSWORD;
 import static edu.duke.ece651.riskclient.Constant.ACTION_CREATE_NEW_ROOM;
 import static edu.duke.ece651.riskclient.Constant.ACTION_GET_IN_ROOM;
@@ -26,6 +30,7 @@ import static edu.duke.ece651.riskclient.Constant.ACTION_GET_WAIT_ROOM;
 import static edu.duke.ece651.riskclient.Constant.ACTION_LOGIN;
 import static edu.duke.ece651.riskclient.Constant.ACTION_SIGN_UP;
 import static edu.duke.ece651.riskclient.Constant.ACTION_TYPE;
+import static edu.duke.ece651.riskclient.Constant.FAIL_TO_SEND;
 import static edu.duke.ece651.riskclient.Constant.INFO_ALL_PLAYER;
 import static edu.duke.ece651.riskclient.Constant.MAP_NAME;
 import static edu.duke.ece651.riskclient.Constant.PASSWORD_NEW;
@@ -55,7 +60,7 @@ public class HTTPUtils {
      * @param player player to be authenticated
      * @param listener result listener
      */
-    public static void authUser(Player player, onResultListener listener){
+    public static void authUser(SimplePlayer player, onResultListener listener){
         try {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put(USER_NAME, player.getName());
@@ -73,7 +78,7 @@ public class HTTPUtils {
      * * @param player player to be add
      * @param listener result listener
      */
-    public static void addUser(Player player, onResultListener listener){
+    public static void addUser(SimplePlayer player, onResultListener listener){
         try {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put(USER_NAME, player.getName());
@@ -92,7 +97,7 @@ public class HTTPUtils {
      * @param newPass new password
      * @param listener result listener
      */
-    public static void changePassword(Player player, String newPass, onResultListener listener){
+    public static void changePassword(SimplePlayer player, String newPass, onResultListener listener){
         try {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put(USER_NAME, player.getName());
@@ -112,11 +117,6 @@ public class HTTPUtils {
      * @param listener result listener
      */
     public static void getRoomList(boolean isRoomIn, onReceiveListener listener){
-//        List<Room> rooms = new ArrayList<>();
-//        for (int i = 0; i < 30; i++){
-//            rooms.add(new Room(i, isRoomIn ? "roomIn" + (i + 1) : "roomWait" + (i + 1)));
-//        }
-//        listener.onSuccessful(rooms);
         try {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put(USER_NAME, getPlayerName());
@@ -152,20 +152,6 @@ public class HTTPUtils {
             send(jsonObject.toString());
             // create a new room
             sendAndCheckSuccessG("-1", listener);
-
-//            send("-1");
-//            // receive the confirm message
-//            checkResult(new onResultListener() {
-//                @Override
-//                public void onFailure(String error) {
-//                    listener.onFailure(error);
-//                }
-//
-//                @Override
-//                public void onSuccessful() {
-//                    listener.onSuccessful();
-//                }
-//            });
         }catch (JSONException e){
             Log.e(TAG, "createNewRoom: " + e.toString());
         }
@@ -211,9 +197,7 @@ public class HTTPUtils {
                         listener.onAllPlayer();
                     }else {
                         try {
-                            listener.onNewPlayer(new Player((String) object, ""));
-                            // give the UI some time to refresh
-                            Thread.sleep(500);
+                            listener.onNewPlayer(new SimplePlayer((String) object, ""));
                             waitAllPlayers(listener);
                         }catch (Exception e){
                             Log.e(TAG, "waitAllPlayers: " + e.toString());
@@ -253,9 +237,9 @@ public class HTTPUtils {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put(USER_NAME, getPlayerName());
             jsonObject.put(ACTION_TYPE, ACTION_RECONNECT_ROOM);
-            send(jsonObject.toString());
+            jsonObject.put(ROOM_ID, getRoomID());
             // join in an existing room
-            sendAndCheckSuccessG(String.valueOf(getRoomID()), listener);
+            sendAndCheckSuccessG(jsonObject.toString(), listener);
         }catch (JSONException e){
             Log.e(TAG, "backGame: " + e.toString());
         }
@@ -270,7 +254,7 @@ public class HTTPUtils {
         send(group, new onResultListener() {
             @Override
             public void onFailure(String error) {
-
+                Log.e(TAG, "verifySelectGroup: " + error);
             }
 
             @Override
@@ -280,8 +264,23 @@ public class HTTPUtils {
         });
     }
 
-    public static void getRoundInfo(onReceiveListener listener){
-        recv(listener);
+    /**
+     * Send the result of assigning units to verify.
+     * @param selection result of assigning units
+     * @param listener result listener
+     */
+    public static void verifyAssignUnits(ServerSelect selection, onResultListener listener){
+        send(selection, new onResultListener() {
+            @Override
+            public void onFailure(String error) {
+                Log.e(TAG, "verifyAssignUnits: " + error);
+            }
+
+            @Override
+            public void onSuccessful() {
+                checkResult(listener);
+            }
+        });
     }
 
     /**
@@ -290,33 +289,55 @@ public class HTTPUtils {
      * @param listener result listener
      */
     public static void sendAction(Action action, onResultListener listener){
-        listener.onSuccessful();
+        send(action, new onResultListener() {
+            @Override
+            public void onFailure(String error) {
+                // fail to send the action
+                listener.onFailure(FAIL_TO_SEND);
+            }
 
-//        send(action, new onResultListener() {
-//            @Override
-//            public void onFailure(String error) {
-//                // fail to send the action
-//                listener.onFailure(FAIL_TO_SEND);
-//            }
-//
-//            @Override
-//            public void onSuccessful() {
-//                // successful send the action, receive the result
-//                checkResult(new onResultListener() {
-//                    @Override
-//                    public void onFailure(String error) {
-//                        // invalid action
-//                        listener.onFailure(error);
-//                    }
-//
-//                    @Override
-//                    public void onSuccessful() {
-//                        // valid action
-//                        listener.onSuccessful();
-//                    }
-//                });
-//            }
-//        });
+            @Override
+            public void onSuccessful() {
+                // successful send the action, receive the result
+                checkResult(new onResultListener() {
+                    @Override
+                    public void onFailure(String error) {
+                        // invalid action
+                        listener.onFailure(error);
+                    }
+
+                    @Override
+                    public void onSuccessful() {
+                        // valid action
+                        listener.onSuccessful();
+                    }
+                });
+            }
+        });
+    }
+
+    public static void recvAttackResult(onRecvAttackResultListener listener){
+        recv(new onReceiveListener() {
+            @Override
+            public void onFailure(String error) {
+                listener.onFailure(error);
+            }
+
+            @Override
+            public void onSuccessful(Object object) {
+                if (object instanceof String){
+                    String result = (String) object;
+                    // received all attack result, start a new round
+                    if (result.equals(ROUND_OVER)){
+                        listener.onOver();
+                    }else {
+                        listener.onNewResult(result);
+                        // keep listening
+                        recvAttackResult(listener);
+                    }
+                }
+            }
+        });
     }
 
     /* ====== helper function ====== */
@@ -328,7 +349,6 @@ public class HTTPUtils {
      * @param listener result listener
      */
     static void sendAndCheckSuccessT(String request, onResultListener listener) {
-//        listener.onSuccessful();
         // use the global thread pool to execute
         getThreadPool().execute(() -> {
             try {

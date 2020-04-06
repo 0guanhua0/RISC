@@ -165,20 +165,18 @@ public class GameServer {
                 currPlayer.setIn(player.getIn());
                 currPlayer.setOut(player.getOut());
                 currPlayer.setConnect(true);
+                currPlayer.send(SUCCESSFUL);
             } else {
                 player.send(INVALID_RECONNECT);
             }
 
         }
-
-
     }
 
 
     /**
      * user want to create a room or add a room
      */
-
     void startGame(Player player) throws IOException, ClassNotFoundException {
         int choice = askValidRoomNum(player);
         synchronized (this) {
@@ -203,7 +201,7 @@ public class GameServer {
      * @param player player object, handle the communication
      * @return room number/ID, e.g. -1(or any negative number) stands for a new room, > 0 stands for an existing room
      */
-    int askValidRoomNum(Player<?> player) throws IOException {
+    int askValidRoomNum(Player<?> player) {
         while (true) {
             try {
                 String choice = (String) player.recv();

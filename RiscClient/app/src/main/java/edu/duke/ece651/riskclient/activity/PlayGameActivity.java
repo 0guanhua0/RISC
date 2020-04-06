@@ -3,8 +3,10 @@ package edu.duke.ece651.riskclient.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -15,7 +17,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -23,39 +24,49 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import edu.duke.ece651.risk.shared.ToClientMsg.RoundInfo;
+import edu.duke.ece651.risk.shared.WorldState;
 import edu.duke.ece651.risk.shared.action.Action;
-import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.map.Territory;
-import edu.duke.ece651.risk.shared.map.TerritoryV2;
 import edu.duke.ece651.risk.shared.map.Unit;
 import edu.duke.ece651.risk.shared.map.WorldMap;
+import edu.duke.ece651.risk.shared.player.Player;
 import edu.duke.ece651.riskclient.R;
 import edu.duke.ece651.riskclient.adapter.TerritoryAdapter;
 import edu.duke.ece651.riskclient.listener.onReceiveListener;
+import edu.duke.ece651.riskclient.listener.onRecvAttackResultListener;
 import edu.duke.ece651.riskclient.listener.onResultListener;
 
 import static edu.duke.ece651.risk.shared.Constant.ACTION_DONE;
 import static edu.duke.ece651.risk.shared.Constant.GAME_OVER;
-import static edu.duke.ece651.risk.shared.Constant.ROUND_OVER;
 import static edu.duke.ece651.riskclient.Constant.ACTION_PERFORMED;
-import static edu.duke.ece651.riskclient.Constant.FAIL_TO_SEND;
+import static edu.duke.ece651.riskclient.Constant.MAP_NAME_TO_RESOURCE_ID;
 import static edu.duke.ece651.riskclient.Constant.NETWORK_PROBLEM;
 import static edu.duke.ece651.riskclient.RiskApplication.getRoomName;
 import static edu.duke.ece651.riskclient.RiskApplication.recv;
+import static edu.duke.ece651.riskclient.RiskApplication.releaseGameSocket;
 import static edu.duke.ece651.riskclient.RiskApplication.send;
+import static edu.duke.ece651.riskclient.RiskApplication.setPlayerID;
+import static edu.duke.ece651.riskclient.utils.HTTPUtils.recvAttackResult;
 import static edu.duke.ece651.riskclient.utils.UIUtils.showToastUI;
 
 public class PlayGameActivity extends AppCompatActivity {
+    private static final String TAG = PlayGameActivity.class.getSimpleName();
+
+    public static final String PLAYING_MAP = "playingMap";
+
     private static final int ACTION_MOVE_ATTACK = 1;
     private static final int ACTION_UPGRADE = 2;
 
     /**
      * UI variable
      */
+    private TextView tvRoundNum;
+    private TextView tvPlayerInfo;
     private TextView tvActionInfo;
     private Button btMoveAttack;
     private Button btUpgrade;
     private Button btDone;
+    private ImageView imgMap;
 
     /**
      * Variable
@@ -63,6 +74,7 @@ public class PlayGameActivity extends AppCompatActivity {
     private TerritoryAdapter territoryAdapter;
     private List<Action> performedActions;
     private WorldMap<String> map;
+    private Player<String> player;
     private int roundNum;
 
     @Override
@@ -78,11 +90,13 @@ public class PlayGameActivity extends AppCompatActivity {
         }
 
         performedActions = new ArrayList<>();
+        roundNum = 1;
 
         setUpUI();
 
-        // make sure user can't do anything before we receive the data
+        // make sure user can't do anything before we receive the first round data
         setAllButtonClickable(false);
+
         newRound();
     }
 
@@ -104,8 +118,14 @@ public class PlayGameActivity extends AppCompatActivity {
             case ACTION_MOVE_ATTACK:
             case ACTION_UPGRADE:
                 if (resultCode == RESULT_OK){
-                    performedActions.add((Action) data.getSerializableExtra(ACTION_PERFORMED));
+                    Action action = (Action) data.getSerializableExtra(ACTION_PERFORMED);
+                    // server check that the action is valid, so we perform it to update current map
+                    // NOTE: this only update the copy of the map, we will still get the latest map from server at the beginning of each term
+                    action.perform(new WorldState(player, map));
+                    // TODO: maybe we can perform the action here
+                    performedActions.add(action);
                     showActions();
+                    showPlayerInfo();
                 }
                 break;
         }
@@ -119,11 +139,17 @@ public class PlayGameActivity extends AppCompatActivity {
 
         btMoveAttack.setOnClickListener(v -> {
             Intent intent = new Intent(PlayGameActivity.this, MoveAttackActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putSerializable(PLAYING_MAP, map);
+            intent.putExtras(bundle);
             startActivityForResult(intent, ACTION_MOVE_ATTACK);
         });
 
         btUpgrade.setOnClickListener(v -> {
             Intent intent = new Intent(PlayGameActivity.this, UpgradeActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putSerializable(PLAYING_MAP, map);
+            intent.putExtras(bundle);
             startActivityForResult(intent, ACTION_UPGRADE);
         });
 
@@ -139,6 +165,14 @@ public class PlayGameActivity extends AppCompatActivity {
             }));
             builder.show();
         });
+
+        tvPlayerInfo = findViewById(R.id.tv_player_info);
+        tvPlayerInfo.setText("Please wait other players to finish assigning units...");
+
+        tvRoundNum = findViewById(R.id.tv_round_number);
+        tvRoundNum.setText(String.valueOf(roundNum));
+
+        imgMap = findViewById(R.id.img_map);
 
         tvActionInfo = findViewById(R.id.tv_action_info);
         tvActionInfo.setMovementMethod(new ScrollingMovementMethod());
@@ -157,8 +191,6 @@ public class PlayGameActivity extends AppCompatActivity {
         rvTerritoryList.setLayoutManager(new LinearLayoutManager(PlayGameActivity.this));
         rvTerritoryList.setHasFixedSize(true);
         rvTerritoryList.setAdapter(territoryAdapter);
-
-        tvActionInfo = findViewById(R.id.tv_action_info);
     }
 
     /**
@@ -215,27 +247,26 @@ public class PlayGameActivity extends AppCompatActivity {
      */
     private void receiveAttackResult(){
         StringBuilder results = new StringBuilder();
-        // TODO: keep receiving until over, now it will only receive once
-        recv(new onReceiveListener() {
+        recvAttackResult(new onRecvAttackResultListener() {
             @Override
-            public void onFailure(String error) {
-                showToastUI(PlayGameActivity.this, NETWORK_PROBLEM);
-                setAllButtonClickable(true);
+            public void onNewResult(String result) {
+                runOnUiThread(() -> {
+                    results.append(result).append("\n");
+                    tvActionInfo.setText(results.toString());
+                });
             }
 
             @Override
-            public void onSuccessful(Object object) {
-                tvActionInfo.setText("");
-                if (object instanceof String){
-                    String result = (String) object;
-                    // received all attack result, start a new round
-                    if (result.equals(ROUND_OVER)){
-                        checkGameEnd();
-                    }else {
-                        results.append(object);
-                        tvActionInfo.setText(results.toString());
-                    }
-                }
+            public void onOver() {
+                checkGameEnd();
+            }
+
+            @Override
+            public void onFailure(String error) {
+                showToastUI(PlayGameActivity.this, NETWORK_PROBLEM);
+                runOnUiThread(() -> {
+                    setAllButtonClickable(true);
+                });
             }
         });
     }
@@ -248,7 +279,9 @@ public class PlayGameActivity extends AppCompatActivity {
             @Override
             public void onFailure(String error) {
                 showToastUI(PlayGameActivity.this, NETWORK_PROBLEM);
-                setAllButtonClickable(true);
+                runOnUiThread(() -> {
+                    setAllButtonClickable(true);
+                });
             }
 
             @Override
@@ -272,18 +305,34 @@ public class PlayGameActivity extends AppCompatActivity {
         recv(new onReceiveListener() {
             @Override
             public void onFailure(String error) {
-                showToastUI(PlayGameActivity.this, NETWORK_PROBLEM);
+                showToastUI(PlayGameActivity.this, error);
                 setAllButtonClickable(true);
             }
 
             @Override
             public void onSuccessful(Object object) {
-//                RoundInfo info = (RoundInfo) object;
-//                roundNum = info.getRoundNum();
-//                map = info.getMap();
-//                showToastUI(PlayGameActivity.this, String.format(Locale.US,"start round %d", roundNum));
-                updateTerritories();
-                setAllButtonClickable(true);
+                RoundInfo info = (RoundInfo) object;
+                roundNum = info.getRoundNum();
+                map = info.getMap();
+                player = info.getPlayer();
+                setPlayerID(player.getId());
+                // clear all actions in the last round
+                performedActions.clear();
+                showToastUI(PlayGameActivity.this, String.format(Locale.US,"start round %d", roundNum));
+                runOnUiThread(() -> {
+                    // set the round number
+                    tvRoundNum.setText(String.valueOf(roundNum));
+                    // reset the action info
+                    showActions();
+                    // set the map image
+                    imgMap.setImageResource(MAP_NAME_TO_RESOURCE_ID.get(map.getName()));
+                    // update player info
+                    showPlayerInfo();
+                    // update territory list
+                    showTerritories();
+                    // set all button clickable, let user input
+                    setAllButtonClickable(true);
+                });
             }
         });
     }
@@ -291,15 +340,24 @@ public class PlayGameActivity extends AppCompatActivity {
     /**
      * Update the territory list based on the latest map.
      */
-    private void updateTerritories(){
+    private void showTerritories(){
         List<Territory> territories = new ArrayList<>();
-//        for (Map.Entry<String, Territory> entry : map.getAtlas().entrySet()){
-//            territories.add(entry.getValue());
-//        }
-        for (int i = 0; i < 20; i++){
-            territories.add(new TerritoryV2("t" + i, 1, 1, 1));
+        for (Map.Entry<String, Territory> entry : map.getAtlas().entrySet()){
+            territories.add(entry.getValue());
         }
         territoryAdapter.setTerritories(territories);
+    }
+
+    private void showPlayerInfo(){
+        StringBuilder builder = new StringBuilder();
+        builder.append("Player ").append(player.getName())
+                .append("(id: ").append(player.getId()).append(")")
+                .append("   ").append("Max Tech Level: ").append(player.getTechLevel())
+                .append("\n");
+        builder.append("Food resource: ").append(player.getFoodNum())
+                .append("; Tech resource: ").append(player.getTechNum())
+                .append("\n");
+        tvPlayerInfo.setText(builder);
     }
 
     /**
@@ -323,7 +381,7 @@ public class PlayGameActivity extends AppCompatActivity {
         }else {
             int index = 1;
             for (Action action : performedActions){
-                builder.append(index).append(". ").append(action.toString());
+                builder.append(index).append(". ").append(action.toString()).append("\n");
                 index ++;
             }
         }
@@ -335,7 +393,7 @@ public class PlayGameActivity extends AppCompatActivity {
         recv(new onReceiveListener() {
             @Override
             public void onFailure(String error) {
-
+                Log.e(TAG, "endGame" + error);
             }
 
             @Override
@@ -362,11 +420,11 @@ public class PlayGameActivity extends AppCompatActivity {
 
     // probably want to extract this into constant
     private void goBack(){
-        // TODO: change text to save & exit
         AlertDialog.Builder builder = new AlertDialog.Builder(PlayGameActivity.this);
         builder.setPositiveButton("Save", (dialog1, which) -> {
-            showToastUI(PlayGameActivity.this, "Sava room");
+            showToastUI(PlayGameActivity.this, "Save room");
             // TODO: communicate with the server, send the exit info
+            releaseGameSocket();
             onBackPressed();
         });
         builder.setNegativeButton("Exit", (dialog2, which) -> {
