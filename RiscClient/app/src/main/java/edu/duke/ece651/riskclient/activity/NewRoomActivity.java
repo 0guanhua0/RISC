@@ -30,7 +30,7 @@ import edu.duke.ece651.riskclient.adapter.MapAdapter;
 import edu.duke.ece651.riskclient.listener.onReceiveListener;
 import edu.duke.ece651.riskclient.listener.onResultListener;
 
-import static edu.duke.ece651.riskclient.Constant.MAP_NAME_TO_RESOURCE_ID;
+import static edu.duke.ece651.riskclient.ClientConstant.MAP_NAME_TO_RESOURCE_ID;
 import static edu.duke.ece651.riskclient.RiskApplication.recv;
 import static edu.duke.ece651.riskclient.RiskApplication.setRoom;
 import static edu.duke.ece651.riskclient.utils.HTTPUtils.sendNewRoomInfo;
@@ -175,7 +175,7 @@ public class NewRoomActivity extends AppCompatActivity {
         recv(new onReceiveListener() {
             @Override
             public void onFailure(String error) {
-
+                Log.e(TAG, "updateMap: " + error);
             }
 
             @Override

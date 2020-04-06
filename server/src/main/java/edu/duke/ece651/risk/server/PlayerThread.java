@@ -97,17 +97,8 @@ public class PlayerThread extends Thread{
         // 3. round number
         // 4. player object(contains the information of resources)
         RoundInfo roundInfo = new RoundInfo(gameInfo.getRoundNum(), map, gameInfo.getIdToName(), player);
-        Player<String> player = roundInfo.getPlayer();
 
-        synchronized (this){
-            this.player.send(roundInfo);
-            int id = player.getId();
-            System.out.println("id = " + id);
-            int foodNum = player.getFoodNum();
-            System.out.println("foodNum = " + foodNum);
-            int techNum = player.getTechNum();
-            System.out.println("techNum = " + techNum);
-        }
+        player.send(roundInfo);
 
         // build the current state of game
         WorldState worldState = new WorldState(this.player, this.map);
@@ -119,16 +110,13 @@ public class PlayerThread extends Thread{
                 // we will only wait for user input unless he/she is connected
                 // otherwise we will want 1s and then check if user is connected or not
                 if (this.player.isConnect()){
-                    System.out.println("start waiting for input");
                     if (reconnect){
-                        System.out.println("user successfully reconnect");
                         // once user reconnect, send he/she the latest roundInfo
                         this.player.send(roundInfo);
                     }
                     Object recvRes = this.player.recv();
                     if (recvRes instanceof Action){
                         Action action = (Action) recvRes;
-                        System.out.println("receive action");
                         System.out.println(action);
                         synchronized (this) {
                             // act accordingly based on whether the input actions are valid or not

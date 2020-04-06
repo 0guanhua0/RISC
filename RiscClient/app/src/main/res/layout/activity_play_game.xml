@@ -76,7 +76,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/ll_button_group"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/large_button_height"
+        android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_marginVertical="@dimen/normal_margin"
         app:layout_constraintStart_toStartOf="parent"
@@ -86,7 +86,7 @@
         <Button
             android:id="@+id/bt_move_attack"
             android:layout_width="@dimen/small_button_width"
-            android:layout_height="match_parent"
+            android:layout_height="@dimen/large_button_height"
             android:layout_marginHorizontal="@dimen/normal_margin"
             android:text="@string/play_game_move_attack"
             style="@style/Widget.Button"
@@ -96,7 +96,7 @@
         <Button
             android:id="@+id/bt_upgrade"
             android:layout_width="@dimen/small_button_width"
-            android:layout_height="match_parent"
+            android:layout_height="@dimen/large_button_height"
             android:text="@string/play_game_upgrade"
             style="@style/Widget.Button"
             app:layout_constraintStart_toEndOf="@id/bt_move_attack"
@@ -106,7 +106,7 @@
         <Button
             android:id="@+id/bt_done"
             android:layout_width="@dimen/small_button_width"
-            android:layout_height="match_parent"
+            android:layout_height="@dimen/large_button_height"
             android:layout_marginHorizontal="@dimen/normal_margin"
             android:text="@string/play_game_done"
             style="@style/Widget.Button"

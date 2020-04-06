@@ -17,6 +17,8 @@ import edu.duke.ece651.riskclient.R;
 import edu.duke.ece651.riskclient.listener.onClickListener;
 import edu.duke.ece651.riskclient.objects.UnitGroup;
 
+import static edu.duke.ece651.risk.shared.Constant.UNIT_NAME;
+
 public class UnitAdapter extends RecyclerView.Adapter<UnitAdapter.RoomViewHolder> {
 
     private List<UnitGroup> units;
@@ -38,7 +40,7 @@ public class UnitAdapter extends RecyclerView.Adapter<UnitAdapter.RoomViewHolder
     public void onBindViewHolder(@NonNull RoomViewHolder holder, int position) {
         UnitGroup unit = units.get(position);
 
-        holder.tvUnitInfo.setText(String.format(Locale.US, "%d units with level %d", unit.getNumber(), unit.getLevel()));
+        holder.tvUnitInfo.setText(String.format(Locale.US, "%d %s(level %d)", unit.getNumber(), UNIT_NAME.get(unit.getLevel()), unit.getLevel()));
         holder.itemView.setOnClickListener(v -> {
             if (listener != null){
                 listener.onClick(position);

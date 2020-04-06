@@ -33,7 +33,7 @@ import edu.duke.ece651.riskclient.listener.onReceiveListener;
 import edu.duke.ece651.riskclient.listener.onResultListener;
 import pl.polak.clicknumberpicker.ClickNumberPickerView;
 
-import static edu.duke.ece651.riskclient.Constant.MAP_NAME_TO_RESOURCE_ID;
+import static edu.duke.ece651.riskclient.ClientConstant.MAP_NAME_TO_RESOURCE_ID;
 import static edu.duke.ece651.riskclient.RiskApplication.recv;
 import static edu.duke.ece651.riskclient.utils.HTTPUtils.verifyAssignUnits;
 import static edu.duke.ece651.riskclient.utils.HTTPUtils.verifySelectGroup;

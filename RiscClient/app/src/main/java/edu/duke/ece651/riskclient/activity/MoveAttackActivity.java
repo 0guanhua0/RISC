@@ -20,14 +20,15 @@ import android.widget.TextView;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
 import edu.duke.ece651.risk.shared.action.Action;
 import edu.duke.ece651.risk.shared.action.AttackAction;
 import edu.duke.ece651.risk.shared.action.MoveAction;
+import edu.duke.ece651.risk.shared.map.BasicResource;
 import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.Unit;
 import edu.duke.ece651.risk.shared.map.WorldMap;
@@ -36,15 +37,15 @@ import edu.duke.ece651.riskclient.adapter.UnitAdapter;
 import edu.duke.ece651.riskclient.listener.onResultListener;
 import edu.duke.ece651.riskclient.objects.UnitGroup;
 
-import static edu.duke.ece651.riskclient.Constant.ACTION_PERFORMED;
+import static edu.duke.ece651.risk.shared.Constant.UNIT_NAME;
+import static edu.duke.ece651.riskclient.ClientConstant.ACTION_PERFORMED;
 import static edu.duke.ece651.riskclient.RiskApplication.getPlayerID;
+import static edu.duke.ece651.riskclient.activity.PlayGameActivity.FOOD_RESOURCE;
 import static edu.duke.ece651.riskclient.activity.PlayGameActivity.PLAYING_MAP;
 import static edu.duke.ece651.riskclient.utils.HTTPUtils.sendAction;
 import static edu.duke.ece651.riskclient.utils.UIUtils.showToastUI;
 
 public class MoveAttackActivity extends AppCompatActivity {
-    private static final String ACTION_MOVE = "move";
-    private static final String ACTION_ATTACK = "attack";
 
     /**
      * UI variable
@@ -62,6 +63,7 @@ public class MoveAttackActivity extends AppCompatActivity {
     private AutoCompleteTextView dropdownDestTerritory;
     private boolean isMove;
     private WorldMap<String> map;
+    private int foodResource;
     // territory info
     List<String> territoryOwn;
     List<String> territoryOther;
@@ -78,6 +80,7 @@ public class MoveAttackActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         if (bundle != null){
             map = (WorldMap<String>) bundle.getSerializable(PLAYING_MAP);
+            foodResource = bundle.getInt(FOOD_RESOURCE);
         }
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -111,6 +114,9 @@ public class MoveAttackActivity extends AppCompatActivity {
     }
 
     private void setUpUI(){
+        TextView tvResource = findViewById(R.id.tv_resource);
+        tvResource.setText(String.format(Locale.US, "Total food resource(before this action): %d", foodResource));
+
         Button btConfirm = findViewById(R.id.bt_confirm);
         Button btDecline = findViewById(R.id.bt_decline);
 
@@ -129,6 +135,9 @@ public class MoveAttackActivity extends AppCompatActivity {
                     public void onFailure(String error) {
                         // either invalid action or networking problem
                         showToastUI(MoveAttackActivity.this, error);
+                        // clear all input once action invalid
+                        units.clear();
+                        refreshUnitsInfo();
                     }
 
                     @Override
@@ -244,9 +253,8 @@ public class MoveAttackActivity extends AppCompatActivity {
         dropdownAction.setAdapter(adapter);
         dropdownAction.setText(items[0], false);
         dropdownAction.setOnItemClickListener((parent, v, position, id) -> {
-            showToastUI(MoveAttackActivity.this, "action: " + items[position]);
             isMove = (position == 0);
-            // only need to update the destination territory
+            // only need to update the destination territory(dropdown)
             destTerritoryAdapter.clear();
             if (isMove){
                 // pass a copy inside
@@ -254,8 +262,12 @@ public class MoveAttackActivity extends AppCompatActivity {
             }else {
                 destTerritoryAdapter.addAll(new ArrayList<>(territoryOther));
             }
+
             // set default value
-            dropdownDestTerritory.setText(destTerritoryAdapter.getItem(0), false);
+            destTerritory = destTerritoryAdapter.getItem(0);
+
+            dropdownDestTerritory.setText(destTerritory, false);
+            updateUnitList(false);
         });
     }
 
@@ -291,7 +303,6 @@ public class MoveAttackActivity extends AppCompatActivity {
         srcUnitAdapter = new UnitAdapter();
         srcUnitAdapter.setListener(position -> {
             UnitGroup unit = srcUnitAdapter.getUnitGroup(position);
-            showToastUI(MoveAttackActivity.this, "you click");
         });
         rvUnitList.setLayoutManager(new LinearLayoutManager(MoveAttackActivity.this));
         rvUnitList.setHasFixedSize(true);
@@ -329,7 +340,6 @@ public class MoveAttackActivity extends AppCompatActivity {
         destUnitAdapter = new UnitAdapter();
         destUnitAdapter.setListener(position -> {
             UnitGroup unit = destUnitAdapter.getUnitGroup(position);
-            showToastUI(MoveAttackActivity.this, "you click");
         });
         rvUnitList.setLayoutManager(new LinearLayoutManager(MoveAttackActivity.this));
         rvUnitList.setHasFixedSize(true);
@@ -357,8 +367,9 @@ public class MoveAttackActivity extends AppCompatActivity {
 
     private void refreshUnitsInfo(){
         StringBuilder builder = new StringBuilder();
+        // key: level; value: number
         for (Map.Entry<Integer, Integer> entry : units.entrySet()){
-            builder.append(entry.getValue()).append(" units of level ").append(entry.getKey()).append("\n");
+            builder.append(entry.getValue()).append(" ").append(UNIT_NAME.get(entry.getKey())).append("\n");
         }
         tvUnitsInfo.setText(builder.toString());
     }

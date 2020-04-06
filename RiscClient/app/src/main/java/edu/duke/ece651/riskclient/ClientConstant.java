@@ -3,13 +3,13 @@ package edu.duke.ece651.riskclient;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Constant {
+public class ClientConstant {
     // the longest waiting time for any network operation
     public static final int TIME_OUT = 30 * 1000;
 
     // CI server: vcm-12835.vm.duke.edu
     // testing server: vcm-13663.vm.duke.edu
-    public static final String HOST = "192.168.1.102";
+    public static final String HOST = "vcm-12835.vm.duke.edu";
     public static final int PORT = 12345;
 
     public static final String USER_NAME = "userName";

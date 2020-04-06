@@ -10,6 +10,8 @@ import java.util.*;
  * @create: 2020-03-28 14:10
  **/
 public class WorldMapV2<T extends Serializable> extends WorldMap{
+    private static final long serialVersionUID = 12L;
+
     public WorldMapV2(Map<String, Set<String>> adjaList, List<T> colorList,
                       Map<Set<String>, Boolean> groups, Map<String,Integer> sizes,
                       Map<String,Integer> food, Map<String,Integer> tech){
@@ -18,19 +20,19 @@ public class WorldMapV2<T extends Serializable> extends WorldMap{
         Set<String> allName = new HashSet<>();
         for (Set<String> nameSet : groups.keySet()) {
             for (String name : nameSet) {
-                assert (adjaList.containsKey(name) || !allName.contains(name));
+//                assert (adjaList.containsKey(name) || !allName.contains(name));
                 allName.add(name);
             }
-            assert(groups.get(nameSet)==false);
+//            assert(groups.get(nameSet)==false);
         }
-        assert (allName.size() == adjaList.size());
+//        assert (allName.size() == adjaList.size());
         this.groups = groups;
 
         int playerNum = colorList.size();
         int terriNum = adjaList.size();
 
-        assert(playerNum<=terriNum);
-        assert(0==terriNum%playerNum);
+//        assert(playerNum<=terriNum);
+//        assert(0==terriNum%playerNum);
 
         this.colorList = colorList;
         this.atlas = new HashMap<String,Territory>();

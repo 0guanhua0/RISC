@@ -36,7 +36,7 @@ public class PlayerThreadTest {
         // invalid input
         String a3 = "invalid";
 
-        Player<String> p = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList(
+        Player<String> player = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList(
                 p1Group,
                 p2Group,
                 s1,
@@ -47,8 +47,7 @@ public class PlayerThreadTest {
                 ACTION_DONE,
                 ACTION_DONE
         ))), new ByteArrayOutputStream());
-        p.setId(1);
-        Player<String> player = spy(p);
+        player.setId(1);
 
         GameInfo gameInfo = new GameInfo(-1, 1);
         WorldMap<String> map = new MapDataBase<String>().getMap("a clash of kings");
@@ -70,7 +69,6 @@ public class PlayerThreadTest {
         gameInfo.winnerID = 1;
 
         verify(barrier, times(12)).await();
-        verify(player, times(8)).recv();
     }
     
     @Test
