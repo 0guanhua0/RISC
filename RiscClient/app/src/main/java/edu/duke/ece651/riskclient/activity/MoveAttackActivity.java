@@ -20,7 +20,6 @@ import android.widget.TextView;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -39,7 +38,7 @@ import edu.duke.ece651.riskclient.listener.onResultListener;
 import edu.duke.ece651.riskclient.objects.UnitGroup;
 
 import static edu.duke.ece651.risk.shared.Constant.UNIT_NAME;
-import static edu.duke.ece651.riskclient.Constant.ACTION_PERFORMED;
+import static edu.duke.ece651.riskclient.ClientConstant.ACTION_PERFORMED;
 import static edu.duke.ece651.riskclient.RiskApplication.getPlayerID;
 import static edu.duke.ece651.riskclient.activity.PlayGameActivity.FOOD_RESOURCE;
 import static edu.duke.ece651.riskclient.activity.PlayGameActivity.PLAYING_MAP;

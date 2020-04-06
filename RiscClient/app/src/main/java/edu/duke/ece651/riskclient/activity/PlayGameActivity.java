@@ -39,10 +39,12 @@ import edu.duke.ece651.riskclient.listener.onResultListener;
 
 import static edu.duke.ece651.risk.shared.Constant.ACTION_DONE;
 import static edu.duke.ece651.risk.shared.Constant.GAME_OVER;
+
 import static edu.duke.ece651.riskclient.Constant.ACTION_PERFORMED;
 import static edu.duke.ece651.riskclient.Constant.MAP_NAME_TO_RESOURCE_ID;
 import static edu.duke.ece651.riskclient.Constant.NETWORK_PROBLEM;
 import static edu.duke.ece651.riskclient.RiskApplication.getPlayerID;
+
 import static edu.duke.ece651.riskclient.RiskApplication.getRoomName;
 import static edu.duke.ece651.riskclient.RiskApplication.recv;
 import static edu.duke.ece651.riskclient.RiskApplication.releaseGameSocket;

@@ -19,8 +19,8 @@ import edu.duke.ece651.riskclient.listener.onResultListener;
 import edu.duke.ece651.riskclient.objects.SimplePlayer;
 import edu.duke.ece651.riskclient.R;
 
-import static edu.duke.ece651.riskclient.Constant.USER_NAME;
-import static edu.duke.ece651.riskclient.Constant.USER_PASSWORD;
+import static edu.duke.ece651.riskclient.ClientConstant.USER_NAME;
+import static edu.duke.ece651.riskclient.ClientConstant.USER_PASSWORD;
 import static edu.duke.ece651.riskclient.RiskApplication.setPlayer;
 import static edu.duke.ece651.riskclient.utils.HTTPUtils.authUser;
 import static edu.duke.ece651.riskclient.utils.UIUtils.showToastUI;
