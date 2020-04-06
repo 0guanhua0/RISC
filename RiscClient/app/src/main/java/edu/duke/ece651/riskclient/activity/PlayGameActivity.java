@@ -118,7 +118,10 @@ public class PlayGameActivity extends AppCompatActivity {
             case ACTION_MOVE_ATTACK:
             case ACTION_UPGRADE:
                 if (resultCode == RESULT_OK){
-                    performedActions.add((Action) data.getSerializableExtra(ACTION_PERFORMED));
+                    Action action = (Action) data.getSerializableExtra(ACTION_PERFORMED);
+                    // TODO: maybe we can perform the action here
+                    performedActions.add(action);
+
                     showActions();
                 }
                 break;
