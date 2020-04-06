@@ -199,7 +199,7 @@ public class HTTPUtils {
                         try {
                             listener.onNewPlayer(new SimplePlayer((String) object, ""));
                             // give the UI some time to refresh
-                            Thread.sleep(500);
+//                            Thread.sleep(500);
                             waitAllPlayers(listener);
                         }catch (Exception e){
                             Log.e(TAG, "waitAllPlayers: " + e.toString());
