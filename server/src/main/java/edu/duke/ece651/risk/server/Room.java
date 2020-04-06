@@ -322,4 +322,14 @@ public class Room {
         }
         return null;
     }
+
+    //check if has certain player
+    public boolean hasUser(String name) {
+        for (Player p : players) {
+            if (p.getName().equals(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

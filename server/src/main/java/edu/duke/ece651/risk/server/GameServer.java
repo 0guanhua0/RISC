@@ -137,7 +137,7 @@ public class GameServer {
 
         //the room user has joined
         if (action.equals(ACTION_GET_IN_ROOM)) {
-            player.send(userList.getUser(userName).getRoomList());
+            player.send(getUserRoom(userName));
             return;
         }
 
@@ -253,8 +253,10 @@ public class GameServer {
      */
 
     List<RoomInfo> getRoomList() {
-        clearRoom();
         // clear any finished room
+        clearRoom();
+
+
         List<RoomInfo> roomInfoList = new ArrayList<>();
         for (Room room : rooms.values()) {
             if (!room.hasStarted()) {
@@ -264,6 +266,25 @@ public class GameServer {
         }
         return roomInfoList;
     }
+
+    List<RoomInfo> getUserRoom(String user) {
+        // clear any finished room
+        clearRoom();
+
+        List<RoomInfo> roomInfoList = new ArrayList<>();
+        for (Room room : rooms.values()) {
+
+            if (room.hasUser(user)) {
+                roomInfoList.add(new RoomInfo(room.roomID, room.roomName, room.map, room.players));
+            }
+
+        }
+        return roomInfoList;
+
+
+    }
+
+
 
     public static void main(String[] args) throws IOException, SQLException, ClassNotFoundException {
         GameServer gameServer = new GameServer(new Server());
