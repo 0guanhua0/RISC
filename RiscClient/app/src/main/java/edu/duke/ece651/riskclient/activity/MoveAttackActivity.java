@@ -36,6 +36,7 @@ import edu.duke.ece651.riskclient.adapter.UnitAdapter;
 import edu.duke.ece651.riskclient.listener.onResultListener;
 import edu.duke.ece651.riskclient.objects.UnitGroup;
 
+import static edu.duke.ece651.risk.shared.Constant.UNIT_NAME;
 import static edu.duke.ece651.riskclient.Constant.ACTION_PERFORMED;
 import static edu.duke.ece651.riskclient.RiskApplication.getPlayerID;
 import static edu.duke.ece651.riskclient.activity.PlayGameActivity.PLAYING_MAP;
@@ -358,8 +359,9 @@ public class MoveAttackActivity extends AppCompatActivity {
 
     private void refreshUnitsInfo(){
         StringBuilder builder = new StringBuilder();
+        // key: level; value: number
         for (Map.Entry<Integer, Integer> entry : units.entrySet()){
-            builder.append(entry.getValue()).append(" units of level ").append(entry.getKey()).append("\n");
+            builder.append(entry.getValue()).append(" ").append(UNIT_NAME.get(entry.getKey())).append("\n");
         }
         tvUnitsInfo.setText(builder.toString());
     }
