@@ -131,7 +131,9 @@ public class WaitGameActivity extends AppCompatActivity {
         waitAllPlayers(new onNewPlayerListener() {
             @Override
             public void onNewPlayer(SimplePlayer player) {
-                addPlayer(player.getName());
+                runOnUiThread(() -> {
+                    addPlayer(player.getName());
+                });
             }
 
             @Override
