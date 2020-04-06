@@ -300,6 +300,7 @@ public class UpgradeActivity extends AppCompatActivity {
 
     private boolean validateAction(){
         if (unitLevelTo <= unitLevelFrom){
+            showToastUI(UpgradeActivity.this, "You can't downgrade(or unchange) the unit.");
             return false;
         }
         return true;

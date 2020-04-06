@@ -399,21 +399,24 @@ public class PlayGameActivity extends AppCompatActivity {
             @Override
             public void onSuccessful(Object object) {
                 String winnerInfo = (String) object;
-                // popup the game result and close the game after 3 seconds
-                AlertDialog.Builder builder = new AlertDialog.Builder(PlayGameActivity.this);
-                builder.setCancelable(false);
-                builder.setTitle("Result");
-                builder.setMessage(winnerInfo + "\n(this page will closed after 3 seconds)");
-                builder.show();
+                // dialog is a UI operation
+                runOnUiThread(() -> {
+                    // popup the game result and close the game after 3 seconds
+                    AlertDialog.Builder builder = new AlertDialog.Builder(PlayGameActivity.this);
+                    builder.setCancelable(false);
+                    builder.setTitle("Result");
+                    builder.setMessage(winnerInfo + "\n(this page will closed after 3 seconds)");
+                    builder.show();
 
-                Timer timer = new Timer();
-                timer.schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        // kill this activity
-                        finish();
-                    }
-                }, 3000);
+                    Timer timer = new Timer();
+                    timer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            // kill this activity
+                            finish();
+                        }
+                    }, 3000);
+                });
             }
         });
     }

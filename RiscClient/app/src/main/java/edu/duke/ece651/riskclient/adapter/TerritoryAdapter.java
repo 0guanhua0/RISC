@@ -58,6 +58,7 @@ public class TerritoryAdapter extends RecyclerView.Adapter<TerritoryAdapter.Room
     }
 
     public void setTerritories(List<Territory> territories){
+        // TODO: sort by owner id
         this.territories.clear();
         this.territories.addAll(territories);
         notifyDataSetChanged();
