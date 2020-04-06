@@ -16,18 +16,18 @@ public class WorldMapV1<T extends Serializable> extends WorldMap{
         Set<String> allName = new HashSet<>();
         for (Set<String> nameSet : groups.keySet()) {
             for (String name : nameSet) {
-                assert (adjaList.containsKey(name) || !allName.contains(name));
+//                assert (adjaList.containsKey(name) || !allName.contains(name));
                 allName.add(name);
             }
         }
-        assert (allName.size() == adjaList.size());
+//        assert (allName.size() == adjaList.size());
         this.groups = groups;
 
         int playerNum = colorList.size();
         int terriNum = adjaList.size();
 
-        assert(playerNum<=terriNum);
-        assert(0==terriNum%playerNum);
+//        assert(playerNum<=terriNum);
+//        assert(0==terriNum%playerNum);
 
         this.colorList = colorList;
         atlas = new HashMap<>();
