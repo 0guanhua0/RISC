@@ -43,8 +43,6 @@ import static edu.duke.ece651.riskclient.utils.HTTPUtils.sendAction;
 import static edu.duke.ece651.riskclient.utils.UIUtils.showToastUI;
 
 public class MoveAttackActivity extends AppCompatActivity {
-    private static final String ACTION_MOVE = "move";
-    private static final String ACTION_ATTACK = "attack";
 
     /**
      * UI variable
@@ -244,9 +242,8 @@ public class MoveAttackActivity extends AppCompatActivity {
         dropdownAction.setAdapter(adapter);
         dropdownAction.setText(items[0], false);
         dropdownAction.setOnItemClickListener((parent, v, position, id) -> {
-            showToastUI(MoveAttackActivity.this, "action: " + items[position]);
             isMove = (position == 0);
-            // only need to update the destination territory
+            // only need to update the destination territory(dropdown)
             destTerritoryAdapter.clear();
             if (isMove){
                 // pass a copy inside
@@ -254,8 +251,12 @@ public class MoveAttackActivity extends AppCompatActivity {
             }else {
                 destTerritoryAdapter.addAll(new ArrayList<>(territoryOther));
             }
+
             // set default value
-            dropdownDestTerritory.setText(destTerritoryAdapter.getItem(0), false);
+            destTerritory = destTerritoryAdapter.getItem(0);
+
+            dropdownDestTerritory.setText(destTerritory, false);
+            updateUnitList(false);
         });
     }
 

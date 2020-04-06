@@ -64,14 +64,14 @@ public class Room {
 //        player.send(String.format("Please wait other players to join th game(need %d, joined %d)", colorList.size(), players.size()));
 
         gameInfo = new GameInfo(-1, 1);
-        gameInfo.addPlayer(player.getId(), player.getColor());
+        gameInfo.addPlayer(player.getId(), player.getName());
 
         System.out.println("successfully init the game");
         System.out.println("room name: " + this.roomName);
     }
 
     //constructor for testing
-    public Room(int roomID, MapDataBase<String> mapDataBase) throws IllegalArgumentException, ClassNotFoundException {
+    public Room(int roomID, MapDataBase<String> mapDataBase) throws IllegalArgumentException {
         if (roomID < 0) {
             throw new IllegalArgumentException("Invalid value of Room Id");
         }
@@ -104,7 +104,7 @@ public class Room {
             // send the latest room info
             player.send(new RoomInfo(roomID, roomName, map, players));
 
-            gameInfo.addPlayer(player.getId(), player.getColor());
+            gameInfo.addPlayer(player.getId(), player.getName());
 
             // broadcast the newly joined player info
             sendAllExcept(player.getName(), player);
