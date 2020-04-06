@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -41,6 +42,7 @@ import static edu.duke.ece651.risk.shared.Constant.GAME_OVER;
 import static edu.duke.ece651.riskclient.Constant.ACTION_PERFORMED;
 import static edu.duke.ece651.riskclient.Constant.MAP_NAME_TO_RESOURCE_ID;
 import static edu.duke.ece651.riskclient.Constant.NETWORK_PROBLEM;
+import static edu.duke.ece651.riskclient.RiskApplication.getPlayerID;
 import static edu.duke.ece651.riskclient.RiskApplication.getRoomName;
 import static edu.duke.ece651.riskclient.RiskApplication.recv;
 import static edu.duke.ece651.riskclient.RiskApplication.releaseGameSocket;
@@ -53,6 +55,8 @@ public class PlayGameActivity extends AppCompatActivity {
     private static final String TAG = PlayGameActivity.class.getSimpleName();
 
     public static final String PLAYING_MAP = "playingMap";
+    public static final String FOOD_RESOURCE = "food";
+    public static final String TECH_RESOURCE = "tech";
 
     private static final int ACTION_MOVE_ATTACK = 1;
     private static final int ACTION_UPGRADE = 2;
@@ -76,6 +80,8 @@ public class PlayGameActivity extends AppCompatActivity {
     private WorldMap<String> map;
     private Player<String> player;
     private int roundNum;
+    private boolean isLose;
+    private boolean hasShowDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +97,8 @@ public class PlayGameActivity extends AppCompatActivity {
 
         performedActions = new ArrayList<>();
         roundNum = 1;
+        isLose = false;
+        hasShowDialog = false;
 
         setUpUI();
 
@@ -122,7 +130,6 @@ public class PlayGameActivity extends AppCompatActivity {
                     // server check that the action is valid, so we perform it to update current map
                     // NOTE: this only update the copy of the map, we will still get the latest map from server at the beginning of each term
                     action.perform(new WorldState(player, map));
-                    // TODO: maybe we can perform the action here
                     performedActions.add(action);
                     showActions();
                     showPlayerInfo();
@@ -141,6 +148,7 @@ public class PlayGameActivity extends AppCompatActivity {
             Intent intent = new Intent(PlayGameActivity.this, MoveAttackActivity.class);
             Bundle bundle = new Bundle();
             bundle.putSerializable(PLAYING_MAP, map);
+            bundle.putInt(FOOD_RESOURCE, player.getFoodNum());
             intent.putExtras(bundle);
             startActivityForResult(intent, ACTION_MOVE_ATTACK);
         });
@@ -149,6 +157,7 @@ public class PlayGameActivity extends AppCompatActivity {
             Intent intent = new Intent(PlayGameActivity.this, UpgradeActivity.class);
             Bundle bundle = new Bundle();
             bundle.putSerializable(PLAYING_MAP, map);
+            bundle.putInt(TECH_RESOURCE, player.getTechNum());
             intent.putExtras(bundle);
             startActivityForResult(intent, ACTION_UPGRADE);
         });
@@ -229,7 +238,7 @@ public class PlayGameActivity extends AppCompatActivity {
         send(ACTION_DONE, new onResultListener() {
             @Override
             public void onFailure(String error) {
-                showToastUI(PlayGameActivity.this, "Network problem, please retry.");
+                showToastUI(PlayGameActivity.this, NETWORK_PROBLEM);
                 setAllButtonClickable(true);
             }
 
@@ -319,19 +328,45 @@ public class PlayGameActivity extends AppCompatActivity {
                 // clear all actions in the last round
                 performedActions.clear();
                 showToastUI(PlayGameActivity.this, String.format(Locale.US,"start round %d", roundNum));
+                checkLose();
                 runOnUiThread(() -> {
-                    // set the round number
-                    tvRoundNum.setText(String.valueOf(roundNum));
-                    // reset the action info
-                    showActions();
-                    // set the map image
-                    imgMap.setImageResource(MAP_NAME_TO_RESOURCE_ID.get(map.getName()));
-                    // update player info
-                    showPlayerInfo();
-                    // update territory list
-                    showTerritories();
-                    // set all button clickable, let user input
-                    setAllButtonClickable(true);
+                    if (isLose){
+                        // is user lose, hide all button
+                        setAllButtonVisibility(false);
+                        if (!hasShowDialog){
+                            AlertDialog.Builder builder = new AlertDialog.Builder(PlayGameActivity.this);
+                            builder.setPositiveButton("Yes", (dialog1, which) -> {
+                                showToastUI(PlayGameActivity.this, "you lose");
+                            });
+                            builder.setNegativeButton("No", (dialog2, which) -> {
+                                onBackPressed();
+                            });
+                            builder.setTitle("You Lose");
+                            builder.setMessage("Do you want to keep watching the game?");
+                            AlertDialog dialog = builder.create();
+                            dialog.setOnShowListener(dialog12 -> {
+                                dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                                        .setTextColor(
+                                                getResources().getColor(R.color.colorPrimary)
+                                        );
+                            });
+                            dialog.show();
+                            hasShowDialog = true;
+                        }
+                    }else {
+                        // set the round number
+                        tvRoundNum.setText(String.valueOf(roundNum));
+                        // reset the action info
+//                    showActions();
+                        // set the map image
+                        imgMap.setImageResource(MAP_NAME_TO_RESOURCE_ID.get(map.getName()));
+                        // update player info
+                        showPlayerInfo();
+                        // update territory list
+                        showTerritories();
+                        // set all button clickable, let user input
+                        setAllButtonClickable(true);
+                    }
                 });
             }
         });
@@ -370,6 +405,12 @@ public class PlayGameActivity extends AppCompatActivity {
         btDone.setClickable(isClickable);
     }
 
+    private void setAllButtonVisibility(boolean isVisible){
+        btMoveAttack.setVisibility(View.GONE);
+        btUpgrade.setVisibility(View.GONE);
+        btDone.setVisibility(View.GONE);
+    }
+
     /**
      * This function will format and show the list of actions user already successfully performed.
      */
@@ -389,7 +430,6 @@ public class PlayGameActivity extends AppCompatActivity {
     }
 
     private void endGame(){
-        // TODO: receive the winner info
         recv(new onReceiveListener() {
             @Override
             public void onFailure(String error) {
@@ -419,6 +459,17 @@ public class PlayGameActivity extends AppCompatActivity {
                 });
             }
         });
+    }
+
+    private void checkLose(){
+        List<Territory> territories = new ArrayList<>(map.getAtlas().values());
+        for (Territory territory : territories){
+            if (territory.getOwner() == getPlayerID()){
+                isLose = false;
+                return;
+            }
+        }
+        isLose = true;
     }
 
     // probably want to extract this into constant

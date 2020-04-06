@@ -11,6 +11,19 @@
         android:id="@+id/app_bar"
         layout="@layout/widget_app_bar" />
 
+    <TextView
+        android:id="@+id/tv_resource"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Total food resource(before this action): %d"
+        android:textSize="@dimen/normal_text_size"
+        android:textColor="@color/text_color"
+        android:layout_marginHorizontal="@dimen/normal_margin"
+        android:layout_marginVertical="@dimen/small_margin_vertical"
+        app:layout_constraintTop_toBottomOf="@id/app_bar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
     <include
         android:id="@+id/action_dropdown"
         android:layout_width="match_parent"
@@ -19,7 +32,7 @@
         android:layout_marginHorizontal="@dimen/normal_margin"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/app_bar"
+        app:layout_constraintTop_toBottomOf="@id/tv_resource"
         layout="@layout/widget_dropdown" />
 
     <include

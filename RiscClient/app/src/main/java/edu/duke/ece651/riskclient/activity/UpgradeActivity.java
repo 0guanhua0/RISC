@@ -19,6 +19,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import edu.duke.ece651.risk.shared.action.Action;
@@ -37,6 +38,7 @@ import static edu.duke.ece651.riskclient.Constant.ACTION_PERFORMED;
 import static edu.duke.ece651.riskclient.Constant.MAP_NAME;
 import static edu.duke.ece651.riskclient.RiskApplication.getPlayerID;
 import static edu.duke.ece651.riskclient.activity.PlayGameActivity.PLAYING_MAP;
+import static edu.duke.ece651.riskclient.activity.PlayGameActivity.TECH_RESOURCE;
 import static edu.duke.ece651.riskclient.utils.HTTPUtils.sendAction;
 import static edu.duke.ece651.riskclient.utils.UIUtils.showToastUI;
 
@@ -49,6 +51,7 @@ public class UpgradeActivity extends AppCompatActivity {
     private ArrayAdapter<String> srcTerritoryAdapter;
     private AutoCompleteTextView dropdownSrcTerritory;
     private WorldMap<String> map;
+    private int techResource;
     // action parameters
     private String srcTerritory;
     private int unitLevelFrom;
@@ -67,6 +70,7 @@ public class UpgradeActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         if (bundle != null){
             map = (WorldMap<String>) bundle.getSerializable(PLAYING_MAP);
+            techResource = bundle.getInt(TECH_RESOURCE);
         }
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -117,6 +121,9 @@ public class UpgradeActivity extends AppCompatActivity {
     }
 
     private void setUpUI(){
+        TextView tvResource = findViewById(R.id.tv_resource);
+        tvResource.setText(String.format(Locale.US, "Total tech resource(before this action): %d", techResource));
+
         Button btUpgradeMax = findViewById(R.id.bt_max);
         Button btConfirm = findViewById(R.id.bt_confirm);
         Button btDecline = findViewById(R.id.bt_decline);

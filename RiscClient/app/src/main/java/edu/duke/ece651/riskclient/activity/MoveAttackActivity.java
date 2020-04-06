@@ -22,12 +22,14 @@ import com.google.android.material.textfield.TextInputLayout;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
 import edu.duke.ece651.risk.shared.action.Action;
 import edu.duke.ece651.risk.shared.action.AttackAction;
 import edu.duke.ece651.risk.shared.action.MoveAction;
+import edu.duke.ece651.risk.shared.map.BasicResource;
 import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.Unit;
 import edu.duke.ece651.risk.shared.map.WorldMap;
@@ -39,6 +41,7 @@ import edu.duke.ece651.riskclient.objects.UnitGroup;
 import static edu.duke.ece651.risk.shared.Constant.UNIT_NAME;
 import static edu.duke.ece651.riskclient.Constant.ACTION_PERFORMED;
 import static edu.duke.ece651.riskclient.RiskApplication.getPlayerID;
+import static edu.duke.ece651.riskclient.activity.PlayGameActivity.FOOD_RESOURCE;
 import static edu.duke.ece651.riskclient.activity.PlayGameActivity.PLAYING_MAP;
 import static edu.duke.ece651.riskclient.utils.HTTPUtils.sendAction;
 import static edu.duke.ece651.riskclient.utils.UIUtils.showToastUI;
@@ -61,6 +64,7 @@ public class MoveAttackActivity extends AppCompatActivity {
     private AutoCompleteTextView dropdownDestTerritory;
     private boolean isMove;
     private WorldMap<String> map;
+    private int foodResource;
     // territory info
     List<String> territoryOwn;
     List<String> territoryOther;
@@ -77,6 +81,7 @@ public class MoveAttackActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         if (bundle != null){
             map = (WorldMap<String>) bundle.getSerializable(PLAYING_MAP);
+            foodResource = bundle.getInt(FOOD_RESOURCE);
         }
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -110,6 +115,9 @@ public class MoveAttackActivity extends AppCompatActivity {
     }
 
     private void setUpUI(){
+        TextView tvResource = findViewById(R.id.tv_resource);
+        tvResource.setText(String.format(Locale.US, "Total food resource(before this action): %d", foodResource));
+
         Button btConfirm = findViewById(R.id.bt_confirm);
         Button btDecline = findViewById(R.id.bt_decline);
 
@@ -128,6 +136,9 @@ public class MoveAttackActivity extends AppCompatActivity {
                     public void onFailure(String error) {
                         // either invalid action or networking problem
                         showToastUI(MoveAttackActivity.this, error);
+                        // clear all input once action invalid
+                        units.clear();
+                        refreshUnitsInfo();
                     }
 
                     @Override
@@ -293,7 +304,6 @@ public class MoveAttackActivity extends AppCompatActivity {
         srcUnitAdapter = new UnitAdapter();
         srcUnitAdapter.setListener(position -> {
             UnitGroup unit = srcUnitAdapter.getUnitGroup(position);
-            showToastUI(MoveAttackActivity.this, "you click");
         });
         rvUnitList.setLayoutManager(new LinearLayoutManager(MoveAttackActivity.this));
         rvUnitList.setHasFixedSize(true);
@@ -331,7 +341,6 @@ public class MoveAttackActivity extends AppCompatActivity {
         destUnitAdapter = new UnitAdapter();
         destUnitAdapter.setListener(position -> {
             UnitGroup unit = destUnitAdapter.getUnitGroup(position);
-            showToastUI(MoveAttackActivity.this, "you click");
         });
         rvUnitList.setLayoutManager(new LinearLayoutManager(MoveAttackActivity.this));
         rvUnitList.setHasFixedSize(true);
