@@ -102,20 +102,6 @@ public class SelectTerritoryActivity extends AppCompatActivity {
                     selectedGroup = groups.get(0);
                     territoryGroupAdapter.setTerritories(groups);
                 });
-
-//                unitTotal = 10;
-//                unitLeft = unitTotal;
-//                List<Set<String>> groups = new ArrayList<>();
-//                for (int i = 0; i < 30; i++){
-//                    Set<String> group = new HashSet<>();
-//                    group.add(i + "t1");
-//                    group.add(i + "t2");
-//                    group.add(i + "t3");
-//                    groups.add(group);
-//                }
-//                // set default selected group
-//                selectedGroup = groups.get(0);
-//                territoryGroupAdapter.setTerritories(groups);
             }
         });
     }

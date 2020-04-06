@@ -64,6 +64,7 @@ public class PlayGameActivity extends AppCompatActivity {
     /**
      * UI variable
      */
+    private TextView tvRoundNum;
     private TextView tvPlayerInfo;
     private TextView tvActionInfo;
     private Button btMoveAttack;
@@ -93,6 +94,7 @@ public class PlayGameActivity extends AppCompatActivity {
         }
 
         performedActions = new ArrayList<>();
+        roundNum = 1;
 
         setUpUI();
 
@@ -169,6 +171,9 @@ public class PlayGameActivity extends AppCompatActivity {
 
         tvPlayerInfo = findViewById(R.id.tv_player_info);
         tvPlayerInfo.setText("Please wait other players to finish assigning units...");
+
+        tvRoundNum = findViewById(R.id.tv_round_number);
+        tvRoundNum.setText(String.valueOf(roundNum));
 
         imgMap = findViewById(R.id.img_map);
 
@@ -317,10 +322,17 @@ public class PlayGameActivity extends AppCompatActivity {
                 performedActions.clear();
                 showToastUI(PlayGameActivity.this, String.format(Locale.US,"start round %d", roundNum));
                 runOnUiThread(() -> {
+                    // set the round number
+                    tvRoundNum.setText(String.valueOf(roundNum));
+                    // reset the action info
                     showActions();
+                    // set the map image
                     imgMap.setImageResource(MAP_NAME_TO_RESOURCE_ID.get(map.getName()));
+                    // update player info
                     updatePlayerInfo();
+                    // update territory list
                     updateTerritories();
+                    // set all button clickable, let user input
                     setAllButtonClickable(true);
                 });
             }

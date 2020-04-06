@@ -19,7 +19,7 @@ public class Constant {
     public static final String PLAYER_ID = "playerID";
     public static final String PLAYER_COLOR = "playerColor";
 
-    public static final String SELECT_GROUP_ERROR = "The group you choose is either be chosen or invalid.";
+    public static final String SELECT_GROUP_ERROR = "This group is chosen by other players.";
 
     public static final String SELECT_MAP_ERROR = "The map name you select is invalid.";
     public static final String SELECT_TERR_ERROR = "The territories you select is invalid.";
@@ -65,7 +65,7 @@ public class Constant {
 
 
 
-    //client requiring gaming info
+    // client requiring gaming info
     public static final String ACTION_GET_WAIT_ROOM = "getWaitRoom";
     public static final String ACTION_GET_IN_ROOM = "getInRoom";
     public static final String ACTION_JOIN_GAME = "joinGame";
@@ -77,11 +77,12 @@ public class Constant {
     public static final String INFO_ALL_PLAYER = "allPlayer";
 
 
-    //time when player offline others have to wait
-    public static final int WAIT_TIME = 60000;
+    // the time other player will wait for any player which is disconnected
+    // i.e. a player disconnect but don't reconnect in 60s, his/her round will be forced finished
+    public static final int WAIT_TIME_OUT = 60;
 
 
-    //the key is current technical level, value is the cost of tech resources to upgrade maximum tech level to the next technical level
+    // the key is current technical level, value is the cost of tech resources to upgrade maximum tech level to the next technical level
     public static final Map<Integer, Integer> TECH_MAP = new HashMap<Integer, Integer>() {
         {
             put(1, 50);
@@ -91,7 +92,7 @@ public class Constant {
             put(5, 300);
         }
     };
-    //key is the level of units, value is the name of corresponding units
+    // key is the level of units, value is the name of corresponding units
     public static final Map<Integer, String> UNIT_NAME = new HashMap<Integer, String>() {{
         put(0, "Light Infantry");
         put(1, "Infantry");

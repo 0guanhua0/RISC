@@ -49,7 +49,7 @@ public class WaitGameActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null){
             getSupportActionBar().setTitle(getRoomName());
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
         // get the player info first, and then get the room info
