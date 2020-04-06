@@ -252,7 +252,7 @@ public class RoomTest {
         s1.readObject(); // player info
         s1.readObject();
         assertEquals(YOU_WINS, s1.readObject());
-        assertEquals("Winner is the red player.", s2.readObject());
+        assertEquals("Winner is the null player.", s2.readObject());
     }
 
     @Test
