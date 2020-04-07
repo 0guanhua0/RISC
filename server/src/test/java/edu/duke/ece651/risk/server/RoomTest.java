@@ -400,7 +400,23 @@ public class RoomTest {
         Player<String> p1 = new PlayerV2<>(setupMockInput(new ArrayList<>(Arrays.asList(s11))), o1);
 
         p1.setName("1");
+
+        //player 2
+        ByteArrayOutputStream o2 = new ByteArrayOutputStream();
+        String map2 = "a clash of kings";
+        String rName2 = "2";
+
+        String s21 = "{\"" + MAP_NAME + "\": \"" + map + "\",\n" +
+                "\"" + ROOM_NAME +"\": \"" + rName + "\" }";
+        Player<String> p2 = new PlayerV2<>(setupMockInput(new ArrayList<>(Arrays.asList(s21))), o2);
+
+        p2.setName("2");
+
+
         room.getPlayers().add(p1);
+        room.getPlayers().add(p2);
+
+
         assertEquals(p1, room.getPlayer("1"));
         assertNull(room.getPlayer("4"));
         assertTrue(room.hasUser("1"));
