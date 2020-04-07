@@ -41,6 +41,7 @@ public class PlayerThread extends Thread{
                 barrier.await();
             }
         }catch (Exception ignored){
+            System.out.println(ignored);
         }
      }
 
