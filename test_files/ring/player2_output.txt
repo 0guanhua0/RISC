@@ -9,9 +9,9 @@
 > Task :client:run
 Welcome to the fancy RISK game!!!
 What do you want to do?
-J(oin) an existing room
-C(reate) a new room
-Please specify a WorldMap for this room
+J(oin) an existing roomInfo
+C(reate) a new roomInfo
+Please specify a WorldMap for this roomInfo
 1. test(support 3 players)
 0 units in t7 (next to: t2)
 0 units in t1 (next to: t2)

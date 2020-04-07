@@ -7,6 +7,7 @@ import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.risk.shared.player.Player;
 import edu.duke.ece651.risk.shared.player.PlayerV1;
+import edu.duke.ece651.risk.shared.player.PlayerV2;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -161,7 +162,7 @@ public class CommunicationTest {
         idToColor.put(1, "green");
         idToColor.put(2, "red");
 
-        RoundInfo roundInfo = new RoundInfo(1, map, idToColor);
+        RoundInfo roundInfo = new RoundInfo(1, map, idToColor, new PlayerV1<String>("", 1));
 
         new Thread(() -> {
             try {

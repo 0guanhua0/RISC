@@ -13,6 +13,8 @@ import java.util.Map;
 import static edu.duke.ece651.risk.shared.Constant.UNIT_NAME;
 
 public class MoveAction implements Action, Serializable {
+    private static final long serialVersionUID = 1L;
+
     String src;
     String dest;
     int playerId;
@@ -35,15 +37,13 @@ public class MoveAction implements Action, Serializable {
 
     //TODO make sure that client part use this moveAction instead of previous one
     public MoveAction(String src, String dest,
-                      int playerId,Map<Integer,Integer> levelToNum) {
+                      int playerId, Map<Integer,Integer> levelToNum) {
         this.src = src.toLowerCase();
         this.dest = dest.toLowerCase();
         this.playerId = playerId;
         this.levelToNum = levelToNum;
         this.unitsNum = levelToNum.values().stream().mapToInt(a -> a).sum();
-
     }
-
 
     @Override
     public boolean isValid(WorldState worldState) {

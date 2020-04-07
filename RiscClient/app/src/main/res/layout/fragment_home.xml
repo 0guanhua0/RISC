@@ -37,6 +37,20 @@
             android:text="@string/home_room_in"/>
     </com.google.android.material.chip.ChipGroup>
 
+    <TextView
+        android:id="@+id/tv_no_room"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/large_margin"
+        android:text="@string/home_no_room_wait"
+        android:textColor="@color/text_color"
+        android:textSize="@dimen/large_text_size"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cg_room_type"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swr_layout"
         android:layout_width="match_parent"

@@ -13,9 +13,8 @@ import com.google.android.material.textfield.TextInputEditText;
 import java.util.Objects;
 
 import edu.duke.ece651.riskclient.listener.onResultListener;
-import edu.duke.ece651.riskclient.objects.Player;
+import edu.duke.ece651.riskclient.objects.SimplePlayer;
 import edu.duke.ece651.riskclient.R;
-import edu.duke.ece651.riskclient.listener.onReceiveListener;
 
 import static edu.duke.ece651.riskclient.utils.HTTPUtils.addUser;
 import static edu.duke.ece651.riskclient.utils.UIUtils.showToastUI;
@@ -61,7 +60,7 @@ public class SignUpActivity extends AppCompatActivity {
             String password = Objects.requireNonNull(etPassword.getText()).toString();
             String password2 = Objects.requireNonNull(etPassword2.getText()).toString();
             if (password.equals(password2)){
-                addUser(new Player(name, password), new onResultListener() {
+                addUser(new SimplePlayer(name, password), new onResultListener() {
                     @Override
                     public void onFailure(String error) {
                         signUp.setClickable(true);
@@ -79,6 +78,7 @@ public class SignUpActivity extends AppCompatActivity {
                 });
             }else {
                 showToastUI(SignUpActivity.this, "Two password mismatch.");
+                signUp.setClickable(true);
             }
         });
     }

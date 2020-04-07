@@ -10,24 +10,26 @@ import java.util.*;
  * @create: 2020-03-28 15:00
  **/
 public class WorldMapV1<T extends Serializable> extends WorldMap{
+    private static final long serialVersionUID = 11L;
+
     public WorldMapV1(Map<String, Set<String>> adjaList, List<T> colorList, Map<Set<String>, Boolean> groups) throws IllegalArgumentException {
 
         //check legality of groups
         Set<String> allName = new HashSet<>();
         for (Set<String> nameSet : groups.keySet()) {
             for (String name : nameSet) {
-                assert (adjaList.containsKey(name) || !allName.contains(name));
+//                assert (adjaList.containsKey(name) || !allName.contains(name));
                 allName.add(name);
             }
         }
-        assert (allName.size() == adjaList.size());
+//        assert (allName.size() == adjaList.size());
         this.groups = groups;
 
         int playerNum = colorList.size();
         int terriNum = adjaList.size();
 
-        assert(playerNum<=terriNum);
-        assert(0==terriNum%playerNum);
+//        assert(playerNum<=terriNum);
+//        assert(0==terriNum%playerNum);
 
         this.colorList = colorList;
         atlas = new HashMap<>();

@@ -4,6 +4,7 @@ import java.sql.*;
 
 //todo: add change password, encrypt password
 public class SQL {
+    // jdbc:postgresql://vcm-12835.vm.duke.edu:5432/risk
     static String dbUrl = "jdbc:postgresql://vcm-12835.vm.duke.edu:5432/risk";
     static String dbUser = "postgres";
     static String dbPassword = "postgres";
@@ -13,8 +14,6 @@ public class SQL {
         dropTable();
         //create table
         createTable();
-
-
     }
 
     public void createTable() throws SQLException, ClassNotFoundException {
@@ -50,7 +49,7 @@ public class SQL {
         // ask postgres to crypt the password
 
         //check if user already exists
-        if (authUserName(name)) {
+        if (isNameExist(name)) {
             return false;
         }
         Statement statement = conn.createStatement();
@@ -80,7 +79,7 @@ public class SQL {
 
     }
 
-    public boolean authUserName(String name) throws SQLException, ClassNotFoundException {
+    public boolean isNameExist(String name) throws SQLException, ClassNotFoundException {
 
         Class.forName("org.postgresql.Driver");
         Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);

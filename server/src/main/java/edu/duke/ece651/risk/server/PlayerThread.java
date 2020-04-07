@@ -41,8 +41,9 @@ public class PlayerThread extends Thread{
                 barrier.await();
             }
         }catch (Exception ignored){
+            System.out.println(ignored);
         }
-    }
+     }
 
     void selectTerritory() throws IOException, IllegalArgumentException, ClassNotFoundException, BrokenBarrierException, InterruptedException {
         int terrPerUsr = map.getTerrPerPlayer();
@@ -71,7 +72,7 @@ public class PlayerThread extends Thread{
             ServerSelect serverSelect = (ServerSelect)player.recv();
             synchronized (this) {
                 if(serverSelect.isValid(map, totalUnits, terrPerUsr)){
-                    //if valid, update the map
+                    // if valid, update the map
                     for (String terrName : serverSelect.getAllName()) {
                         Territory territory = map.getTerritory(terrName);
                         territory.addBasicUnits(serverSelect.getUnitsNum(terrName));
@@ -93,32 +94,53 @@ public class PlayerThread extends Thread{
         // 1. latest WorldMap
         // 2. mapping between id and color
         // 3. round number
-        RoundInfo roundInfo = new RoundInfo(gameInfo.getRoundNum(), map, gameInfo.getIdToName());
+        // 4. player object(contains the information of resources)
+        RoundInfo roundInfo = new RoundInfo(gameInfo.getRoundNum(), map, gameInfo.getIdToName(), player);
 
         player.send(roundInfo);
-        //build the current state of game
+
+        // build the current state of game
         WorldState worldState = new WorldState(this.player, this.map);
-        //if player hasn't losed yet, let him or her play another round of game
-        if (player.getTerrNum() > 0){
+        // if player hasn't lose yet, let him or her play another round of game
+        if (this.player.getTerrNum() > 0){
+            int checkCnt = 0;
+            boolean reconnect = false;
             while (true){
-                Object recvRes = player.recv();
-                if (recvRes instanceof Action){
-                    Action action = (Action) recvRes;
-                    synchronized (this) {
-                        // act accordingly based on whether the input actions are valid or not
-                        if (action.isValid(worldState)){
-                            // if valid, update the state of the world
-                            action.perform(worldState);
-                            player.send(SUCCESSFUL);
-                        }else{
-                            // otherwise ask user to resend the information
-                            player.send(INVALID_ACTION);
-                        }
+                // we will only wait for user input unless he/she is connected
+                // otherwise we will want 1s and then check if user is connected or not
+                if (this.player.isConnect()){
+                    if (reconnect){
+                        // once user reconnect, send he/she the latest roundInfo
+                        this.player.send(roundInfo);
                     }
-                }else if (recvRes instanceof String && recvRes.equals(ACTION_DONE)){
-                    break;
+                    Object recvRes = this.player.recv();
+                    if (recvRes instanceof Action){
+                        Action action = (Action) recvRes;
+                        System.out.println(action);
+                        synchronized (this) {
+                            // act accordingly based on whether the input actions are valid or not
+                            if (action.isValid(worldState)){
+                                // if valid, update the state of the world
+                                action.perform(worldState);
+                                this.player.send(SUCCESSFUL);
+                            }else{
+                                // otherwise ask user to resend the information
+                                this.player.send(INVALID_ACTION);
+                            }
+                        }
+                    }else if (recvRes instanceof String && recvRes.equals(ACTION_DONE)){
+                        break;
+                    }else {
+                        this.player.send(INVALID_ACTION);
+                    }
                 }else {
-                    player.send(INVALID_ACTION);
+                    Thread.sleep(1000);
+                    checkCnt++;
+                    reconnect = true;
+                }
+                // if user disconnect more than 60s in one round, we force he/she finish this round
+                if (checkCnt > WAIT_TIME_OUT){
+                    break;
                 }
             }
         }

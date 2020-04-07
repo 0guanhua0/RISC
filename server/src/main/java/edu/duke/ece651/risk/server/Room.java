@@ -1,10 +1,12 @@
 package edu.duke.ece651.risk.server;
 
+import edu.duke.ece651.risk.shared.RoomInfo;
 import edu.duke.ece651.risk.shared.action.AttackResult;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.risk.shared.player.Player;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.*;
@@ -17,6 +19,7 @@ import static edu.duke.ece651.risk.shared.Constant.*;
 //TODO for every method that have networking, handle some exceptions rather than just throwing it
 public class Room {
     int roomID;
+    String roomName;
     // all players in current room
     List<Player<String>> players;
     // the map this room is playing
@@ -26,47 +29,71 @@ public class Room {
 
     /**
      * The constructor, initialize the whole game(room.
-     * @param roomID roomID for this room
-     * @param player the "beginner", the player create this room
+     *
+     * @param roomID      roomID for this room
+     * @param player      the "beginner", the player create this room
      * @param mapDataBase all map we have
-     * @throws IOException probably because of stream close
+     * @throws IOException              probably because of stream close
      * @throws IllegalArgumentException probably because of invalid roomID(should be positive)
-     * @throws ClassNotFoundException probably because of not follow the protocol
+     * @throws ClassNotFoundException   probably because of not follow the protocol
      */
     public Room(int roomID, Player<String> player, MapDataBase<String> mapDataBase) throws IOException, IllegalArgumentException, ClassNotFoundException {
-        if (roomID < 0){
+        if (roomID < 0) {
             throw new IllegalArgumentException("Invalid value of Room Id");
         }
         this.roomID = roomID;
+        this.roomName = "";
 
         players = new ArrayList<>();
         players.add(player);
         player.setId(players.size());
 
-        // let the beginner determine the map
-        askForMap(mapDataBase);
+        // let the beginner choose map & specify room name
+        initGame(mapDataBase);
 
+        System.out.println("send player info");
         List<String> colorList = map.getColorList();
         // assign the color
         player.setColor(colorList.get(0));
         player.sendPlayerInfo();
 
-        player.send(String.format("Please wait other players to join th game(need %d, joined %d)", colorList.size(), players.size()));
+        System.out.println("send new room info");
+        player.send(new RoomInfo(roomID, roomName, map, players));
+
+        // don't need this message anymore
+//        player.send(String.format("Please wait other players to join th game(need %d, joined %d)", colorList.size(), players.size()));
 
         gameInfo = new GameInfo(-1, 1);
-        gameInfo.addPlayer(player.getId(), player.getColor());
+        gameInfo.addPlayer(player.getId(), player.getName());
+
+        System.out.println("successfully init the game");
+        System.out.println("room name: " + this.roomName);
     }
 
+    //constructor for testing
+    public Room(int roomID, MapDataBase<String> mapDataBase) throws IllegalArgumentException {
+        if (roomID < 0) {
+            throw new IllegalArgumentException("Invalid value of Room Id");
+        }
+        this.roomID = roomID;
+        this.roomName = "";
+
+        players = new ArrayList<>();
+
+        System.out.println("send new room info");
+
+        gameInfo = new GameInfo(-1, 1);
+    }
     /**
      * call this method to add a new player into this room
      * after the last player enter the room, game will begin automatically
+     *
      * @param player new player
      * @throws IOException probably because of stream close
      */
     void addPlayer(Player<String> player) throws IOException {
-        // TODO: in evolution 2, we need to check whether this player is already in room
         // only accept new player if the game is not start yet
-        if(players.size() < map.getColorList().size()){
+        if (players.size() < map.getColorList().size()) {
             players.add(player);
 
             List<String> colorList = map.getColorList();
@@ -74,32 +101,42 @@ public class Room {
             player.setColor(colorList.get(players.size() - 1));
             player.sendPlayerInfo();
 
-            gameInfo.addPlayer(player.getId(), player.getColor());
+            // send the latest room info
+            player.send(new RoomInfo(roomID, roomName, map, players));
+
+            gameInfo.addPlayer(player.getId(), player.getName());
+
+            // broadcast the newly joined player info
+            sendAllExcept(player.getName(), player);
 
             // check whether has enough player to start the game
-            if (players.size() == colorList.size()){
-                player.send("You are the last player, game will start now.");
+            if (players.size() == map.getColorList().size()) {
+                // broadcast enough players join the game
+                sendAll(INFO_ALL_PLAYER);
+                // use a separate thread to run the game
                 new Thread(() -> {
                     try {
                         runGame();
                     } catch (Exception ignored) {
                     }
                 }).start();
-            }else {
-                player.send(String.format("Please wait other players to join th game(need %d, joined %d)", colorList.size(), players.size()));
             }
         }
     }
 
-    void askForMap(MapDataBase<String> mapDataBase) throws IOException, ClassNotFoundException {
+    void initGame(MapDataBase<String> mapDataBase) throws ClassNotFoundException {
         Player<String> firstPlayer = players.get(0);
         firstPlayer.send(mapDataBase);
-        while(true){
-            String mapName = (String) firstPlayer.recv();
-            if (mapDataBase.containsMap(mapName)){
+        while (true) {
+            String json = (String) firstPlayer.recv();
+            JSONObject jsonObject = new JSONObject(json);
+            String mapName = jsonObject.optString(MAP_NAME, "test");
+            String roomName = jsonObject.optString(ROOM_NAME, "fancy room");
+            if (mapDataBase.containsMap(mapName)) {
                 map = mapDataBase.getMap(mapName);
+                this.roomName = roomName;
                 break;
-            }else {
+            } else {
                 firstPlayer.send(SELECT_MAP_ERROR);
             }
         }
@@ -108,16 +145,30 @@ public class Room {
 
     /**
      * This function will send the data to all players in current room
+     *
      * @param data data to be sent
      */
-    void sendAll(Object data) throws IOException {
-        for (Player<String> player : players){
-            player.send(data);
+    void sendAll(Object data)  {
+        for (Player<String> player : players) {
+            if (player.isConnect()) {
+                player.send(data);
+            }
+
+        }
+    }
+
+    void sendAllExcept(Object data, Player<String> p)  {
+        for (Player<String> player : players) {
+            if (player.isConnect() && player != p) {
+                player.send(data);
+            }
+
         }
     }
 
     /**
      * This function should be called at the end of each round, will resolve all combats happen in all territories.
+     *
      * @throws IOException probably because of stream closed
      */
     void resolveCombats() throws IOException {
@@ -135,7 +186,7 @@ public class Room {
 
                 Territory destTerritory = map.getAtlas().get(aR.getDestTerritory());
                 List<Territory> srcTerritories = new ArrayList<>();
-                for (String name : aR.getSrcTerritories()){
+                for (String name : aR.getSrcTerritories()) {
                     srcTerritories.add(map.getAtlas().get(name));
                 }
 
@@ -143,7 +194,7 @@ public class Room {
                 sb.append(pAttack.getColor()).append(" attacks ").append(pDefend.getColor());
                 sb.append("'s territory ").append(destTerritory.getName());
                 sb.append("(from ");
-                for (String name : aR.getSrcTerritories()){
+                for (String name : aR.getSrcTerritories()) {
                     sb.append(name).append(", ");
                 }
                 sb.delete(sb.length() - 2, sb.length());
@@ -155,8 +206,7 @@ public class Room {
                     // attacker wins, win the destination territory
                     pDefend.loseTerritory(destTerritory);
                     pAttack.addTerritory(destTerritory);
-                }
-                else {
+                } else {
                     sb.append(" ---> attacker loses");
                 }
 
@@ -169,27 +219,27 @@ public class Room {
     /**
      * check whether there is a winner
      */
-    void checkWinner(){
+    void checkWinner() {
         int targetNum = map.getTerriNum();
         int totalNum = 0;
         for (Player<String> player : players) {
             int curNum = player.getTerrNum();
             totalNum += curNum;
-            if (totalNum > targetNum){
+            if (totalNum > targetNum) {
                 throw new IllegalStateException("Illegal State of current world");
             }
-            if (curNum == targetNum){
+            if (curNum == targetNum) {
                 gameInfo.setWinner(player.getId());
             }
         }
     }
 
-    void endGame() throws IOException {
+    void endGame() {
         String winnerName = gameInfo.getWinnerName();
         for (Player<String> player : players) {
-            if (player.getId() != gameInfo.getWinnerID()){
+            if (player.getId() != gameInfo.getWinnerID()) {
                 player.send(String.format("Winner is the %s player.", winnerName));
-            }else{
+            } else {
                 player.send(YOU_WINS);
             }
         }
@@ -199,6 +249,7 @@ public class Room {
      * update the state(e.g. num of units and resources)
      * of current map after the end of each single round of game
      */
+
     void updateWorld(){
         //update tech&food resources for every player
         for (Player<String> player : players) {
@@ -207,7 +258,7 @@ public class Room {
 
     }
 
-    boolean hasFinished(){
+    boolean hasFinished() {
         return gameInfo.hasFinished();
     }
 
@@ -224,7 +275,7 @@ public class Room {
         // wait for selecting territory
         barrierWait(barrier);
 
-        while(true) {
+        while (true) {
             // wait for all player to ready start a round(give main thread some time to process round result)
             barrierWait(barrier);
 
@@ -237,9 +288,9 @@ public class Room {
             sendAll(ROUND_OVER);
             // check the game result
             checkWinner();
-            if(!gameInfo.hasFinished()){
+            if (!gameInfo.hasFinished()) {
                 sendAll("continue");
-            }else {
+            } else {
                 sendAll(GAME_OVER);
                 break;
             }
@@ -249,10 +300,49 @@ public class Room {
         endGame();
     }
 
-    void barrierWait(CyclicBarrier barrier){
+    void barrierWait(CyclicBarrier barrier) {
         try {
             barrier.await();
-        }catch (InterruptedException | BrokenBarrierException ignored) {
+        } catch (InterruptedException | BrokenBarrierException ignored) {
         }
+    }
+
+    //return list of player
+    public List<Player<String>> getPlayers() {
+        return players;
+    }
+
+    //find certaion player
+    public Player getPlayer(String name) {
+        for (Player p : players) {
+            if (p.getName().equals(name)) {
+                return p;
+            }
+        }
+        return null;
+    }
+
+    //check if has certain player
+    public boolean hasUser(String name) {
+        for (Player<String> p : players) {
+            if (p.getName().equals(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check whether this player is lose.
+     * @param playerName player name
+     * @return true for lose
+     */
+    public boolean isPlayerLose(String playerName){
+        for (Player<String> p : players) {
+            if (p.getName().equals(playerName)) {
+                return p.getTerrNum() <= 0;
+            }
+        }
+        return false;
     }
 }

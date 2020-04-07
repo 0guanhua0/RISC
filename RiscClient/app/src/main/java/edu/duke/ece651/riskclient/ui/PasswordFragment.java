@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import edu.duke.ece651.riskclient.objects.Player;
 import edu.duke.ece651.riskclient.R;
 
 import static edu.duke.ece651.riskclient.RiskApplication.getPlayerName;

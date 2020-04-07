@@ -1,6 +1,6 @@
 package edu.duke.ece651.risk.client;
 
-import edu.duke.ece651.risk.shared.Room;
+import edu.duke.ece651.risk.shared.RoomInfo;
 import edu.duke.ece651.risk.shared.ToClientMsg.ClientSelect;
 import edu.duke.ece651.risk.shared.ToClientMsg.RoundInfo;
 import edu.duke.ece651.risk.shared.ToServerMsg.ServerSelect;
@@ -121,7 +121,7 @@ public class GameClient {
      */
     boolean chooseRoom(Scanner scanner) throws IOException, ClassNotFoundException {
         boolean isNewRoom;
-        List<Room> roomInfo = (List<Room>) client.recv();
+        List<RoomInfo> roomInfo = (List<RoomInfo>) client.recv();
         while (true){
             insAskRoomOption();
             String roomChoice = scanner.nextLine().toLowerCase();
@@ -261,13 +261,13 @@ public class GameClient {
         }
     }
 
-    boolean isValidRoom(List<Room> rooms, String roomNum){
+    boolean isValidRoom(List<RoomInfo> roomInfos, String roomNum){
         if (!Format.isNumeric(roomNum)){
             return false;
         }
         int id = Integer.parseInt(roomNum);
-        for (Room room : rooms){
-            if (room.getRoomID() == id){
+        for (RoomInfo roomInfo : roomInfos){
+            if (roomInfo.getRoomID() == id){
                 return true;
             }
         }

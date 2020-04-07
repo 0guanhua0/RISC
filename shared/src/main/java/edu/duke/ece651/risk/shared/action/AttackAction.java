@@ -15,6 +15,8 @@ import static edu.duke.ece651.risk.shared.Constant.UNIT_NAME;
 
 
 public class AttackAction implements Action, Serializable {
+    private static final long serialVersionUID = 2L;
+
     String src;
     String dest;
     int playerId;

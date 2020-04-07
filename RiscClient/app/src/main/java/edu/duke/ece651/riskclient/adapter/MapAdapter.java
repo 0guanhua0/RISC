@@ -10,6 +10,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -70,6 +71,7 @@ public class MapAdapter extends RecyclerView.Adapter<MapAdapter.MapViewHolder> {
 
     public void setMaps(List<WorldMap> maps){
         mapList.clear();
+        Collections.sort(maps, (WorldMap map1, WorldMap map2)-> Integer.compare(map1.getColorList().size(), map2.getColorList().size()));
         mapList.addAll(maps);
         notifyDataSetChanged();
     }

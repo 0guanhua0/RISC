@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -13,6 +14,8 @@ import java.util.HashSet;
 import static edu.duke.ece651.risk.shared.Mock.readAllStringFromObjectStream;
 import static edu.duke.ece651.risk.shared.Mock.setupMockInput;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class PlayerTest {
     @Test
@@ -20,12 +23,14 @@ class PlayerTest {
         Player<String> p1 = new PlayerV1<String>("Red", 1);
         assertTrue(p1.territories.isEmpty());
         assertTrue(p1.color.equals("Red"));
-        assertTrue(1==p1.id);
-        assertThrows(IllegalArgumentException.class, ()->{new PlayerV1<String>("Red",0);});
+        assertTrue(1 == p1.id);
+        assertThrows(IllegalArgumentException.class, () -> {
+            new PlayerV1<String>("Red", 0);
+        });
 
         Player<String> p2 = new PlayerV1<String>(setupMockInput(new ArrayList<Object>()), new ByteArrayOutputStream());
         assertTrue(p2.territories.isEmpty());
-        assertThrows(IllegalArgumentException.class, ()->p2.setId(0));
+        assertThrows(IllegalArgumentException.class, () -> p2.setId(0));
         p2.setId(2);
         p2.setColor("Green");
         assertEquals(2, p2.getId());
@@ -40,34 +45,36 @@ class PlayerTest {
         assertEquals(4, p4.getId());
         assertEquals("Blue", p4.getColor());
 
-        assertThrows(IllegalArgumentException.class, ()->new PlayerV1<String>(0, setupMockInput(new ArrayList<Object>()), new ByteArrayOutputStream()));
+        assertThrows(IllegalArgumentException.class, () -> new PlayerV1<String>(0, setupMockInput(new ArrayList<Object>()), new ByteArrayOutputStream()));
     }
 
     @Test
     void addTerritory() throws IOException {
-        Player<String> p1 = new PlayerV1<String>("Red",1);
+        Player<String> p1 = new PlayerV1<String>("Red", 1);
         TerritoryV1 n1 = new TerritoryV1("n1");
         TerritoryV1 n2 = new TerritoryV1("n2");
-        HashSet<Territory> n1Neigh = new HashSet<Territory>(){{
+        HashSet<Territory> n1Neigh = new HashSet<Territory>() {{
             add(n2);
         }};
         p1.addTerritory(n1);
-        assertThrows(IllegalArgumentException.class,()->{p1.addTerritory(n1);});
+        assertThrows(IllegalArgumentException.class, () -> {
+            p1.addTerritory(n1);
+        });
         p1.addTerritory(n2);
         assertEquals(2, p1.getTerrNum());
         assertTrue(p1.territories.contains(n1));
         assertTrue(p1.territories.contains(n2));
-        assertTrue(1==n1.getOwner());
-        assertTrue(1==n2.getOwner());
+        assertTrue(1 == n1.getOwner());
+        assertTrue(1 == n2.getOwner());
     }
 
     @Test
     void loseTerritory() throws IOException {
-        PlayerV1<String> p1 = new PlayerV1<String>("Red",1);
+        PlayerV1<String> p1 = new PlayerV1<String>("Red", 1);
         TerritoryV1 n1 = new TerritoryV1("n1");
         int owner = n1.getOwner();
         TerritoryV1 n2 = new TerritoryV1("n2");
-        HashSet<Territory> n1Neigh = new HashSet<Territory>(){{
+        HashSet<Territory> n1Neigh = new HashSet<Territory>() {{
             add(n2);
         }};
         p1.addTerritory(n1);
@@ -76,7 +83,7 @@ class PlayerTest {
         p1.loseTerritory(n1);
         assertEquals(1, p1.getTerrNum());
         TerritoryV1 n3 = new TerritoryV1("n3");
-        assertThrows(IllegalArgumentException.class, ()-> p1.loseTerritory(n3));
+        assertThrows(IllegalArgumentException.class, () -> p1.loseTerritory(n3));
 
         assertTrue(!p1.territories.contains(n1));
         assertTrue(p1.territories.contains(n2));
@@ -107,4 +114,120 @@ class PlayerTest {
                 readAllStringFromObjectStream(outputStream)
         );
     }
+
+    @Test
+    void connect() throws IOException, ClassNotFoundException {
+        String s1 = "1`";
+        String s2 = "2";
+
+        ByteArrayOutputStream outputStream1 = new ByteArrayOutputStream();
+        Socket socket1 = mock(Socket.class);
+        when(socket1.getInputStream())
+                .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList(s1, s2))));
+        when(socket1.getOutputStream()).thenReturn(outputStream1);
+        Player p1 = new PlayerV2(socket1.getInputStream(), socket1.getOutputStream());
+
+        p1.setName("a");
+        assertEquals("a", p1.getName());
+
+        assertTrue(p1.isConnect());
+        p1.setConnect(false);
+        assertFalse(p1.isConnect());
+
+
+        ByteArrayOutputStream o2 = new ByteArrayOutputStream();
+        Socket socket2 = mock(Socket.class);
+        when(socket2.getInputStream())
+                .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList(s1, s2))));
+        when(socket2.getOutputStream()).thenReturn(o2);
+        Player p2 = new PlayerV2(socket2.getInputStream(), socket2.getOutputStream());
+
+        p2.setIn(p1.getIn());
+        p2.setOut(p1.getOut());
+        assertEquals(s1, p2.recv());
+
+        p2.send(s2);
+        assertEquals(s2, readAllStringFromObjectStream(outputStream1));
+    }
+
+
+    /*
+    @Test
+    void IOexption() throws IOException, InterruptedException {
+        new Thread(new Server()).start();
+
+        Thread.sleep(1000);
+
+        Socket socket1 = new Socket("127.0.0.1", 5555);
+
+        Socket socket2 = mock(Socket.class);
+
+        when(socket2.getInputStream())
+                .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList("0", "0"))));
+
+        ObjectOutputStream o = new ObjectOutputStream(socket1.getOutputStream());
+        Player p1 = new PlayerV2(socket2.getInputStream(), socket1.getOutputStream());
+
+        assertTrue(p1.isConnect());
+        p1.send("hello");
+        p1.send("hello");
+        p1.send("hello");
+
+
+    }
+
+
 }
+
+//client thread for testing purpose
+class ServerThread implements Runnable {
+    private Socket client = null;
+
+    public ServerThread(Socket s) {
+        this.client = s;
+    }
+
+    @Override
+    public void run() {
+        try {
+            PrintStream out = new PrintStream(client.getOutputStream());
+            BufferedReader buf = new BufferedReader(new InputStreamReader(client.getInputStream()));
+
+            String str = buf.readLine();
+            System.out.println(str);
+            out.close();
+            client.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+}
+
+class Server implements Runnable {
+
+    @Override
+    public void run() {
+        ServerSocket server = null;
+        try {
+            server = new ServerSocket(5555);
+        } catch (IOException ignored) {
+        }
+
+        Socket client = null;
+        try {
+            client = server.accept();
+        } catch (IOException ignored) {
+        }
+        new Thread(new ServerThread(client)).start();
+
+        try {
+            server.close();
+        } catch (IOException ignored) {
+        }
+
+    }
+
+     */
+}
+

@@ -1,7 +1,5 @@
 package edu.duke.ece651.risk.shared.ToClientMsg;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 import org.junit.jupiter.api.BeforeAll;
@@ -10,6 +8,9 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class RoundInfoTest {
 
@@ -47,7 +48,10 @@ public class RoundInfoTest {
         players.put(2, "Blue");
         players.put(3, "Red");
 
-        roundInfo = new RoundInfo(1, map, players);
+        roundInfo = new RoundInfo(1, map, players, null);
+
+        //test player list
+        assertNull(roundInfo.getPlayer());
     }
 
     @Test

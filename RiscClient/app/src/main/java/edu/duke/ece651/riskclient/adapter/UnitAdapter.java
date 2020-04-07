@@ -10,14 +10,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import edu.duke.ece651.risk.shared.map.Unit;
 import edu.duke.ece651.riskclient.R;
 import edu.duke.ece651.riskclient.listener.onClickListener;
+import edu.duke.ece651.riskclient.objects.UnitGroup;
+
+import static edu.duke.ece651.risk.shared.Constant.UNIT_NAME;
 
 public class UnitAdapter extends RecyclerView.Adapter<UnitAdapter.RoomViewHolder> {
 
-    private List<Unit> units;
+    private List<UnitGroup> units;
     private onClickListener listener;
 
     public UnitAdapter(){
@@ -34,9 +38,9 @@ public class UnitAdapter extends RecyclerView.Adapter<UnitAdapter.RoomViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull RoomViewHolder holder, int position) {
-        Unit unit = units.get(position);
+        UnitGroup unit = units.get(position);
 
-        holder.tvUnitInfo.setText("nothing for now");
+        holder.tvUnitInfo.setText(String.format(Locale.US, "%d %s(level %d)", unit.getNumber(), UNIT_NAME.get(unit.getLevel()), unit.getLevel()));
         holder.itemView.setOnClickListener(v -> {
             if (listener != null){
                 listener.onClick(position);
@@ -53,10 +57,14 @@ public class UnitAdapter extends RecyclerView.Adapter<UnitAdapter.RoomViewHolder
         this.listener = listener;
     }
 
-    public void setUnits(List<Unit> units){
+    public void setUnits(List<UnitGroup> units){
         this.units.clear();
         this.units.addAll(units);
         notifyDataSetChanged();
+    }
+
+    public UnitGroup getUnitGroup(int index){
+        return units.get(index);
     }
 
     static class RoomViewHolder extends RecyclerView.ViewHolder{

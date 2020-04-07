@@ -2,60 +2,61 @@ package edu.duke.ece651.riskclient.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import java.util.Random;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import edu.duke.ece651.risk.shared.RoomInfo;
 import edu.duke.ece651.riskclient.R;
+import edu.duke.ece651.riskclient.listener.onNewPlayerListener;
+import edu.duke.ece651.riskclient.listener.onReceiveListener;
+import edu.duke.ece651.riskclient.objects.SimplePlayer;
 
+import static edu.duke.ece651.risk.shared.Constant.PLAYER_ID;
 import static edu.duke.ece651.riskclient.RiskApplication.getRoomName;
+import static edu.duke.ece651.riskclient.RiskApplication.recv;
+import static edu.duke.ece651.riskclient.RiskApplication.setPlayerID;
+import static edu.duke.ece651.riskclient.RiskApplication.setRoom;
+import static edu.duke.ece651.riskclient.utils.HTTPUtils.waitAllPlayers;
+import static edu.duke.ece651.riskclient.utils.UIUtils.showToastUI;
 
 public class WaitGameActivity extends AppCompatActivity {
-    public final static String PLAYER_CNT = "playerCnt";
+    private final static String TAG = WaitGameActivity.class.getSimpleName();
 
-    private int playerTotal;
+    private TextView tvPlayerTotal;
+    private List<TextView> tvPlayers;
+    private int playerIn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wait_game);
 
-        Bundle bundle = getIntent().getExtras();
-        if (bundle != null){
-            playerTotal = bundle.getInt(PLAYER_CNT);
-        }
-
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null){
             getSupportActionBar().setTitle(getRoomName());
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        LinearLayout llPlayer = findViewById(R.id.ll_player);
-
-        for (int i = 0; i < playerTotal; i ++){
-            View playerView = getLayoutInflater().inflate(R.layout.listitem_player, llPlayer, false);
-            llPlayer.addView(playerView);
-        }
-
-        // TODO: remove this testing code
-        Timer timer = new Timer();
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                Intent intent = new Intent(WaitGameActivity.this, SelectTerritoryActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        }, 1000);
+        // each time enter this activity, should fetch the latest room & player info from the server
+        // get the player info first, and then get the room info
+        initPlayerInfo();
+        getRoomInfo();
     }
 
     @Override
@@ -69,5 +70,104 @@ public class WaitGameActivity extends AppCompatActivity {
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void initPlayerInfo(){
+        recv(new onReceiveListener() {
+            @Override
+            public void onFailure(String error) {
+
+            }
+
+            @Override
+            public void onSuccessful(Object object) {
+                try {
+                    String playerInfo = (String) object;
+                    JSONObject jsonObject = new JSONObject(playerInfo);
+                    setPlayerID(jsonObject.optInt(PLAYER_ID, 1));
+                }catch (JSONException e){
+                    Log.e(TAG, "initPlayerInfo: " + e.toString());
+                }
+            }
+        });
+    }
+
+    private void getRoomInfo(){
+        recv(new onReceiveListener() {
+            @Override
+            public void onFailure(String error) {
+
+            }
+
+            @Override
+            public void onSuccessful(Object object) {
+                runOnUiThread(() -> {
+                    RoomInfo info = (RoomInfo) object;
+                    setRoom(info);
+
+                    tvPlayerTotal = findViewById(R.id.tv_player_in_total);
+                    tvPlayerTotal.setText(String.format(Locale.US, "Player needed in total: %d", info.getPlayerNeedTotal()));
+
+                    tvPlayers = new ArrayList<>();
+                    // dynamically initialize a list of player
+                    LinearLayout llPlayer = findViewById(R.id.ll_player);
+                    for (int i = 0; i < info.getPlayerNeedTotal(); i ++){
+                        View playerView = getLayoutInflater().inflate(R.layout.listitem_player, llPlayer, false);
+                        // store the text view
+                        tvPlayers.add(playerView.findViewById(R.id.tv_player_name));
+                        llPlayer.addView(playerView);
+                    }
+
+                    playerIn = 0;
+                    for (String playerName : info.getPlayerNames()){
+                        tvPlayers.get(playerIn).setText(String.format(Locale.US, "player %d: %s", playerIn + 1, playerName));
+                        playerIn++;
+                    }
+                    // wait for other players only after initialize the UI
+                    waitPlayers();
+                });
+            }
+        });
+    }
+
+    private void waitPlayers(){
+        // wait for other players
+        waitAllPlayers(new onNewPlayerListener() {
+            @Override
+            public void onNewPlayer(SimplePlayer player) {
+                runOnUiThread(() -> {
+                    addPlayer(player.getName());
+                });
+            }
+
+            @Override
+            public void onAllPlayer() {
+                showToastUI(WaitGameActivity.this, "All players enter the room, the game will start shortly.");
+                delayAndStartActivity();
+            }
+
+            @Override
+            public void onFailure(String error) {
+
+            }
+        });
+    }
+
+    private void addPlayer(String name){
+        showToastUI(WaitGameActivity.this, name + " join the game");
+        tvPlayers.get(playerIn).setText(String.format(Locale.US, "player %d: %s", playerIn + 1, name));
+        playerIn++;
+    }
+
+    private void delayAndStartActivity(){
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                Intent intent = new Intent(WaitGameActivity.this, SelectTerritoryActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        }, 1000);
     }
 }

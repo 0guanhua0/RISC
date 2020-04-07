@@ -2,10 +2,7 @@ package edu.duke.ece651.risk.shared.player;
 
 import edu.duke.ece651.risk.shared.map.Territory;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.ArrayList;
 
 import static edu.duke.ece651.risk.shared.Mock.setupMockInput;
@@ -16,7 +13,7 @@ import static edu.duke.ece651.risk.shared.Mock.setupMockInput;
  * @author: Chengda Wu(cw402)
  * @create: 2020-03-09 17:42
  **/
-public class PlayerV1<T> extends Player<T> {
+public class PlayerV1<T> extends Player<T> implements Serializable {
 
     public PlayerV1(InputStream in, OutputStream out) throws IOException {
         super(in, out);

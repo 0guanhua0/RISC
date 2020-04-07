@@ -15,6 +15,8 @@
     <!--  home fragment  -->
     <string name="home_all_room">rooms waiting for players</string>
     <string name="home_room_in">rooms you in</string>
+    <string name="home_no_room_wait">Currently there are no roomInfos waiting for new player.</string>
+    <string name="home_no_room_in">Currently you don\'t have any playing roomInfos.</string>
 
     <!--  update fragment  -->
     <string name="update_name_info">Username:</string>
@@ -22,7 +24,7 @@
     <string name="update_new_password">New Password</string>
     <string name="update_submit">Submit</string>
 
-    <!--  add room activity  -->
+    <!--  add roomInfo activity  -->
     <string name="add_room_name">Room Name</string>
     <string name="add_room_selected_map">Selected map:</string>
     <string name="add_room_unselected_map">not selected yet</string>
@@ -49,6 +51,12 @@
 
     <!--  move & attack activity  -->
     <string name="move_attack_unit_info">The Units you sent:</string>
+
+    <!--  upgrade activity  -->
+    <string name="upgrade_total_cost">Total cost:</string>
+    <string name="upgrade_upgrade_max_tech">Upgrade Max Tech Level:</string>
+    <string name="upgrade_upgrade_unit">Upgrade Unit:</string>
+    <string name="upgrade_upgrade_max_button">Upgrade</string>
 
     <string name="menu_home">Home</string>
     <string name="menu_update">Change Password</string>

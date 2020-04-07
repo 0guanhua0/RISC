@@ -21,25 +21,31 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
 import edu.duke.ece651.risk.shared.action.Action;
 import edu.duke.ece651.risk.shared.action.AttackAction;
 import edu.duke.ece651.risk.shared.action.MoveAction;
+import edu.duke.ece651.risk.shared.map.BasicResource;
+import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.Unit;
+import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.riskclient.R;
 import edu.duke.ece651.riskclient.adapter.UnitAdapter;
 import edu.duke.ece651.riskclient.listener.onResultListener;
+import edu.duke.ece651.riskclient.objects.UnitGroup;
 
-import static edu.duke.ece651.riskclient.Constant.ACTION_PERFORMED;
+import static edu.duke.ece651.risk.shared.Constant.UNIT_NAME;
+import static edu.duke.ece651.riskclient.ClientConstant.ACTION_PERFORMED;
 import static edu.duke.ece651.riskclient.RiskApplication.getPlayerID;
+import static edu.duke.ece651.riskclient.activity.PlayGameActivity.FOOD_RESOURCE;
+import static edu.duke.ece651.riskclient.activity.PlayGameActivity.PLAYING_MAP;
 import static edu.duke.ece651.riskclient.utils.HTTPUtils.sendAction;
 import static edu.duke.ece651.riskclient.utils.UIUtils.showToastUI;
 
 public class MoveAttackActivity extends AppCompatActivity {
-    private static final String ACTION_MOVE = "move";
-    private static final String ACTION_ATTACK = "attack";
 
     /**
      * UI variable
@@ -51,9 +57,16 @@ public class MoveAttackActivity extends AppCompatActivity {
      */
     private UnitAdapter srcUnitAdapter;
     private UnitAdapter destUnitAdapter;
-    private List<Unit> srcUnits;
-    private List<Unit> destUnits;
-    private String actionType;
+    private ArrayAdapter<String> srcTerritoryAdapter;
+    private ArrayAdapter<String> destTerritoryAdapter;
+    private AutoCompleteTextView dropdownSrcTerritory;
+    private AutoCompleteTextView dropdownDestTerritory;
+    private boolean isMove;
+    private WorldMap<String> map;
+    private int foodResource;
+    // territory info
+    List<String> territoryOwn;
+    List<String> territoryOther;
     // parameters of the action
     private String srcTerritory;
     private String destTerritory;
@@ -64,6 +77,12 @@ public class MoveAttackActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_move_attack);
 
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null){
+            map = (WorldMap<String>) bundle.getSerializable(PLAYING_MAP);
+            foodResource = bundle.getInt(FOOD_RESOURCE);
+        }
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null){
@@ -71,7 +90,11 @@ public class MoveAttackActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        actionType = ACTION_MOVE;
+        territoryOwn = new ArrayList<>();
+        territoryOther = new ArrayList<>();
+        groupTerritory();
+
+        isMove = true;
         srcTerritory = "";
         destTerritory = "";
         units = new TreeMap<>();
@@ -91,13 +114,16 @@ public class MoveAttackActivity extends AppCompatActivity {
     }
 
     private void setUpUI(){
+        TextView tvResource = findViewById(R.id.tv_resource);
+        tvResource.setText(String.format(Locale.US, "Total food resource(before this action): %d", foodResource));
+
         Button btConfirm = findViewById(R.id.bt_confirm);
         Button btDecline = findViewById(R.id.bt_decline);
 
         btConfirm.setOnClickListener(v -> {
             if (validateAction()){
                 Action action = null;
-                if (actionType.equals(ACTION_MOVE)){
+                if (isMove){
                     action = new MoveAction(srcTerritory, destTerritory, getPlayerID(), units);
                 }else {
                     action = new AttackAction(srcTerritory, destTerritory, getPlayerID(), units);
@@ -109,6 +135,9 @@ public class MoveAttackActivity extends AppCompatActivity {
                     public void onFailure(String error) {
                         // either invalid action or networking problem
                         showToastUI(MoveAttackActivity.this, error);
+                        // clear all input once action invalid
+                        units.clear();
+                        refreshUnitsInfo();
                     }
 
                     @Override
@@ -149,32 +178,43 @@ public class MoveAttackActivity extends AppCompatActivity {
     private void sendUnits(){
         LayoutInflater layoutInflater = getLayoutInflater();
 
+        Territory t = map.getTerritory(srcTerritory);
+        List<String> unitLevel = new ArrayList<>();
+        for (Integer l : t.getUnitGroup().keySet()){
+            unitLevel.add(String.valueOf(l));
+        }
+        unitLevel.sort(String::compareTo);
+        ArrayAdapter<String> adapterLevel =
+                new ArrayAdapter<>(
+                        MoveAttackActivity.this,
+                        R.layout.dropdown_menu_popup_item,
+                        unitLevel);
+
+        // TODO: maybe we can dynamically change this one
+        List<String> unitNumber = new ArrayList<>();
+        for (int i = 0; i < 20; i++){
+            unitNumber.add(String.valueOf(i + 1));
+        }
+        ArrayAdapter<String> adapterNumber =
+                new ArrayAdapter<>(
+                        MoveAttackActivity.this,
+                        R.layout.dropdown_menu_popup_item,
+                        unitNumber);
+
         View view = layoutInflater.inflate(R.layout.view_add_units, null);
         // level
         TextInputLayout tlLevel = view.findViewById(R.id.layout_level);
         AutoCompleteTextView dpLevel = tlLevel.findViewById(R.id.input);
         tlLevel.setHint("Unit Level");
-        String[] items1 = new String[] {"1", "2", "3", "4", "5"};
-        ArrayAdapter<String> adapter1 =
-                new ArrayAdapter<>(
-                        MoveAttackActivity.this,
-                        R.layout.dropdown_menu_popup_item,
-                        items1);
-        dpLevel.setAdapter(adapter1);
-        dpLevel.setText(items1[0], false);
+        dpLevel.setAdapter(adapterLevel);
+        dpLevel.setText(adapterLevel.getItem(0), false);
 
         // number
         TextInputLayout tlNumber = view.findViewById(R.id.layout_number);
         AutoCompleteTextView dpNumber = tlNumber.findViewById(R.id.input);
         tlNumber.setHint("Unit Numbers");
-        String[] items2 = new String[] {"1", "2", "3", "4", "5"};
-        ArrayAdapter<String> adapter2 =
-                new ArrayAdapter<>(
-                        MoveAttackActivity.this,
-                        R.layout.dropdown_menu_popup_item,
-                        items2);
-        dpNumber.setAdapter(adapter2);
-        dpNumber.setText(items2[0], false);
+        dpNumber.setAdapter(adapterNumber);
+        dpNumber.setText(adapterNumber.getItem(0), false);
 
         AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
         mBuilder.setTitle("Add Units");
@@ -213,9 +253,21 @@ public class MoveAttackActivity extends AppCompatActivity {
         dropdownAction.setAdapter(adapter);
         dropdownAction.setText(items[0], false);
         dropdownAction.setOnItemClickListener((parent, v, position, id) -> {
-            // TODO: update territory info
-            showToastUI(MoveAttackActivity.this, "action: " + items[position]);
-            actionType = (position == 0 ? "move" : "attack");
+            isMove = (position == 0);
+            // only need to update the destination territory(dropdown)
+            destTerritoryAdapter.clear();
+            if (isMove){
+                // pass a copy inside
+                destTerritoryAdapter.addAll(new ArrayList<>(territoryOwn));
+            }else {
+                destTerritoryAdapter.addAll(new ArrayList<>(territoryOther));
+            }
+
+            // set default value
+            destTerritory = destTerritoryAdapter.getItem(0);
+
+            dropdownDestTerritory.setText(destTerritory, false);
+            updateUnitList(false);
         });
     }
 
@@ -225,41 +277,38 @@ public class MoveAttackActivity extends AppCompatActivity {
         // setup drop down
         TextInputLayout layout = view.findViewById(R.id.dropdown_layout);
         layout.setHint("Src Territory");
-        String[] items = new String[] {"Item 1", "Item 2", "Item 3", "Item 4"};
-
-        ArrayAdapter<String> adapter =
+        srcTerritoryAdapter =
                 new ArrayAdapter<>(
                         MoveAttackActivity.this,
                         R.layout.dropdown_menu_popup_item,
-                        items);
+                        new ArrayList<>(territoryOwn));
 
-        AutoCompleteTextView dropdownSrcTerritory =
+        srcTerritory = srcTerritoryAdapter.getItem(0);
+
+        dropdownSrcTerritory =
                 view.findViewById(R.id.input);
-        dropdownSrcTerritory.setAdapter(adapter);
-        dropdownSrcTerritory.setText(items[0], false);
+        dropdownSrcTerritory.setAdapter(srcTerritoryAdapter);
+        dropdownSrcTerritory.setText(srcTerritory, false);
         dropdownSrcTerritory.setOnItemClickListener((parent, v, position, id) -> {
-            // TODO: update units
-            showToastUI(MoveAttackActivity.this, "src: " + items[position]);
-            srcTerritory = items[position];
+            srcTerritory = srcTerritoryAdapter.getItem(position);
+            updateUnitList(true);
+            // each time change src territory, you need to clear all units specify before
+            units.clear();
+            refreshUnitsInfo();
         });
 
         // setup recycler view
         RecyclerView rvUnitList = view.findViewById(R.id.rv_unit_list);
-        // TODO: replace with real data
-        srcUnits = new ArrayList<>();
-        for (int i = 0; i < 30; i++){
-            srcUnits.add(new Unit());
-        }
 
         srcUnitAdapter = new UnitAdapter();
         srcUnitAdapter.setListener(position -> {
-            Unit unit = srcUnits.get(position);
-            showToastUI(MoveAttackActivity.this, "you click");
+            UnitGroup unit = srcUnitAdapter.getUnitGroup(position);
         });
         rvUnitList.setLayoutManager(new LinearLayoutManager(MoveAttackActivity.this));
         rvUnitList.setHasFixedSize(true);
         rvUnitList.setAdapter(srcUnitAdapter);
-        srcUnitAdapter.setUnits(srcUnits);
+        // set default unit list
+        updateUnitList(true);
     }
 
     private void setUpDestTerritory(){
@@ -267,47 +316,60 @@ public class MoveAttackActivity extends AppCompatActivity {
         // setup drop down
         TextInputLayout layout = view.findViewById(R.id.dropdown_layout);
         layout.setHint("Dest Territory");
-        String[] items = new String[] {"Item 1", "Item 2", "Item 3", "Item 4"};
 
-        ArrayAdapter<String> adapter =
+        destTerritoryAdapter =
                 new ArrayAdapter<>(
                         MoveAttackActivity.this,
                         R.layout.dropdown_menu_popup_item,
-                        items);
+                        new ArrayList<>(territoryOwn));
 
-        AutoCompleteTextView dropdownDestTerritory =
+        destTerritory = destTerritoryAdapter.getItem(0);
+
+        dropdownDestTerritory =
                 view.findViewById(R.id.input);
-        dropdownDestTerritory.setAdapter(adapter);
-        dropdownDestTerritory.setText(items[0], false);
+        dropdownDestTerritory.setAdapter(destTerritoryAdapter);
+        dropdownDestTerritory.setText(destTerritory, false);
         dropdownDestTerritory.setOnItemClickListener((parent, v, position, id) -> {
-            // TODO: update units
-            showToastUI(MoveAttackActivity.this, "dest: " + items[position]);
-            destTerritory = items[position];
+            destTerritory = destTerritoryAdapter.getItem(position);
+            updateUnitList(false);
         });
 
         // setup recycler view
         RecyclerView rvUnitList = view.findViewById(R.id.rv_unit_list);
-        // TODO: replace with real data
-        destUnits = new ArrayList<>();
-        for (int i = 0; i < 30; i++){
-            destUnits.add(new Unit());
-        }
 
         destUnitAdapter = new UnitAdapter();
         destUnitAdapter.setListener(position -> {
-            Unit unit = destUnits.get(position);
-            showToastUI(MoveAttackActivity.this, "you click");
+            UnitGroup unit = destUnitAdapter.getUnitGroup(position);
         });
         rvUnitList.setLayoutManager(new LinearLayoutManager(MoveAttackActivity.this));
         rvUnitList.setHasFixedSize(true);
         rvUnitList.setAdapter(destUnitAdapter);
-        destUnitAdapter.setUnits(destUnits);
+        updateUnitList(false);
+    }
+
+    private void updateUnitList(boolean isSrc){
+        if (isSrc){
+            Territory t = map.getTerritory(srcTerritory);
+            List<UnitGroup> unitGroups = new ArrayList<>();
+            for (Map.Entry<Integer, List<Unit>> entry : t.getUnitGroup().entrySet()){
+                unitGroups.add(new UnitGroup(entry.getKey(), entry.getValue().size()));
+            }
+            srcUnitAdapter.setUnits(unitGroups);
+        }else {
+            Territory t = map.getTerritory(destTerritory);
+            List<UnitGroup> unitGroups = new ArrayList<>();
+            for (Map.Entry<Integer, List<Unit>> entry : t.getUnitGroup().entrySet()){
+                unitGroups.add(new UnitGroup(entry.getKey(), entry.getValue().size()));
+            }
+            destUnitAdapter.setUnits(unitGroups);
+        }
     }
 
     private void refreshUnitsInfo(){
         StringBuilder builder = new StringBuilder();
+        // key: level; value: number
         for (Map.Entry<Integer, Integer> entry : units.entrySet()){
-            builder.append(entry.getValue()).append(" units of level ").append(entry.getKey()).append("\n");
+            builder.append(entry.getValue()).append(" ").append(UNIT_NAME.get(entry.getKey())).append("\n");
         }
         tvUnitsInfo.setText(builder.toString());
     }
@@ -322,5 +384,16 @@ public class MoveAttackActivity extends AppCompatActivity {
             return false;
         }
         return true;
+    }
+
+    private void groupTerritory(){
+        List<Territory> territories = new ArrayList<>(map.getAtlas().values());
+        for (Territory territory : territories){
+            if (territory.getOwner() == getPlayerID()){
+                territoryOwn.add(territory.getName());
+            }else {
+                territoryOther.add(territory.getName());
+            }
+        }
     }
 }
