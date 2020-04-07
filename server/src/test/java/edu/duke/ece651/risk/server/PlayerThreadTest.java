@@ -134,6 +134,7 @@ public class PlayerThreadTest {
                 ACTION_DONE
         ))), new ByteArrayOutputStream());
         player.setId(1);
+        player.setConnect(false);
 
         GameInfo gameInfo = new GameInfo(-1, 1);
         WorldMap<String> map = new MapDataBase<String>().getMap("a clash of kings");
@@ -141,7 +142,6 @@ public class PlayerThreadTest {
 
         CyclicBarrier b = new CyclicBarrier(2);
         CyclicBarrier barrier = spy(b);
-        player.setConnect(false);
         PlayerThread playerThread = new PlayerThread(player, map, gameInfo, barrier);
         playerThread.start();
 
