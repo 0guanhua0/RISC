@@ -34,7 +34,7 @@ import edu.duke.ece651.riskclient.listener.onResultListener;
 import edu.duke.ece651.riskclient.objects.UnitGroup;
 
 import static edu.duke.ece651.risk.shared.Constant.UP_UNIT_COST;
-import static edu.duke.ece651.riskclient.ClientConstant.ACTION_PERFORMED;
+import static edu.duke.ece651.riskclient.Constant.ACTION_PERFORMED;
 import static edu.duke.ece651.riskclient.RiskApplication.getPlayerID;
 import static edu.duke.ece651.riskclient.activity.PlayGameActivity.PLAYING_MAP;
 import static edu.duke.ece651.riskclient.activity.PlayGameActivity.TECH_RESOURCE;

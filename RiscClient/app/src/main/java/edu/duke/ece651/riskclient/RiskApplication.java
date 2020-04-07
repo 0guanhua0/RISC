@@ -19,8 +19,8 @@ import edu.duke.ece651.riskclient.listener.onResultListener;
 import edu.duke.ece651.riskclient.objects.SimplePlayer;
 
 import static edu.duke.ece651.risk.shared.Constant.SUCCESSFUL;
-import static edu.duke.ece651.riskclient.ClientConstant.HOST;
-import static edu.duke.ece651.riskclient.ClientConstant.PORT;
+import static edu.duke.ece651.riskclient.Constant.HOST;
+import static edu.duke.ece651.riskclient.Constant.PORT;
 
 public class RiskApplication extends Application {
     private static final String TAG = RiskApplication.class.getSimpleName();

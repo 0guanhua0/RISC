@@ -28,7 +28,6 @@ import java.util.TreeMap;
 import edu.duke.ece651.risk.shared.action.Action;
 import edu.duke.ece651.risk.shared.action.AttackAction;
 import edu.duke.ece651.risk.shared.action.MoveAction;
-import edu.duke.ece651.risk.shared.map.BasicResource;
 import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.Unit;
 import edu.duke.ece651.risk.shared.map.WorldMap;
@@ -38,7 +37,7 @@ import edu.duke.ece651.riskclient.listener.onResultListener;
 import edu.duke.ece651.riskclient.objects.UnitGroup;
 
 import static edu.duke.ece651.risk.shared.Constant.UNIT_NAME;
-import static edu.duke.ece651.riskclient.ClientConstant.ACTION_PERFORMED;
+import static edu.duke.ece651.riskclient.Constant.ACTION_PERFORMED;
 import static edu.duke.ece651.riskclient.RiskApplication.getPlayerID;
 import static edu.duke.ece651.riskclient.activity.PlayGameActivity.FOOD_RESOURCE;
 import static edu.duke.ece651.riskclient.activity.PlayGameActivity.PLAYING_MAP;

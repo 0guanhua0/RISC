@@ -3,7 +3,7 @@ package edu.duke.ece651.riskclient;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ClientConstant {
+public class Constant {
     // the longest waiting time for any network operation
     public static final int TIME_OUT = 30 * 1000;
 
