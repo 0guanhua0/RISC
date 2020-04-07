@@ -22,12 +22,22 @@ public class PlayerThread extends Thread{
     WorldMap<String> map;
     GameInfo gameInfo;
     CyclicBarrier barrier;
+    int waitTimeOut;
 
     public PlayerThread(Player<String> player, WorldMap<String> map, GameInfo gameInfo, CyclicBarrier barrier) {
         this.player = player;
         this.map = map;
         this.gameInfo = gameInfo;
         this.barrier = barrier;
+        this.waitTimeOut = WAIT_TIME_OUT;
+    }
+
+    public PlayerThread(Player<String> player, WorldMap<String> map, GameInfo gameInfo, CyclicBarrier barrier, int timeout) {
+        this.player = player;
+        this.map = map;
+        this.gameInfo = gameInfo;
+        this.barrier = barrier;
+        this.waitTimeOut = timeout;
     }
 
     @Override
@@ -41,7 +51,6 @@ public class PlayerThread extends Thread{
                 barrier.await();
             }
         }catch (Exception ignored){
-            System.out.println(ignored);
         }
      }
 
@@ -96,7 +105,6 @@ public class PlayerThread extends Thread{
         // 3. round number
         // 4. player object(contains the information of resources)
         RoundInfo roundInfo = new RoundInfo(gameInfo.getRoundNum(), map, gameInfo.getIdToName(), player);
-
         player.send(roundInfo);
 
         // build the current state of game
@@ -116,7 +124,6 @@ public class PlayerThread extends Thread{
                     Object recvRes = this.player.recv();
                     if (recvRes instanceof Action){
                         Action action = (Action) recvRes;
-                        System.out.println(action);
                         synchronized (this) {
                             // act accordingly based on whether the input actions are valid or not
                             if (action.isValid(worldState)){
@@ -139,7 +146,7 @@ public class PlayerThread extends Thread{
                     reconnect = true;
                 }
                 // if user disconnect more than 60s in one round, we force he/she finish this round
-                if (checkCnt > WAIT_TIME_OUT){
+                if (checkCnt > waitTimeOut){
                     break;
                 }
             }

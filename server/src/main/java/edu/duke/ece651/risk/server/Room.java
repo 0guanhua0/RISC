@@ -33,13 +33,12 @@ public class Room {
      * @param roomID      roomID for this room
      * @param player      the "beginner", the player create this room
      * @param mapDataBase all map we have
-     * @throws IOException              probably because of stream close
      * @throws IllegalArgumentException probably because of invalid roomID(should be positive)
      * @throws ClassNotFoundException   probably because of not follow the protocol
      */
-    public Room(int roomID, Player<String> player, MapDataBase<String> mapDataBase) throws IOException, IllegalArgumentException, ClassNotFoundException {
+    public Room(int roomID, Player<String> player, MapDataBase<String> mapDataBase) throws IllegalArgumentException, ClassNotFoundException {
         if (roomID < 0) {
-            throw new IllegalArgumentException("Invalid value of Room Id");
+            throw new IllegalArgumentException("Invalid value of Room ID");
         }
         this.roomID = roomID;
         this.roomName = "";
@@ -51,13 +50,11 @@ public class Room {
         // let the beginner choose map & specify room name
         initGame(mapDataBase);
 
-        System.out.println("send player info");
         List<String> colorList = map.getColorList();
         // assign the color
         player.setColor(colorList.get(0));
         player.sendPlayerInfo();
 
-        System.out.println("send new room info");
         player.send(new RoomInfo(roomID, roomName, map, players));
 
         // don't need this message anymore
@@ -80,18 +77,16 @@ public class Room {
 
         players = new ArrayList<>();
 
-        System.out.println("send new room info");
-
         gameInfo = new GameInfo(-1, 1);
     }
+
     /**
      * call this method to add a new player into this room
      * after the last player enter the room, game will begin automatically
      *
      * @param player new player
-     * @throws IOException probably because of stream close
      */
-    void addPlayer(Player<String> player) throws IOException {
+    void addPlayer(Player<String> player) {
         // only accept new player if the game is not start yet
         if (players.size() < map.getColorList().size()) {
             players.add(player);
@@ -157,6 +152,11 @@ public class Room {
         }
     }
 
+    /**
+     * This function will send the data to all players except p.
+     * @param data data to be sent
+     * @param p except this player
+     */
     void sendAllExcept(Object data, Player<String> p)  {
         for (Player<String> player : players) {
             if (player.isConnect() && player != p) {
@@ -185,13 +185,9 @@ public class Room {
                 Player<String> pDefend = players.get(aR.getDefenderID() - 1);
 
                 Territory destTerritory = map.getAtlas().get(aR.getDestTerritory());
-                List<Territory> srcTerritories = new ArrayList<>();
-                for (String name : aR.getSrcTerritories()) {
-                    srcTerritories.add(map.getAtlas().get(name));
-                }
 
                 // attack info
-                sb.append(pAttack.getColor()).append(" attacks ").append(pDefend.getColor());
+                sb.append(pAttack.getName()).append(" attacks ").append(pDefend.getName());
                 sb.append("'s territory ").append(destTerritory.getName());
                 sb.append("(from ");
                 for (String name : aR.getSrcTerritories()) {
@@ -249,9 +245,8 @@ public class Room {
      * update the state(e.g. num of units and resources)
      * of current map after the end of each single round of game
      */
-
     void updateWorld(){
-        //update tech&food resources for every player
+        // update tech&food resources for every player
         for (Player<String> player : players) {
             player.updateState();
         }
@@ -267,7 +262,8 @@ public class Room {
     }
 
     void runGame() throws IOException {
-        CyclicBarrier barrier = new CyclicBarrier(players.size() + 1); // + 1 for main thread
+        // + 1 for main thread
+        CyclicBarrier barrier = new CyclicBarrier(players.size() + 1);
 
         for (Player<String> player : players) {
             new PlayerThread(player, map, gameInfo, barrier).start();
@@ -307,14 +303,21 @@ public class Room {
         }
     }
 
-    //return list of player
+    /**
+     * get players
+     * @return list of players in current room
+     */
     public List<Player<String>> getPlayers() {
         return players;
     }
 
-    //find certaion player
-    public Player getPlayer(String name) {
-        for (Player p : players) {
+    /**
+     * Find certain player.
+     * @param name name of the player looking for
+     * @return corresponding player object
+     */
+    public Player<?> getPlayer(String name) {
+        for (Player<String> p : players) {
             if (p.getName().equals(name)) {
                 return p;
             }
@@ -322,8 +325,12 @@ public class Room {
         return null;
     }
 
-    //check if has certain player
-    public boolean hasUser(String name) {
+    /**
+     * Check if certain player is in current room.
+     * @param name player name
+     * @return true for player in this room
+     */
+    public boolean hasPlayer(String name) {
         for (Player<String> p : players) {
             if (p.getName().equals(name)) {
                 return true;

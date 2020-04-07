@@ -23,11 +23,11 @@ public class GameServer {
     Server server;
     // thread pool, used to handle incoming request
     ThreadPoolExecutor threadPool;
-    // list of all rooms(each room represent a running game)
-
+    // list of all authenticated user
     UserList userList;
     // db for user name & password
     SQL db;
+    // map of all rooms(each room represent a running game), key is the room id
     Map<Integer, Room> rooms;
 
     public GameServer(Server server) throws SQLException, ClassNotFoundException {
@@ -76,21 +76,20 @@ public class GameServer {
      * @param socket represent a newly accept player
      */
     void handleIncomeRequest(Socket socket) throws IOException, ClassNotFoundException, SQLException {
-        //treat new connection as new user
-        Player player = new PlayerV2(socket.getInputStream(), socket.getOutputStream());
+        // treat each new connection as a new user
+        Player<String> player = new PlayerV2<>(socket.getInputStream(), socket.getOutputStream());
 
-        System.out.println("new connection");
-        //header info from client
+        System.out.println("receive new connection");
+        // header info from client(specify the action)
         String msg = (String) player.recv();
         System.out.println("recv: " + msg);
-        JSONObject obj = new JSONObject(msg);
 
+        JSONObject obj = new JSONObject(msg);
         String userName = obj.getString(USER_NAME);
         String action = obj.getString(ACTION);
-
         player.setName(userName);
 
-        //user try to sign up
+        // user try to sign up
         if (action.equals(SIGNUP)) {
             String userPassword = obj.getString(USER_PASSWORD);
             if (db.addUser(userName, userPassword)) {
@@ -101,13 +100,12 @@ public class GameServer {
             return;
         }
 
-        //login
+        // login
         if (action.equals(LOGIN)) {
             String userPassword = obj.getString(USER_PASSWORD);
             if (db.authUser(userName, userPassword)) {
                 player.send(SUCCESSFUL);
-
-                //add to active user & keep tracking room info
+                //add to active user list & keep tracking room info
                 if (!userList.hasUser(userName)) {
                     User user = new User(userName, userPassword);
                     userList.addUser(user);
@@ -118,51 +116,44 @@ public class GameServer {
             return;
         }
 
-        //user try to play game
-        //check user is in validate list
-        //if no, return error
+        /* ====== actions below all need user login first(so we will check the user list first) ====== */
+
+        // if not login, return error
         if (!userList.hasUser(userName)) {
             //invalid user
             player.send(INVALID_USER);
             return;
         }
+        // successful login
 
-        //if yes, proceed
-        //according to actual action to redirect
-        //the available room
+        // get all rooms which waiting for new players
         if (action.equals(ACTION_GET_WAIT_ROOM)) {
             player.send(getRoomList());
             return;
         }
 
-
-        //the room user has joined
+        // the room user has joined
         if (action.equals(ACTION_GET_IN_ROOM)) {
             player.send(getUserRoom(userName));
             return;
         }
 
-
-        //create new room
+        // create a new room or join an existing room
         if (action.equals(ACTION_CREATE_GAME) || action.equals(ACTION_JOIN_GAME)) {
-            //proceed to original process
+            // proceed to original process
             startGame(player);
             return;
 
         }
 
-
-        //join the existing game
-        //if new player, then just new player
-        //if existing player, then plug in the stream
+        // reconnect to the room
         if (action.equals(ACTION_RECONNECT_ROOM)) {
             int roomID = obj.getInt(ROOM_ID);
             // user is a player already in room
             // redirect io
             if (userList.getUser(userName).isInRoom(roomID)) {
-                //go to the room
-                //find that player
-                Player currPlayer = rooms.get(roomID).getPlayer(userName);
+                // go to the room, find that player and replace the stream with new one
+                Player<?> currPlayer = rooms.get(roomID).getPlayer(userName);
                 currPlayer.setIn(player.getIn());
                 currPlayer.setOut(player.getOut());
                 currPlayer.setConnect(true);
@@ -170,15 +161,13 @@ public class GameServer {
             } else {
                 player.send(INVALID_RECONNECT);
             }
-
         }
     }
-
 
     /**
      * user want to create a room or add a room
      */
-    void startGame(Player player) throws IOException, ClassNotFoundException {
+    void startGame(Player<String> player) throws IOException, ClassNotFoundException {
         int choice = askValidRoomNum(player);
         synchronized (this) {
             if (choice < 0) {
@@ -198,7 +187,6 @@ public class GameServer {
 
     /**
      * This function asks the player whether he/she want to start a new room or join an existing room.
-     *
      * @param player player object, handle the communication
      * @return room number/ID, e.g. -1(or any negative number) stands for a new room, > 0 stands for an existing room
      */
@@ -219,11 +207,9 @@ public class GameServer {
         }
     }
 
-
     /**
      * clear finish room
      */
-
     void clearRoom() {
         List<Integer> finishedRoom = new ArrayList<>();
         for (Room room : rooms.values()) {
@@ -234,27 +220,22 @@ public class GameServer {
 
         for (int id : finishedRoom) {
             rooms.remove(id, rooms.get(id));
-            //clear done room from user list
+            // clear any finished rooms from user list
             for (User u : userList.getUserList()) {
                 if (u.isInRoom(id)) {
                     u.rmRoom(id);
                 }
-
             }
         }
-
-
     }
 
     /**
      * This function will return the current running room list.
-     * @return List of room object
+     * @return list of RoomInfo object
      */
-
     List<RoomInfo> getRoomList() {
         // clear any finished room
         clearRoom();
-
 
         List<RoomInfo> roomInfoList = new ArrayList<>();
         for (Room room : rooms.values()) {
@@ -266,22 +247,22 @@ public class GameServer {
         return roomInfoList;
     }
 
+    /**
+     * This function will return the current running room list of one specific player.
+     * @return list of RoomInfo object
+     */
     List<RoomInfo> getUserRoom(String user) {
         // clear any finished room
         clearRoom();
 
         List<RoomInfo> roomInfoList = new ArrayList<>();
         for (Room room : rooms.values()) {
-            if (room.hasUser(user) && !room.isPlayerLose(user)) {
+            if (room.hasPlayer(user) && !room.isPlayerLose(user)) {
                 roomInfoList.add(new RoomInfo(room.roomID, room.roomName, room.map, room.players));
             }
         }
         return roomInfoList;
-
-
     }
-
-
 
     public static void main(String[] args) throws IOException, SQLException, ClassNotFoundException {
         GameServer gameServer = new GameServer(new Server());
