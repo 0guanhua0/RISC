@@ -546,6 +546,8 @@ public class GameServerTest {
                                 s11, s11, s11
                         ))), new ByteArrayOutputStream());
 
+        player.setName("1");
+
         Room room1 = new Room(1, player, new MapDataBase<>()); // waiting
         Room room2 = new Room(2, player, new MapDataBase<>()); // running
         Room room3 = new Room(3, player, new MapDataBase<>()); // finish
@@ -567,10 +569,14 @@ public class GameServerTest {
         gameServer.rooms.put(room2.roomID, room2);
         gameServer.rooms.put(room3.roomID, room3);
 
+        assertTrue(room1.hasUser("1"));
+        assertTrue(room2.hasUser("1"));
+        assertTrue(room3.hasUser("1"));
         gameServer.clearRoom();
 
         assertTrue(u1.isInRoom(2));
         assertFalse(u1.isInRoom(3));
+        assertEquals("[]", gameServer.getUserRoom("1").toString());
         }
 
 }

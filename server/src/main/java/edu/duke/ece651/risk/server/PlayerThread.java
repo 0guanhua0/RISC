@@ -12,8 +12,6 @@ import edu.duke.ece651.risk.shared.player.Player;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 
@@ -44,7 +42,7 @@ public class PlayerThread extends Thread{
             }
         }catch (Exception ignored){
         }
-    }
+     }
 
     void selectTerritory() throws IOException, IllegalArgumentException, ClassNotFoundException, BrokenBarrierException, InterruptedException {
         int terrPerUsr = map.getTerrPerPlayer();
