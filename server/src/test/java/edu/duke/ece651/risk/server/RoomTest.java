@@ -22,7 +22,8 @@ public class RoomTest {
     @Test
     void testConstructor() throws IOException, ClassNotFoundException {
 
-        assertThrows(IllegalArgumentException.class,()->{new Room(-1,null, new MapDataBase<String>());});
+        assertThrows(IllegalArgumentException.class,()->{new Room(-3,null, new MapDataBase<String>());});
+        assertThrows(IllegalArgumentException.class,()->{new Room(-3, new MapDataBase<String>());});
 
         String m1 = "hogwarts";
         String r1 = "1";
@@ -401,7 +402,10 @@ public class RoomTest {
         p1.setName("1");
         room.getPlayers().add(p1);
         assertEquals(p1, room.getPlayer("1"));
+        assertNull(room.getPlayer("4"));
         assertTrue(room.hasUser("1"));
+        assertFalse(room.hasUser("4"));
+        assertFalse(room.isPlayerLose("4"));
         assertTrue(room.isPlayerLose("1"));
 
     }
