@@ -1,6 +1,7 @@
 package edu.duke.ece651.risk.server;
 
 import edu.duke.ece651.risk.shared.map.MapDataBase;
+import edu.duke.ece651.risk.shared.map.TerritoryV1;
 import edu.duke.ece651.risk.shared.network.Client;
 import edu.duke.ece651.risk.shared.network.Server;
 import edu.duke.ece651.risk.shared.player.Player;
@@ -95,7 +96,7 @@ public class GameServerTest {
             gameServer.run();
         });
         thread.start();
-        Thread.sleep(2000);
+        Thread.sleep(10000);
         thread.interrupt();
         thread.join();
         verify(server, atLeast(3)).accept();
@@ -396,7 +397,7 @@ public class GameServerTest {
         Player<String> player2 = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList("abc", "10", "0"))), outputStream);
         int roomID = 0;
         GameServer gameServer = new GameServer(null);
-        gameServer.rooms.put(roomID, new Room(roomID, player1, new MapDataBase<String>()));
+        gameServer.rooms.put(roomID, new Room(roomID, player1, new MapDataBase<>()));
         assertEquals(roomID, gameServer.askValidRoomNum(player2));
         assertEquals("Invalid choice, try again.".repeat(2) + SUCCESSFUL, readAllStringFromObjectStream(outputStream));
     }
@@ -540,43 +541,57 @@ public class GameServerTest {
         String s11 = "{\"" + MAP_NAME + "\": \"" + MAP_0 + "\",\n" +
                 "\"" + ROOM_NAME + "\": \"" + r1 + "\" }";
 
-        Player<String> player = new PlayerV1<>(
+        Player<String> player1 = new PlayerV1<>(
                 setupMockInput(
                         new ArrayList<>(Arrays.asList(
-                                s11, s11, s11
+                                s11, s11, s11, s11
                         ))), new ByteArrayOutputStream());
+        player1.setName("1");
+        player1.setId(10);
+        player1.addTerritory(new TerritoryV1("test"));
 
-        player.setName("1");
+        Player<String> player2 = new PlayerV1<>(
+                setupMockInput(
+                        new ArrayList<>(Arrays.asList(
+                                s11, s11
+                        ))), new ByteArrayOutputStream());
+        player2.setName("2");
 
-        Room room1 = new Room(1, player, new MapDataBase<>()); // waiting
-        Room room2 = new Room(2, player, new MapDataBase<>()); // running
-        Room room3 = new Room(3, player, new MapDataBase<>()); // finish
+        Room room1 = new Room(1, player1, new MapDataBase<>()); // waiting
+        Room room2 = new Room(2, player1, new MapDataBase<>()); // running
+        Room room3 = new Room(3, player1, new MapDataBase<>()); // finish
+        Room room4 = new Room(4, player2, new MapDataBase<>()); // finish and player not in
+        Room room5 = new Room(5, player2, new MapDataBase<>()); // running and player not in
 
         room2.players.add(new PlayerV1<>("Green", 1));
         room3.gameInfo.winnerID = 1;
+        room4.gameInfo.winnerID = 2;
 
         Server server = mock(Server.class);
         GameServer gameServer = new GameServer(server);
 
-        User u1 = new User("1", "1");
+        User u1 = new User(player1.getName(), "1");
         gameServer.userList.addUser(u1);
         u1.addRoom(1);
         u1.addRoom(2);
         u1.addRoom(3);
 
-
         gameServer.rooms.put(room1.roomID, room1);
         gameServer.rooms.put(room2.roomID, room2);
         gameServer.rooms.put(room3.roomID, room3);
+        gameServer.rooms.put(room4.roomID, room4);
+        gameServer.rooms.put(room5.roomID, room5);
 
-        assertTrue(room1.hasUser("1"));
-        assertTrue(room2.hasUser("1"));
-        assertTrue(room3.hasUser("1"));
+        assertTrue(room1.hasPlayer("1"));
+        assertTrue(room2.hasPlayer("1"));
+        assertTrue(room3.hasPlayer("1"));
+        assertFalse(room4.hasPlayer("1"));
         gameServer.clearRoom();
 
         assertTrue(u1.isInRoom(2));
         assertFalse(u1.isInRoom(3));
-        assertEquals("[]", gameServer.getUserRoom("1").toString());
-        }
+        // room 1 & 2 should in this list
+        assertEquals(2, gameServer.getUserRoom("1").size());
+    }
 
 }

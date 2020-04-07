@@ -30,7 +30,6 @@ public class SQL {
         conn.close();
     }
 
-
     public void dropTable() throws SQLException, ClassNotFoundException {
         Class.forName("org.postgresql.Driver");
         Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
@@ -42,11 +41,10 @@ public class SQL {
         conn.close();
     }
 
-
     public boolean addUser(String name, String pwd) throws SQLException, ClassNotFoundException {
         Class.forName("org.postgresql.Driver");
         Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
-        // ask postgres to crypt the password
+        // TODO: ask postgres to crypt the password
 
         //check if user already exists
         if (isNameExist(name)) {
@@ -80,7 +78,6 @@ public class SQL {
     }
 
     public boolean isNameExist(String name) throws SQLException, ClassNotFoundException {
-
         Class.forName("org.postgresql.Driver");
         Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
         Statement statement = conn.createStatement();
@@ -89,12 +86,10 @@ public class SQL {
                 " WHERE name = '%s' ", name));
 
         boolean rst = set.next();
-
         set.close();
         statement.close();
         conn.close();
         return rst;
 
     }
-
-};
+}

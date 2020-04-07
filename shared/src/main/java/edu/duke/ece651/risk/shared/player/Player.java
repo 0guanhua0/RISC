@@ -17,7 +17,6 @@ import static edu.duke.ece651.risk.shared.Constant.PLAYER_ID;
  * @author: Chengda Wu(cw402)
  * @create: 2020-03-09 16:24
  **/
-
 public abstract class Player<T> implements Serializable{
 
     T color;
@@ -125,8 +124,6 @@ public abstract class Player<T> implements Serializable{
      * This function will send the player info to corresponding client(in json format), now it includes:
      * 1) player id
      * 2) player color
-     *
-     * @throws IOException probably because of stream closed
      */
     public void sendPlayerInfo() {
         JSONObject jsonObject = new JSONObject();
@@ -184,7 +181,6 @@ public abstract class Player<T> implements Serializable{
     /**
      * reset connection handle connection
      */
-
     //todo: redirect the round info to a log file
     public void setName(String name) {
         this.name = name;

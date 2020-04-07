@@ -388,7 +388,7 @@ public class RoomTest {
         //room 0
         Room room = new Room(0, mapDataBase);
         assertNull(room.getPlayer("1"));
-        assertFalse(room.hasUser("1"));
+        assertFalse(room.hasPlayer("1"));
         assertFalse(room.isPlayerLose("1"));
 
         ByteArrayOutputStream o1 = new ByteArrayOutputStream();
@@ -419,8 +419,8 @@ public class RoomTest {
 
         assertEquals(p1, room.getPlayer("1"));
         assertNull(room.getPlayer("4"));
-        assertTrue(room.hasUser("1"));
-        assertFalse(room.hasUser("4"));
+        assertTrue(room.hasPlayer("1"));
+        assertFalse(room.hasPlayer("4"));
         assertFalse(room.isPlayerLose("4"));
         assertTrue(room.isPlayerLose("1"));
 

@@ -4,26 +4,25 @@ import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.TerritoryV1;
 import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 
 import static edu.duke.ece651.risk.shared.Mock.readAllStringFromObjectStream;
 import static edu.duke.ece651.risk.shared.Mock.setupMockInput;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class PlayerTest {
     @Test
     void constructor() throws IOException {
         Player<String> p1 = new PlayerV1<String>("Red", 1);
         assertTrue(p1.territories.isEmpty());
-        assertTrue(p1.color.equals("Red"));
-        assertTrue(1 == p1.id);
+        assertEquals("Red", p1.color);
+        assertEquals(1, p1.id);
         assertThrows(IllegalArgumentException.class, () -> {
             new PlayerV1<String>("Red", 0);
         });
@@ -64,8 +63,8 @@ class PlayerTest {
         assertEquals(2, p1.getTerrNum());
         assertTrue(p1.territories.contains(n1));
         assertTrue(p1.territories.contains(n2));
-        assertTrue(1 == n1.getOwner());
-        assertTrue(1 == n2.getOwner());
+        assertEquals(1, n1.getOwner());
+        assertEquals(1, n2.getOwner());
     }
 
     @Test
@@ -85,10 +84,10 @@ class PlayerTest {
         TerritoryV1 n3 = new TerritoryV1("n3");
         assertThrows(IllegalArgumentException.class, () -> p1.loseTerritory(n3));
 
-        assertTrue(!p1.territories.contains(n1));
+        assertFalse(p1.territories.contains(n1));
         assertTrue(p1.territories.contains(n2));
         assertTrue(n1.isFree());
-        assertTrue(!n2.isFree());
+        assertFalse(n2.isFree());
     }
 
 
@@ -102,6 +101,27 @@ class PlayerTest {
         assertEquals(str2, player.recv());
         player.send(str1);
         assertEquals(str1, readAllStringFromObjectStream(outputStream));
+    }
+
+    @Test
+    void testSendIO() throws IOException {
+        ByteArrayOutputStream out = mock(ByteArrayOutputStream.class);
+        Player<String> player = new PlayerV1<String>(setupMockInput(new ArrayList<Object>(Arrays.asList("str1"))), out);
+        doThrow(new IOException())
+                .when(out)
+                .flush();
+        assertTrue(player.isConnect);
+        player.send("1");
+        assertFalse(player.isConnect);
+    }
+
+    @Test
+    void testRecvIO() throws IOException, ClassNotFoundException {
+        // NOTE: EOFException extends IOException, so we only need to produce an EOF(which a empty stream can achieve)
+        Player<String> player = new PlayerV1<String>(setupMockInput(new ArrayList<>()), new ByteArrayOutputStream());
+        assertTrue(player.isConnect);
+        player.recv();
+        assertFalse(player.isConnect);
     }
 
     @Test
@@ -125,7 +145,7 @@ class PlayerTest {
         when(socket1.getInputStream())
                 .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList(s1, s2))));
         when(socket1.getOutputStream()).thenReturn(outputStream1);
-        Player p1 = new PlayerV2(socket1.getInputStream(), socket1.getOutputStream());
+        Player<String> p1 = new PlayerV2<String>(socket1.getInputStream(), socket1.getOutputStream());
 
         p1.setName("a");
         assertEquals("a", p1.getName());
@@ -140,7 +160,7 @@ class PlayerTest {
         when(socket2.getInputStream())
                 .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList(s1, s2))));
         when(socket2.getOutputStream()).thenReturn(o2);
-        Player p2 = new PlayerV2(socket2.getInputStream(), socket2.getOutputStream());
+        Player<String> p2 = new PlayerV2<String>(socket2.getInputStream(), socket2.getOutputStream());
 
         p2.setIn(p1.getIn());
         p2.setOut(p1.getOut());
