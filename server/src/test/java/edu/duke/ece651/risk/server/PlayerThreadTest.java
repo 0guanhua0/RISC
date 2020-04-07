@@ -141,10 +141,10 @@ public class PlayerThreadTest {
 
         CyclicBarrier b = new CyclicBarrier(2);
         CyclicBarrier barrier = spy(b);
+        player.setConnect(false);
         PlayerThread playerThread = new PlayerThread(player, map, gameInfo, barrier);
         playerThread.start();
 
-        player.setConnect(false);
         Thread.sleep(2000);
         player.setConnect(true);
 
