@@ -1,11 +1,14 @@
 package edu.duke.ece651.riskclient.activity;
 
+import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -16,6 +19,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +52,6 @@ import static edu.duke.ece651.riskclient.RiskApplication.getPlayerID;
 
 import static edu.duke.ece651.riskclient.RiskApplication.getRoomName;
 import static edu.duke.ece651.riskclient.RiskApplication.recv;
-import static edu.duke.ece651.riskclient.RiskApplication.releaseGameSocket;
 import static edu.duke.ece651.riskclient.RiskApplication.send;
 import static edu.duke.ece651.riskclient.RiskApplication.setPlayerID;
 import static edu.duke.ece651.riskclient.utils.HTTPUtils.recvAttackResult;
@@ -59,9 +63,22 @@ public class PlayGameActivity extends AppCompatActivity {
     public static final String PLAYING_MAP = "playingMap";
     public static final String FOOD_RESOURCE = "food";
     public static final String TECH_RESOURCE = "tech";
+    public static final String CURRENT_TECH_LEVEL = "currentTechLevel";
+    public static final String IS_MOVE = "isMove";
+    public static final String IS_UPGRADE_MAX = "isUpgradeMax";
 
-    private static final int ACTION_MOVE_ATTACK = 1;
-    private static final int ACTION_UPGRADE = 2;
+    private static final String TYPE_MOVE = "move";
+    private static final String TYPE_ATTACK = "attack";
+    private static final String TYPE_UPGRADE_UNIT = "upgrade unit";
+    private static final String TYPE_UPGRADE_MAX = "upgrade max tech";
+    private static final String TYPE_ALLIANCE = "form alliance";
+    private static final String TYPE_DONE = "done";
+
+    private static final int REQUEST_ACTION_MOVE = 1;
+    private static final int REQUEST_ACTION_ATTACK = 2;
+    private static final int REQUEST_ACTION_UPGRADE_MAX = 3;
+    private static final int REQUEST_ACTION_UPGRADE_UNIT = 4;
+    private static final int REQUEST_ACTION_ALLIANCE = 5;
 
     /**
      * UI variable
@@ -69,6 +86,7 @@ public class PlayGameActivity extends AppCompatActivity {
     private TextView tvRoundNum;
     private TextView tvPlayerInfo;
     private TextView tvActionInfo;
+    private Button btPerform;
     private Button btMoveAttack;
     private Button btUpgrade;
     private Button btDone;
@@ -84,6 +102,7 @@ public class PlayGameActivity extends AppCompatActivity {
     private int roundNum;
     private boolean isLose;
     private boolean hasShowDialog;
+    private String actionType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,6 +120,7 @@ public class PlayGameActivity extends AppCompatActivity {
         roundNum = 1;
         isLose = false;
         hasShowDialog = false;
+        actionType = TYPE_MOVE;
 
         setUpUI();
 
@@ -125,15 +145,18 @@ public class PlayGameActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         switch (requestCode){
-            case ACTION_MOVE_ATTACK:
-            case ACTION_UPGRADE:
+            case REQUEST_ACTION_MOVE:
+            case REQUEST_ACTION_ATTACK:
+            case REQUEST_ACTION_UPGRADE_UNIT:
+            case REQUEST_ACTION_UPGRADE_MAX:
+            case REQUEST_ACTION_ALLIANCE:
                 if (resultCode == RESULT_OK){
                     Action action = (Action) data.getSerializableExtra(ACTION_PERFORMED);
                     // server check that the action is valid, so we perform it to update current map
                     // NOTE: this only update the copy of the map, we will still get the latest map from server at the beginning of each term
                     action.perform(new WorldState(player, map));
                     performedActions.add(action);
-                    showActions();
+                    showPerformedActions();
                     showPlayerInfo();
                 }
                 break;
@@ -142,39 +165,62 @@ public class PlayGameActivity extends AppCompatActivity {
     }
 
     private void setUpUI(){
-        btMoveAttack = findViewById(R.id.bt_move_attack);
-        btUpgrade = findViewById(R.id.bt_upgrade);
-        btDone = findViewById(R.id.bt_done);
-
-        btMoveAttack.setOnClickListener(v -> {
-            Intent intent = new Intent(PlayGameActivity.this, MoveAttackActivity.class);
+        btPerform = findViewById(R.id.bt_perform);
+        btPerform.setOnClickListener(v -> {
+            // TODO: switch to different activity based on action type
+            Intent intent = new Intent();
             Bundle bundle = new Bundle();
-            bundle.putSerializable(PLAYING_MAP, map);
-            bundle.putInt(FOOD_RESOURCE, player.getFoodNum());
+            int requestCode = -1;
+            switch (actionType){
+                case TYPE_MOVE:
+                    intent.setComponent(new ComponentName(PlayGameActivity.this, MoveAttackActivity.class));
+                    bundle.putBoolean(IS_MOVE, true);
+                    bundle.putSerializable(PLAYING_MAP, map);
+                    bundle.putInt(FOOD_RESOURCE, player.getFoodNum());
+                    requestCode = REQUEST_ACTION_MOVE;
+                    break;
+                case TYPE_ATTACK:
+                    intent.setComponent(new ComponentName(PlayGameActivity.this, MoveAttackActivity.class));
+                    bundle.putBoolean(IS_MOVE, false);
+                    bundle.putSerializable(PLAYING_MAP, map);
+                    bundle.putInt(FOOD_RESOURCE, player.getFoodNum());
+                    requestCode = REQUEST_ACTION_ATTACK;
+                    break;
+                case TYPE_UPGRADE_UNIT:
+                    intent.setComponent(new ComponentName(PlayGameActivity.this, UpgradeActivity.class));
+                    bundle.putBoolean(IS_UPGRADE_MAX, false);
+                    bundle.putSerializable(PLAYING_MAP, map);
+                    bundle.putInt(TECH_RESOURCE, player.getTechNum());
+                    bundle.putInt(CURRENT_TECH_LEVEL, player.getTechLevel());
+                    requestCode = REQUEST_ACTION_UPGRADE_UNIT;
+                    break;
+                case TYPE_UPGRADE_MAX:
+                    intent.setComponent(new ComponentName(PlayGameActivity.this, UpgradeActivity.class));
+                    bundle.putBoolean(IS_UPGRADE_MAX, true);
+                    bundle.putSerializable(PLAYING_MAP, map);
+                    bundle.putInt(TECH_RESOURCE, player.getTechNum());
+                    bundle.putInt(CURRENT_TECH_LEVEL, player.getTechLevel());
+                    requestCode = REQUEST_ACTION_UPGRADE_MAX;
+                    break;
+                case TYPE_ALLIANCE:
+                    requestCode = REQUEST_ACTION_ALLIANCE;
+                    break;
+                case TYPE_DONE:
+                    // pop up a dialog to ask confirm
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setTitle("Finish this round");
+                    builder.setMessage("once you finish this round, you can't undo it");
+                    builder.setPositiveButton("Finish", (dialog, which) -> {
+                        roundOver();
+                    });
+                    builder.setNegativeButton("Cancel", ((dialog, which) -> {
+                        // do nothing
+                    }));
+                    builder.show();
+                    return;
+            }
             intent.putExtras(bundle);
-            startActivityForResult(intent, ACTION_MOVE_ATTACK);
-        });
-
-        btUpgrade.setOnClickListener(v -> {
-            Intent intent = new Intent(PlayGameActivity.this, UpgradeActivity.class);
-            Bundle bundle = new Bundle();
-            bundle.putSerializable(PLAYING_MAP, map);
-            bundle.putInt(TECH_RESOURCE, player.getTechNum());
-            intent.putExtras(bundle);
-            startActivityForResult(intent, ACTION_UPGRADE);
-        });
-
-        btDone.setOnClickListener(v -> {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Finish this round");
-            builder.setMessage("once you finish this round, you can't undo it");
-            builder.setPositiveButton("Finish", (dialog, which) -> {
-                roundOver();
-            });
-            builder.setNegativeButton("Cancel", ((dialog, which) -> {
-                // do nothing
-            }));
-            builder.show();
+            startActivityForResult(intent, requestCode);
         });
 
         tvPlayerInfo = findViewById(R.id.tv_player_info);
@@ -187,10 +233,15 @@ public class PlayGameActivity extends AppCompatActivity {
 
         tvActionInfo = findViewById(R.id.tv_action_info);
         tvActionInfo.setMovementMethod(new ScrollingMovementMethod());
-        showActions();
+
+        showPerformedActions();
+        setUpActionDropdown();
         setUpTerritoryList();
     }
 
+    /**
+     * Set up the recycler view of territory list.
+     */
     private void setUpTerritoryList(){
         RecyclerView rvTerritoryList = findViewById(R.id.rv_territory_list);
 
@@ -202,6 +253,31 @@ public class PlayGameActivity extends AppCompatActivity {
         rvTerritoryList.setLayoutManager(new LinearLayoutManager(PlayGameActivity.this));
         rvTerritoryList.setHasFixedSize(true);
         rvTerritoryList.setAdapter(territoryAdapter);
+    }
+
+    /**
+     * Set up the action type drop down.
+     */
+    private void setUpActionDropdown(){
+        TextInputLayout layout = findViewById(R.id.action_dropdown);
+        layout.setHint("Action Type");
+
+        String[] items = new String[] {TYPE_MOVE, TYPE_ATTACK, TYPE_UPGRADE_UNIT, TYPE_UPGRADE_MAX, TYPE_ALLIANCE, TYPE_DONE};
+        ArrayAdapter<String> adapter =
+                new ArrayAdapter<>(
+                        PlayGameActivity.this,
+                        R.layout.dropdown_menu_popup_item,
+                        items);
+
+        // set up default choice
+        actionType = adapter.getItem(0);
+
+        AutoCompleteTextView dropdownAction = layout.findViewById(R.id.input);
+        dropdownAction.setAdapter(adapter);
+        dropdownAction.setText(adapter.getItem(0), false);
+        dropdownAction.setOnItemClickListener((parent, v, position, id) -> {
+            actionType = adapter.getItem(position);
+        });
     }
 
     /**
@@ -334,7 +410,7 @@ public class PlayGameActivity extends AppCompatActivity {
                 runOnUiThread(() -> {
                     if (isLose){
                         // is user lose, hide all button
-                        setAllButtonVisibility(false);
+                        setAllButtonHidden();
                         if (!hasShowDialog){
                             AlertDialog.Builder builder = new AlertDialog.Builder(PlayGameActivity.this);
                             builder.setPositiveButton("Yes", (dialog1, which) -> {
@@ -403,21 +479,17 @@ public class PlayGameActivity extends AppCompatActivity {
      * @param isClickable is clickable or not
      */
     private void setAllButtonClickable(boolean isClickable){
-        btMoveAttack.setClickable(isClickable);
-        btUpgrade.setClickable(isClickable);
-        btDone.setClickable(isClickable);
+        btPerform.setClickable(isClickable);
     }
 
-    private void setAllButtonVisibility(boolean isVisible){
-        btMoveAttack.setVisibility(View.GONE);
-        btUpgrade.setVisibility(View.GONE);
-        btDone.setVisibility(View.GONE);
+    private void setAllButtonHidden(){
+        btPerform.setVisibility(View.GONE);
     }
 
     /**
      * This function will format and show the list of actions user already successfully performed.
      */
-    private void showActions(){
+    private void showPerformedActions(){
         StringBuilder builder = new StringBuilder();
         builder.append("Actions performed:\n");
         if (performedActions.isEmpty()){

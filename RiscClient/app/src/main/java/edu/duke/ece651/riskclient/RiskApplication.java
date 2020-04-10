@@ -50,6 +50,8 @@ public class RiskApplication extends Application {
         // warm up one core thread
         threadPool.prestartCoreThread();
         gameSocket = null;
+        player = new SimplePlayer("", "");
+        room = new RoomInfo(1, "");
     }
 
     public static Context getContext() {

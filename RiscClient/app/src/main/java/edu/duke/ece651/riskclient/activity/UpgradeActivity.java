@@ -2,11 +2,13 @@ package edu.duke.ece651.riskclient.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -21,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 import edu.duke.ece651.risk.shared.action.Action;
 import edu.duke.ece651.risk.shared.action.UpMaxTechAction;
@@ -33,9 +36,12 @@ import edu.duke.ece651.riskclient.adapter.UnitAdapter;
 import edu.duke.ece651.riskclient.listener.onResultListener;
 import edu.duke.ece651.riskclient.objects.UnitGroup;
 
+import static edu.duke.ece651.risk.shared.Constant.TECH_MAP;
 import static edu.duke.ece651.risk.shared.Constant.UP_UNIT_COST;
 import static edu.duke.ece651.riskclient.Constant.ACTION_PERFORMED;
 import static edu.duke.ece651.riskclient.RiskApplication.getPlayerID;
+import static edu.duke.ece651.riskclient.activity.PlayGameActivity.CURRENT_TECH_LEVEL;
+import static edu.duke.ece651.riskclient.activity.PlayGameActivity.IS_UPGRADE_MAX;
 import static edu.duke.ece651.riskclient.activity.PlayGameActivity.PLAYING_MAP;
 import static edu.duke.ece651.riskclient.activity.PlayGameActivity.TECH_RESOURCE;
 import static edu.duke.ece651.riskclient.utils.HTTPUtils.sendAction;
@@ -48,9 +54,13 @@ public class UpgradeActivity extends AppCompatActivity {
 
     private UnitAdapter srcUnitAdapter;
     private ArrayAdapter<String> srcTerritoryAdapter;
+    private ArrayAdapter<String> fromLevelAdapter;
+    private ArrayAdapter<String> toLevelAdapter;
     private AutoCompleteTextView dropdownSrcTerritory;
     private WorldMap<String> map;
     private int techResource;
+    private int currentTechLevel;
+    private boolean isUpgradeMax;
     // action parameters
     private String srcTerritory;
     private int unitLevelFrom;
@@ -58,7 +68,9 @@ public class UpgradeActivity extends AppCompatActivity {
     private int unitNum;
 
     List<String> territoryOwn;
+    // levels of all units in this territory
     List<String> territoryUnitLevel;
+    // the max number of any level of units in this territory
     List<String> territoryUnitNumber;
 
     @Override
@@ -70,6 +82,8 @@ public class UpgradeActivity extends AppCompatActivity {
         if (bundle != null){
             map = (WorldMap<String>) bundle.getSerializable(PLAYING_MAP);
             techResource = bundle.getInt(TECH_RESOURCE);
+            isUpgradeMax = bundle.getBoolean(IS_UPGRADE_MAX);
+            currentTechLevel = bundle.getInt(CURRENT_TECH_LEVEL);
         }
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -97,12 +111,14 @@ public class UpgradeActivity extends AppCompatActivity {
         territoryUnitLevel = new ArrayList<>();
         territoryUnitNumber = new ArrayList<>();
 
-        Territory t = map.getTerritory(srcTerritory);
-        List<Integer> level = new ArrayList<>(t.getUnitGroup().keySet());
-        level.sort(Integer::compareTo);
-        for (Integer l : level){
-            territoryUnitLevel.add(String.valueOf(l));
-        }
+//        Territory t = map.getTerritory(srcTerritory);
+//        int maxNumber = 0;
+//        for (Map.Entry<Integer, List<Unit>> entry : t.getUnitGroup().entrySet()){
+//            territoryUnitLevel.add(String.valueOf(entry.getKey()));
+//            maxNumber = Math.max(entry.getValue().size(), maxNumber);
+//        }
+//        territoryUnitLevel.sort(String::compareTo);
+        updateUnitDropDown();
 
         setUpUI();
     }
@@ -123,39 +139,60 @@ public class UpgradeActivity extends AppCompatActivity {
         TextView tvResource = findViewById(R.id.tv_resource);
         tvResource.setText(String.format(Locale.US, "Total tech resource(before this action): %d", techResource));
 
-        Button btUpgradeMax = findViewById(R.id.bt_max);
+        // decide to show which part of the layout
+        ConstraintLayout layoutUpgradeUnit = findViewById(R.id.layout_upgrade_unit);
+        ConstraintLayout layoutUpgradeMax = findViewById(R.id.layout_upgrade_max);
+        if (isUpgradeMax){
+            layoutUpgradeUnit.setVisibility(View.GONE);
+            layoutUpgradeMax.setVisibility(View.VISIBLE);
+            setupUpgradeMax();
+        }else {
+            layoutUpgradeUnit.setVisibility(View.VISIBLE);
+            layoutUpgradeMax.setVisibility(View.GONE);
+            setUpUpgradeUnit();
+        }
+
         Button btConfirm = findViewById(R.id.bt_confirm);
         Button btDecline = findViewById(R.id.bt_decline);
 
-        btUpgradeMax.setOnClickListener(v -> {
-            UpMaxTechAction action = new UpMaxTechAction();
-            sendActionToValid(action);
-        });
-
         btConfirm.setOnClickListener(v -> {
-            if (validateAction()){
-                UpUnitAction action = new UpUnitAction(
-                        srcTerritory,
-                        unitLevelFrom,
-                        unitLevelTo,
-                        getPlayerID(),
-                        unitNum
-                );
+            if (isUpgradeMax){
+                UpMaxTechAction action = new UpMaxTechAction();
                 sendActionToValid(action);
+            }else {
+                if (validateAction()){
+                    UpUnitAction action = new UpUnitAction(
+                            srcTerritory,
+                            unitLevelFrom,
+                            unitLevelTo,
+                            getPlayerID(),
+                            unitNum
+                    );
+                    sendActionToValid(action);
+                }
             }
         });
         btDecline.setOnClickListener(v -> {
             onBackPressed();
         });
+    }
 
+    private void setUpUpgradeUnit(){
         tvTotalCost = findViewById(R.id.tv_total_cost);
         tvTotalCost.setText("");
-
         setUpSrcTerritory();
         setUpFromLevelDropdown();
         setUpToLevelDropdown();
         setUpNumberDropdown();
         updateTotalCost();
+    }
+
+    private void setupUpgradeMax(){
+        TextView tvCurrentLevel = findViewById(R.id.tv_current_level);
+        tvCurrentLevel.setText(String.format(Locale.US, "Current tech level: %d", currentTechLevel));
+
+        TextView tvCostToNext = findViewById(R.id.tv_cost_to_next);
+        tvCostToNext.setText(String.format(Locale.US, "Cost to upgrade to next: %d", TECH_MAP.get(currentTechLevel + 1)));
     }
 
     private void setUpSrcTerritory(){
@@ -168,7 +205,7 @@ public class UpgradeActivity extends AppCompatActivity {
                 new ArrayAdapter<>(
                         UpgradeActivity.this,
                         R.layout.dropdown_menu_popup_item,
-                        new ArrayList<>(territoryOwn));
+                        territoryOwn);
 
         srcTerritory = srcTerritoryAdapter.getItem(0);
 
@@ -179,6 +216,7 @@ public class UpgradeActivity extends AppCompatActivity {
         dropdownSrcTerritory.setOnItemClickListener((parent, v, position, id) -> {
             srcTerritory = srcTerritoryAdapter.getItem(position);
             updateUnitList();
+            updateUnitDropDown();
         });
 
         // setup recycler view
@@ -187,7 +225,6 @@ public class UpgradeActivity extends AppCompatActivity {
         srcUnitAdapter = new UnitAdapter();
         srcUnitAdapter.setListener(position -> {
             UnitGroup unit = srcUnitAdapter.getUnitGroup(position);
-            showToastUI(UpgradeActivity.this, "you click");
         });
         rvUnitList.setLayoutManager(new LinearLayoutManager(UpgradeActivity.this));
         rvUnitList.setHasFixedSize(true);
@@ -200,20 +237,20 @@ public class UpgradeActivity extends AppCompatActivity {
         TextInputLayout layout = findViewById(R.id.dd_unit_level_from);
         layout.setHint("From Level");
 
-        ArrayAdapter<String> adapter =
+        fromLevelAdapter =
                 new ArrayAdapter<>(
                         UpgradeActivity.this,
                         R.layout.dropdown_menu_popup_item,
-                        new ArrayList<>(territoryUnitLevel));
+                        territoryUnitLevel);
 
-        unitLevelFrom = Integer.parseInt(adapter.getItem(0));
+        unitLevelFrom = Integer.parseInt(fromLevelAdapter.getItem(0));
 
         AutoCompleteTextView dropdownAction =
                 layout.findViewById(R.id.input);
-        dropdownAction.setAdapter(adapter);
-        dropdownAction.setText(adapter.getItem(0), false);
+        dropdownAction.setAdapter(fromLevelAdapter);
+        dropdownAction.setText(fromLevelAdapter.getItem(0), false);
         dropdownAction.setOnItemClickListener((parent, v, position, id) -> {
-            unitLevelFrom = Integer.parseInt(adapter.getItem(position));
+            unitLevelFrom = Integer.parseInt(fromLevelAdapter.getItem(position));
             updateTotalCost();
         });
     }
@@ -223,7 +260,8 @@ public class UpgradeActivity extends AppCompatActivity {
         layout.setHint("To Level");
 
         List<String> toLevel = new ArrayList<>();
-        for (int i = unitLevelFrom + 1; i <= 6; i++){
+        // the max to level will be constraint by current tech level
+        for (int i = unitLevelFrom + 1; i <= currentTechLevel; i++){
             toLevel.add(String.valueOf(i));
         }
         ArrayAdapter<String> adapter =
@@ -248,15 +286,15 @@ public class UpgradeActivity extends AppCompatActivity {
         TextInputLayout layout = findViewById(R.id.dd_unit_number);
         layout.setHint("Number of Units");
 
-        List<String> number = new ArrayList<>();
-        for (int i = 1; i <= 20; i++){
-            number.add(String.valueOf(i));
-        }
+//        List<String> number = new ArrayList<>();
+//        for (int i = 1; i <= 20; i++){
+//            number.add(String.valueOf(i));
+//        }
         ArrayAdapter<String> adapter =
                 new ArrayAdapter<>(
                         UpgradeActivity.this,
                         R.layout.dropdown_menu_popup_item,
-                        number);
+                        territoryUnitNumber);
 
         unitNum = Integer.parseInt(adapter.getItem(0));
 
@@ -279,6 +317,26 @@ public class UpgradeActivity extends AppCompatActivity {
         srcUnitAdapter.setUnits(unitGroups);
     }
 
+    /**
+     * This function will update the drop down content of from & to level, and number of units
+     */
+    private void updateUnitDropDown(){
+        // clear the old data
+        territoryUnitLevel.clear();
+        territoryUnitNumber.clear();
+        // add new one
+        Territory t = map.getTerritory(srcTerritory);
+        int maxNumber = 0;
+        for (Map.Entry<Integer, List<Unit>> entry : t.getUnitGroup().entrySet()){
+            territoryUnitLevel.add(String.valueOf(entry.getKey()));
+            maxNumber = Math.max(entry.getValue().size(), maxNumber);
+        }
+        territoryUnitLevel.sort(String::compareTo);
+        for (int i = 1; i <= maxNumber; i++){
+            territoryUnitNumber.add(String.valueOf(i));
+        }
+    }
+
     private void updateTotalCost() {
         int delta = UP_UNIT_COST.get(unitLevelTo) - UP_UNIT_COST.get(unitLevelFrom);
         int total = delta * unitNum;
@@ -291,6 +349,7 @@ public class UpgradeActivity extends AppCompatActivity {
             public void onFailure(String error) {
                 // either invalid action or networking problem
                 showToastUI(UpgradeActivity.this, error);
+                Log.e(TAG, "sendAction: " + error);
             }
 
             @Override
@@ -309,6 +368,11 @@ public class UpgradeActivity extends AppCompatActivity {
             showToastUI(UpgradeActivity.this, "You can't downgrade(or unchange) the unit.");
             return false;
         }
-        return true;
+        Territory t = map.getTerritory(srcTerritory);
+        if (!t.getUnitGroup().containsKey(unitLevelFrom)){
+            return false;
+        }else {
+            return unitNum > Objects.requireNonNull(t.getUnitGroup().get(unitLevelFrom)).size();
+        }
     }
 }

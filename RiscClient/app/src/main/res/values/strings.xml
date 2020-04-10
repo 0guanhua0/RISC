@@ -48,6 +48,7 @@
     <string name="play_game_done">Done</string>
     <string name="play_game_confirm">Confirm</string>
     <string name="play_game_decline">Decline</string>
+    <string name="play_game_perform">Perform</string>
 
     <!--  move & attack activity  -->
     <string name="move_attack_unit_info">The Units you sent:</string>
