@@ -111,13 +111,6 @@ public class UpgradeActivity extends AppCompatActivity {
         territoryUnitLevel = new ArrayList<>();
         territoryUnitNumber = new ArrayList<>();
 
-//        Territory t = map.getTerritory(srcTerritory);
-//        int maxNumber = 0;
-//        for (Map.Entry<Integer, List<Unit>> entry : t.getUnitGroup().entrySet()){
-//            territoryUnitLevel.add(String.valueOf(entry.getKey()));
-//            maxNumber = Math.max(entry.getValue().size(), maxNumber);
-//        }
-//        territoryUnitLevel.sort(String::compareTo);
         updateUnitDropDown();
 
         setUpUI();
@@ -286,10 +279,6 @@ public class UpgradeActivity extends AppCompatActivity {
         TextInputLayout layout = findViewById(R.id.dd_unit_number);
         layout.setHint("Number of Units");
 
-//        List<String> number = new ArrayList<>();
-//        for (int i = 1; i <= 20; i++){
-//            number.add(String.valueOf(i));
-//        }
         ArrayAdapter<String> adapter =
                 new ArrayAdapter<>(
                         UpgradeActivity.this,

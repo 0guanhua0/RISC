@@ -167,7 +167,6 @@ public class PlayGameActivity extends AppCompatActivity {
     private void setUpUI(){
         btPerform = findViewById(R.id.bt_perform);
         btPerform.setOnClickListener(v -> {
-            // TODO: switch to different activity based on action type
             Intent intent = new Intent();
             Bundle bundle = new Bundle();
             int requestCode = -1;
