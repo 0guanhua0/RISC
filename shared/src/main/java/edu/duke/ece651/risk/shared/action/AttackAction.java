@@ -101,11 +101,12 @@ public class AttackAction implements Action, Serializable {
             throw new IllegalArgumentException("Invalid attack action!");
         }
         WorldMap<String> worldMap = worldState.getMap();
-        Player<String> player = worldState.getMyPlayer();
+        Player<String> myPlayer = worldState.getMyPlayer();
+
 
         //use some food to finish this attack operation
         int foodCost = unitsNum;
-        player.useFood(unitsNum);
+        myPlayer.useFood(unitsNum);
 
         for (Map.Entry<Integer, Integer> entry : levelToNum.entrySet()) {
             // reduce src units
@@ -114,6 +115,10 @@ public class AttackAction implements Action, Serializable {
 
         // add attack units to target territory's attack buffer
         worldMap.getTerritory(dest).addAttack(playerId, new Army(playerId, src,levelToNum));
+
+        //break the alliance
+        myPlayer.ruputureAlly();
+
 
         return true;
     }
