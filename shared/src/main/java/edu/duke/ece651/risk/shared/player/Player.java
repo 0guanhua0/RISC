@@ -174,6 +174,14 @@ public abstract class Player<T> implements Serializable{
         }
         this.ally = p;
         p.ally = this;
+
+        for (Territory territory : this.territories) {
+            territory.setFriendId(p.id);
+        }
+        for (Object o : p.territories) {
+            Territory territory = (Territory) o;
+            territory.setFriendId(this.id);
+        }
     }
 
     public Player getAlly() {

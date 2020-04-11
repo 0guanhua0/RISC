@@ -16,10 +16,14 @@ public abstract class Territory implements Serializable {
     TStatus status;
     HashMap<Integer, List<Army>> attackAct;
 
+
+    int friendId;
+
     public Territory(String name) {
         this.neigh = new HashSet<>();
         this.status = new TStatus(name);
         this.attackAct = new HashMap<>();
+        this.friendId = -1;
     }
 
     //get the owner id of corresponding territory
@@ -57,6 +61,11 @@ public abstract class Territory implements Serializable {
 
     public void setFree() {
         status.setOwnerId(0);
+    }
+
+    public int getFriendId() { return friendId; }
+    public void setFriendId(int friendId) {
+        this.friendId = friendId;
     }
 
 //    //helper function to check if two territories are adjacent to each other
