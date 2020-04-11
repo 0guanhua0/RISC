@@ -15,7 +15,7 @@ import static edu.duke.ece651.risk.shared.Utils.getMinKey;
  * @author: Chengda Wu
  * @create: 2020-03-28 10:20
  **/
-public class TerritoryV2 extends TerritoryV1 {
+public class TerritoryV2 extends Territory {
 
     int size;
     int foodYield;
@@ -43,6 +43,15 @@ public class TerritoryV2 extends TerritoryV1 {
     @Override
     public int getTechYield() {
         return techYield;
+    }
+
+    @Override
+    public void addAttack(int playerId, Army army) {
+        if (attackAct.containsKey(playerId)) {
+            attackAct.get(playerId).add(army);
+        } else {
+            attackAct.put(playerId, new ArrayList<Army>(Collections.singletonList(army)));
+        }
     }
 
     //TODO test the correctness of this data

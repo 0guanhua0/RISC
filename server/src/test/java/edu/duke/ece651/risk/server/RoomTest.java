@@ -177,7 +177,7 @@ public class RoomTest {
         room.checkWinner();
         assertEquals(room.gameInfo.winnerID,1);
 
-        Territory test = new TerritoryV1("some name");
+        Territory test = new TerritoryV2("some name",0,0,0);
         player1.addTerritory(test);
         assertThrows(IllegalStateException.class, room::checkWinner);
     }

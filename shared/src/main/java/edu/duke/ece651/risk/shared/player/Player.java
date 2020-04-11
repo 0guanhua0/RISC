@@ -34,6 +34,8 @@ public abstract class Player<T> implements Serializable{
     //you need to clearly understand the definition of allyRequest:
     //the player id of target ally this player object receives from client side  during
     int allyRequest;
+
+
     Player ally;
 
     public Player(InputStream in, OutputStream out) throws IOException {
@@ -174,6 +176,9 @@ public abstract class Player<T> implements Serializable{
         p.ally = this;
     }
 
+    public Player getAlly() {
+        return ally;
+    }
 
 
     /**

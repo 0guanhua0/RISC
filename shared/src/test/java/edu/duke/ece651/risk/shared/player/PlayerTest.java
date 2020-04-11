@@ -1,7 +1,7 @@
 package edu.duke.ece651.risk.shared.player;
 
 import edu.duke.ece651.risk.shared.map.Territory;
-import edu.duke.ece651.risk.shared.map.TerritoryV1;
+import edu.duke.ece651.risk.shared.map.TerritoryV2;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
@@ -9,7 +9,6 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 
 import static edu.duke.ece651.risk.shared.Mock.readAllStringFromObjectStream;
 import static edu.duke.ece651.risk.shared.Mock.setupMockInput;
@@ -50,8 +49,8 @@ class PlayerTest {
     @Test
     void addTerritory() throws IOException {
         Player<String> p1 = new PlayerV1<String>("Red", 1);
-        TerritoryV1 n1 = new TerritoryV1("n1");
-        TerritoryV1 n2 = new TerritoryV1("n2");
+        Territory n1 = new TerritoryV2("n1",0,0,0);
+        Territory n2 = new TerritoryV2("n2",0,0,0);
         HashSet<Territory> n1Neigh = new HashSet<Territory>() {{
             add(n2);
         }};
@@ -70,9 +69,9 @@ class PlayerTest {
     @Test
     void loseTerritory() throws IOException {
         PlayerV1<String> p1 = new PlayerV1<String>("Red", 1);
-        TerritoryV1 n1 = new TerritoryV1("n1");
+        Territory n1 = new TerritoryV2("n1",0,0,0);
         int owner = n1.getOwner();
-        TerritoryV1 n2 = new TerritoryV1("n2");
+        Territory n2 = new TerritoryV2("n2",0,0,0);
         HashSet<Territory> n1Neigh = new HashSet<Territory>() {{
             add(n2);
         }};
@@ -81,7 +80,7 @@ class PlayerTest {
         assertEquals(2, p1.getTerrNum());
         p1.loseTerritory(n1);
         assertEquals(1, p1.getTerrNum());
-        TerritoryV1 n3 = new TerritoryV1("n3");
+        Territory n3 = new TerritoryV2("n3",0,0,0);
         assertThrows(IllegalArgumentException.class, () -> p1.loseTerritory(n3));
 
         assertFalse(p1.territories.contains(n1));

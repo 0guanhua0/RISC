@@ -47,6 +47,9 @@ public class AllyAction implements Action{
         Player<String> myPlayer = worldState.getMyPlayer();
         myPlayer.setAllyRequest(this.allyRequest);
         Player<String> targetAlly = worldState.getPlayers().get(allyRequest);
+        //use the allyRequest as a field inside player class
+        myPlayer.setAllyRequest(this.allyRequest);
+        //if both has such a request, accept
         if (targetAlly.canAllyWith(myPlayer)){
             myPlayer.allyWith(targetAlly);
         }
