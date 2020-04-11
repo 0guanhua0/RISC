@@ -1,6 +1,7 @@
 package edu.duke.ece651.risk.shared.map;
 
 import edu.duke.ece651.risk.shared.action.AttackResult;
+import edu.duke.ece651.risk.shared.player.Player;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -23,12 +24,18 @@ public class TerritoryV2 extends Territory {
     //key is the technology level of units, value is the set of units
     Map<Integer, List<Unit>> unitGroup;
 
+    //unit from friend
+    Map<Integer, List<Unit>> friendUnits;
+
+
+
     public TerritoryV2(String name, int size, int foodYield, int techYield) {
         super(name);
         this.size = size;
         this.foodYield = foodYield;
         this.techYield = techYield;
         this.unitGroup = new HashMap<>();;
+        this.friendUnits = new HashMap<>();
     }
 
     public int getSize() {
@@ -100,11 +107,12 @@ public class TerritoryV2 extends Territory {
             this.unitGroup = new HashMap<Integer, List<Unit>>();
             for (Map.Entry<Integer, Integer> entry : enemy.entrySet()) {
                 int num = entry.getValue();
+                int level = entry.getKey();
                 List<Unit> units = new ArrayList<>();
                 for (int i = 0; i < num ; i++) {
-                    units.add(new Unit());
+                    units.add(new Unit(level,attackerID));
                 }
-                unitGroup.put(entry.getKey(),units);
+                unitGroup.put(level,units);
             }
         }
         return new AttackResult(attackerID, defenderID, srcNames, destName, !enemy.isEmpty());
@@ -151,7 +159,7 @@ public class TerritoryV2 extends Territory {
         }
         List<Unit> units = unitGroup.getOrDefault(level,new ArrayList<>());
         for (int i = 0; i < num; i++) {
-            units.add(new Unit());
+            units.add(new Unit(level,this.getOwner()));
         }
         unitGroup.put(level,units);
     }
@@ -204,7 +212,7 @@ public class TerritoryV2 extends Territory {
         List<Unit> target = unitGroup.getOrDefault(targetLevel, new ArrayList<Unit>());
 
 
-        //update source territory
+        //update source unit
         if (source.size()==num){
             unitGroup.remove(curLevel);
         }else{
@@ -213,9 +221,9 @@ public class TerritoryV2 extends Territory {
             }
             unitGroup.put(curLevel, source);
         }
-        //update target territory
+        //update target unit
         for (int i = 0; i < num; i++) {
-            target.add(new Unit());
+            target.add(new Unit(targetLevel,this.getOwner()));
         }
 
         unitGroup.put(targetLevel,target);
@@ -224,5 +232,70 @@ public class TerritoryV2 extends Territory {
     @Override
     public Map<Integer, List<Unit>> getUnitGroup() {
         return unitGroup;
+    }
+
+
+    @Override
+    public void addFriendUnit(Unit unit) {
+        if (unit.getOwnerId()!=this.friendId){
+            throw new IllegalArgumentException("Invalid state");
+        }
+        int level = unit.getLevel();
+        List<Unit> units = friendUnits.getOrDefault(level, new ArrayList<>());
+        units.add(unit);
+        friendUnits.put(level,units);
+    }
+
+    /**
+     * this method change the state of all territories: mark the friendId as -1(no friend)
+     * and expel all units to nearest territory
+     * @param p
+     */
+    @Override
+    public void ruptureAlly(Player p){
+        if (this.friendId!=p.getId()){
+            throw new IllegalArgumentException("Invalid argument");
+        }
+        Set<Territory> neigh = this.getNeigh();
+        //using BFS to find the most near Territory
+        Queue<Territory> queue = new ArrayDeque<>();
+        queue.addAll(neigh);
+        while(!queue.isEmpty()){
+            int size = queue.size();
+            for (int i=0;i<size;i++){//iterate through new level
+                Territory territory = queue.poll();
+                if (territory.getOwner()==p.getId()){//find target territory, expel all friend unit to this territory
+                    for (int level : friendUnits.keySet()) {
+                        List<Unit> units = friendUnits.get(level);
+                        territory.addUnits(units);
+                    }
+                    this.friendId = -1;
+                    return;
+                }else{//add new adjacent territories
+                    Set<Territory> neighTmp = territory.getNeigh();
+                    queue.addAll(neighTmp);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void addUnit(Unit unit) {
+        int level = unit.getLevel();
+        int ownerId = unit.getOwnerId();
+        if (unit.getOwnerId()!=0){
+            throw new IllegalArgumentException("invalid argument!");
+        }
+        unit.setOwnerId(this.getOwner());
+        List<Unit> units = unitGroup.getOrDefault(level, new ArrayList<>());
+        units.add(unit);
+        unitGroup.put(level,units);
+    }
+
+    @Override
+    public void addUnits(List<Unit> units) {
+        for (Unit unit : units) {
+            this.addUnit(unit);
+        }
     }
 }

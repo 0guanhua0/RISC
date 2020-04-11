@@ -1,6 +1,7 @@
 package edu.duke.ece651.risk.shared.map;
 
 import edu.duke.ece651.risk.shared.action.AttackResult;
+import edu.duke.ece651.risk.shared.player.Player;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -16,8 +17,9 @@ public abstract class Territory implements Serializable {
     TStatus status;
     HashMap<Integer, List<Army>> attackAct;
 
-
+    //use -1 to represent don't have any friends
     int friendId;
+
 
     public Territory(String name) {
         this.neigh = new HashSet<>();
@@ -68,33 +70,6 @@ public abstract class Territory implements Serializable {
         this.friendId = friendId;
     }
 
-//    //helper function to check if two territories are adjacent to each other
-//    private boolean DFSHelper(Territory current, Territory target, Set<Territory> visited) {
-//        if (visited.contains(current) || current.getOwner() != this.getOwner()) {
-//            return false;
-//        } else if (current == target) {
-//            return true;
-//        } else {
-//            visited.add(current);
-//            for (Territory neigh : current.getNeigh()) {
-//                if (DFSHelper(neigh, target, visited)) {
-//                    return true;
-//                }
-//            }
-//            return false;
-//        }
-//    }
-//
-//    //return true only when there is path from current territory to the target territory,
-//    //and all territories along the path should under the control of owner of current territory
-//    public boolean hasPathTo(Territory target) {
-//        if (this == target || target.getOwner() != this.getOwner()) {//a territory is not adjacent to itself
-//            return false;
-//        }
-//        Set<Territory> visited = new HashSet<>();
-//        return DFSHelper(this, target, visited);
-//    }
-
     /**
      * This function will resolve all combats happen in current territory.
      * @return list of combat result
@@ -126,6 +101,8 @@ public abstract class Territory implements Serializable {
      * @return number of units, 0 when level not exist
      */
     public abstract int getUnitsNum(int level);
+
+    public abstract void addUnit(Unit unit);
 
 
     /**
@@ -201,5 +178,12 @@ public abstract class Territory implements Serializable {
      * @param targetLevel: target level of units
      */
     public abstract void upUnit(int num, int curLevel,int targetLevel);
+
+    public abstract void ruptureAlly(Player p);
+
+    public abstract void addFriendUnit(Unit unit);
+
+    public abstract void addUnits(List<Unit> units);
+
 
 }

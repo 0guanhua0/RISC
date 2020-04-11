@@ -157,8 +157,13 @@ public abstract class Player<T> implements Serializable{
     public boolean hasRecvAlly(){
         return this.allyRequest!=-1;
     }
+
     public boolean hasAlly(){
         return this.ally!=null;
+    }
+
+    public boolean isAllyWith(Player p){
+        return this.ally==p;
     }
 
     public boolean canAllyWith(Player p){
@@ -168,24 +173,40 @@ public abstract class Player<T> implements Serializable{
             return false;
         }
     }
+
+    public void setTerrFriend(Player p){
+        for (Territory territory : this.territories) {
+            territory.setFriendId(p.getId());
+        }
+    }
+
     public void allyWith(Player p){
         if (!this.canAllyWith(p)){
             throw new IllegalArgumentException("Invalid argument");
         }
         this.ally = p;
         p.ally = this;
-
-        for (Territory territory : this.territories) {
-            territory.setFriendId(p.id);
-        }
-        for (Object o : p.territories) {
-            Territory territory = (Territory) o;
-            territory.setFriendId(this.id);
-        }
+        this.setTerrFriend(p);
+        p.setTerrFriend(this);
     }
 
-    public Player getAlly() {
-        return ally;
+    //TODO finish this method
+    public void ruputureAlly(){
+        if (hasAlly()){
+            assert(ally.ally==this);//used only for debugging
+            for (Territory territory : this.territories) {
+                territory.ruptureAlly(ally);
+            }
+            for (Object o : this.ally.territories) {
+                Territory territory = (Territory)o;
+                territory.ruptureAlly(this.ally);
+            }
+            this.ally.ally = null;
+            this.ally.allyRequest = -1;
+            this.allyRequest = -1;
+            this.ally = null;
+
+        }
     }
 
 
