@@ -265,18 +265,17 @@ public class TerritoryV2 extends Territory {
             for (int i=0;i<size;i++){//iterate through new level
                 Territory territory = queue.poll();
                 if (territory.getOwner()==p.getId()){//find target territory, expel all friend unit to this territory
-                    for (int level : friendUnits.keySet()) {
-                        List<Unit> units = friendUnits.get(level);
-                        territory.addUnits(units);
-                    }
-                    this.friendId = -1;
-                    return;
+                    //expel all units
+                    this.expelFriend(territory);
+                    //mark friend as not existed
+                    break;
                 }else{//add new adjacent territories
                     Set<Territory> neighTmp = territory.getNeigh();
                     queue.addAll(neighTmp);
                 }
             }
         }
+        this.friendId = -1;
     }
 
     @Override
@@ -297,5 +296,17 @@ public class TerritoryV2 extends Territory {
         for (Unit unit : units) {
             this.addUnit(unit);
         }
+    }
+
+    private void expelFriend(Territory friendTerr){
+        if (this.friendUnits.isEmpty()){
+            return;
+        }
+        //expel all units
+        for (int level : friendUnits.keySet()) {
+            List<Unit> units = friendUnits.get(level);
+            friendTerr.addUnits(units);
+        }
+        this.friendUnits = new HashMap<>();
     }
 }
