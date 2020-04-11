@@ -10,7 +10,9 @@ import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.risk.shared.player.Player;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
@@ -23,13 +25,14 @@ public class PlayerThread extends Thread{
     GameInfo gameInfo;
     CyclicBarrier barrier;
     int waitTimeOut;
-
-    public PlayerThread(Player<String> player, WorldMap<String> map, GameInfo gameInfo, CyclicBarrier barrier) {
+    List<Player<String>> players;
+    public PlayerThread(Player<String> player, WorldMap<String> map, GameInfo gameInfo, CyclicBarrier barrier, List<Player<String>> players) {
         this.player = player;
         this.map = map;
         this.gameInfo = gameInfo;
         this.barrier = barrier;
         this.waitTimeOut = WAIT_TIME_OUT;
+        this.players = players;
     }
 
     public PlayerThread(Player<String> player, WorldMap<String> map, GameInfo gameInfo, CyclicBarrier barrier, int timeout) {
@@ -38,6 +41,7 @@ public class PlayerThread extends Thread{
         this.gameInfo = gameInfo;
         this.barrier = barrier;
         this.waitTimeOut = timeout;
+        this.players = new ArrayList<>();
     }
 
     @Override
@@ -108,7 +112,7 @@ public class PlayerThread extends Thread{
         player.send(roundInfo);
 
         // build the current state of game
-        WorldState worldState = new WorldState(this.player, this.map);
+        WorldState worldState = new WorldState(this.player, this.map,this.players);
         // if player hasn't lose yet, let him or her play another round of game
         if (this.player.getTerrNum() > 0){
             int checkCnt = 0;

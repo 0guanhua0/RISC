@@ -2,9 +2,7 @@ package edu.duke.ece651.risk.shared;
 
 import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.map.WorldMap;
-import edu.duke.ece651.risk.shared.player.Player;
 import edu.duke.ece651.risk.shared.player.PlayerV2;
-import edu.duke.ece651.risk.shared.Mock;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
@@ -32,6 +30,6 @@ class WorldStateTest {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         PlayerV2<String> player = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),out);
         WorldState worldState = new WorldState(player, worldMap);
-        assertEquals(worldState.getPlayer(),player);
+        assertEquals(worldState.getMyPlayer(),player);
     }
 }

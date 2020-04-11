@@ -29,13 +29,21 @@ public abstract class Player<T> implements Serializable{
     boolean isConnect;
     String name;
 
+    //used only in evolution3
+    //pay attention that in order to use the field below and make the state of territory remain legal
+    //you need to clearly understand the definition of allyRequest:
+    //the player id of target ally this player object receives from client side  during
+    int allyRequest;
+    Player ally;
+
     public Player(InputStream in, OutputStream out) throws IOException {
         this.territories = new HashSet<>();
         this.in = new ObjectInputStream(in);
         this.out = new ObjectOutputStream(out);
         this.id = -1;
-
         this.isConnect = true;
+        this.allyRequest = -1;
+        this.ally = null;
     }
 
 
@@ -49,6 +57,8 @@ public abstract class Player<T> implements Serializable{
         this.territories = new HashSet<>();
         this.in = new ObjectInputStream(in);
         this.out = new ObjectOutputStream(out);
+        this.allyRequest = -1;
+        this.ally = null;
     }
 
     //this constructor should be called for all players except for first player
@@ -61,6 +71,8 @@ public abstract class Player<T> implements Serializable{
         this.territories = new HashSet<>();
         this.in = new ObjectInputStream(in);
         this.out = new ObjectOutputStream(out);
+        this.allyRequest = -1;
+        this.ally = null;
     }
 
     public int getId() {
@@ -135,6 +147,34 @@ public abstract class Player<T> implements Serializable{
     public int getTerrNum() {
         return territories.size();
     }
+
+    public void setAllyRequest(int allyRequest) {
+        this.allyRequest = allyRequest;
+    }
+
+    public boolean hasRecvAlly(){
+        return this.allyRequest!=-1;
+    }
+    public boolean hasAlly(){
+        return this.ally!=null;
+    }
+
+    public boolean canAllyWith(Player p){
+        if (!this.hasAlly()&&!p.hasAlly()&&this.allyRequest==p.allyRequest){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    public void allyWith(Player p){
+        if (!this.canAllyWith(p)){
+            throw new IllegalArgumentException("Invalid argument");
+        }
+        this.ally = p;
+        p.ally = this;
+    }
+
+
 
     /**
      * this method is called to add the resource production of each territory

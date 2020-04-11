@@ -6,7 +6,6 @@ import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.risk.shared.player.Player;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,7 +47,7 @@ public class MoveAction implements Action, Serializable {
     @Override
     public boolean isValid(WorldState worldState) {
         WorldMap<String> map = worldState.getMap();
-        Player<String> player = worldState.getPlayer();
+        Player<String> player = worldState.getMyPlayer();
 
         //check if two input names are valid
         if (!map.hasTerritory(src) || !map.hasTerritory(dest)){
@@ -85,7 +84,7 @@ public class MoveAction implements Action, Serializable {
             throw new IllegalArgumentException("Invalid move action!");
         }
         WorldMap<String> map = worldState.getMap();
-        Player<String> player = worldState.getPlayer();
+        Player<String> player = worldState.getMyPlayer();
         //update the state of src and target territory
         Territory srcNode = map.getTerritory(src);
         Territory destNode = map.getTerritory(dest);

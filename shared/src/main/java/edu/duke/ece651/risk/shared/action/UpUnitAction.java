@@ -7,11 +7,9 @@ import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.risk.shared.player.Player;
 
 import java.io.Serializable;
-import java.util.Map;
 
 import static edu.duke.ece651.risk.shared.Constant.UNIT_BONUS;
 import static edu.duke.ece651.risk.shared.Constant.UNIT_NAME;
-import static edu.duke.ece651.risk.shared.Utils.getUnitUpCost;
 
 /**
  * @program: risk
@@ -40,7 +38,7 @@ public class UpUnitAction implements Action, Serializable {
 
     @Override
     public boolean isValid(WorldState worldState) {
-        Player<String> player = worldState.getPlayer();
+        Player<String> player = worldState.getMyPlayer();
         WorldMap<String> map = worldState.getMap();
 
         //check if territory name is valid
@@ -80,7 +78,7 @@ public class UpUnitAction implements Action, Serializable {
         }
         Territory territory = worldState.getMap().getTerritory(this.terr);
 
-        Player<String> player = worldState.getPlayer();
+        Player<String> player = worldState.getMyPlayer();
         int cost = Utils.getUnitUpCost(srcLevel,targetLevel)*unitsNum;
         player.useTech(cost);
 
