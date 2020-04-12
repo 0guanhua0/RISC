@@ -41,6 +41,9 @@ public abstract class Territory implements Serializable {
         if (id<=0){
             throw new IllegalArgumentException("a player id must be positive!");
         }
+        if (0==id){
+            this.initUnitOwner();
+        }
         status.setOwnerId(id);
     }
 
@@ -185,5 +188,5 @@ public abstract class Territory implements Serializable {
 
     public abstract void addUnits(List<Unit> units);
 
-
+    protected abstract void initUnitOwner();
 }

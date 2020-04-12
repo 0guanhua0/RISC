@@ -96,12 +96,23 @@ public abstract class Player<T> implements Serializable{
         this.color = color;
     }
 
+
+    /**
+     * actually, it's not a very good to implement it like so, actually, we shouldn't decouple setOwner and addTerritory
+     * maybe change that in future commit
+     * @param territory: territory you want to add to this player
+     * @throws IllegalArgumentException
+     */
     public void addTerritory(Territory territory) throws IllegalArgumentException {
         if (!territory.isFree()) {
             throw new IllegalArgumentException("You can not occupy an occupied territory");
         }
         territories.add(territory);
-        territory.setOwner(this.id);
+        //based on current situation, the attack action will call setOwner directly
+        //thus we should execute the following logic
+        if(0==territory.getOwner()){
+            territory.setOwner(this.id);
+        }
     }
 
     public void loseTerritory(Territory territory) throws IllegalArgumentException {

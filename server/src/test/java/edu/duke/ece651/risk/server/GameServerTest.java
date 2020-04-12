@@ -466,7 +466,6 @@ public class GameServerTest {
 
 
 
-
     @Test
     void testStartGame() throws IOException, SQLException, ClassNotFoundException {
         GameServer gameServer = new GameServer(null);

@@ -10,7 +10,7 @@ public class Unit implements Serializable {
 
     int level;
 
-    //0 represent this unit doesn't have an owner yet
+    //0 represent this unit doesn't have an owner yet and can be changed in the future
     int ownerId;
 
     public Unit(int level, int ownerId) {
@@ -28,4 +28,17 @@ public class Unit implements Serializable {
     public int getOwnerId() {
         return ownerId;
     }
+
+    void initOwner(int ownerId){
+        if (ownerId<=0){
+            throw new IllegalArgumentException("Invalid argument");
+        }
+        if (this.getOwnerId()!=0){
+            throw new IllegalStateException("invalid state!");
+        }
+        this.ownerId = ownerId;
+    }
+
+
+
 }

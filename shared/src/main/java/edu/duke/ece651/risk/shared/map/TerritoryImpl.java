@@ -312,4 +312,17 @@ public class TerritoryImpl extends Territory {
         }
         this.friendUnits = new HashMap<>();
     }
+
+    @Override
+    protected void initUnitOwner() {
+        if (this.getOwner()<=0){
+            throw new IllegalStateException("Invalid state");
+        }
+        for (Map.Entry<Integer, List<Unit>> entry : unitGroup.entrySet()) {
+            List<Unit> units = entry.getValue();
+            for (Unit unit : units) {
+                unit.initOwner(this.getOwner());
+            }
+        }
+    }
 }
