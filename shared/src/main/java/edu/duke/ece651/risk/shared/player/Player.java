@@ -195,7 +195,9 @@ public abstract class Player<T> implements Serializable{
         }
     }
 
-
+    /**
+     * rupture of alliance between this player and her ally
+     */
     public void ruputureAlly(){
         if (hasAlly()){
             assert(ally.ally==this);//used only for debugging

@@ -249,7 +249,7 @@ public class TerritoryV2 extends Territory {
     /**
      * this method change the state of all territories: mark the friendId as -1(no friend)
      * and expel all units to nearest territory
-     * @param p
+     * @param p: the ally of owner of this territory
      */
     @Override
     public void ruptureAlly(Player p){
