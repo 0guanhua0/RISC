@@ -110,7 +110,7 @@ public class TerritoryImpl extends Territory {
                 int level = entry.getKey();
                 List<Unit> units = new ArrayList<>();
                 for (int i = 0; i < num ; i++) {
-                    units.add(new Unit(level,attackerID));
+                    units.add(new Unit(level));
                 }
                 unitGroup.put(level,units);
             }
@@ -159,7 +159,7 @@ public class TerritoryImpl extends Territory {
         }
         List<Unit> units = unitGroup.getOrDefault(level,new ArrayList<>());
         for (int i = 0; i < num; i++) {
-            units.add(new Unit(level,this.getOwner()));
+            units.add(new Unit(level));
         }
         unitGroup.put(level,units);
     }
@@ -223,7 +223,7 @@ public class TerritoryImpl extends Territory {
         }
         //update target unit
         for (int i = 0; i < num; i++) {
-            target.add(new Unit(targetLevel,this.getOwner()));
+            target.add(new Unit(targetLevel));
         }
 
         unitGroup.put(targetLevel,target);
@@ -237,9 +237,6 @@ public class TerritoryImpl extends Territory {
 
     @Override
     public void addFriendUnit(Unit unit) {
-        if (unit.getOwnerId()!=this.friendId){
-            throw new IllegalArgumentException("Invalid state");
-        }
         int level = unit.getLevel();
         List<Unit> units = friendUnits.getOrDefault(level, new ArrayList<>());
         units.add(unit);
@@ -285,10 +282,6 @@ public class TerritoryImpl extends Territory {
     @Override
     public void addUnit(Unit unit) {
         int level = unit.getLevel();
-        int ownerId = unit.getOwnerId();
-        if (unit.getOwnerId()!=this.getOwner()){
-            throw new IllegalArgumentException("invalid argument!");
-        }
         List<Unit> units = unitGroup.getOrDefault(level, new ArrayList<>());
         units.add(unit);
         unitGroup.put(level,units);
@@ -313,16 +306,5 @@ public class TerritoryImpl extends Territory {
         this.friendUnits = new HashMap<>();
     }
 
-    @Override
-    protected void initUnitOwner() {
-        if (this.getOwner()<=0){
-            throw new IllegalStateException("Invalid state");
-        }
-        for (Map.Entry<Integer, List<Unit>> entry : unitGroup.entrySet()) {
-            List<Unit> units = entry.getValue();
-            for (Unit unit : units) {
-                unit.initOwner(this.getOwner());
-            }
-        }
-    }
+
 }
