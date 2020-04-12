@@ -13,6 +13,8 @@
 
 [link](https://drive.google.com/file/d/1MILliFXiKYeaP-MawAnwRJEiIybS7V-U/view?usp=sharing)
 
+[evo.2](https://app.creately.com/diagram/YXyNF32eHrc/edit)
+
 ## test files
 In the *test_files* directory, there are several txt files which can represent a whole process of one game.
 * test case 1 --- player2 win
