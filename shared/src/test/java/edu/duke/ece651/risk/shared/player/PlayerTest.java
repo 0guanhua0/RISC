@@ -1,5 +1,6 @@
 package edu.duke.ece651.risk.shared.player;
 
+import edu.duke.ece651.risk.shared.Mock;
 import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.TerritoryV2;
 import org.junit.jupiter.api.Test;
@@ -167,6 +168,94 @@ class PlayerTest {
 
         p2.send(s2);
         assertEquals(s2, readAllStringFromObjectStream(outputStream1));
+    }
+
+    @Test
+    void setAllyRequest() throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        PlayerV2<String> player = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),out);
+        player.setAllyRequest(1);
+        assertEquals(1,player.allyRequest);
+        assertThrows(IllegalArgumentException.class,()->{player.setAllyRequest(2);});
+    }
+
+
+    @Test
+    void hasRecvAlly() throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        PlayerV2<String> player = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),out);
+        player.setAllyRequest(1);
+        assertTrue(player.hasRecvAlly());
+    }
+
+    @Test
+    void canAllyWith() throws IOException {
+        PlayerV2<String> player1 = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),new ByteArrayOutputStream());
+        PlayerV2<String> player2 = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),new ByteArrayOutputStream());
+        player1.setId(1);
+        player2.setId(2);
+        assertFalse(player1.canAllyWith(player2));
+        player1.setAllyRequest(2);
+        assertFalse(player1.canAllyWith(player2));
+        assertFalse(player2.canAllyWith(player1));
+
+        player2.setAllyRequest(1);
+        assertTrue(player1.canAllyWith(player2));
+        assertTrue(player2.canAllyWith(player1));
+    }
+
+    @Test
+    void allyWith() throws IOException {
+        PlayerV2<String> player1 = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),new ByteArrayOutputStream());
+        PlayerV2<String> player2 = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),new ByteArrayOutputStream());
+        player1.setId(1);
+        player2.setId(2);
+        assertThrows(IllegalArgumentException.class,()->{player1.allyWith(player2);});
+        player1.setAllyRequest(2);
+        player2.setAllyRequest(1);
+        assertDoesNotThrow(()->{player1.allyWith(player2);});
+        assertTrue(player1.ally==player2);
+        assertTrue(player2.ally==player1);
+        for (Territory territory : player1.territories) {
+            assertEquals(2,territory.getFriendId());
+        }
+        for (Territory territory : player2.territories) {
+            assertEquals(1,territory.getFriendId());
+        }
+    }
+
+    @Test
+    void hasAlly() throws IOException {
+        PlayerV2<String> player1 = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),new ByteArrayOutputStream());
+        PlayerV2<String> player2 = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),new ByteArrayOutputStream());
+        player1.setId(1);
+        player2.setId(2);
+        player1.setAllyRequest(2);
+        player2.setAllyRequest(1);
+        player1.allyWith(player2);
+        assertTrue(player1.hasAlly());
+        assertTrue(player2.hasAlly());
+    }
+
+    @Test
+    void isAllyWith() throws IOException {
+        PlayerV2<String> player1 = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),new ByteArrayOutputStream());
+        PlayerV2<String> player2 = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),new ByteArrayOutputStream());
+        player1.setId(1);
+        player2.setId(2);
+        player1.setAllyRequest(2);
+        player2.setAllyRequest(1);
+        player1.allyWith(player2);
+        assertTrue(player1.isAllyWith(player2));
+        assertTrue(player2.isAllyWith(player1));
+        player1.updateState();
+        player2.updateState();
+        assertTrue(player1.isAllyWith(player2));
+        assertTrue(player2.isAllyWith(player1));
+    }
+
+    @Test
+    void ruputureAlly() {
     }
 
 
