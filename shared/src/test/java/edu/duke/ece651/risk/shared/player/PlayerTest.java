@@ -217,10 +217,10 @@ class PlayerTest {
         assertTrue(player1.ally==player2);
         assertTrue(player2.ally==player1);
         for (Territory territory : player1.territories) {
-            assertEquals(2,territory.getFriendId());
+            assertEquals(2,territory.getAllyId());
         }
         for (Territory territory : player2.territories) {
-            assertEquals(1,territory.getFriendId());
+            assertEquals(1,territory.getAllyId());
         }
     }
 

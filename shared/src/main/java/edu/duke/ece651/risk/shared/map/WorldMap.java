@@ -121,7 +121,7 @@ public abstract class WorldMap<T extends Serializable> implements Serializable {
                 visited.add(curTerr);
                 int neighDist = curTerr.getSize()+dist.get(curTerr);
                 for(Territory neigh:curTerr.getNeigh()){
-                    if (neigh.getOwner()!=owner&&neigh.getFriendId()!=owner){
+                    if (neigh.getOwner()!=owner&&neigh.getAllyId()!=owner){
                         continue;
                     }
                     dist.put(neigh,Math.min(dist.getOrDefault(neigh,Integer.MAX_VALUE),neighDist));

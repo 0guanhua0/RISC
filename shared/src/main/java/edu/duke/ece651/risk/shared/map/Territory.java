@@ -15,17 +15,17 @@ public abstract class Territory implements Serializable {
     Set<Territory> neigh;
     //class to represent current status of this territory
     TStatus status;
-    HashMap<Integer, List<Army>> attackAct;
+    HashMap<Player, List<Army>> attackAct;
 
-    //use -1 to represent don't have any friends
-    int friendId;
+    //use null to represent don't have any friends
+    Player ally;
 
 
     public Territory(String name) {
         this.neigh = new HashSet<>();
         this.status = new TStatus(name);
         this.attackAct = new HashMap<>();
-        this.friendId = -1;
+        this.ally = null;
     }
 
     //get the owner id of corresponding territory
@@ -65,9 +65,18 @@ public abstract class Territory implements Serializable {
         status.setOwnerId(0);
     }
 
-    public int getFriendId() { return friendId; }
-    public void setFriendId(int friendId) {
-        this.friendId = friendId;
+    /**
+     * @return ally id of this this territory, -1 when don't have ally
+     */
+    public int getAllyId() {
+        if (null==this.ally){
+            return -1;
+        }
+        return ally.getId();
+    }
+
+    public void setAlly(Player ally) {
+        this.ally = ally;
     }
 
     /**
@@ -82,7 +91,7 @@ public abstract class Territory implements Serializable {
         // store the whole result of combat
         ArrayList<AttackResult> attackResults = new ArrayList<>();
         // iterate through attack list
-        for (Map.Entry<Integer, List<Army>> entry : attackAct.entrySet()) {
+        for (Map.Entry<Player, List<Army>> entry : attackAct.entrySet()) {
             attackResults.add(resolveCombat(entry.getKey(), entry.getValue(), diceAttack, diceDefend));
         }
         // clean up attackMap
@@ -151,9 +160,9 @@ public abstract class Territory implements Serializable {
      */
     public abstract boolean canLoseUnits(int num, int level);
 
-    public abstract void addAttack(int playerId, Army army);
+    public abstract void addAttack(Player player, Army army);
 
-    abstract AttackResult resolveCombat(int attackerID, List<Army> armies, Random diceAttack, Random diceDefend);
+    abstract AttackResult resolveCombat(Player player, List<Army> armies, Random diceAttack, Random diceDefend);
 
     abstract int getSize();
 
@@ -179,9 +188,9 @@ public abstract class Territory implements Serializable {
      */
     public abstract void upUnit(int num, int curLevel,int targetLevel);
 
-    public abstract void ruptureAlly(Player p);
+    public abstract void ruptureAlly();
 
-    public abstract void addFriendUnit(Unit unit);
+    public abstract void addAllyUnit(Unit unit);
 
     public abstract void addUnits(List<Unit> units);
 

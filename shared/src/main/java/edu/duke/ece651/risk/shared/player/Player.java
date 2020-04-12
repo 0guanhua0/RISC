@@ -202,7 +202,7 @@ public abstract class Player<T> implements Serializable{
 
     public void setTerrFriend(Player p){
         for (Territory territory : this.territories) {
-            territory.setFriendId(p.getId());
+            territory.setAlly(p);
         }
     }
 
@@ -214,11 +214,11 @@ public abstract class Player<T> implements Serializable{
             assert(ally.ally==this);//used only for debugging
             //change the state of all territories
             for (Territory territory : this.territories) {
-                territory.ruptureAlly(ally);
+                territory.ruptureAlly();
             }
             for (Object o : this.ally.territories) {
                 Territory territory = (Territory)o;
-                territory.ruptureAlly(this.ally);
+                territory.ruptureAlly();
             }
             this.ally.ally = null;
             this.ally.allyRequest = -1;

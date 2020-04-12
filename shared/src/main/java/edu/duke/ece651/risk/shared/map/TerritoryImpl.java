@@ -24,8 +24,8 @@ public class TerritoryImpl extends Territory {
     //key is the technology level of units, value is the set of units
     Map<Integer, List<Unit>> unitGroup;
 
-    //unit from friend
-    Map<Integer, List<Unit>> friendUnits;
+    //unit from ally
+    Map<Integer, List<Unit>> allyUnits;
 
 
 
@@ -35,7 +35,7 @@ public class TerritoryImpl extends Territory {
         this.foodYield = foodYield;
         this.techYield = techYield;
         this.unitGroup = new HashMap<>();;
-        this.friendUnits = new HashMap<>();
+        this.allyUnits = new HashMap<>();
     }
 
     public int getSize() {
@@ -53,17 +53,17 @@ public class TerritoryImpl extends Territory {
     }
 
     @Override
-    public void addAttack(int playerId, Army army) {
-        if (attackAct.containsKey(playerId)) {
-            attackAct.get(playerId).add(army);
+    public void addAttack(Player player, Army army) {
+        if (attackAct.containsKey(player)) {
+            attackAct.get(player).add(army);
         } else {
-            attackAct.put(playerId, new ArrayList<Army>(Collections.singletonList(army)));
+            attackAct.put(player, new ArrayList<Army>(Collections.singletonList(army)));
         }
     }
 
     //TODO test the correctness of this data
     @Override
-    AttackResult resolveCombat(int attackerID, List<Army> armies, Random diceAttack, Random diceDefend) {
+    AttackResult resolveCombat(Player attacker, List<Army> armies, Random diceAttack, Random diceDefend) {
         // retrieve the attack info
         int defenderID = getOwner();
         List<String> srcNames = armies.stream().map(Army::getSrc).collect(Collectors.toList());
@@ -103,7 +103,7 @@ public class TerritoryImpl extends Territory {
         }
         // update the ownership only if attacker has units left
         if (!enemy.isEmpty()) {
-            setOwner(attackerID);
+            setOwner(attacker.getId());
             this.unitGroup = new HashMap<Integer, List<Unit>>();
             for (Map.Entry<Integer, Integer> entry : enemy.entrySet()) {
                 int num = entry.getValue();
@@ -115,7 +115,7 @@ public class TerritoryImpl extends Territory {
                 unitGroup.put(level,units);
             }
         }
-        return new AttackResult(attackerID, defenderID, srcNames, destName, !enemy.isEmpty());
+        return new AttackResult(attacker.getId(), defenderID, srcNames, destName, !enemy.isEmpty());
     }
 
     @Override
@@ -236,22 +236,21 @@ public class TerritoryImpl extends Territory {
 
 
     @Override
-    public void addFriendUnit(Unit unit) {
+    public void addAllyUnit(Unit unit) {
         int level = unit.getLevel();
-        List<Unit> units = friendUnits.getOrDefault(level, new ArrayList<>());
+        List<Unit> units = allyUnits.getOrDefault(level, new ArrayList<>());
         units.add(unit);
-        friendUnits.put(level,units);
+        allyUnits.put(level,units);
     }
 
     /**
-     * this method change the state of all territories: mark the friendId as -1(no friend)
+     * this method change the state of all territories: mark the allyId as -1(no ally)
      * and expel all units to nearest territory
-     * @param p: the ally of owner of this territory
      */
     @Override
-    public void ruptureAlly(Player p){
-        if (this.friendId!=p.getId()){
-            throw new IllegalArgumentException("Invalid argument");
+    public void ruptureAlly(){
+        if (null== ally){
+            throw new IllegalStateException("Invalid action");
         }
         Set<Territory> neigh = this.getNeigh();
         //using BFS to find the most near Territory
@@ -261,10 +260,10 @@ public class TerritoryImpl extends Territory {
             int size = queue.size();
             for (int i=0;i<size;i++){//iterate through new level
                 Territory territory = queue.poll();
-                if (territory.getOwner()==p.getId()){//find target territory, expel all friend unit to this territory
+                if (territory.getOwner()== ally.getId()){//find target territory, expel all ally unit to this territory
                     //expel all units
-                    this.expelFriend(territory);
-                    //mark friend as not existed
+                    this.expelAlly(territory);
+                    //mark ally as not existed
                     break;
                 }else{//add new adjacent territories
                     Set<Territory> neighTmp = territory.getNeigh();
@@ -272,7 +271,7 @@ public class TerritoryImpl extends Territory {
                 }
             }
         }
-        this.friendId = -1;
+        this.ally = null;
     }
 
     /**
@@ -294,17 +293,15 @@ public class TerritoryImpl extends Territory {
         }
     }
 
-    private void expelFriend(Territory friendTerr){
-        if (this.friendUnits.isEmpty()){
+    private void expelAlly(Territory allyTerr){
+        if (this.allyUnits.isEmpty()){
             return;
         }
         //expel all units
-        for (int level : friendUnits.keySet()) {
-            List<Unit> units = friendUnits.get(level);
-            friendTerr.addUnits(units);
+        for (int level : allyUnits.keySet()) {
+            List<Unit> units = allyUnits.get(level);
+            allyTerr.addUnits(units);
         }
-        this.friendUnits = new HashMap<>();
+        this.allyUnits = new HashMap<>();
     }
-
-
 }
