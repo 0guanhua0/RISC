@@ -12,6 +12,8 @@ import java.util.List;
  * @create: 2020-04-10 17:13
  **/
 public class AllyAction implements Action{
+
+    //below the id of the player that you want ally to ally with at this round
     int allyRequest;
 
     public AllyAction(int allyRequest) {
