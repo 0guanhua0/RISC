@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * @program: risk
  * @description: this is action required for evolution3
- * @author: Mr.Wang
+ * @author: Chengda Wu(cw402)
  * @create: 2020-04-10 17:13
  **/
 public class AllyAction implements Action{

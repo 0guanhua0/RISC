@@ -16,12 +16,13 @@ import java.util.List;
  **/
 public class WorldState {
 
-    // all players in current room
+    //Player for corresponding action
     Player<String> myPlayer;
 
     // the map this room is playing
     WorldMap<String> map;
 
+    // all players in current room
     List<Player<String>> players;
 
     public WorldState(Player<String> myPlayer, WorldMap<String> map) {
