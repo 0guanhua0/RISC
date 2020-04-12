@@ -116,7 +116,7 @@ public class GameServer {
             return;
         }
 
-        /* ====== actions below all need user login first(so we will check the user list first) ====== */
+        /* ====== actions below all need user login first(so we will check the user list) ====== */
 
         // if not login, return error
         if (!userList.hasUser(userName)) {
@@ -160,6 +160,22 @@ public class GameServer {
                 currPlayer.send(SUCCESSFUL);
             } else {
                 player.send(INVALID_RECONNECT);
+            }
+        }
+
+        // user want to connect to the chat
+        if (action.equals(ACTION_CONNECT_CHAT)) {
+            int roomID = obj.getInt(ROOM_ID);
+            // user is a player already in room
+            // redirect io
+            if (userList.getUser(userName).isInRoom(roomID)) {
+                // go to the room, find that player and replace the stream with new one
+                Player<?> currPlayer = rooms.get(roomID).getPlayer(userName);
+                currPlayer.setChatStream(player.getIn(), player.getOut());
+                currPlayer.setConnect(true);
+                currPlayer.sendChatMessage(SUCCESSFUL);
+            } else {
+                player.sendChatMessage(INVALID_RECONNECT);
             }
         }
     }

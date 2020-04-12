@@ -1,11 +1,13 @@
 package edu.duke.ece651.riskclient.objects;
 
+import com.stfalcon.chatkit.commons.models.IUser;
+
 import java.io.Serializable;
 
-public class SimplePlayer implements Serializable {
+public class SimplePlayer implements Serializable, IUser {
     private int id;
     private String name;
-    private String password;
+    transient private String password;
 
     public SimplePlayer(String name, String password) {
         this.name = name;
@@ -18,7 +20,7 @@ public class SimplePlayer implements Serializable {
         this.password = password;
     }
 
-    public int getId() {
+    public int getIdInt() {
         return id;
     }
 
@@ -26,8 +28,19 @@ public class SimplePlayer implements Serializable {
         this.id = id;
     }
 
+    @Override
+    public String getId() {
+        return String.valueOf(id);
+    }
+
+    @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public String getAvatar() {
+        return null;
     }
 
     public void setName(String name) {

@@ -8,10 +8,10 @@ import edu.duke.ece651.risk.shared.action.Action;
 import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.risk.shared.player.Player;
+import edu.duke.ece651.risk.shared.player.SPlayer;
 
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 
@@ -19,25 +19,34 @@ import static edu.duke.ece651.risk.shared.Constant.*;
 
 public class PlayerThread extends Thread{
     Player<String> player;
+    List<SPlayer> allPlayers;
     WorldMap<String> map;
     GameInfo gameInfo;
     CyclicBarrier barrier;
     int waitTimeOut;
 
+    /**
+     *
+     * @param player current player
+     * @param map the map playing
+     * @param gameInfo current game info(e.g. round number, winner ID etc.)
+     * @param barrier barrier, used to synchronous multi-threading
+     */
     public PlayerThread(Player<String> player, WorldMap<String> map, GameInfo gameInfo, CyclicBarrier barrier) {
-        this.player = player;
-        this.map = map;
-        this.gameInfo = gameInfo;
-        this.barrier = barrier;
-        this.waitTimeOut = WAIT_TIME_OUT;
+        this(player, map, gameInfo, barrier, WAIT_TIME_OUT);
     }
 
+    /**
+     * This is mainly for testing purpose, control the timeout
+     */
     public PlayerThread(Player<String> player, WorldMap<String> map, GameInfo gameInfo, CyclicBarrier barrier, int timeout) {
         this.player = player;
         this.map = map;
         this.gameInfo = gameInfo;
         this.barrier = barrier;
         this.waitTimeOut = timeout;
+        // TODO: initialize the player list
+        allPlayers = new ArrayList<>();
     }
 
     @Override
@@ -45,6 +54,8 @@ public class PlayerThread extends Thread{
         try {
             selectTerritory();
             barrier.await();
+            // once the player finished assign units, send them the player info
+            player.send(allPlayers);
             while (!gameInfo.hasFinished()){
                 playGame();
                 // give main thread some time to process round result
@@ -99,7 +110,7 @@ public class PlayerThread extends Thread{
     }
 
     void playGame() throws IOException, ClassNotFoundException, BrokenBarrierException, InterruptedException {
-        // tell client the round info
+        // tell client the round info, contains:
         // 1. latest WorldMap
         // 2. mapping between id and color
         // 3. round number
@@ -118,8 +129,9 @@ public class PlayerThread extends Thread{
                 // otherwise we will want 1s and then check if user is connected or not
                 if (this.player.isConnect()){
                     if (reconnect){
-                        // once user reconnect, send he/she the latest roundInfo
-                        this.player.send(roundInfo);
+                        // once user reconnect, send he/she all player info & the latest roundInfo
+                        player.send(allPlayers);
+                        player.send(roundInfo);
                     }
                     Object recvRes = this.player.recv();
                     if (recvRes instanceof Action){

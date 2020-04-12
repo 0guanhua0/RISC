@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -36,7 +38,9 @@ import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.Unit;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.risk.shared.player.Player;
+import edu.duke.ece651.risk.shared.player.SPlayer;
 import edu.duke.ece651.riskclient.R;
+import edu.duke.ece651.riskclient.RiskApplication;
 import edu.duke.ece651.riskclient.adapter.TerritoryAdapter;
 import edu.duke.ece651.riskclient.listener.onReceiveListener;
 import edu.duke.ece651.riskclient.listener.onRecvAttackResultListener;
@@ -51,6 +55,7 @@ import static edu.duke.ece651.riskclient.Constant.NETWORK_PROBLEM;
 import static edu.duke.ece651.riskclient.RiskApplication.getPlayerID;
 
 import static edu.duke.ece651.riskclient.RiskApplication.getRoomName;
+import static edu.duke.ece651.riskclient.RiskApplication.initChatSocket;
 import static edu.duke.ece651.riskclient.RiskApplication.recv;
 import static edu.duke.ece651.riskclient.RiskApplication.send;
 import static edu.duke.ece651.riskclient.RiskApplication.setPlayerID;
@@ -87,9 +92,6 @@ public class PlayGameActivity extends AppCompatActivity {
     private TextView tvPlayerInfo;
     private TextView tvActionInfo;
     private Button btPerform;
-    private Button btMoveAttack;
-    private Button btUpgrade;
-    private Button btDone;
     private ImageView imgMap;
 
     /**
@@ -99,6 +101,7 @@ public class PlayGameActivity extends AppCompatActivity {
     private List<Action> performedActions;
     private WorldMap<String> map;
     private Player<String> player;
+    private List<SPlayer> allPlayers;
     private int roundNum;
     private boolean isLose;
     private boolean hasShowDialog;
@@ -117,6 +120,7 @@ public class PlayGameActivity extends AppCompatActivity {
         }
 
         performedActions = new ArrayList<>();
+        allPlayers = new ArrayList<>();
         roundNum = 1;
         isLose = false;
         hasShowDialog = false;
@@ -127,7 +131,14 @@ public class PlayGameActivity extends AppCompatActivity {
         // make sure user can't do anything before we receive the first round data
         setAllButtonClickable(false);
 
-        newRound();
+        receiveLatestInfo();
+        connectToChat();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.play_game_menu,menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -135,6 +146,11 @@ public class PlayGameActivity extends AppCompatActivity {
         switch (item.getItemId()){
             case android.R.id.home:
                 goBack();
+                break;
+            case R.id.chat_room:
+                Intent intent = new Intent(PlayGameActivity.this, ChatActivity.class);
+                startActivity(intent);
+                // TODO: go to the chat room
                 break;
             default:
                 break;
@@ -202,8 +218,9 @@ public class PlayGameActivity extends AppCompatActivity {
                     requestCode = REQUEST_ACTION_UPGRADE_MAX;
                     break;
                 case TYPE_ALLIANCE:
-                    requestCode = REQUEST_ACTION_ALLIANCE;
-                    break;
+                    // alliance is relatively simple action, don't need a new page
+                    showAllianceDialog();
+                    return;
                 case TYPE_DONE:
                     // pop up a dialog to ask confirm
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -271,7 +288,7 @@ public class PlayGameActivity extends AppCompatActivity {
         // set up default choice
         actionType = adapter.getItem(0);
 
-        AutoCompleteTextView dropdownAction = layout.findViewById(R.id.input);
+        AutoCompleteTextView dropdownAction = layout.findViewById(R.id.dd_input);
         dropdownAction.setAdapter(adapter);
         dropdownAction.setText(adapter.getItem(0), false);
         dropdownAction.setOnItemClickListener((parent, v, position, id) -> {
@@ -304,6 +321,44 @@ public class PlayGameActivity extends AppCompatActivity {
         builder.setTitle("Detail Info");
         builder.setMessage(detailInfo.toString());
         builder.show();
+    }
+
+    /**
+     * Show a dialog to ask user for alliance information(aka only alliance id is enough).
+     */
+    private void showAllianceDialog(){
+        LayoutInflater layoutInflater = getLayoutInflater();
+
+        List<String> allianceName = new ArrayList<>();
+        for (SPlayer p : allPlayers){
+            allianceName.add(p.getName());
+        }
+
+        ArrayAdapter<String> adapterName =
+                new ArrayAdapter<>(
+                        PlayGameActivity.this,
+                        R.layout.dropdown_menu_popup_item,
+                        allianceName);
+
+        View view = layoutInflater.inflate(R.layout.view_form_alliance, null);
+        // level
+        TextInputLayout tlAlliance = view.findViewById(R.id.layout_alliance);
+        AutoCompleteTextView dpAlliance = tlAlliance.findViewById(R.id.dd_input);
+        tlAlliance.setHint("Alliance name");
+        dpAlliance.setAdapter(adapterName);
+        dpAlliance.setText(adapterName.getItem(0), false);
+
+        AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
+        mBuilder.setTitle("Form alliance");
+        mBuilder.setView(view);
+        mBuilder.setPositiveButton("Confirm", ((dialogInterface, i) -> {
+            String name = dpAlliance.getText().toString();
+            showToastUI(PlayGameActivity.this, "form alliance with " + name);
+            // TODO: send the form alliance action
+        }));
+        mBuilder.setNegativeButton("Cancel", ((dialogInterface, i) -> {
+        }));
+        mBuilder.create().show();
     }
 
     /**
@@ -385,6 +440,48 @@ public class PlayGameActivity extends AppCompatActivity {
     }
 
     /**
+     * This function will be called each time user join the game(e.g. first time or reconnect to it).
+     * It will receive the latest info from the server: roundInfo + player list
+     */
+    private void receiveLatestInfo(){
+        // 1. receive player list
+        // 2. receive new round info
+        recv(new onReceiveListener() {
+            @Override
+            public void onFailure(String error) {
+                showToastUI(PlayGameActivity.this, error);
+                setAllButtonClickable(true);
+            }
+
+            @Override
+            public void onSuccessful(Object object) {
+                allPlayers = (List<SPlayer>) object;
+                newRound();
+            }
+        });
+
+//        RiskApplication.getThreadPool().execute(() -> {
+//            try {
+//                Object object = RiskApplication.in.readObject();
+//                allPlayers = (List<SPlayer>) object;
+//                object = RiskApplication.in.readObject();
+//                RoundInfo info = (RoundInfo) object;
+//                roundNum = info.getRoundNum();
+//                map = info.getMap();
+//                player = info.getPlayer();
+//                setPlayerID(player.getId());
+//                // clear all actions in the last round
+//                performedActions.clear();
+//                showToastUI(PlayGameActivity.this, String.format(Locale.US,"start round %d", roundNum));
+//                checkLose();
+//                updateUI();
+//            }catch (Exception e){
+//                System.err.println(e.toString());
+//            }
+//        });
+    }
+
+    /**
      * This function will receive the new round info from server.
      */
     private void newRound(){
@@ -406,47 +503,54 @@ public class PlayGameActivity extends AppCompatActivity {
                 performedActions.clear();
                 showToastUI(PlayGameActivity.this, String.format(Locale.US,"start round %d", roundNum));
                 checkLose();
-                runOnUiThread(() -> {
-                    if (isLose){
-                        // is user lose, hide all button
-                        setAllButtonHidden();
-                        if (!hasShowDialog){
-                            AlertDialog.Builder builder = new AlertDialog.Builder(PlayGameActivity.this);
-                            builder.setPositiveButton("Yes", (dialog1, which) -> {
-                                showToastUI(PlayGameActivity.this, "you lose");
-                            });
-                            builder.setNegativeButton("No", (dialog2, which) -> {
-                                onBackPressed();
-                            });
-                            builder.setTitle("You Lose");
-                            builder.setMessage("Do you want to keep watching the game?");
-                            AlertDialog dialog = builder.create();
-                            dialog.setOnShowListener(dialog12 -> {
-                                dialog.getButton(AlertDialog.BUTTON_POSITIVE)
-                                        .setTextColor(
-                                                getResources().getColor(R.color.colorPrimary)
-                                        );
-                            });
-                            dialog.show();
-                            hasShowDialog = true;
-                        }
-                        // do nothing, just waiting for attack result
-                        receiveAttackResult();
-                    }else {
-                        // set all button clickable, let user input
-                        setAllButtonClickable(true);
-                    }
-                    // as long as the user is in the room, we should update the info
-                    // set the round number
-                    tvRoundNum.setText(String.valueOf(roundNum));
-                    // set the map image
-                    imgMap.setImageResource(MAP_NAME_TO_RESOURCE_ID.get(map.getName()));
-                    // update player info
-                    showPlayerInfo();
-                    // update territory list
-                    showTerritories();
-                });
+                updateUI();
             }
+        });
+    }
+
+    /**
+     * This function will update all UI in play game page, should be called each time received the latest round info.
+     */
+    private void updateUI(){
+        runOnUiThread(() -> {
+            if (isLose){
+                // is user lose, hide all button
+                setAllButtonHidden();
+                if (!hasShowDialog){
+                    AlertDialog.Builder builder = new AlertDialog.Builder(PlayGameActivity.this);
+                    builder.setPositiveButton("Yes", (dialog1, which) -> {
+                        showToastUI(PlayGameActivity.this, "you lose");
+                    });
+                    builder.setNegativeButton("No", (dialog2, which) -> {
+                        onBackPressed();
+                    });
+                    builder.setTitle("You Lose");
+                    builder.setMessage("Do you want to keep watching the game?");
+                    AlertDialog dialog = builder.create();
+                    dialog.setOnShowListener(dialog12 -> {
+                        dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                                .setTextColor(
+                                        getResources().getColor(R.color.colorPrimary)
+                                );
+                    });
+                    dialog.show();
+                    hasShowDialog = true;
+                }
+                // do nothing, just waiting for attack result
+                receiveAttackResult();
+            }else {
+                // set all button clickable, let user input
+                setAllButtonClickable(true);
+            }
+            // as long as the user is in the room, we should update the info
+            // set the round number
+            tvRoundNum.setText(String.valueOf(roundNum));
+            // set the map image
+            imgMap.setImageResource(MAP_NAME_TO_RESOURCE_ID.get(map.getName()));
+            // update player info
+            showPlayerInfo();
+            // update territory list
+            showTerritories();
         });
     }
 
@@ -544,6 +648,21 @@ public class PlayGameActivity extends AppCompatActivity {
             }
         }
         isLose = true;
+    }
+
+    private void connectToChat(){
+        // first init the chat socket
+        initChatSocket(new onResultListener() {
+            @Override
+            public void onFailure(String error) {
+                Log.e(TAG, "fail to init chat socket: " + error);
+            }
+
+            @Override
+            public void onSuccessful() {
+                showToastUI(PlayGameActivity.this, "Connect to the chat successfully.");
+            }
+        });
     }
 
     // probably want to extract this into constant

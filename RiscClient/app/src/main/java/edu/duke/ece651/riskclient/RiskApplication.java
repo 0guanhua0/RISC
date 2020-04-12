@@ -4,6 +4,9 @@ import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -18,9 +21,16 @@ import edu.duke.ece651.riskclient.listener.onReceiveListener;
 import edu.duke.ece651.riskclient.listener.onResultListener;
 import edu.duke.ece651.riskclient.objects.SimplePlayer;
 
+import static edu.duke.ece651.risk.shared.Constant.ACTION_CONNECT_CHAT;
+import static edu.duke.ece651.risk.shared.Constant.ROOM_ID;
 import static edu.duke.ece651.risk.shared.Constant.SUCCESSFUL;
+import static edu.duke.ece651.riskclient.Constant.ACTION_CREATE_NEW_ROOM;
+import static edu.duke.ece651.riskclient.Constant.ACTION_TYPE;
 import static edu.duke.ece651.riskclient.Constant.HOST;
+import static edu.duke.ece651.riskclient.Constant.MAP_NAME;
 import static edu.duke.ece651.riskclient.Constant.PORT;
+import static edu.duke.ece651.riskclient.Constant.ROOM_NAME;
+import static edu.duke.ece651.riskclient.Constant.USER_NAME;
 
 public class RiskApplication extends Application {
     private static final String TAG = RiskApplication.class.getSimpleName();
@@ -35,8 +45,14 @@ public class RiskApplication extends Application {
     // will be initialized once you join(or create) a room
     // will be closed once you leave a room
     private static Socket gameSocket;
-    private static ObjectInputStream in;
+    public static ObjectInputStream in;
     private static ObjectOutputStream out;
+    // this socket is used to chat with other players in one game
+    // will be initialized once the game is started
+    // will be closed once you leave a room
+    private static Socket chatSocket;
+    private static ObjectInputStream chatIn;
+    private static ObjectOutputStream chatOut;
     // this is the thread pool which dedicate for network communication
     private static ThreadPoolExecutor threadPool;
 
@@ -83,7 +99,7 @@ public class RiskApplication extends Application {
     }
 
     public static int getPlayerID() {
-        return player.getId();
+        return player.getIdInt();
     }
 
     public static void setRoom(RoomInfo r){
@@ -112,6 +128,8 @@ public class RiskApplication extends Application {
 
     /**
      * Initialize the game socket, will close any old one.
+     * This function should be called before you entered any room(e.g. join or reconnect)
+     * @param listener result listener
      */
     public static void initGameSocket(onResultListener listener) {
         threadPool.execute(() -> {
@@ -127,6 +145,48 @@ public class RiskApplication extends Application {
                 listener.onSuccessful();
             }catch (IOException e){
                 Log.e(TAG, "initGameSocket error");
+                listener.onFailure("can't initialize the game socket");
+            }
+        });
+    }
+
+    /**
+     * Initialize the chat socket, will close any old one.
+     * This function should be called only after you successfully join(reconnect the room) and the game is start.
+     * The server only support chat function after the game is begin.
+     * @param listener result listener
+     */
+    public static void initChatSocket(onResultListener listener) {
+        threadPool.execute(() -> {
+            try {
+                releaseChatSocket();
+                chatSocket = new Socket(HOST, PORT);
+                // WARNING!!! here you should initialize "out-in" in this order!!! Otherwise, it will
+                // cause deadlock.(Because server will initialize in "in-out" order.
+                // https://stackoverflow.com/questions/21075453/objectinputstream-from-socket-getinputstream
+                RiskApplication.chatOut = new ObjectOutputStream(chatSocket.getOutputStream());
+                RiskApplication.chatIn = new ObjectInputStream(chatSocket.getInputStream());
+
+                // send the connect chat message
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put(USER_NAME, getPlayerName());
+                jsonObject.put(ROOM_ID, getRoomID());
+                jsonObject.put(ACTION_TYPE, ACTION_CONNECT_CHAT);
+                // send and receive the result
+                chatOut.writeObject(jsonObject.toString());
+                chatOut.flush();
+                Object object = chatIn.readObject();
+                if (object instanceof String){
+                    if (object.equals(SUCCESSFUL)){
+                        listener.onSuccessful();
+                    }else{
+                        listener.onFailure((String) object);
+                    }
+                }else {
+                    listener.onFailure("");
+                }
+            }catch (IOException | JSONException | ClassNotFoundException e){
+                Log.e(TAG, "initGameSocket error " + e.toString());
                 listener.onFailure("can't initialize the game socket");
             }
         });
@@ -197,6 +257,20 @@ public class RiskApplication extends Application {
             }
         }catch (IOException e){
             Log.e(TAG, "releaseGameSocket error");
+        }
+    }
+
+    /**
+     * Release(close) the game socket.
+     * Since this function not use thread pool inside, don't call it on MainThread.
+     */
+    public static void releaseChatSocket() {
+        try {
+            if (chatSocket != null && !chatSocket.isClosed()){
+                chatSocket.close();
+            }
+        }catch (IOException e){
+            Log.e(TAG, "releaseChatSocket error");
         }
     }
 

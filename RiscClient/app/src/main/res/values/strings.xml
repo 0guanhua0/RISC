@@ -15,8 +15,8 @@
     <!--  home fragment  -->
     <string name="home_all_room">rooms waiting for players</string>
     <string name="home_room_in">rooms you in</string>
-    <string name="home_no_room_wait">Currently there are no roomInfos waiting for new player.</string>
-    <string name="home_no_room_in">Currently you don\'t have any playing roomInfos.</string>
+    <string name="home_no_room_wait">Currently there are no rooms waiting for new player.</string>
+    <string name="home_no_room_in">Currently you don\'t have any playing rooms.</string>
 
     <!--  update fragment  -->
     <string name="update_name_info">Username:</string>
@@ -49,6 +49,7 @@
     <string name="play_game_confirm">Confirm</string>
     <string name="play_game_decline">Decline</string>
     <string name="play_game_perform">Perform</string>
+    <string name="play_game_chat">Chat Room</string>
 
     <!--  move & attack activity  -->
     <string name="move_attack_unit_info">The Units you sent:</string>
@@ -58,6 +59,10 @@
     <string name="upgrade_upgrade_max_tech">Upgrade Max Tech Level:</string>
     <string name="upgrade_upgrade_unit">Upgrade Unit:</string>
     <string name="upgrade_upgrade_max_button">Upgrade</string>
+
+    <!--  chat activity  -->
+    <string name="chat_hint_enter_a_message">Type a message…</string>
+    <string name="chat_hint_to_player">To:</string>
 
     <string name="menu_home">Home</string>
     <string name="menu_update">Change Password</string>

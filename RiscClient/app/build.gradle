@@ -41,6 +41,9 @@ dependencies {
     implementation 'com.google.android.material:material:1.2.0-alpha02'
     // number picker
     implementation 'com.github.polok:clicknumberpicker:0.1.2'
+    // char library
+    implementation 'com.github.stfalcon:chatkit:0.3.3'
+    implementation "de.hdodenhof:circleimageview:2.2.0"
 
     // testing library
     testImplementation 'junit:junit:4.12'
@@ -56,5 +59,7 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.5.2'
     testImplementation "org.mockito:mockito-core:3.3.3"
+
+    // the .jar files in lib directory
     implementation fileTree(dir: 'libs', include: ['*.aar', '*.jar'], exclude: [])
 }

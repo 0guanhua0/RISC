@@ -6,6 +6,7 @@ import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.risk.shared.player.Player;
+import edu.duke.ece651.risk.shared.player.SPlayer;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -262,6 +263,13 @@ public class Room {
     }
 
     void runGame() throws IOException {
+        // at the very beginning of each game, send the player info to all players
+//        List<SPlayer> playerInfo = new ArrayList<>();
+//        for (Player<String> player : players){
+//            playerInfo.add(new SPlayer(player.getId(), player.getName()));
+//        }
+//        sendAll(playerInfo);
+
         // + 1 for main thread
         CyclicBarrier barrier = new CyclicBarrier(players.size() + 1);
 

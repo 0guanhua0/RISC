@@ -205,14 +205,14 @@ public class MoveAttackActivity extends AppCompatActivity {
         View view = layoutInflater.inflate(R.layout.view_add_units, null);
         // level
         TextInputLayout tlLevel = view.findViewById(R.id.layout_level);
-        AutoCompleteTextView dpLevel = tlLevel.findViewById(R.id.input);
+        AutoCompleteTextView dpLevel = tlLevel.findViewById(R.id.dd_input);
         tlLevel.setHint("Unit Level");
         dpLevel.setAdapter(adapterLevel);
         dpLevel.setText(adapterLevel.getItem(0), false);
 
         // number
         TextInputLayout tlNumber = view.findViewById(R.id.layout_number);
-        AutoCompleteTextView dpNumber = tlNumber.findViewById(R.id.input);
+        AutoCompleteTextView dpNumber = tlNumber.findViewById(R.id.dd_input);
         tlNumber.setHint("Unit Numbers");
         dpNumber.setAdapter(adapterNumber);
         dpNumber.setText(adapterNumber.getItem(0), false);
@@ -251,7 +251,7 @@ public class MoveAttackActivity extends AppCompatActivity {
         srcTerritory = srcTerritoryAdapter.getItem(0);
 
         dropdownSrcTerritory =
-                view.findViewById(R.id.input);
+                view.findViewById(R.id.dd_input);
         dropdownSrcTerritory.setAdapter(srcTerritoryAdapter);
         dropdownSrcTerritory.setText(srcTerritory, false);
         dropdownSrcTerritory.setOnItemClickListener((parent, v, position, id) -> {
@@ -291,7 +291,7 @@ public class MoveAttackActivity extends AppCompatActivity {
         destTerritory = destTerritoryAdapter.getItem(0);
 
         dropdownDestTerritory =
-                view.findViewById(R.id.input);
+                view.findViewById(R.id.dd_input);
         dropdownDestTerritory.setAdapter(destTerritoryAdapter);
         dropdownDestTerritory.setText(destTerritory, false);
         dropdownDestTerritory.setOnItemClickListener((parent, v, position, id) -> {

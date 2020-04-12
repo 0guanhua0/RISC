@@ -203,7 +203,7 @@ public class UpgradeActivity extends AppCompatActivity {
         srcTerritory = srcTerritoryAdapter.getItem(0);
 
         dropdownSrcTerritory =
-                view.findViewById(R.id.input);
+                view.findViewById(R.id.dd_input);
         dropdownSrcTerritory.setAdapter(srcTerritoryAdapter);
         dropdownSrcTerritory.setText(srcTerritory, false);
         dropdownSrcTerritory.setOnItemClickListener((parent, v, position, id) -> {
@@ -239,7 +239,7 @@ public class UpgradeActivity extends AppCompatActivity {
         unitLevelFrom = Integer.parseInt(fromLevelAdapter.getItem(0));
 
         AutoCompleteTextView dropdownAction =
-                layout.findViewById(R.id.input);
+                layout.findViewById(R.id.dd_input);
         dropdownAction.setAdapter(fromLevelAdapter);
         dropdownAction.setText(fromLevelAdapter.getItem(0), false);
         dropdownAction.setOnItemClickListener((parent, v, position, id) -> {
@@ -266,7 +266,7 @@ public class UpgradeActivity extends AppCompatActivity {
         unitLevelTo = Integer.parseInt(adapter.getItem(0));
 
         AutoCompleteTextView dropdownAction =
-                layout.findViewById(R.id.input);
+                layout.findViewById(R.id.dd_input);
         dropdownAction.setAdapter(adapter);
         dropdownAction.setText(adapter.getItem(0), false);
         dropdownAction.setOnItemClickListener((parent, v, position, id) -> {
@@ -288,7 +288,7 @@ public class UpgradeActivity extends AppCompatActivity {
         unitNum = Integer.parseInt(adapter.getItem(0));
 
         AutoCompleteTextView dropdownAction =
-                layout.findViewById(R.id.input);
+                layout.findViewById(R.id.dd_input);
         dropdownAction.setAdapter(adapter);
         dropdownAction.setText(adapter.getItem(0), false);
         dropdownAction.setOnItemClickListener((parent, v, position, id) -> {
