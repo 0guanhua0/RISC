@@ -17,6 +17,10 @@ import java.util.concurrent.CyclicBarrier;
 
 import static edu.duke.ece651.risk.shared.Constant.*;
 
+/**
+ * This is a separate thread for each player, handle all events related to the player
+ * e.g. select territory, assign units, perform actions
+ */
 public class PlayerThread extends Thread{
     Player<String> player;
     List<SPlayer> allPlayers;
@@ -46,7 +50,7 @@ public class PlayerThread extends Thread{
         this.barrier = barrier;
         this.waitTimeOut = timeout;
         // TODO: initialize the player list
-        allPlayers = new ArrayList<>();
+        allPlayers = new ArrayList<>(Collections.singleton(new SPlayer(player.getId(), player.getName())));
     }
 
     @Override

@@ -10,14 +10,14 @@ public class SimplePlayer implements Serializable, IUser {
     transient private String password;
 
     public SimplePlayer(String name, String password) {
+        this.id = -1;
         this.name = name;
         this.password = password;
     }
 
-    public SimplePlayer(int id, String name, String password){
+    public SimplePlayer(int id, String name){
         this.id = id;
         this.name = name;
-        this.password = password;
     }
 
     public int getIdInt() {

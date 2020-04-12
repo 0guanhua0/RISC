@@ -45,7 +45,7 @@ public class RiskApplication extends Application {
     // will be initialized once you join(or create) a room
     // will be closed once you leave a room
     private static Socket gameSocket;
-    public static ObjectInputStream in;
+    private static ObjectInputStream in;
     private static ObjectOutputStream out;
     // this socket is used to chat with other players in one game
     // will be initialized once the game is started
@@ -241,6 +241,29 @@ public class RiskApplication extends Application {
                 listener.onSuccessful(o);
             }catch (Exception e){
                 Log.e(TAG, "receiver error: " + e.toString());
+                listener.onFailure(e.toString());
+            }
+        });
+    }
+
+    public static void sendChat(Object object) {
+        threadPool.execute(() -> {
+            try {
+                chatOut.writeObject(object);
+                chatOut.flush();
+            }catch (Exception e){
+                Log.e(TAG, "send chat error: " + e.toString());
+            }
+        });
+    }
+
+    public static void recvChat(onReceiveListener listener) {
+        threadPool.execute(() -> {
+            try {
+                Object o = chatIn.readObject();
+                listener.onSuccessful(o);
+            }catch (Exception e){
+                Log.e(TAG, "receiver chat error: " + e.toString());
                 listener.onFailure(e.toString());
             }
         });

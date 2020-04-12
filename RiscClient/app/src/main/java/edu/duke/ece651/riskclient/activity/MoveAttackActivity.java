@@ -39,9 +39,9 @@ import edu.duke.ece651.riskclient.objects.UnitGroup;
 import static edu.duke.ece651.risk.shared.Constant.UNIT_NAME;
 import static edu.duke.ece651.riskclient.Constant.ACTION_PERFORMED;
 import static edu.duke.ece651.riskclient.RiskApplication.getPlayerID;
-import static edu.duke.ece651.riskclient.activity.PlayGameActivity.FOOD_RESOURCE;
-import static edu.duke.ece651.riskclient.activity.PlayGameActivity.IS_MOVE;
-import static edu.duke.ece651.riskclient.activity.PlayGameActivity.PLAYING_MAP;
+import static edu.duke.ece651.riskclient.activity.PlayGameActivity.DATA_FOOD_RESOURCE;
+import static edu.duke.ece651.riskclient.activity.PlayGameActivity.DATA_IS_MOVE;
+import static edu.duke.ece651.riskclient.activity.PlayGameActivity.DATA_PLAYING_MAP;
 import static edu.duke.ece651.riskclient.utils.HTTPUtils.sendAction;
 import static edu.duke.ece651.riskclient.utils.UIUtils.showToastUI;
 
@@ -79,9 +79,9 @@ public class MoveAttackActivity extends AppCompatActivity {
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null){
-            map = (WorldMap<String>) bundle.getSerializable(PLAYING_MAP);
-            foodResource = bundle.getInt(FOOD_RESOURCE);
-            isMove = bundle.getBoolean(IS_MOVE);
+            map = (WorldMap<String>) bundle.getSerializable(DATA_PLAYING_MAP);
+            foodResource = bundle.getInt(DATA_FOOD_RESOURCE);
+            isMove = bundle.getBoolean(DATA_IS_MOVE);
         }
 
         Toolbar toolbar = findViewById(R.id.toolbar);

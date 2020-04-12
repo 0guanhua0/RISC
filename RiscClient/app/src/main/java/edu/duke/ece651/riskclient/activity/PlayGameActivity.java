@@ -25,6 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -40,7 +41,6 @@ import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.risk.shared.player.Player;
 import edu.duke.ece651.risk.shared.player.SPlayer;
 import edu.duke.ece651.riskclient.R;
-import edu.duke.ece651.riskclient.RiskApplication;
 import edu.duke.ece651.riskclient.adapter.TerritoryAdapter;
 import edu.duke.ece651.riskclient.listener.onReceiveListener;
 import edu.duke.ece651.riskclient.listener.onRecvAttackResultListener;
@@ -48,12 +48,10 @@ import edu.duke.ece651.riskclient.listener.onResultListener;
 
 import static edu.duke.ece651.risk.shared.Constant.ACTION_DONE;
 import static edu.duke.ece651.risk.shared.Constant.GAME_OVER;
-
 import static edu.duke.ece651.riskclient.Constant.ACTION_PERFORMED;
 import static edu.duke.ece651.riskclient.Constant.MAP_NAME_TO_RESOURCE_ID;
 import static edu.duke.ece651.riskclient.Constant.NETWORK_PROBLEM;
 import static edu.duke.ece651.riskclient.RiskApplication.getPlayerID;
-
 import static edu.duke.ece651.riskclient.RiskApplication.getRoomName;
 import static edu.duke.ece651.riskclient.RiskApplication.initChatSocket;
 import static edu.duke.ece651.riskclient.RiskApplication.recv;
@@ -65,12 +63,14 @@ import static edu.duke.ece651.riskclient.utils.UIUtils.showToastUI;
 public class PlayGameActivity extends AppCompatActivity {
     private static final String TAG = PlayGameActivity.class.getSimpleName();
 
-    public static final String PLAYING_MAP = "playingMap";
-    public static final String FOOD_RESOURCE = "food";
-    public static final String TECH_RESOURCE = "tech";
-    public static final String CURRENT_TECH_LEVEL = "currentTechLevel";
-    public static final String IS_MOVE = "isMove";
-    public static final String IS_UPGRADE_MAX = "isUpgradeMax";
+    public static final String DATA_PLAYING_MAP = "playingMap";
+    public static final String DATA_FOOD_RESOURCE = "food";
+    public static final String DATA_TECH_RESOURCE = "tech";
+    public static final String DATA_CURRENT_TECH_LEVEL = "currentTechLevel";
+    public static final String DATA_IS_MOVE = "isMove";
+    public static final String DATA_IS_UPGRADE_MAX = "isUpgradeMax";
+    public static final String DATA_ALL_PLAYERS = "allPlayers";
+    public static final String DATA_CURRENT_PLAYER = "currentPlayer";
 
     private static final String TYPE_MOVE = "move";
     private static final String TYPE_ATTACK = "attack";
@@ -98,10 +98,12 @@ public class PlayGameActivity extends AppCompatActivity {
      * Variable
      */
     private TerritoryAdapter territoryAdapter;
+    private ArrayAdapter<String> actionAdapter;
     private List<Action> performedActions;
     private WorldMap<String> map;
     private Player<String> player;
-    private List<SPlayer> allPlayers;
+    // we need to pass this list to ChatActivity, so use ArrayList here(List is not Serializable)
+    private ArrayList<SPlayer> allPlayers;
     private int roundNum;
     private boolean isLose;
     private boolean hasShowDialog;
@@ -131,6 +133,7 @@ public class PlayGameActivity extends AppCompatActivity {
         // make sure user can't do anything before we receive the first round data
         setAllButtonClickable(false);
 
+        // these two use separate socket, can do them in parallel
         receiveLatestInfo();
         connectToChat();
     }
@@ -149,6 +152,10 @@ public class PlayGameActivity extends AppCompatActivity {
                 break;
             case R.id.chat_room:
                 Intent intent = new Intent(PlayGameActivity.this, ChatActivity.class);
+                Bundle data = new Bundle();
+                data.putSerializable(DATA_ALL_PLAYERS, allPlayers);
+                data.putSerializable(DATA_CURRENT_PLAYER, player);
+                intent.putExtras(data);
                 startActivity(intent);
                 // TODO: go to the chat room
                 break;
@@ -189,32 +196,32 @@ public class PlayGameActivity extends AppCompatActivity {
             switch (actionType){
                 case TYPE_MOVE:
                     intent.setComponent(new ComponentName(PlayGameActivity.this, MoveAttackActivity.class));
-                    bundle.putBoolean(IS_MOVE, true);
-                    bundle.putSerializable(PLAYING_MAP, map);
-                    bundle.putInt(FOOD_RESOURCE, player.getFoodNum());
+                    bundle.putBoolean(DATA_IS_MOVE, true);
+                    bundle.putSerializable(DATA_PLAYING_MAP, map);
+                    bundle.putInt(DATA_FOOD_RESOURCE, player.getFoodNum());
                     requestCode = REQUEST_ACTION_MOVE;
                     break;
                 case TYPE_ATTACK:
                     intent.setComponent(new ComponentName(PlayGameActivity.this, MoveAttackActivity.class));
-                    bundle.putBoolean(IS_MOVE, false);
-                    bundle.putSerializable(PLAYING_MAP, map);
-                    bundle.putInt(FOOD_RESOURCE, player.getFoodNum());
+                    bundle.putBoolean(DATA_IS_MOVE, false);
+                    bundle.putSerializable(DATA_PLAYING_MAP, map);
+                    bundle.putInt(DATA_FOOD_RESOURCE, player.getFoodNum());
                     requestCode = REQUEST_ACTION_ATTACK;
                     break;
                 case TYPE_UPGRADE_UNIT:
                     intent.setComponent(new ComponentName(PlayGameActivity.this, UpgradeActivity.class));
-                    bundle.putBoolean(IS_UPGRADE_MAX, false);
-                    bundle.putSerializable(PLAYING_MAP, map);
-                    bundle.putInt(TECH_RESOURCE, player.getTechNum());
-                    bundle.putInt(CURRENT_TECH_LEVEL, player.getTechLevel());
+                    bundle.putBoolean(DATA_IS_UPGRADE_MAX, false);
+                    bundle.putSerializable(DATA_PLAYING_MAP, map);
+                    bundle.putInt(DATA_TECH_RESOURCE, player.getTechNum());
+                    bundle.putInt(DATA_CURRENT_TECH_LEVEL, player.getTechLevel());
                     requestCode = REQUEST_ACTION_UPGRADE_UNIT;
                     break;
                 case TYPE_UPGRADE_MAX:
                     intent.setComponent(new ComponentName(PlayGameActivity.this, UpgradeActivity.class));
-                    bundle.putBoolean(IS_UPGRADE_MAX, true);
-                    bundle.putSerializable(PLAYING_MAP, map);
-                    bundle.putInt(TECH_RESOURCE, player.getTechNum());
-                    bundle.putInt(CURRENT_TECH_LEVEL, player.getTechLevel());
+                    bundle.putBoolean(DATA_IS_UPGRADE_MAX, true);
+                    bundle.putSerializable(DATA_PLAYING_MAP, map);
+                    bundle.putInt(DATA_TECH_RESOURCE, player.getTechNum());
+                    bundle.putInt(DATA_CURRENT_TECH_LEVEL, player.getTechLevel());
                     requestCode = REQUEST_ACTION_UPGRADE_MAX;
                     break;
                 case TYPE_ALLIANCE:
@@ -278,21 +285,21 @@ public class PlayGameActivity extends AppCompatActivity {
         TextInputLayout layout = findViewById(R.id.action_dropdown);
         layout.setHint("Action Type");
 
-        String[] items = new String[] {TYPE_MOVE, TYPE_ATTACK, TYPE_UPGRADE_UNIT, TYPE_UPGRADE_MAX, TYPE_ALLIANCE, TYPE_DONE};
-        ArrayAdapter<String> adapter =
+        List<String> actions = new ArrayList<>(Arrays.asList(TYPE_MOVE, TYPE_ATTACK, TYPE_UPGRADE_UNIT, TYPE_UPGRADE_MAX, TYPE_ALLIANCE, TYPE_DONE));
+        actionAdapter =
                 new ArrayAdapter<>(
                         PlayGameActivity.this,
                         R.layout.dropdown_menu_popup_item,
-                        items);
+                        actions);
 
         // set up default choice
-        actionType = adapter.getItem(0);
+        actionType = actionAdapter.getItem(0);
 
         AutoCompleteTextView dropdownAction = layout.findViewById(R.id.dd_input);
-        dropdownAction.setAdapter(adapter);
-        dropdownAction.setText(adapter.getItem(0), false);
+        dropdownAction.setAdapter(actionAdapter);
+        dropdownAction.setText(actionAdapter.getItem(0), false);
         dropdownAction.setOnItemClickListener((parent, v, position, id) -> {
-            actionType = adapter.getItem(position);
+            actionType = actionAdapter.getItem(position);
         });
     }
 
@@ -331,6 +338,7 @@ public class PlayGameActivity extends AppCompatActivity {
 
         List<String> allianceName = new ArrayList<>();
         for (SPlayer p : allPlayers){
+            // TODO: exclude player himself
             allianceName.add(p.getName());
         }
 
@@ -455,30 +463,14 @@ public class PlayGameActivity extends AppCompatActivity {
 
             @Override
             public void onSuccessful(Object object) {
-                allPlayers = (List<SPlayer>) object;
+                allPlayers = (ArrayList<SPlayer>) object;
+                // only support alliance action for 3 or more players
+                if (allPlayers.size() < 3){
+                    actionAdapter.remove(TYPE_ALLIANCE);
+                }
                 newRound();
             }
         });
-
-//        RiskApplication.getThreadPool().execute(() -> {
-//            try {
-//                Object object = RiskApplication.in.readObject();
-//                allPlayers = (List<SPlayer>) object;
-//                object = RiskApplication.in.readObject();
-//                RoundInfo info = (RoundInfo) object;
-//                roundNum = info.getRoundNum();
-//                map = info.getMap();
-//                player = info.getPlayer();
-//                setPlayerID(player.getId());
-//                // clear all actions in the last round
-//                performedActions.clear();
-//                showToastUI(PlayGameActivity.this, String.format(Locale.US,"start round %d", roundNum));
-//                checkLose();
-//                updateUI();
-//            }catch (Exception e){
-//                System.err.println(e.toString());
-//            }
-//        });
     }
 
     /**
@@ -542,7 +534,7 @@ public class PlayGameActivity extends AppCompatActivity {
                 // set all button clickable, let user input
                 setAllButtonClickable(true);
             }
-            // as long as the user is in the room, we should update the info
+            // as long as the user is in the room, we should update these info
             // set the round number
             tvRoundNum.setText(String.valueOf(roundNum));
             // set the map image
@@ -585,6 +577,9 @@ public class PlayGameActivity extends AppCompatActivity {
         btPerform.setClickable(isClickable);
     }
 
+    /**
+     * Hide all button, call this function once the player is lose.
+     */
     private void setAllButtonHidden(){
         btPerform.setVisibility(View.GONE);
     }

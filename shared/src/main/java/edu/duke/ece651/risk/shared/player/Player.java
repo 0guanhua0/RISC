@@ -112,7 +112,7 @@ public abstract class Player<T> implements Serializable{
     public Object recv() throws ClassNotFoundException {
         Object o = new Object();
         try {
-            o =  in.readObject();
+            o = in.readObject();
         }
         catch (IOException ignored) {
             System.err.println(ignored.toString());
@@ -132,6 +132,24 @@ public abstract class Player<T> implements Serializable{
         } catch (IOException ignored){
             this.setConnect(false);
         }
+    }
+
+
+    /**
+     * Use the chat socket to receive a chat message from this player.
+     * @return ChatMessage
+     */
+    public Object recvChatMessage() {
+        try {
+            if (chatIn != null){
+                return chatIn.readObject();
+            }
+        }
+        catch (Exception ignored) {
+            System.err.println(ignored.toString());
+            this.setConnect(false);
+        }
+        return null;
     }
 
     /**

@@ -40,10 +40,10 @@ import static edu.duke.ece651.risk.shared.Constant.TECH_MAP;
 import static edu.duke.ece651.risk.shared.Constant.UP_UNIT_COST;
 import static edu.duke.ece651.riskclient.Constant.ACTION_PERFORMED;
 import static edu.duke.ece651.riskclient.RiskApplication.getPlayerID;
-import static edu.duke.ece651.riskclient.activity.PlayGameActivity.CURRENT_TECH_LEVEL;
-import static edu.duke.ece651.riskclient.activity.PlayGameActivity.IS_UPGRADE_MAX;
-import static edu.duke.ece651.riskclient.activity.PlayGameActivity.PLAYING_MAP;
-import static edu.duke.ece651.riskclient.activity.PlayGameActivity.TECH_RESOURCE;
+import static edu.duke.ece651.riskclient.activity.PlayGameActivity.DATA_CURRENT_TECH_LEVEL;
+import static edu.duke.ece651.riskclient.activity.PlayGameActivity.DATA_IS_UPGRADE_MAX;
+import static edu.duke.ece651.riskclient.activity.PlayGameActivity.DATA_PLAYING_MAP;
+import static edu.duke.ece651.riskclient.activity.PlayGameActivity.DATA_TECH_RESOURCE;
 import static edu.duke.ece651.riskclient.utils.HTTPUtils.sendAction;
 import static edu.duke.ece651.riskclient.utils.UIUtils.showToastUI;
 
@@ -80,10 +80,10 @@ public class UpgradeActivity extends AppCompatActivity {
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null){
-            map = (WorldMap<String>) bundle.getSerializable(PLAYING_MAP);
-            techResource = bundle.getInt(TECH_RESOURCE);
-            isUpgradeMax = bundle.getBoolean(IS_UPGRADE_MAX);
-            currentTechLevel = bundle.getInt(CURRENT_TECH_LEVEL);
+            map = (WorldMap<String>) bundle.getSerializable(DATA_PLAYING_MAP);
+            techResource = bundle.getInt(DATA_TECH_RESOURCE);
+            isUpgradeMax = bundle.getBoolean(DATA_IS_UPGRADE_MAX);
+            currentTechLevel = bundle.getInt(DATA_CURRENT_TECH_LEVEL);
         }
 
         Toolbar toolbar = findViewById(R.id.toolbar);

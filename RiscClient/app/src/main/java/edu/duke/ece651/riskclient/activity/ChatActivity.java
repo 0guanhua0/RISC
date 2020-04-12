@@ -2,7 +2,6 @@ package edu.duke.ece651.riskclient.activity;
 
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 
@@ -21,10 +20,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import edu.duke.ece651.risk.shared.player.Player;
+import edu.duke.ece651.risk.shared.player.SMessage;
+import edu.duke.ece651.risk.shared.player.SPlayer;
 import edu.duke.ece651.riskclient.R;
 import edu.duke.ece651.riskclient.objects.Message;
 import edu.duke.ece651.riskclient.objects.SimplePlayer;
 
+import static edu.duke.ece651.riskclient.RiskApplication.sendChat;
 import static edu.duke.ece651.riskclient.utils.UIUtils.showToastUI;
 
 public class ChatActivity extends AppCompatActivity implements MessagesListAdapter.OnMessageLongClickListener<Message>, MessagesListAdapter.OnLoadMoreListener, MessageInput.InputListener {
@@ -40,6 +43,7 @@ public class ChatActivity extends AppCompatActivity implements MessagesListAdapt
     /**
      * Variable
      */
+    private Player<String> sender;
     private String toPlayerName;
     private List<String> playerName;
     private Map<String, Integer> nameToID;
@@ -52,7 +56,7 @@ public class ChatActivity extends AppCompatActivity implements MessagesListAdapt
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null){
-            getSupportActionBar().setTitle("Chat");
+            getSupportActionBar().setTitle("Chat Room");
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
@@ -61,6 +65,18 @@ public class ChatActivity extends AppCompatActivity implements MessagesListAdapt
         nameToID = new HashMap<>();
         nameToID.put(EVERYONE, -1);
         playerName.add(EVERYONE);
+
+        Bundle data = getIntent().getExtras();
+        if (data != null){
+            sender = (Player<String>) data.getSerializable(PlayGameActivity.DATA_CURRENT_PLAYER);
+            ArrayList<SPlayer> players = (ArrayList<SPlayer>) data.get(PlayGameActivity.DATA_ALL_PLAYERS);
+            if (players != null){
+                for (SPlayer player : players){
+                    playerName.add(player.getName());
+                    nameToID.put(player.getName(), player.getId());
+                }
+            }
+        }
 
         setUpUI();
     }
@@ -90,12 +106,15 @@ public class ChatActivity extends AppCompatActivity implements MessagesListAdapt
     @Override
     public boolean onSubmit(CharSequence input) {
         showToastUI(ChatActivity.this, input.toString());
-        boolean b = new Random().nextBoolean();
-        if (b){
-            messagesAdapter.addToStart(new Message(1, new SimplePlayer(1, "xkw", "xkw"), input.toString()), true);
-        }else {
-            messagesAdapter.addToStart(new Message(2, new SimplePlayer(2, "xkx", "xkw"), input.toString()), true);
-        }
+        messagesAdapter.addToStart(new Message(0, new SimplePlayer(sender.getId(), sender.getName()), input.toString()), true);
+        SMessage message = new SMessage(0, sender.getId(), -1, sender.getName(), input.toString());
+        sendChat(message);
+//        boolean b = new Random().nextBoolean();
+//        if (b){
+//            messagesAdapter.addToStart(new Message(1, new SimplePlayer(1, "xkw"), input.toString()), true);
+//        }else {
+//            messagesAdapter.addToStart(new Message(2, new SimplePlayer(2, "xkx"), input.toString()), true);
+//        }
         return true;
     }
 
