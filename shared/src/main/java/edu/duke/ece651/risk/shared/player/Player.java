@@ -190,7 +190,6 @@ public abstract class Player<T> implements Serializable{
         p.setTerrFriend(this);
     }
 
-    //TODO finish this method
     public void ruputureAlly(){
         if (hasAlly()){
             assert(ally.ally==this);//used only for debugging

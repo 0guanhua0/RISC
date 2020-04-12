@@ -278,14 +278,17 @@ public class TerritoryV2 extends Territory {
         this.friendId = -1;
     }
 
+    /**
+     * this method can only add free units
+     * @param unit: unit to add
+     */
     @Override
     public void addUnit(Unit unit) {
         int level = unit.getLevel();
         int ownerId = unit.getOwnerId();
-        if (unit.getOwnerId()!=0){
+        if (unit.getOwnerId()!=this.getOwner()){
             throw new IllegalArgumentException("invalid argument!");
         }
-        unit.setOwnerId(this.getOwner());
         List<Unit> units = unitGroup.getOrDefault(level, new ArrayList<>());
         units.add(unit);
         unitGroup.put(level,units);

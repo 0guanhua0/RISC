@@ -14,7 +14,7 @@ public class Unit implements Serializable {
     int ownerId;
 
     public Unit(int level, int ownerId) {
-        if (ownerId<0||!UNIT_BONUS.containsKey(level)){
+        if (ownerId<=0||!UNIT_BONUS.containsKey(level)){
             throw new IllegalArgumentException("Invalid argument");
         }
         this.level = level;
@@ -27,12 +27,5 @@ public class Unit implements Serializable {
 
     public int getOwnerId() {
         return ownerId;
-    }
-
-    public void setOwnerId(int ownerId) {
-        if (ownerId<=0){
-            throw new IllegalArgumentException("Invalid argument!");
-        }
-        this.ownerId = ownerId;
     }
 }
