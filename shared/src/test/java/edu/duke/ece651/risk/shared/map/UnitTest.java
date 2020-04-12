@@ -10,7 +10,7 @@ class UnitTest {
     @Test
     void testConst(){
         assertDoesNotThrow(()->{new Unit(0,1);});
-        assertThrows(IllegalArgumentException.class,()->{new Unit(0,1);});
+        assertThrows(IllegalArgumentException.class,()->{new Unit(-1,1);});
         assertThrows(IllegalArgumentException.class,()->{new Unit(Utils.getMaxKey(Constant.UNIT_BONUS)+1,1);});
     }
 
