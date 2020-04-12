@@ -16,7 +16,7 @@ import java.util.*;
 import static edu.duke.ece651.risk.shared.Constant.UNIT_BONUS;
 import static org.junit.jupiter.api.Assertions.*;
 
-class TerritoryV2Test {
+class TerritoryImplTest {
     private static final String storm = "the storm kingdom";
     private static final String reach = "kingdom of the reach";
     private static final String rock = "kingdom of the rock";
@@ -26,7 +26,7 @@ class TerritoryV2Test {
 
     @Test
     void getSize() throws IOException {
-        TerritoryV2 territory = new TerritoryV2("name",3,2,4);
+        TerritoryImpl territory = new TerritoryImpl("name",3,2,4);
         assertEquals(territory.getSize(),3);
         assertEquals(territory.getFoodYield(),2);
         assertEquals(territory.getTechYield(),4);
@@ -35,7 +35,7 @@ class TerritoryV2Test {
 
     @Test
     void canAddUnits() {
-        TerritoryV2 territory = new TerritoryV2("name",3,2,4);
+        TerritoryImpl territory = new TerritoryImpl("name",3,2,4);
         assertTrue(territory.canAddUnits(1,1));
         assertFalse(territory.canAddUnits(0,1));
         assertFalse(territory.canAddUnits(0,UNIT_BONUS.keySet().stream().max(Integer::compareTo).get()+1));
@@ -43,7 +43,7 @@ class TerritoryV2Test {
 
     @Test
     void canLoseUnits() {
-        TerritoryV2 territory = new TerritoryV2("name",3,2,4);
+        TerritoryImpl territory = new TerritoryImpl("name",3,2,4);
         assertFalse(territory.canLoseUnits(0,1));
         territory.addUnits(1,1);
         assertTrue(territory.canLoseUnits(1,1));
@@ -53,7 +53,7 @@ class TerritoryV2Test {
 
     @Test
     void addBasicUnits() {
-        TerritoryV2 territory = new TerritoryV2("name",3,2,4);
+        TerritoryImpl territory = new TerritoryImpl("name",3,2,4);
         territory.addBasicUnits(1);
         assertEquals(1,territory.getBasicUnitsNum());
         assertThrows(IllegalArgumentException.class,()->{territory.addBasicUnits(0);});
@@ -63,7 +63,7 @@ class TerritoryV2Test {
 
     @Test
     void loseBasicUnits() {
-        TerritoryV2 territory = new TerritoryV2("name",3,2,4);
+        TerritoryImpl territory = new TerritoryImpl("name",3,2,4);
         territory.addBasicUnits(1);
         assertThrows(IllegalArgumentException.class,()->{territory.loseBasicUnits(-1);});
         assertThrows(IllegalArgumentException.class,()->{territory.loseBasicUnits(2);});
@@ -73,7 +73,7 @@ class TerritoryV2Test {
 
     @Test
     void addUnits() {
-        TerritoryV2 territory = new TerritoryV2("name",3,2,4);
+        TerritoryImpl territory = new TerritoryImpl("name",3,2,4);
         territory.addUnits(1,0);
         assertEquals(1,territory.getBasicUnitsNum());
         territory.addUnits(1,1);
@@ -83,7 +83,7 @@ class TerritoryV2Test {
 
     @Test
     void loseUnits() {
-        TerritoryV2 territory = new TerritoryV2("name",3,2,4);
+        TerritoryImpl territory = new TerritoryImpl("name",3,2,4);
         assertThrows(IllegalArgumentException.class,()->{territory.loseUnits(0,1);});
         territory.addUnits(1,1);
         assertDoesNotThrow(()->{territory.loseUnits(1,1);});
@@ -91,7 +91,7 @@ class TerritoryV2Test {
 
     @Test
     void getBasicUnitsNum() {
-        TerritoryV2 territory = new TerritoryV2("name",3,2,4);
+        TerritoryImpl territory = new TerritoryImpl("name",3,2,4);
         assertEquals(0,territory.getBasicUnitsNum());
         territory.addBasicUnits(1);
         assertEquals(1,territory.getBasicUnitsNum());
@@ -99,7 +99,7 @@ class TerritoryV2Test {
 
     @Test
     void getUnitsNum() {
-        TerritoryV2 territory = new TerritoryV2("name",3,2,4);
+        TerritoryImpl territory = new TerritoryImpl("name",3,2,4);
         assertEquals(0,territory.getUnitsNum(0));
         territory.addUnits(1,1);
         assertEquals(1,territory.getUnitsNum(1));
@@ -222,7 +222,7 @@ class TerritoryV2Test {
 
     @Test
     void getDetailInfo(){
-        TerritoryV2 t2 = new TerritoryV2("name", 1, 1, 1);
+        TerritoryImpl t2 = new TerritoryImpl("name", 1, 1, 1);
         assertNotNull(t2.getUnitGroup());
     }
 }

@@ -16,7 +16,7 @@ import static edu.duke.ece651.risk.shared.Utils.getMinKey;
  * @author: Chengda Wu
  * @create: 2020-03-28 10:20
  **/
-public class TerritoryV2 extends Territory {
+public class TerritoryImpl extends Territory {
 
     int size;
     int foodYield;
@@ -29,7 +29,7 @@ public class TerritoryV2 extends Territory {
 
 
 
-    public TerritoryV2(String name, int size, int foodYield, int techYield) {
+    public TerritoryImpl(String name, int size, int foodYield, int techYield) {
         super(name);
         this.size = size;
         this.foodYield = foodYield;
