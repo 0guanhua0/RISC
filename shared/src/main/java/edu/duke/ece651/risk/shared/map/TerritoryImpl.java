@@ -236,6 +236,9 @@ public class TerritoryImpl extends Territory {
 
     @Override
     public void addAllyUnit(Unit unit) {
+        if (ally==null){
+            throw new IllegalStateException("Invalid state");
+        }
         int level = unit.getLevel();
         List<Unit> units = allyUnits.getOrDefault(level, new ArrayList<>());
         units.add(unit);
@@ -337,10 +340,10 @@ public class TerritoryImpl extends Territory {
      * the second element of list represents where does this unit come from(0 for unitGroup, 1 for allyGroup)
      */
     List<Integer> selectMaxDefendUnit(){
-        if (unitGroup.isEmpty()&&(null==allyUnits||allyUnits.isEmpty())){
-            throw new IllegalArgumentException("Invalid argument");
+        if (unitGroup.isEmpty()&&(allyUnits.isEmpty())){
+            throw new IllegalStateException("Invalid state");
         }
-        if (unitGroup.isEmpty()||(null==allyUnits||allyUnits.isEmpty())){
+        if (unitGroup.isEmpty()||(allyUnits.isEmpty())){
             int level = unitGroup.isEmpty()?allyUnits.lastKey():unitGroup.lastKey();
             int index = unitGroup.isEmpty()?1:0;
             return Arrays.asList(level,index);
@@ -365,7 +368,7 @@ public class TerritoryImpl extends Territory {
      */
     List<Integer> selectMinDefendUnit(){
         if (unitGroup.isEmpty()&&(null==allyUnits||allyUnits.isEmpty())){
-            throw new IllegalArgumentException("Invalid argument");
+            throw new IllegalStateException("Invalid state");
         }
         if (unitGroup.isEmpty()||(null==allyUnits||allyUnits.isEmpty())){
             int level = unitGroup.isEmpty()?allyUnits.firstKey():unitGroup.firstKey();
@@ -377,7 +380,7 @@ public class TerritoryImpl extends Territory {
             if (myLevel==allyLevel){
                 return Arrays.asList(myLevel,new Random().nextInt(2));
             }else{
-                int idx = myLevel>allyLevel?0:1;
+                int idx = myLevel<allyLevel?0:1;
                 int level = Math.min(myLevel,allyLevel);
                 return Arrays.asList(level,idx);
             }
@@ -401,13 +404,14 @@ public class TerritoryImpl extends Territory {
             if (maxKey>maxLevel){
                 max = new ArrayList<>();
                 max.add(i);
-                maxLevel = treeMap.lastKey();
+                maxLevel = maxKey;
             }else if (maxKey==maxLevel){
                 max.add(i);
             }
         }
+
         Random random = new Random();
-        int selectedPlayer = random.nextInt(max.size());
+        int selectedPlayer = max.get(random.nextInt(max.size()));
         return Arrays.asList(maxLevel,selectedPlayer);
     }
 
@@ -427,13 +431,13 @@ public class TerritoryImpl extends Territory {
             if (minKey<minLevel){
                 min = new ArrayList<>();
                 min.add(i);
-                minLevel = treeMap.lastKey();
+                minLevel = minKey;
             }else if (minKey==minLevel){
                 min.add(i);
             }
         }
         Random random = new Random();
-        int selectedPlayer = random.nextInt(min.size());
+        int selectedPlayer = min.get(random.nextInt(min.size()));
         return Arrays.asList(minLevel,selectedPlayer);
     }
 

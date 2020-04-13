@@ -234,6 +234,10 @@ class TerritoryImplTest {
         PlayerV2<String> player2 = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),new ByteArrayOutputStream());
         player1.setId(1);
         player2.setId(2);
+        TerritoryImpl test = new TerritoryImpl("test", 3, 20, 20);
+        player1.addTerritory(test);
+        assertThrows(IllegalStateException.class,()->{test.addAllyUnit(new Unit(1));});
+
         WorldState worldState1 = new WorldState(player1, worldMap, Arrays.asList(player1,player2));
         WorldState worldState2 = new WorldState(player2, worldMap, Arrays.asList(player1,player2));
         //1 submit an ally request to ally with 2
@@ -243,8 +247,6 @@ class TerritoryImplTest {
         AllyAction allyAction2 = new AllyAction(1);
         allyAction2.perform(worldState2);
 
-        TerritoryImpl test = new TerritoryImpl("test", 3, 20, 20);
-        player1.addTerritory(test);
         assertEquals(0,test.allyUnits.getOrDefault(1,new ArrayList<>()).size());
         test.addAllyUnit(new Unit(1));
         assertEquals(1,test.allyUnits.get(1).size());
@@ -287,37 +289,152 @@ class TerritoryImplTest {
         AllyAction allyAction2 = new AllyAction(1);
         allyAction2.perform(worldState2);
 
-       vale.ruptureAlly();
-       assertEquals(3,storm.getUnitsNum(1));
-       assertEquals(1,storm.getUnitsNum(2));
+        vale.ruptureAlly();
+        assertEquals(3,storm.getUnitsNum(1));
+        assertEquals(1,storm.getUnitsNum(2));
     }
 
     @Test
-    void selectMaxDefendUnit() {
+    void selectMaxDefendUnit() throws IOException {
+        //prepare the state
+        MapDataBase<String> mapDataBase = new MapDataBase<>();
+        WorldMap<String> worldMap = mapDataBase.getMap("a clash of kings");
+        PlayerV2<String> player1 = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),new ByteArrayOutputStream());
+        PlayerV2<String> player2 = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),new ByteArrayOutputStream());
+        player1.setId(1);
+        player2.setId(2);
+        TerritoryImpl test = new TerritoryImpl("test", 3, 20, 20);
+        player1.addTerritory(test);
+        WorldState worldState1 = new WorldState(player1, worldMap, Arrays.asList(player1,player2));
+        WorldState worldState2 = new WorldState(player2, worldMap, Arrays.asList(player1,player2));
+        AllyAction allyAction1 = new AllyAction(2);
+        allyAction1.perform(worldState1);
+        AllyAction allyAction2 = new AllyAction(1);
+        allyAction2.perform(worldState2);
+
+
+        assertThrows(IllegalStateException.class,()->{test.selectMaxDefendUnit();});
+
+        test.addAllyUnit(new Unit(1));
+        test.addAllyUnit(new Unit(3));
+
+        List<Integer> list = test.selectMaxDefendUnit();
+        assertEquals(3,list.get(0));
+        assertEquals(1,list.get(1));
+
+        test.addUnit(new Unit(1));
+        test.addUnit(new Unit(4));
+        List<Integer> list2 = test.selectMaxDefendUnit();
+        assertEquals(4,list2.get(0));
+        assertEquals(0,list2.get(1));
+
+        test.addAllyUnit(new Unit(4));
+        List<Integer> list3 = test.selectMaxDefendUnit();
+        assertEquals(4,list3.get(0));
+        assertTrue(list.get(1)==0||list.get(1)==1);
 
     }
 
     @Test
-    void selectMinDefendUnit() {
+    void selectMinDefendUnit() throws IOException {
+        //prepare the state
+        MapDataBase<String> mapDataBase = new MapDataBase<>();
+        WorldMap<String> worldMap = mapDataBase.getMap("a clash of kings");
+        PlayerV2<String> player1 = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),new ByteArrayOutputStream());
+        PlayerV2<String> player2 = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),new ByteArrayOutputStream());
+        player1.setId(1);
+        player2.setId(2);
+        TerritoryImpl test = new TerritoryImpl("test", 3, 20, 20);
+        player1.addTerritory(test);
+        WorldState worldState1 = new WorldState(player1, worldMap, Arrays.asList(player1,player2));
+        WorldState worldState2 = new WorldState(player2, worldMap, Arrays.asList(player1,player2));
+        AllyAction allyAction1 = new AllyAction(2);
+        allyAction1.perform(worldState1);
+        AllyAction allyAction2 = new AllyAction(1);
+        allyAction2.perform(worldState2);
+
+        assertThrows(IllegalStateException.class,()->{test.selectMinDefendUnit();});
+
+        //ally now has a level-1 unit and level-3 unit
+        test.addAllyUnit(new Unit(1));
+        test.addAllyUnit(new Unit(3));
+        List<Integer> list = test.selectMinDefendUnit();
+        assertEquals(1,list.get(0));
+        assertEquals(1,list.get(1));
+
+        //player herself now have a level-0 unit and level-1 unit
+        test.addUnit(new Unit(0));
+        test.addUnit(new Unit(1));
+        List<Integer> list2 = test.selectMinDefendUnit();
+        assertEquals(0,list2.get(0));
+        assertEquals(0,list2.get(1));
+
+        test.addAllyUnit(new Unit(0));
+        List<Integer> list3 = test.selectMinDefendUnit();
+        assertEquals(0,list3.get(0));
+        assertTrue(list.get(1)==0||list.get(1)==1);
     }
 
     @Test
     void selectMaxAttackUnit() {
+        TerritoryImpl test = new TerritoryImpl("test", 3, 20, 20);
+        List<TreeMap<Integer,Integer>> combinedAttack = new ArrayList<>();
+        TreeMap<Integer, Integer> treeMap1 = new TreeMap<Integer, Integer>(){{
+            put(1,1);
+            put(0,2);
+        }};
+        TreeMap<Integer, Integer> treeMap2 = new TreeMap<>();
+        TreeMap<Integer, Integer> treeMap3 = new TreeMap<>();
+        combinedAttack.add(treeMap1);
+        combinedAttack.add(treeMap2);
+        combinedAttack.add(treeMap3);
+
+        List<Integer> list1 = test.selectMaxAttackUnit(combinedAttack);
+        assertEquals(1,list1.get(0));
+        assertEquals(0,list1.get(1));
+        treeMap3.put(1,1);
+        List<Integer> list2 = test.selectMaxAttackUnit(combinedAttack);
+        assertEquals(1,list2.get(0));
+        assertTrue(list1.get(1)==0||list2.get(1)==2);
+
     }
 
     @Test
     void selectMinAttackUnit() {
+        TerritoryImpl test = new TerritoryImpl("test", 3, 20, 20);
+        List<TreeMap<Integer,Integer>> combinedAttack = new ArrayList<>();
+        TreeMap<Integer, Integer> treeMap1 = new TreeMap<Integer, Integer>(){{
+            put(1,1);
+            put(0,2);
+        }};
+        TreeMap<Integer, Integer> treeMap2 = new TreeMap<>();
+        TreeMap<Integer, Integer> treeMap3 = new TreeMap<>();
+        combinedAttack.add(treeMap1);
+        combinedAttack.add(treeMap2);
+        combinedAttack.add(treeMap3);
+
+        List<Integer> list1 = test.selectMinAttackUnit(combinedAttack);
+        assertEquals(0,list1.get(0));
+        assertEquals(0,list1.get(1));
+        treeMap3.put(0,1);
+        List<Integer> list2 = test.selectMinAttackUnit(combinedAttack);
+        assertEquals(0,list2.get(0));
+        assertTrue(list1.get(1)==0||list2.get(1)==2);
+
     }
 
     @Test
     void updateAttacker() {
+
     }
 
     @Test
     void updateDefender() {
+
     }
 
     @Test
     void updateForceState() {
+
     }
 }
