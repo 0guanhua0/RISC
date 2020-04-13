@@ -8,6 +8,7 @@ import edu.duke.ece651.risk.shared.player.Player;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static edu.duke.ece651.risk.shared.Constant.UNIT_NAME;
@@ -116,8 +117,12 @@ public class AttackAction implements Action, Serializable {
         // add attack units to target territory's attack buffer
         worldMap.getTerritory(dest).addAttack(myPlayer, new Army(playerId, src,levelToNum));
 
-        //break the alliance
-        myPlayer.ruputureAlly();
+        int destOwner = worldMap.getTerritory(dest).getOwner();
+        //break the alliance if trying to attack an ally
+        List<Player<String>> players = worldState.getPlayers();
+        if (myPlayer.hasAlly()&&destOwner==myPlayer.getAlly().getId()){
+            myPlayer.ruptureAlly();
+        }
 
 
         return true;

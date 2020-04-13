@@ -195,8 +195,8 @@ public abstract class Player<T> implements Serializable{
         }
         this.ally = p;
         p.ally = this;
-        this.setTerrFriend(p);
-        p.setTerrFriend(this);
+        this.setTerrAlly(p);
+        p.setTerrAlly(this);
     }
 
     public boolean isAllyWith(Player p){
@@ -205,7 +205,7 @@ public abstract class Player<T> implements Serializable{
 
 
 
-    public void setTerrFriend(Player p){
+    public void setTerrAlly(Player p){
         for (Territory territory : this.territories) {
             territory.setAlly(p);
         }
@@ -219,7 +219,7 @@ public abstract class Player<T> implements Serializable{
     /**
      * rupture of alliance between this player and her ally
      */
-    public void ruputureAlly(){
+    public void ruptureAlly(){
         if (hasAlly()){
             assert(ally.ally==this);//used only for debugging
             //change the state of all territories

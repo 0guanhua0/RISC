@@ -248,10 +248,11 @@ public class TerritoryImpl extends Territory {
      */
     @Override
     public void ruptureAlly(){
-        if (null== ally){
+        if (null == ally){
             throw new IllegalStateException("Invalid action");
         }
         Set<Territory> neigh = this.getNeigh();
+        Set<Territory> visited = new HashSet<>();
         //using BFS to find the most near Territory
         Queue<Territory> queue = new ArrayDeque<>();
         queue.addAll(neigh);
@@ -259,6 +260,8 @@ public class TerritoryImpl extends Territory {
             int size = queue.size();
             for (int i=0;i<size;i++){//iterate through new level
                 Territory territory = queue.poll();
+                if (visited.contains(territory)) continue;
+                visited.add(territory);
                 if (territory.getOwner()== ally.getId()){//find target territory, expel all ally unit to this territory
                     //expel all units
                     this.expelAlly(territory);

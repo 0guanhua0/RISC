@@ -3,6 +3,7 @@ package edu.duke.ece651.risk.shared.map;
 import edu.duke.ece651.risk.shared.Mock;
 import edu.duke.ece651.risk.shared.Utils;
 import edu.duke.ece651.risk.shared.WorldState;
+import edu.duke.ece651.risk.shared.action.AllyAction;
 import edu.duke.ece651.risk.shared.action.AttackAction;
 import edu.duke.ece651.risk.shared.action.AttackResult;
 import edu.duke.ece651.risk.shared.player.Player;
@@ -222,5 +223,101 @@ class TerritoryImplTest {
     void getDetailInfo(){
         TerritoryImpl t2 = new TerritoryImpl("name", 1, 1, 1);
         assertNotNull(t2.getUnitGroup());
+    }
+
+    @Test
+    void addAllyUnit() throws IOException {
+        //prepare the state
+        MapDataBase<String> mapDataBase = new MapDataBase<>();
+        WorldMap<String> worldMap = mapDataBase.getMap("a clash of kings");
+        PlayerV2<String> player1 = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),new ByteArrayOutputStream());
+        PlayerV2<String> player2 = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),new ByteArrayOutputStream());
+        player1.setId(1);
+        player2.setId(2);
+        WorldState worldState1 = new WorldState(player1, worldMap, Arrays.asList(player1,player2));
+        WorldState worldState2 = new WorldState(player2, worldMap, Arrays.asList(player1,player2));
+        //1 submit an ally request to ally with 2
+        AllyAction allyAction1 = new AllyAction(2);
+        allyAction1.perform(worldState1);
+        //2 submit an ally request to ally with 1
+        AllyAction allyAction2 = new AllyAction(1);
+        allyAction2.perform(worldState2);
+
+        TerritoryImpl test = new TerritoryImpl("test", 3, 20, 20);
+        player1.addTerritory(test);
+        assertEquals(0,test.allyUnits.getOrDefault(1,new ArrayList<>()).size());
+        test.addAllyUnit(new Unit(1));
+        assertEquals(1,test.allyUnits.get(1).size());
+        test.addAllyUnit(new Unit(1));
+        assertEquals(2,test.allyUnits.get(1).size());
+    }
+
+    @Test
+    void ruptureAlly() throws IOException {
+        //prepare the state
+        MapDataBase<String> mapDataBase = new MapDataBase<>();
+        WorldMap<String> worldMap = mapDataBase.getMap("a clash of kings");
+        PlayerV2<String> player1 = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),new ByteArrayOutputStream());
+        PlayerV2<String> player2 = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),new ByteArrayOutputStream());
+        player1.setId(1);
+        player2.setId(2);
+        WorldState worldState1 = new WorldState(player1, worldMap, Arrays.asList(player1,player2));
+        WorldState worldState2 = new WorldState(player2, worldMap, Arrays.asList(player1,player2));
+
+
+        Territory storm = worldMap.getTerritory("the storm kingdom");
+        Territory reach = worldMap.getTerritory("kingdom of the reach");
+        Territory vale = worldMap.getTerritory("kingdom of mountain and vale");
+
+        player1.addTerritory(vale);
+        player2.addTerritory(reach);
+        player2.addTerritory(storm);
+
+        vale.addAllyUnit(new Unit(1));
+        vale.addAllyUnit(new Unit(1));
+        storm.addUnit(new Unit(1));
+        storm.addUnit(new Unit(2));
+
+        assertThrows(IllegalStateException.class,()->{vale.ruptureAlly();});
+
+        //1 submit an ally request to ally with 2
+        AllyAction allyAction1 = new AllyAction(2);
+        allyAction1.perform(worldState1);
+        //2 submit an ally request to ally with 1
+        AllyAction allyAction2 = new AllyAction(1);
+        allyAction2.perform(worldState2);
+
+       vale.ruptureAlly();
+       assertEquals(3,storm.getUnitsNum(1));
+       assertEquals(1,storm.getUnitsNum(2));
+    }
+
+    @Test
+    void selectMaxDefendUnit() {
+
+    }
+
+    @Test
+    void selectMinDefendUnit() {
+    }
+
+    @Test
+    void selectMaxAttackUnit() {
+    }
+
+    @Test
+    void selectMinAttackUnit() {
+    }
+
+    @Test
+    void updateAttacker() {
+    }
+
+    @Test
+    void updateDefender() {
+    }
+
+    @Test
+    void updateForceState() {
     }
 }
