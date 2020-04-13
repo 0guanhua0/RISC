@@ -95,7 +95,7 @@ public class TerritoryImpl extends Territory {
         boolean isDefenderTurn = false;
 
         // start combat
-        while (attackerDone(combinedAttack)||defenderDone()) {
+        while (!attackerDone(combinedAttack)&&!defenderDone()) {
             //decide each side level and caculate corresponding result
             List<Integer> attackList = isDefenderTurn?selectMinAttackUnit(combinedAttack):selectMaxAttackUnit(combinedAttack);
             List<Integer> defenderList = isDefenderTurn?selectMaxDefendUnit():selectMinDefendUnit();
@@ -486,8 +486,12 @@ public class TerritoryImpl extends Territory {
             Player finalOwner = attackers.get(random);
             TreeMap<Integer, Integer> ownerForce = combinedAttack.get(random);
             //note that for multiple alliance, the line below will need to be changed
-            Player ownerAlly = attackers.get(Math.abs(1-random));
-            TreeMap<Integer, Integer> allyForce = combinedAttack.get(Math.abs(1 - random));
+            Player ownerAlly = null;
+            TreeMap<Integer, Integer> allyForce = new TreeMap<Integer, Integer>();
+            if (2==attackers.size()){
+                ownerAlly = attackers.get(Math.abs(1-random));
+                allyForce = combinedAttack.get(Math.abs(1 - random));
+            }
             //change the ownership and ally for this territory
             setOwner(finalOwner.getId());
             setAlly(ownerAlly);

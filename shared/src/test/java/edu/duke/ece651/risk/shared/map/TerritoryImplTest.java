@@ -140,44 +140,42 @@ class TerritoryImplTest {
         stormTerr.addBasicUnits(10);
         reachTerr.addBasicUnits(10);
 
-        //player 1 multiple place attack(10 + 5)
+        WorldState worldState1 = new WorldState(p1,worldMap);
+        WorldState worldState2 = new WorldState(p2,worldMap);
+
+
+        //player 1 combine force(10+5) to attack reach
         AttackAction a10 = new AttackAction(rock, reach, 1, 10);
         AttackAction a11 = new AttackAction(dorne, reach, 1, 5);
         AttackAction a12 = new AttackAction(vale, storm, 1, 1);
-
-        WorldState worldState1 = new WorldState(p1,worldMap);
-        WorldState worldState2 = new WorldState(p2,worldMap);
 
         assertTrue(a10.perform(worldState1));
         assertTrue(a11.perform(worldState1));
         assertTrue(a12.perform(worldState1));
 
-        //player 2 attack to territory without units
+        //player 2 attack rock, which is without units now
         AttackAction a20 = new AttackAction(reach, rock, 2, 2);
         assertTrue(a20.perform(worldState2));
 
-        //perform
+        //battle happening at reach
+        //caculate the result
         List<AttackResult> resultList0 = reachTerr.resolveCombats();
+        AttackResult r0 = resultList0.get(0);
 
-        // attacker: 10 + 5, defender 10
+        // get the expected result: attacker: 10 + 5, defender 10
         AttackResult r = new AttackResult(1, 2,
                 new ArrayList<String>(Arrays.asList(rock,dorne)), reach, true);
-
-
-        AttackResult r0 = resultList0.get(0);
         boolean attackerWin = r0.isAttackerWin();
         boolean attackerWin1 = r.isAttackerWin();
         assertEquals(r0,r);
-
-
         //check result
         assertEquals(1, reachTerr.getOwner());
         assertEquals(8, reachTerr.getBasicUnitsNum());
 
+        //battle happening at rock territory
         rockTerr.resolveCombats();
         assertEquals(2, rockTerr.getOwner());
         assertEquals(2, rockTerr.getBasicUnitsNum());
-
         //lose
         assertFalse(stormTerr.resolveCombats().get(0).isAttackerWin());
     }

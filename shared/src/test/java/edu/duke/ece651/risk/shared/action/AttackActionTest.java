@@ -7,7 +7,6 @@ import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.risk.shared.player.Player;
 import edu.duke.ece651.risk.shared.player.PlayerV2;
-import jdk.nashorn.api.tree.Tree;
 import org.junit.jupiter.api.Test;
 
 import javax.persistence.criteria.CriteriaBuilder;
