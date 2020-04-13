@@ -101,8 +101,6 @@ public class GameServerTest {
         verify(server, atLeast(3)).accept();
     }
 
-
-
     /**
      * short socket
      *
@@ -113,7 +111,6 @@ public class GameServerTest {
     @Test
     public void testHandleIncomeRequest() throws IOException, ClassNotFoundException, SQLException {
         GameServer gameServer = new GameServer(null);
-
         //1 valid signup
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         String user1Name = "1";
@@ -132,7 +129,6 @@ public class GameServerTest {
         gameServer.handleIncomeRequest(socket1);
         assertTrue(gameServer.db.authUser(user1Name, user1Password));
         assertEquals(SUCCESSFUL, readAllStringFromObjectStream(outputStream));
-
 
         //2 valid login
         outputStream.reset();
@@ -167,7 +163,6 @@ public class GameServerTest {
 
         gameServer.handleIncomeRequest(socket2b);
         assertEquals(SUCCESSFUL, readAllStringFromObjectStream(outputStream));
-
 
         //3 invalid signup, same name
         outputStream.reset();
@@ -221,7 +216,6 @@ public class GameServerTest {
         gameServer.handleIncomeRequest(socket5);
         assertEquals(INVALID_USER, readAllStringFromObjectStream(outputStream));
 
-
         //6 login user get available room
         outputStream.reset();
 
@@ -236,7 +230,6 @@ public class GameServerTest {
 
         gameServer.handleIncomeRequest(socket6);
         assertEquals("", readAllStringFromObjectStream(outputStream));
-
 
         //7 login user get room he is in
         outputStream.reset();
@@ -253,7 +246,21 @@ public class GameServerTest {
         gameServer.handleIncomeRequest(socket7);
         assertEquals("", readAllStringFromObjectStream(outputStream));
 
+        outputStream.reset();
 
+        // 8 login user connect to the chat
+//        String s8 = "{\"" + USER_NAME + "\": \"" + userName2 + "\",\n" +
+//                "\"" + USER_PASSWORD + "\": \"" + userPassword2 + "\",\n" +
+//                "\"" + ROOM_ID + "\": \"" + 0 + "\",\n" +
+//                "\"" + ACTION + "\": \"" + ACTION_CONNECT_CHAT + "\" }";
+//
+//        Socket socket8 = mock(Socket.class);
+//        when(socket8.getInputStream())
+//                .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList(s8))));
+//        when(socket8.getOutputStream()).thenReturn(outputStream);
+//
+//        gameServer.handleIncomeRequest(socket8);
+//        assertEquals("", readAllStringFromObjectStream(outputStream));
     }
 
     /**
@@ -274,12 +281,10 @@ public class GameServerTest {
                 "\"" + USER_PASSWORD + "\": \"" + userPassword1 + "\",\n" +
                 "\"" + ACTION + "\": \"" + ACTION_CREATE_GAME + "\" }";
 
-
         String rName = "1";
 
         String s13 = "{\"" + MAP_NAME + "\": \"" + "test" + "\",\n" +
                 "\"" + ROOM_NAME +"\": \"" + rName + "\" }";
-
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         Socket socket1 = mock(Socket.class);
@@ -304,8 +309,6 @@ public class GameServerTest {
                 "\"" + USER_PASSWORD + "\": \"" + pwd2 + "\",\n" +
                 "\"" + ACTION + "\": \"" + ACTION_JOIN_GAME + "\" }";
 
-
-
         ByteArrayOutputStream o2 = new ByteArrayOutputStream();
         Socket socket2 = mock(Socket.class);
         when(socket2.getInputStream())
@@ -317,14 +320,10 @@ public class GameServerTest {
         assertEquals(2, gameServer.rooms.get(0).players.size());
         assertTrue(user2.isInRoom(0));
 
-
-
         //3 login user reconnect to room
         String s31 = "{\"" + USER_NAME + "\": \"" + userName1 + "\",\n" +
                 "\"" + ROOM_ID + "\": \"" + 0 + "\",\n" +
                 "\"" + ACTION + "\": \"" + ACTION_RECONNECT_ROOM + "\" }";
-
-
 
         ByteArrayOutputStream o3 = new ByteArrayOutputStream();
         Socket socket3 = mock(Socket.class);
@@ -350,9 +349,7 @@ public class GameServerTest {
         when(socket4.getOutputStream()).thenReturn(o4);
 
         gameServer.handleIncomeRequest(socket4);
-
         assertEquals(INVALID_RECONNECT, readAllStringFromObjectStream(o4));
-
 
         //5 strange action
         String s51 = "{\"" + USER_NAME + "\": \"" + userName1 + "\",\n" +
@@ -370,8 +367,6 @@ public class GameServerTest {
         gameServer.handleIncomeRequest(socket5);
 
         assertEquals("", readAllStringFromObjectStream(o5));
-
-
     }
 
     @Test
@@ -433,7 +428,6 @@ public class GameServerTest {
         assertEquals(2, gameServer.rooms.size()); // the room finished is removed
     }
 
-
     @Test
     public void testMain() throws IOException, InterruptedException, ClassNotFoundException {
         Thread th = new Thread(() -> {
@@ -462,9 +456,6 @@ public class GameServerTest {
         th.interrupt();
         th.join();
     }
-
-
-
 
     @Test
     void testStartGame() throws IOException, SQLException, ClassNotFoundException {

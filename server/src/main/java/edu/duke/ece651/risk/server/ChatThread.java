@@ -27,14 +27,16 @@ public class ChatThread<T> extends Thread{
                 // open a new thread for each player
                 Thread t = new Thread(() -> {
                     while (!Thread.currentThread().isInterrupted()){
-                        Object object = player.recvChatMessage();
-                        if (object instanceof SMessage){
-                            SMessage message = (SMessage) object;
-                            System.out.println(message.toString());
-                            if (message.getReceiverID() == -1){
-                                sendAllExcept(message, player.getId());
-                            }else {
-                                sendTo(message, message.getReceiverID());
+                        if (player.isConnect()){
+                            Object object = player.recvChatMessage();
+                            if (object instanceof SMessage){
+                                SMessage message = (SMessage) object;
+                                System.out.println(message.toString());
+                                if (message.getReceiverID() == -1){
+                                    sendAllExcept(message, player.getId());
+                                }else {
+                                    sendTo(message, message.getReceiverID());
+                                }
                             }
                         }
                     }
@@ -47,7 +49,6 @@ public class ChatThread<T> extends Thread{
                 t.interrupt();
             }
         }catch (Exception ignored){
-            System.err.println(ignored.toString());
         }
     }
 

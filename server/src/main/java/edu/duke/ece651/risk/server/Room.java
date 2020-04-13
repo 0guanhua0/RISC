@@ -152,7 +152,6 @@ public class Room {
             if (player.isConnect()) {
                 player.send(data);
             }
-
         }
     }
 
