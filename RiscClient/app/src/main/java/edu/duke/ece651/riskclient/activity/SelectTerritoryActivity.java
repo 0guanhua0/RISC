@@ -94,7 +94,6 @@ public class SelectTerritoryActivity extends AppCompatActivity {
                 unitTotal = select.getUnitsTotal();
                 unitLeft = unitTotal;
                 WorldMap map = select.getMap();
-                // TODO: set resource based on the map name
                 runOnUiThread(() -> {
                     imgMap.setImageResource(MAP_NAME_TO_RESOURCE_ID.get(map.getName()));
                     List<Set<String>> groups = new ArrayList<>(map.getGroups().keySet());

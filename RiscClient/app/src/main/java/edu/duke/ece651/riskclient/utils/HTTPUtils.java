@@ -16,6 +16,7 @@ import edu.duke.ece651.riskclient.listener.onNewPlayerListener;
 import edu.duke.ece651.riskclient.listener.onReceiveListener;
 import edu.duke.ece651.riskclient.listener.onRecvAttackResultListener;
 import edu.duke.ece651.riskclient.listener.onResultListener;
+import edu.duke.ece651.riskclient.objects.Message;
 import edu.duke.ece651.riskclient.objects.SimplePlayer;
 
 import static edu.duke.ece651.risk.shared.Constant.ACTION_CREATE_GAME;
@@ -45,6 +46,7 @@ import static edu.duke.ece651.riskclient.RiskApplication.getRoomID;
 import static edu.duke.ece651.riskclient.RiskApplication.getThreadPool;
 import static edu.duke.ece651.riskclient.RiskApplication.getTmpSocket;
 import static edu.duke.ece651.riskclient.RiskApplication.recv;
+import static edu.duke.ece651.riskclient.RiskApplication.recvChat;
 import static edu.duke.ece651.riskclient.RiskApplication.send;
 
 /**
@@ -239,7 +241,7 @@ public class HTTPUtils {
             jsonObject.put(ACTION_TYPE, ACTION_RECONNECT_ROOM);
             jsonObject.put(ROOM_ID, getRoomID());
             // join in an existing room
-             sendAndCheckSuccessG(jsonObject.toString(), listener);
+            sendAndCheckSuccessG(jsonObject.toString(), listener);
         }catch (JSONException e){
             Log.e(TAG, "backGame: " + e.toString());
         }
@@ -335,6 +337,28 @@ public class HTTPUtils {
                         // keep listening
                         recvAttackResult(listener);
                     }
+                }
+            }
+        });
+    }
+
+    /**
+     * This method will listen the chat message as long as the socket is open.
+     * @param listener receive listener
+     */
+    public static void listenChatMessage(onReceiveListener listener){
+        recvChat(new onReceiveListener() {
+            @Override
+            public void onFailure(String error) {
+                listener.onFailure(error);
+            }
+
+            @Override
+            public void onSuccessful(Object object) {
+                if (object instanceof Message){
+                    listener.onSuccessful(object);
+                    // keep receiving
+                    listenChatMessage(listener);
                 }
             }
         });

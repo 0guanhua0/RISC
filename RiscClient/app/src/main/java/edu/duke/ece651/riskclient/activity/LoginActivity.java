@@ -134,7 +134,7 @@ public class LoginActivity extends AppCompatActivity {
                     btLogin.setClickable(true);
                     showToastUI(LoginActivity.this, "Login successful.");
                     // initialize and set the global player object(only after successfully verify)
-                    SimplePlayer player = new SimplePlayer(1, userName, userPassword);
+                    SimplePlayer player = new SimplePlayer(userName, userPassword);
                     setPlayer(player);
                     // switch to MainActivity
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);

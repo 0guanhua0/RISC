@@ -15,6 +15,7 @@
         android:id="@+id/tv_player_info"
         android:layout_width="match_parent"
         android:layout_height="70dp"
+        android:text="player info"
         android:textSize="@dimen/normal_text_size"
         android:textColor="@color/text_color"
         android:layout_marginHorizontal="@dimen/normal_margin"
@@ -68,10 +69,35 @@
         android:layout_marginBottom="@dimen/small_margin_vertical"
         android:text="You perform:\n1. move(a ---> c, 10 level 1 units)\n2. upgrade max level"
         android:scrollbars="vertical"
+        android:background="@drawable/border"
+        android:paddingVertical="@dimen/small_margin_vertical"
+        android:paddingHorizontal="@dimen/small_margin_horizontal"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/rv_territory_list"
-        app:layout_constraintBottom_toTopOf="@id/ll_button_group"/>
+        app:layout_constraintBottom_toTopOf="@id/action_dropdown"/>
+
+    <include
+        android:id="@+id/action_dropdown"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/small_margin_vertical"
+        android:layout_marginStart="@dimen/normal_margin"
+        android:layout_marginEnd="@dimen/small_margin_horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/bt_perform"
+        app:layout_constraintBottom_toBottomOf="parent"
+        layout="@layout/widget_dropdown" />
+
+    <Button
+        android:id="@+id/bt_perform"
+        android:layout_width="@dimen/small_button_width"
+        android:layout_height="@dimen/large_button_height"
+        android:layout_marginEnd="@dimen/normal_margin"
+        android:text="@string/play_game_perform"
+        style="@style/Widget.Button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/ll_button_group"
@@ -79,6 +105,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_marginVertical="@dimen/normal_margin"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">

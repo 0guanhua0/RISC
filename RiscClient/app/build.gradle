@@ -13,6 +13,12 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
+        // store the schema of our app database
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
     }
 
     buildTypes {
@@ -41,6 +47,9 @@ dependencies {
     implementation 'com.google.android.material:material:1.2.0-alpha02'
     // number picker
     implementation 'com.github.polok:clicknumberpicker:0.1.2'
+    // char library
+    implementation 'com.github.stfalcon:chatkit:0.3.3'
+    implementation "de.hdodenhof:circleimageview:2.2.0"
 
     // testing library
     testImplementation 'junit:junit:4.12'
@@ -56,5 +65,20 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.5.2'
     testImplementation "org.mockito:mockito-core:3.3.3"
+
+    // the .jar files in lib directory
     implementation fileTree(dir: 'libs', include: ['*.aar', '*.jar'], exclude: [])
+
+    // android room(an abstraction over SQL)
+    def room_version = "2.2.5"
+    implementation "androidx.room:room-runtime:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version" // For Kotlin use kapt instead of annotationProcessor
+    // optional - Kotlin Extensions and Coroutines support for Room
+    implementation "androidx.room:room-ktx:$room_version"
+    // optional - RxJava support for Room
+    implementation "androidx.room:room-rxjava2:$room_version"
+    // optional - Guava support for Room, including Optional and ListenableFuture
+    implementation "androidx.room:room-guava:$room_version"
+    // Test helpers
+    testImplementation "androidx.room:room-testing:$room_version"
 }

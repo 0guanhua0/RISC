@@ -18,11 +18,14 @@ import static edu.duke.ece651.risk.shared.Constant.PLAYER_ID;
  * @create: 2020-03-09 16:24
  **/
 public abstract class Player<T> implements Serializable{
+    private static final long serialVersionUID = 21L;
 
     T color;
     int id;
     transient ObjectInputStream in;
     transient ObjectOutputStream out;
+    transient ObjectInputStream chatIn;
+    transient ObjectOutputStream chatOut;
     Set<Territory> territories;
 
     //status mark connected / dis
@@ -34,12 +37,10 @@ public abstract class Player<T> implements Serializable{
         this.in = new ObjectInputStream(in);
         this.out = new ObjectOutputStream(out);
         this.id = -1;
-
         this.isConnect = true;
     }
 
-
-    //since only after first player communicating with server and selecting the map
+    // since only after first player communicating with server and selecting the map
     // can we get the color field for player, so color can't be a input field for first player
     public Player(int id, InputStream in, OutputStream out) throws IllegalArgumentException, IOException {
         if (id <= 0) {
@@ -49,6 +50,7 @@ public abstract class Player<T> implements Serializable{
         this.territories = new HashSet<>();
         this.in = new ObjectInputStream(in);
         this.out = new ObjectOutputStream(out);
+        this.isConnect = true;
     }
 
     //this constructor should be called for all players except for first player
@@ -61,6 +63,7 @@ public abstract class Player<T> implements Serializable{
         this.territories = new HashSet<>();
         this.in = new ObjectInputStream(in);
         this.out = new ObjectOutputStream(out);
+        this.isConnect = true;
     }
 
     public int getId() {
@@ -103,7 +106,7 @@ public abstract class Player<T> implements Serializable{
             out.writeObject(data);
             out.flush();
         } catch (IOException ignored) {
-            System.out.println(ignored.toString());
+            System.err.println(ignored.toString());
             this.setConnect(false);
         }
     }
@@ -111,13 +114,44 @@ public abstract class Player<T> implements Serializable{
     public Object recv() throws ClassNotFoundException {
         Object o = new Object();
         try {
-            o =  in.readObject();
+            o = in.readObject();
         }
         catch (IOException ignored) {
-            System.out.println(ignored.toString());
+            System.err.println(ignored.toString());
             this.setConnect(false);
         }
         return o;
+    }
+
+    /**
+     * Send a chat message to the player, use a separate socket.
+     * @param message simple message object
+     */
+    public void sendChatMessage(Object message){
+        try {
+            chatOut.writeObject(message);
+            chatOut.flush();
+        } catch (IOException ignored){
+            this.setConnect(false);
+        }
+    }
+
+
+    /**
+     * Use the chat socket to receive a chat message from this player.
+     * @return ChatMessage
+     */
+    public Object recvChatMessage() {
+        try {
+            if (chatIn != null){
+                return chatIn.readObject();
+            }
+        }
+        catch (Exception ignored) {
+            System.err.println(ignored.toString());
+            this.setConnect(false);
+        }
+        return null;
     }
 
     /**
@@ -176,6 +210,16 @@ public abstract class Player<T> implements Serializable{
 
     public void setIn(ObjectInputStream in) {
         this.in = in;
+    }
+
+    /**
+     * This function will update the chat stream of current user
+     * @param in chat in stream
+     * @param out chat out stream
+     */
+    public void setChatStream(ObjectInputStream in, ObjectOutputStream out){
+        this.chatIn = in;
+        this.chatOut = out;
     }
 
     /**
