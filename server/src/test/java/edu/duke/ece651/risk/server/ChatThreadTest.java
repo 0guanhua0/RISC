@@ -49,8 +49,11 @@ public class ChatThreadTest {
         Player<String> p3 = new PlayerV1<String>("", 3);
         p3.setChatStream(new ObjectInputStream(setupMockInput(new ArrayList<Object>(nulls))), new ObjectOutputStream(out3));
 
-        Player<String> p4 = new PlayerV1<String>("", 3);
+        Player<String> p4 = new PlayerV1<String>("", 4);
         p4.setChatStream(new ObjectInputStream(setupMockInput(new ArrayList<Object>())), new ObjectOutputStream(out4));
+        // make it disconnect
+        p4.recvChatMessage();
+        assertFalse(p4.isConnect());
 
         List<Player<String>> players = new ArrayList<>(Arrays.asList(p1, p2, p3, p4));
         ChatThread<String> thread = new ChatThread<>(players);
@@ -58,7 +61,7 @@ public class ChatThreadTest {
         thread.start();
         thread.interrupt();
         thread.join();
-        Thread.sleep(100);
+        Thread.sleep(1000);
         // player1 only receive the broadcast message
         assertEquals(1, readAllChatFromObjectStream(out1).size());
         // player2 only receive the message send from 1
@@ -66,31 +69,5 @@ public class ChatThreadTest {
         // player3 only receive the broadcast message
         assertEquals(1, readAllChatFromObjectStream(out3).size());
     }
-
-    @Test
-    public void testSendTo() {
-
-    }
-
-    @Test
-    public void testSendAllExcept() {
-
-    }
-
-    @Test
-    public void testHashCode() {
-
-    }
-
-    @Test
-    public void testEquals() {
-
-    }
-
-    @Test
-    public void testUncaughtException() {
-
-    }
-
 
 } 
