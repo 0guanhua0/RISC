@@ -18,6 +18,7 @@ public class SimplePlayer implements Serializable, IUser {
     public SimplePlayer(int id, String name){
         this.id = id;
         this.name = name;
+        this.password = "";
     }
 
     public int getIdInt() {

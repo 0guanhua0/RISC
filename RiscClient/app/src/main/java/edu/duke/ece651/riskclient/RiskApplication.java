@@ -277,6 +277,8 @@ public class RiskApplication extends Application {
         try {
             if (gameSocket != null && !gameSocket.isClosed()){
                 gameSocket.close();
+                gameSocket.shutdownInput();
+                gameSocket.shutdownOutput();
             }
         }catch (IOException e){
             Log.e(TAG, "releaseGameSocket error");
@@ -291,6 +293,8 @@ public class RiskApplication extends Application {
         try {
             if (chatSocket != null && !chatSocket.isClosed()){
                 chatSocket.close();
+                chatSocket.shutdownOutput();
+                chatSocket.shutdownInput();
             }
         }catch (IOException e){
             Log.e(TAG, "releaseChatSocket error");

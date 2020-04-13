@@ -1,6 +1,7 @@
 package edu.duke.ece651.riskclient.activity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -14,24 +15,34 @@ import com.stfalcon.chatkit.messages.MessageInput;
 import com.stfalcon.chatkit.messages.MessagesList;
 import com.stfalcon.chatkit.messages.MessagesListAdapter;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import edu.duke.ece651.risk.shared.player.Player;
+import edu.duke.ece651.risk.shared.player.PlayerV1;
 import edu.duke.ece651.risk.shared.player.SMessage;
 import edu.duke.ece651.risk.shared.player.SPlayer;
 import edu.duke.ece651.riskclient.R;
+import edu.duke.ece651.riskclient.listener.onReceiveListener;
 import edu.duke.ece651.riskclient.objects.Message;
 import edu.duke.ece651.riskclient.objects.SimplePlayer;
 
+import static edu.duke.ece651.riskclient.RiskApplication.getRoomID;
 import static edu.duke.ece651.riskclient.RiskApplication.sendChat;
+import static edu.duke.ece651.riskclient.utils.HTTPUtils.listenChatMessage;
+import static edu.duke.ece651.riskclient.utils.SQLUtils.getAllMessages;
+import static edu.duke.ece651.riskclient.utils.SQLUtils.insertMessage;
 import static edu.duke.ece651.riskclient.utils.UIUtils.showToastUI;
 
-public class ChatActivity extends AppCompatActivity implements MessagesListAdapter.OnMessageLongClickListener<Message>, MessagesListAdapter.OnLoadMoreListener, MessageInput.InputListener {
+public class ChatActivity extends AppCompatActivity
+        implements MessagesListAdapter.OnMessageLongClickListener<Message>,
+        MessagesListAdapter.OnLoadMoreListener,
+        MessageInput.InputListener {
 
+    private static final String TAG = ChatActivity.class.getSimpleName();
     private static final String EVERYONE = "Everyone";
 
     /**
@@ -60,11 +71,15 @@ public class ChatActivity extends AppCompatActivity implements MessagesListAdapt
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        // TODO: pass in a list of player and extract the player name
         playerName = new ArrayList<>();
         nameToID = new HashMap<>();
         nameToID.put(EVERYONE, -1);
         playerName.add(EVERYONE);
+        try {
+            sender = new PlayerV1<>("a", 1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         Bundle data = getIntent().getExtras();
         if (data != null){
@@ -79,6 +94,42 @@ public class ChatActivity extends AppCompatActivity implements MessagesListAdapt
         }
 
         setUpUI();
+
+        // register a chat listener, keep listening for incoming message
+        listenChatMessage(new onReceiveListener() {
+            @Override
+            public void onFailure(String error) {
+                Log.e(TAG, "recv chat error: " + error);
+            }
+
+            @Override
+            public void onSuccessful(Object object) {
+                if (object instanceof Message){
+                    Message message = (Message) object;
+                    // insert into database
+                    insertMessage(message);
+                    // refresh UI
+                    runOnUiThread(() -> {
+                        messagesAdapter.addToStart(message, true);
+                    });
+                }
+            }
+        });
+
+        // load history data
+        getAllMessages(getRoomID(), new onReceiveListener() {
+            @Override
+            public void onFailure(String error) {
+                Log.e(TAG, "load history message: " + error);
+            }
+
+            @Override
+            public void onSuccessful(Object object) {
+                runOnUiThread(() -> {
+                    messagesAdapter.addToEnd((List<Message>) object, false);
+                });
+            }
+        });
     }
 
     @Override
@@ -105,8 +156,12 @@ public class ChatActivity extends AppCompatActivity implements MessagesListAdapt
 
     @Override
     public boolean onSubmit(CharSequence input) {
+        Message newMessage = new Message(0, getRoomID(), new SimplePlayer(sender.getId(), sender.getName()), input.toString());
+        // insert into database
+        insertMessage(newMessage);
         showToastUI(ChatActivity.this, input.toString());
-        messagesAdapter.addToStart(new Message(0, new SimplePlayer(sender.getId(), sender.getName()), input.toString()), true);
+        messagesAdapter.addToStart(newMessage, true);
+        // send the message to server
         SMessage message = new SMessage(0, sender.getId(), -1, sender.getName(), input.toString());
         sendChat(message);
 //        boolean b = new Random().nextBoolean();
@@ -131,8 +186,8 @@ public class ChatActivity extends AppCompatActivity implements MessagesListAdapt
         // only override the incoming text message layout(add the sender name)
         MessageHolders holdersConfig = new MessageHolders()
                 .setIncomingTextLayout(R.layout.item_custom_incoming_text_message);
-        // TODO: modify the sender id here
-        messagesAdapter = new MessagesListAdapter<>("1", holdersConfig, null);
+
+        messagesAdapter = new MessagesListAdapter<>(String.valueOf(sender.getId()), holdersConfig, null);
         messagesAdapter.setOnMessageLongClickListener(this);
         messagesAdapter.setLoadMoreListener(this);
         messagesList.setAdapter(messagesAdapter);
