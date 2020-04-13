@@ -22,10 +22,10 @@ public class TerritoryImpl extends Territory {
     int foodYield;
     int techYield;
     //key is the technology level of units, value is the set of units
-    Map<Integer, List<Unit>> unitGroup;
+    TreeMap<Integer, List<Unit>> unitGroup;
 
     //unit from ally
-    Map<Integer, List<Unit>> allyUnits;
+    TreeMap<Integer, List<Unit>> allyUnits;
 
 
 
@@ -34,8 +34,8 @@ public class TerritoryImpl extends Territory {
         this.size = size;
         this.foodYield = foodYield;
         this.techYield = techYield;
-        this.unitGroup = new HashMap<>();;
-        this.allyUnits = new HashMap<>();
+        this.unitGroup = new TreeMap<>();;
+        this.allyUnits = new TreeMap<>();
     }
 
     public int getSize() {
@@ -61,61 +61,92 @@ public class TerritoryImpl extends Territory {
         }
     }
 
-    //TODO test the correctness of this data
+    //TODO test the correctness of this method
     @Override
-    AttackResult resolveCombat(Player attacker, List<Army> armies, Random diceAttack, Random diceDefend) {
+    AttackResult resolveCombat(Map<Player, List<Army>> unifiedArmy, Random diceAttack, Random diceDefend) {
         // retrieve the attack info
         int defenderID = getOwner();
-        List<String> srcNames = armies.stream().map(Army::getSrc).collect(Collectors.toList());
+
+        //get all territories where these army come from
+        List<String> srcNames = new ArrayList<>();
+        for (Map.Entry<Player, List<Army>> entry : unifiedArmy.entrySet()) {
+            List<Army> comeFrom = entry.getValue();
+            srcNames.addAll(comeFrom.stream().map(Army::getSrc).collect(Collectors.toList()));
+        }
         String destName = getName();
 
-        //get all forces that this enemy has
-        Map<Integer,Integer> enemy = new HashMap<Integer, Integer>();
-        for (Army army : armies){
-            Map<Integer, Integer> troops = army.getTroops();
-            for (Map.Entry<Integer, Integer> entry : troops.entrySet()) {
-                enemy.put(entry.getKey(),enemy.getOrDefault(entry.getKey(),0)+entry.getValue());
+        //represent the attackers army
+        //represent seperate armies for each player, so after the battle, we know how many units left for each single player
+        List<TreeMap<Integer,Integer>> combinedAttack = new ArrayList<>();
+        List<Player> attackers = new ArrayList<>();
+        for (Player player : unifiedArmy.keySet()) {//iterate through each single player
+            TreeMap<Integer,Integer> enemy = new TreeMap<Integer, Integer>();//caculate
+            List<Army> armies = unifiedArmy.get(player);
+            for (Army army : armies) {//for each single player, iterate through all armies
+                Map<Integer, Integer> troops = army.getTroops();
+                for (Map.Entry<Integer, Integer> entry : troops.entrySet()) {
+                    enemy.put(entry.getKey(), enemy.getOrDefault(entry.getKey(), 0) + entry.getValue());
+                }
             }
+            combinedAttack.add(enemy);
+            attackers.add(player);
         }
+
+
         boolean isOwnTurn = false;
+        //TODO finish logic here
         // start combat
-        while (!enemy.isEmpty() && !unitGroup.isEmpty()) {
-            //select the unit for attacker and defender
-            int attackLevel = isOwnTurn? getMinKey(enemy): getMaxKey(enemy);
-            int defendLevel = isOwnTurn? getMaxKey(unitGroup): getMinKey(unitGroup);
-            int i1 = diceAttack.nextInt(20)+UNIT_BONUS.get(attackLevel); // attacker dice
-            int i2 = diceDefend.nextInt(20)+UNIT_BONUS.get(defendLevel); // defender dice
-            // the one with lower roll loss one unit(tie, defender win)
-            if (i1 <= i2) {//attacker loses
-                enemy.put(attackLevel,enemy.get(attackLevel)-1);
-                if (0==enemy.get(attackLevel)){
-                    enemy.remove(attackLevel);
-                }
-            } else {//defender loses
-                List<Unit> units = unitGroup.get(defendLevel);
-                if (1==units.size()){
-                    unitGroup.remove(defendLevel);
-                }else{
-                    units.remove(units.size()-1);
-                }
-            }
-            isOwnTurn = !isOwnTurn;
-        }
-        // update the ownership only if attacker has units left
-        if (!enemy.isEmpty()) {
-            setOwner(attacker.getId());
-            this.unitGroup = new HashMap<Integer, List<Unit>>();
-            for (Map.Entry<Integer, Integer> entry : enemy.entrySet()) {
-                int num = entry.getValue();
-                int level = entry.getKey();
-                List<Unit> units = new ArrayList<>();
-                for (int i = 0; i < num ; i++) {
-                    units.add(new Unit(level));
-                }
-                unitGroup.put(level,units);
-            }
-        }
-        return new AttackResult(attacker.getId(), defenderID, srcNames, destName, !enemy.isEmpty());
+//        while (true) {
+//            TreeMap<Integer, Integer> attacker1 = combinedAttack.get(0);
+//            TreeMap<Integer, Integer> attacker2 = combinedAttack.get(1);
+//            boolean attackerDone = attacker1.isEmpty()&& attacker2.isEmpty();
+//            boolean defenderDone = unitGroup.isEmpty()&&allyUnits.isEmpty();
+//            if (attackerDone||defenderDone){
+//                break;
+//            }
+//            //decide each side level and caculate corresponding result
+//            int attackLevel = isOwnTurn?getMinKey(attacker1,attacker2): getMaxKey(attacker1,attacker2);
+//            int defendLevel = isOwnTurn?getMaxKey(unitGroup,allyUnits): getMinKey(unitGroup,allyUnits);
+//            int i1 = diceAttack.nextInt(20)+UNIT_BONUS.get(attackLevel); // attacker dice
+//            int i2 = diceDefend.nextInt(20)+UNIT_BONUS.get(defendLevel); // defender dice
+//
+//            // the one with lower roll loss one unit(tie, defender win)
+//            if (i1 <= i2) {//attacker loses
+//                //decide which attacker lose this unit
+//                //update the state
+//                enemy.put(attackLevel,enemy.get(attackLevel)-1);
+//                if (0==enemy.get(attackLevel)){
+//                    enemy.remove(attackLevel);
+//                }
+//            } else {//defender loses
+//                //decide which defender lose this unit
+//
+//                //update the state
+//                List<Unit> units = unitGroup.get(defendLevel);
+//                if (1==units.size()){
+//                    unitGroup.remove(defendLevel);
+//                }else{
+//                    units.remove(units.size()-1);
+//                }
+//            }
+//            isOwnTurn = !isOwnTurn;
+//        }
+//        // update the ownership only if attacker has units left
+//        if (!enemy.isEmpty()) {
+//            setOwner(attacker.getId());
+//            this.unitGroup = new HashMap<Integer, List<Unit>>();
+//            for (Map.Entry<Integer, Integer> entry : enemy.entrySet()) {
+//                int num = entry.getValue();
+//                int level = entry.getKey();
+//                List<Unit> units = new ArrayList<>();
+//                for (int i = 0; i < num ; i++) {
+//                    units.add(new Unit(level));
+//                }
+//                unitGroup.put(level,units);
+//            }
+//        }
+//        return new AttackResult(attacker.getId(), defenderID, srcNames, destName, !enemy.isEmpty());
+        return null;
     }
 
     @Override
@@ -302,6 +333,140 @@ public class TerritoryImpl extends Territory {
             List<Unit> units = allyUnits.get(level);
             allyTerr.addUnits(units);
         }
-        this.allyUnits = new HashMap<>();
+        this.allyUnits = new TreeMap<>();
     }
+
+    /**
+     * check if the attacker lose the battle or not
+     * @param combinedAttack: unified armies from all attackers
+     * @return true when attackers lose all units
+     */
+    private boolean attackerDone(List<TreeMap<Integer,Integer>> combinedAttack){
+        for (TreeMap<Integer, Integer> treeMap : combinedAttack) {
+            if (!treeMap.isEmpty()){
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+    /**
+     * @return the first element of list is the level of selected units
+     * the second element of list represents where does this unit come from(0 for unitGroup, 1 for allyGroup)
+     */
+    private List<Integer> selectMaxDefendUnit(){
+        if (unitGroup.isEmpty()&&(null==allyUnits||allyUnits.isEmpty())){
+            throw new IllegalArgumentException("Invalid argument");
+        }
+        if (unitGroup.isEmpty()||(null==allyUnits||allyUnits.isEmpty())){
+            int level =  unitGroup.isEmpty()?allyUnits.lastKey():unitGroup.lastKey();
+            int index =  unitGroup.isEmpty()?1:0;
+            return Arrays.asList(level,index);
+        }else{
+            int myLevel = unitGroup.lastKey();
+            int allyLevel = allyUnits.lastKey();
+            if (myLevel>allyLevel){
+                return Arrays.asList(myLevel,0);
+            }else{
+                return Arrays.asList(allyLevel,1);
+            }
+        }
+    }
+
+    public static int getMinKey(TreeMap<Integer,?> map1,TreeMap<Integer,?> map2){
+        if (map1.isEmpty()&&map2.isEmpty()){
+            throw new IllegalArgumentException("Invalid argument");
+        }
+        if (map1.isEmpty()||map2.isEmpty()){
+            return map1.isEmpty()?map2.firstKey():map1.firstKey();
+        }else{
+            return Math.max(map1.firstKey(),map2.firstKey());
+        }
+    }
+
+    /**
+     * select the units with maximum level from the attacker side,
+     * randomly pick one when there are multiple units with same level
+     * @param combinedAttack: unified army from different attackers
+     * @return: the first element of list is the level, second element is for index
+     */
+    private List<Integer> selectMaxAttackUnit(List<TreeMap<Integer,Integer>> combinedAttack){
+        List<Integer> max = new ArrayList<>();
+        int maxLevel = Integer.MIN_VALUE;
+        for (int i = 0; i < combinedAttack.size(); i++) {
+            TreeMap<Integer, Integer> treeMap = combinedAttack.get(i);
+            if (treeMap.isEmpty()) continue;
+            int maxKey = treeMap.lastKey();
+            if (maxKey>maxLevel){
+                max = new ArrayList<>();
+                max.add(i);
+                maxLevel = treeMap.lastKey();
+            }else if (maxKey==maxLevel){
+                max.add(i);
+            }
+        }
+        Random random = new Random();
+        int selectedPlayer = random.nextInt(max.size());
+        return Arrays.asList(maxLevel,selectedPlayer);
+    }
+
+    /**
+     * select the units with minimum level from the attacker side,
+     * randomly pick one when there are multiple units with same level
+     * @param combinedAttack: unified army from different attackers
+     * @return: the first element of list is the level, second element is for index
+     */
+    private List<Integer> selectMaxDefendUnit(List<TreeMap<Integer,Integer>> combinedAttack){
+        List<Integer> min = new ArrayList<>();
+        int minLevel = Integer.MAX_VALUE;
+        for (int i = 0; i < combinedAttack.size(); i++) {
+            TreeMap<Integer, Integer> treeMap = combinedAttack.get(i);
+            if (treeMap.isEmpty()) continue;
+            int minKey = treeMap.firstKey();
+            if (minKey<minLevel){
+                min = new ArrayList<>();
+                min.add(i);
+                minLevel = treeMap.lastKey();
+            }else if (minKey==minLevel){
+                min.add(i);
+            }
+        }
+        Random random = new Random();
+        int selectedPlayer = random.nextInt(min.size());
+        return Arrays.asList(minLevel,selectedPlayer);
+    }
+
+    /**
+     * check if the defender lose the battle or not
+     * @return true when defenders lose all units
+     */
+    private boolean defenderDone(){
+        return unitGroup.isEmpty()&&(null==allyUnits||allyUnits.isEmpty());
+    }
+
+    /**
+     * when attackers lose a unit with corresponding level, use this method to update the state
+     * @param level: level of units
+     * @param index: index inside array, which records which player here lose this unit
+     * @param combinedAttack: the unified army from attacker
+     */
+    private void updateAttacker(int level,int index, List<TreeMap<Integer,Integer>> combinedAttack){
+        TreeMap<Integer, Integer> treeMap = combinedAttack.get(index);
+        if (1==treeMap.get(index)){
+            treeMap.remove(index);
+        }else{
+            treeMap.put(index,treeMap.get(index)-1);
+        }
+    }
+
+    /**
+     * when defender lose a unit with corresponding level, use this method to update the state
+     * @param level: level of units
+     * @param defender: could be either unitGroup or allyGroup
+     */
+    private void updateDefender(int level,TreeMap<Integer,List<Unit>> defender){
+        //TODO finish the logic inside this method
+    }
+
 }

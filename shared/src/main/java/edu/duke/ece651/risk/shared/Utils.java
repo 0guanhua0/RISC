@@ -106,11 +106,36 @@ public class Utils {
         return cloneObj;
     }
 
-    public static int getMaxKey(Map<Integer,?> map){
-        return map.keySet().stream().max(Integer::compareTo).get();
+//    public static int getMaxKey(Map<Integer,?> map){
+//        return map.keySet().stream().max(Integer::compareTo).get();
+//    }
+//
+//    public static int getMinKey(Map<Integer,?> map){
+//        return map.keySet().stream().min(Integer::compareTo).get();
+//    }
+//
+    public static int getMaxKey(TreeMap<Integer,?> map1,TreeMap<Integer,?> map2){
+        if (map1.isEmpty()&&map2.isEmpty()){
+            throw new IllegalArgumentException("Invalid argument");
+        }
+        if (map1.isEmpty()||map2.isEmpty()){
+            return map1.isEmpty()?map2.lastKey():map1.lastKey();
+        }else{
+            return Math.max(map1.lastKey(),map2.lastKey());
+        }
+    }
+    public static int getMinKey(TreeMap<Integer,?> map1,TreeMap<Integer,?> map2){
+        if (map1.isEmpty()&&map2.isEmpty()){
+            throw new IllegalArgumentException("Invalid argument");
+        }
+        if (map1.isEmpty()||map2.isEmpty()){
+            return map1.isEmpty()?map2.firstKey():map1.firstKey();
+        }else{
+            return Math.max(map1.firstKey(),map2.firstKey());
+        }
     }
 
-    public static int getMinKey(Map<Integer,?> map){
-        return map.keySet().stream().min(Integer::compareTo).get();
-    }
+
+
+
 }

@@ -88,11 +88,28 @@ public abstract class Territory implements Serializable {
         Random diceAttack = new Random(jsonObject.getInt("attackSeed"));
         Random diceDefend = new Random(jsonObject.getInt("defendSeed"));
 
+        List<Map<Player,List<Army>>> unifiedArmies = new ArrayList<>();
+        Set<Player> visited = new HashSet<>();
+
+        for (Player player : attackAct.keySet()) {
+            if (!visited.contains(player)){
+                Map<Player,List<Army>> unifiedArmy = new HashMap<>();
+                unifiedArmy.put(player,attackAct.get(player));
+                visited.add(player);
+                Player ally = player.getAlly();
+                if (null!=ally&&!visited.contains(ally)&&attackAct.containsKey(ally)){
+                    visited.add(ally);
+                    unifiedArmy.put(ally,attackAct.get(ally));
+                }
+                unifiedArmies.add(unifiedArmy);
+            }
+        }
+
         // store the whole result of combat
         ArrayList<AttackResult> attackResults = new ArrayList<>();
-        // iterate through attack list
-        for (Map.Entry<Player, List<Army>> entry : attackAct.entrySet()) {
-            attackResults.add(resolveCombat(entry.getKey(), entry.getValue(), diceAttack, diceDefend));
+        // iterate through unified armies
+        for (Map<Player, List<Army>> unifiedArmy : unifiedArmies) {
+            attackResults.add(resolveCombat(unifiedArmy, diceAttack, diceDefend));
         }
         // clean up attackMap
         attackAct.clear();
@@ -162,7 +179,7 @@ public abstract class Territory implements Serializable {
 
     public abstract void addAttack(Player player, Army army);
 
-    abstract AttackResult resolveCombat(Player player, List<Army> armies, Random diceAttack, Random diceDefend);
+    abstract AttackResult resolveCombat(Map<Player, List<Army>> unifiedArmy, Random diceAttack, Random diceDefend);
 
     abstract int getSize();
 

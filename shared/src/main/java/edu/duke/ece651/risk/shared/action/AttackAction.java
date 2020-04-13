@@ -114,7 +114,7 @@ public class AttackAction implements Action, Serializable {
         }
 
         // add attack units to target territory's attack buffer
-        worldMap.getTerritory(dest).addAttack(playerId, new Army(playerId, src,levelToNum));
+        worldMap.getTerritory(dest).addAttack(myPlayer, new Army(playerId, src,levelToNum));
 
         //break the alliance
         myPlayer.ruputureAlly();

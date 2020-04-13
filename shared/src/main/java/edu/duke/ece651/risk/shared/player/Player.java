@@ -206,6 +206,11 @@ public abstract class Player<T> implements Serializable{
         }
     }
 
+
+    public Player getAlly() {
+        return ally;
+    }
+
     /**
      * rupture of alliance between this player and her ally
      */

@@ -7,12 +7,15 @@ import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.risk.shared.player.Player;
 import edu.duke.ece651.risk.shared.player.PlayerV2;
+import jdk.nashorn.api.tree.Tree;
 import org.junit.jupiter.api.Test;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.io.*;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -195,5 +198,15 @@ class AttackActionTest {
         map.put(2,1);
         AttackAction a1 = new AttackAction("kingdom of the north", "kingdom of mountain and vale", 1, map);
         System.out.println(a1.toString());
+    }
+
+    @Test
+    void testTreeMap(){
+        TreeMap<Integer, Integer> treeMap = new TreeMap<>();
+        treeMap.put(1,10);
+        treeMap.put(2,-10);
+        Integer integer = treeMap.firstKey();
+        System.out.println("integer = " + integer);
+
     }
 }
