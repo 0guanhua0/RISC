@@ -346,7 +346,7 @@ public class HTTPUtils {
      * This method will listen the chat message as long as the socket is open.
      * @param listener receive listener
      */
-    public static void listenChatMessage(onReceiveListener listener){{
+    public static void listenChatMessage(onReceiveListener listener){
         recvChat(new onReceiveListener() {
             @Override
             public void onFailure(String error) {
@@ -362,8 +362,6 @@ public class HTTPUtils {
                 }
             }
         });
-    }
-
     }
 
     /* ====== helper function ====== */

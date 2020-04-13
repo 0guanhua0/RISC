@@ -110,7 +110,7 @@ public class HomeFragment extends Fragment {
                     createNewRoom(new onResultListener() {
                         @Override
                         public void onFailure(String error) {
-
+                            Log.e(TAG, "createNewRoom: " + error);
                         }
 
                         @Override

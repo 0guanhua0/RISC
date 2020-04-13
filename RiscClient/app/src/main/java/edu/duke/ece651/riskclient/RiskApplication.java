@@ -62,7 +62,7 @@ public class RiskApplication extends Application {
         context = getApplicationContext();
         // here we only need a relative very small thread pool, since it's almost impossible we will send two request at the same time
         BlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<>(3);
-        threadPool = new ThreadPoolExecutor(1, 3, 5, TimeUnit.SECONDS, workQueue);
+        threadPool = new ThreadPoolExecutor(3, 5, 5, TimeUnit.SECONDS, workQueue);
         // warm up one core thread
         threadPool.prestartCoreThread();
         gameSocket = null;
@@ -269,6 +269,15 @@ public class RiskApplication extends Application {
         });
     }
 
+    public static Object recvChatBlock() {
+        try {
+            return chatIn.readObject();
+        }catch (Exception e){
+            Log.e(TAG, "recvChatBlock: " + e.toString());
+        }
+        return null;
+    }
+
     /**
      * Release(close) the game socket.
      * Since this function not use thread pool inside, don't call it on MainThread.
@@ -276,9 +285,9 @@ public class RiskApplication extends Application {
     public static void releaseGameSocket() {
         try {
             if (gameSocket != null && !gameSocket.isClosed()){
-                gameSocket.close();
                 gameSocket.shutdownInput();
                 gameSocket.shutdownOutput();
+                gameSocket.close();
             }
         }catch (IOException e){
             Log.e(TAG, "releaseGameSocket error");
@@ -292,13 +301,27 @@ public class RiskApplication extends Application {
     public static void releaseChatSocket() {
         try {
             if (chatSocket != null && !chatSocket.isClosed()){
-                chatSocket.close();
                 chatSocket.shutdownOutput();
                 chatSocket.shutdownInput();
+                chatSocket.close();
             }
         }catch (IOException e){
             Log.e(TAG, "releaseChatSocket error");
         }
+    }
+
+    public static void releaseChatSocketAsy() {
+        threadPool.execute(() -> {
+            try {
+                if (chatSocket != null && !chatSocket.isClosed()){
+                    chatSocket.close();
+                    chatSocket.shutdownOutput();
+                    chatSocket.shutdownInput();
+                }
+            }catch (IOException e){
+                Log.e(TAG, "releaseChatSocket error");
+            }
+        });
     }
 
     /**

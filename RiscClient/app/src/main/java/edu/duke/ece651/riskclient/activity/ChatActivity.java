@@ -1,5 +1,7 @@
 package edu.duke.ece651.riskclient.activity;
 
+import android.content.ComponentName;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -15,7 +17,6 @@ import com.stfalcon.chatkit.messages.MessageInput;
 import com.stfalcon.chatkit.messages.MessagesList;
 import com.stfalcon.chatkit.messages.MessagesListAdapter;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,12 +28,17 @@ import edu.duke.ece651.risk.shared.player.SMessage;
 import edu.duke.ece651.risk.shared.player.SPlayer;
 import edu.duke.ece651.riskclient.R;
 import edu.duke.ece651.riskclient.listener.onReceiveListener;
+import edu.duke.ece651.riskclient.listener.onResultListener;
 import edu.duke.ece651.riskclient.objects.Message;
 import edu.duke.ece651.riskclient.objects.SimplePlayer;
 
 import static edu.duke.ece651.riskclient.RiskApplication.getRoomID;
+import static edu.duke.ece651.riskclient.RiskApplication.initChatSocket;
+import static edu.duke.ece651.riskclient.RiskApplication.recvChatBlock;
+import static edu.duke.ece651.riskclient.RiskApplication.releaseChatSocket;
 import static edu.duke.ece651.riskclient.RiskApplication.sendChat;
-import static edu.duke.ece651.riskclient.utils.HTTPUtils.listenChatMessage;
+import static edu.duke.ece651.riskclient.activity.PlayGameActivity.DATA_IS_UPGRADE_MAX;
+import static edu.duke.ece651.riskclient.activity.PlayGameActivity.DATA_PLAYING_MAP;
 import static edu.duke.ece651.riskclient.utils.SQLUtils.getAllMessages;
 import static edu.duke.ece651.riskclient.utils.SQLUtils.insertMessage;
 import static edu.duke.ece651.riskclient.utils.UIUtils.showToastUI;
@@ -58,6 +64,8 @@ public class ChatActivity extends AppCompatActivity
     private String toPlayerName;
     private List<String> playerName;
     private Map<String, Integer> nameToID;
+    private boolean listening;
+    private Thread chatThread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,9 +84,9 @@ public class ChatActivity extends AppCompatActivity
         nameToID.put(EVERYONE, -1);
         playerName.add(EVERYONE);
         try {
-            sender = new PlayerV1<>("a", 1);
-        } catch (IOException e) {
-            e.printStackTrace();
+            sender = new PlayerV1<>("1", 2);
+        }catch (Exception e){
+            System.out.println(e.toString());
         }
 
         Bundle data = getIntent().getExtras();
@@ -94,27 +102,6 @@ public class ChatActivity extends AppCompatActivity
         }
 
         setUpUI();
-
-        // register a chat listener, keep listening for incoming message
-        listenChatMessage(new onReceiveListener() {
-            @Override
-            public void onFailure(String error) {
-                Log.e(TAG, "recv chat error: " + error);
-            }
-
-            @Override
-            public void onSuccessful(Object object) {
-                if (object instanceof Message){
-                    Message message = (Message) object;
-                    // insert into database
-                    insertMessage(message);
-                    // refresh UI
-                    runOnUiThread(() -> {
-                        messagesAdapter.addToStart(message, true);
-                    });
-                }
-            }
-        });
 
         // load history data
         getAllMessages(getRoomID(), new onReceiveListener() {
@@ -136,7 +123,9 @@ public class ChatActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case android.R.id.home:
-                onBackPressed();
+//                onBackPressed();
+                Intent intent = new Intent(ChatActivity.this, SignUpActivity.class);
+                startActivity(intent);
                 break;
             default:
                 break;
@@ -164,13 +153,56 @@ public class ChatActivity extends AppCompatActivity
         // send the message to server
         SMessage message = new SMessage(0, sender.getId(), -1, sender.getName(), input.toString());
         sendChat(message);
-//        boolean b = new Random().nextBoolean();
-//        if (b){
-//            messagesAdapter.addToStart(new Message(1, new SimplePlayer(1, "xkw"), input.toString()), true);
-//        }else {
-//            messagesAdapter.addToStart(new Message(2, new SimplePlayer(2, "xkx"), input.toString()), true);
-//        }
+        // return true will clear the message input(aka, send the message successfully)
+        // return false, nothing happen
         return true;
+    }
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        listening = true;
+        setUpChat();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        listening = false;
+        if (chatThread != null){
+            chatThread.interrupt();
+        }
+        releaseChatSocket();
+    }
+
+    private void setUpChat(){
+        // first init the chat socket
+        initChatSocket(new onResultListener() {
+            @Override
+            public void onFailure(String error) {
+                Log.e(TAG, "fail to init chat socket: " + error);
+            }
+
+            @Override
+            public void onSuccessful() {
+                showToastUI(ChatActivity.this, "Connect to the chat successfully.");
+                listenForNewMessage();
+            }
+        });
+    }
+
+    private void listenForNewMessage(){
+        chatThread = new Thread(() -> {
+            while (!Thread.currentThread().isInterrupted()){
+                Object object = recvChatBlock();
+                if (object instanceof Message){
+                    messagesAdapter.addToStart((Message) object, true);
+                }
+            }
+            Log.e(TAG, "release chat socket");
+        });
+        chatThread.start();
     }
 
     private void setUpUI(){

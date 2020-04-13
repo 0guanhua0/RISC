@@ -133,9 +133,8 @@ public class PlayGameActivity extends AppCompatActivity {
         // make sure user can't do anything before we receive the first round data
         setAllButtonClickable(false);
 
-        // these two use separate socket, can do them in parallel
+        // these two function use separate sockets, can perform them in parallel
         receiveLatestInfo();
-        connectToChat();
     }
 
     @Override
@@ -157,7 +156,6 @@ public class PlayGameActivity extends AppCompatActivity {
                 data.putSerializable(DATA_CURRENT_PLAYER, player);
                 intent.putExtras(data);
                 startActivity(intent);
-                // TODO: go to the chat room
                 break;
             default:
                 break;
@@ -643,21 +641,6 @@ public class PlayGameActivity extends AppCompatActivity {
             }
         }
         isLose = true;
-    }
-
-    private void connectToChat(){
-        // first init the chat socket
-        initChatSocket(new onResultListener() {
-            @Override
-            public void onFailure(String error) {
-                Log.e(TAG, "fail to init chat socket: " + error);
-            }
-
-            @Override
-            public void onSuccessful() {
-                showToastUI(PlayGameActivity.this, "Connect to the chat successfully.");
-            }
-        });
     }
 
     // probably want to extract this into constant
