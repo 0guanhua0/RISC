@@ -57,11 +57,13 @@ public class ChatThread<T> extends Thread{
      * @param data SMessage
      * @param playerID id of the receiver
      */
-    synchronized void sendTo(Object data, int playerID){
-        for (Player<?> player : allPlayers) {
-            if (player.isConnect() && player.getId() == playerID) {
-                // NOTE: should use the chat socket here
-                player.sendChatMessage(data);
+    void sendTo(Object data, int playerID){
+        synchronized (this){
+            for (Player<?> player : allPlayers) {
+                if (player.isConnect() && player.getId() == playerID) {
+                    // NOTE: should use the chat socket here
+                    player.sendChatMessage(data);
+                }
             }
         }
     }
@@ -71,11 +73,13 @@ public class ChatThread<T> extends Thread{
      * @param data SMessage
      * @param playerID id of the excluded player
      */
-    synchronized void sendAllExcept(Object data, int playerID)  {
-        for (Player<?> player : allPlayers) {
-            if (player.isConnect() && player.getId() != playerID) {
-                // NOTE: should use the chat socket here
-                player.sendChatMessage(data);
+    void sendAllExcept(Object data, int playerID)  {
+        synchronized (this){
+            for (Player<?> player : allPlayers) {
+                if (player.isConnect() && player.getId() != playerID) {
+                    // NOTE: should use the chat socket here
+                    player.sendChatMessage(data);
+                }
             }
         }
     }
