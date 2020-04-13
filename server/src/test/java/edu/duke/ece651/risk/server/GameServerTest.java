@@ -69,7 +69,6 @@ public class GameServerTest {
         when(socket2.getInputStream()).thenReturn(setupMockInput(new ArrayList<>(Arrays.asList(s21))));
         when(socket2.getOutputStream()).thenReturn(new ByteArrayOutputStream());
 
-
         String userName3 = "3";
         String userPassword3 = "3";
 
@@ -84,7 +83,7 @@ public class GameServerTest {
 
         Server server = mock(Server.class);
 
-        when(server.accept()).thenReturn(socket1).thenReturn(socket2).thenReturn(socketError);
+        when(server.accept()).thenReturn(socket1).thenReturn(socket2).thenReturn(socketError).thenReturn(null);
 
         Thread thread = new Thread(() -> {
             GameServer gameServer = null;

@@ -15,8 +15,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class PlayerV2Test {
 
-
-
     @Test
     void updateState() throws IOException {
         MapDataBase<String> mapDataBase = new MapDataBase<String>();

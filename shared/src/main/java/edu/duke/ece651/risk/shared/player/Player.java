@@ -50,6 +50,7 @@ public abstract class Player<T> implements Serializable{
         this.territories = new HashSet<>();
         this.in = new ObjectInputStream(in);
         this.out = new ObjectOutputStream(out);
+        this.isConnect = true;
     }
 
     //this constructor should be called for all players except for first player
@@ -62,6 +63,7 @@ public abstract class Player<T> implements Serializable{
         this.territories = new HashSet<>();
         this.in = new ObjectInputStream(in);
         this.out = new ObjectOutputStream(out);
+        this.isConnect = true;
     }
 
     public int getId() {

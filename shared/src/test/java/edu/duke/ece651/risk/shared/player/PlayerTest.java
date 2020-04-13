@@ -90,7 +90,6 @@ class PlayerTest {
         assertFalse(n2.isFree());
     }
 
-
     @Test
     void testSendRecv() throws IOException, ClassNotFoundException {
         String str1 = "hello";
@@ -104,7 +103,7 @@ class PlayerTest {
     }
 
     @Test
-    void testSendIO() throws IOException {
+    void testSendException() throws IOException {
         ByteArrayOutputStream out = mock(ByteArrayOutputStream.class);
         Player<String> player = new PlayerV1<String>(setupMockInput(new ArrayList<Object>(Arrays.asList("str1"))), out);
         doThrow(new IOException())
@@ -116,11 +115,48 @@ class PlayerTest {
     }
 
     @Test
-    void testRecvIO() throws IOException, ClassNotFoundException {
+    void testRecvException() throws IOException, ClassNotFoundException {
         // NOTE: EOFException extends IOException, so we only need to produce an EOF(which a empty stream can achieve)
         Player<String> player = new PlayerV1<String>(setupMockInput(new ArrayList<>()), new ByteArrayOutputStream());
         assertTrue(player.isConnect);
         player.recv();
+        assertFalse(player.isConnect);
+    }
+
+    @Test
+    void testSendRecvChat() throws IOException, ClassNotFoundException {
+        String str = "SUCCESSFUL";
+        SMessage message = new SMessage(1, 1, 2, "xxx", "hello");
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        Player<String> player = new PlayerV1<String>(setupMockInput(new ArrayList<Object>(Arrays.asList("1", "2"))), outputStream);
+        // for now, the chatIn will be null
+        assertNull(player.recvChatMessage());
+        player.setChatStream(new ObjectInputStream(setupMockInput(new ArrayList<Object>(Arrays.asList(message)))), new ObjectOutputStream(new ByteArrayOutputStream()));
+        assertEquals(message.getMessage(), ((SMessage)player.recvChatMessage()).getMessage());
+        player.send(str);
+        assertEquals(str, readAllStringFromObjectStream(outputStream));
+    }
+
+    @Test
+    void testSendChatException() throws IOException {
+        ByteArrayOutputStream out = mock(ByteArrayOutputStream.class);
+        Player<String> player = new PlayerV1<String>("", 1);
+        player.setChatStream(new ObjectInputStream(setupMockInput(new ArrayList<Object>(Arrays.asList("str1")))), new ObjectOutputStream(out));
+        doThrow(new IOException())
+                .when(out)
+                .flush();
+        assertTrue(player.isConnect);
+        player.sendChatMessage("1");
+        assertFalse(player.isConnect);
+    }
+
+    @Test
+    void testRecvChatException() throws IOException {
+        // NOTE: EOFException extends IOException, so we only need to produce an EOF(which a empty stream can achieve)
+        Player<String> player = new PlayerV1<String>("", 1);
+        player.setChatStream(new ObjectInputStream(setupMockInput(new ArrayList<>())), new ObjectOutputStream(new ByteArrayOutputStream()));
+        assertTrue(player.isConnect);
+        player.recvChatMessage();
         assertFalse(player.isConnect);
     }
 
