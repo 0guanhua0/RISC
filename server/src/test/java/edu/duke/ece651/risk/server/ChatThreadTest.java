@@ -29,9 +29,9 @@ public class ChatThreadTest {
         }
         String str = "SUCCESSFUL";
         // send to 2
-        SMessage message1 = new SMessage(1, 1, 2, "xxx", "hello");
+        SMessage message1 = new SMessage(1, 1, 2, "xxx1", "hello");
         // send to all
-        SMessage message2 = new SMessage(1, 1, -1, "xxx", "hello");
+        SMessage message2 = new SMessage(1, 2, -1, "xxx2", "hello");
 
         ByteArrayOutputStream out1 = new ByteArrayOutputStream();
         ByteArrayOutputStream out2 = new ByteArrayOutputStream();
@@ -39,10 +39,12 @@ public class ChatThreadTest {
         ByteArrayOutputStream out4 = new ByteArrayOutputStream();
 
         Player<String> p1 = new PlayerV1<String>("", 1);
-        p1.setChatStream(new ObjectInputStream(setupMockInput(new ArrayList<Object>(Arrays.asList(message1, message2)))), new ObjectOutputStream(out1));
+        // player1 send to player2
+        p1.setChatStream(new ObjectInputStream(setupMockInput(new ArrayList<Object>(Arrays.asList(message1)))), new ObjectOutputStream(out1));
 
         Player<String> p2 = new PlayerV1<String>("", 2);
-        p2.setChatStream(new ObjectInputStream(setupMockInput(new ArrayList<Object>(nulls))), new ObjectOutputStream(out2));
+        // player2 broadcast to all
+        p2.setChatStream(new ObjectInputStream(setupMockInput(new ArrayList<>(Arrays.asList(message2)))), new ObjectOutputStream(out2));
 
         Player<String> p3 = new PlayerV1<String>("", 3);
         p3.setChatStream(new ObjectInputStream(setupMockInput(new ArrayList<Object>(nulls))), new ObjectOutputStream(out3));
@@ -52,39 +54,43 @@ public class ChatThreadTest {
 
         List<Player<String>> players = new ArrayList<>(Arrays.asList(p1, p2, p3, p4));
         ChatThread<String> thread = new ChatThread<>(players);
+
         thread.start();
-        Thread.sleep(10);
         thread.interrupt();
         thread.join();
-        assertEquals(2, readAllChatFromObjectStream(out2).size());
+        Thread.sleep(100);
+        // player1 only receive the broadcast message
+        assertEquals(1, readAllChatFromObjectStream(out1).size());
+        // player2 only receive the message send from 1
+        assertEquals(1, readAllChatFromObjectStream(out2).size());
         // player3 only receive the broadcast message
         assertEquals(1, readAllChatFromObjectStream(out3).size());
     }
-    
+
     @Test
-    public void testSendTo() { 
-        
+    public void testSendTo() {
+
     }
-    
+
     @Test
-    public void testSendAllExcept() { 
-        
+    public void testSendAllExcept() {
+
     }
-    
+
     @Test
-    public void testHashCode() { 
-        
+    public void testHashCode() {
+
     }
-    
+
     @Test
-    public void testEquals() { 
-        
+    public void testEquals() {
+
     }
-    
+
     @Test
-    public void testUncaughtException() { 
-        
+    public void testUncaughtException() {
+
     }
-    
+
 
 } 

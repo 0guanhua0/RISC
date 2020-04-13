@@ -175,7 +175,7 @@ public class GameServer {
                 currPlayer.setConnect(true);
                 currPlayer.sendChatMessage(SUCCESSFUL);
             } else {
-                player.sendChatMessage(INVALID_RECONNECT);
+                player.send(INVALID_RECONNECT);
             }
         }
     }

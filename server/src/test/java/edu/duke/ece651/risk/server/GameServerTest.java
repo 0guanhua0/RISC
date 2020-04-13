@@ -247,20 +247,6 @@ public class GameServerTest {
         assertEquals("", readAllStringFromObjectStream(outputStream));
 
         outputStream.reset();
-
-        // 8 login user connect to the chat
-//        String s8 = "{\"" + USER_NAME + "\": \"" + userName2 + "\",\n" +
-//                "\"" + USER_PASSWORD + "\": \"" + userPassword2 + "\",\n" +
-//                "\"" + ROOM_ID + "\": \"" + 0 + "\",\n" +
-//                "\"" + ACTION + "\": \"" + ACTION_CONNECT_CHAT + "\" }";
-//
-//        Socket socket8 = mock(Socket.class);
-//        when(socket8.getInputStream())
-//                .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList(s8))));
-//        when(socket8.getOutputStream()).thenReturn(outputStream);
-//
-//        gameServer.handleIncomeRequest(socket8);
-//        assertEquals("", readAllStringFromObjectStream(outputStream));
     }
 
     /**
@@ -340,8 +326,6 @@ public class GameServerTest {
                 "\"" + ROOM_ID + "\": \"" + 5 + "\",\n" +
                 "\"" + ACTION + "\": \"" + ACTION_RECONNECT_ROOM + "\" }";
 
-
-
         ByteArrayOutputStream o4 = new ByteArrayOutputStream();
         Socket socket4 = mock(Socket.class);
         when(socket4.getInputStream())
@@ -356,8 +340,6 @@ public class GameServerTest {
                 "\"" + ROOM_ID + "\": \"" + 5 + "\",\n" +
                 "\"" + ACTION + "\": \"" + "xxx" + "\" }";
 
-
-
         ByteArrayOutputStream o5 = new ByteArrayOutputStream();
         Socket socket5 = mock(Socket.class);
         when(socket5.getInputStream())
@@ -367,6 +349,37 @@ public class GameServerTest {
         gameServer.handleIncomeRequest(socket5);
 
         assertEquals("", readAllStringFromObjectStream(o5));
+
+
+        //6 login user connect to the chat
+        String s6 = "{\"" + USER_NAME + "\": \"" + userName1 + "\",\n" +
+                "\"" + ROOM_ID + "\": \"" + 0 + "\",\n" +
+                "\"" + ACTION + "\": \"" + ACTION_CONNECT_CHAT + "\" }";
+
+        ByteArrayOutputStream o6 = new ByteArrayOutputStream();
+        Socket socket6 = mock(Socket.class);
+        when(socket6.getInputStream())
+                .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList(s6))));
+        when(socket6.getOutputStream()).thenReturn(o6);
+
+        gameServer.handleIncomeRequest(socket6);
+
+        assertEquals(SUCCESSFUL, readAllStringFromObjectStream(o6));
+
+        // 7 login user connect to the chat but no in this room
+        String s7 = "{\"" + USER_NAME + "\": \"" + userName1 + "\",\n" +
+                "\"" + ROOM_ID + "\": \"" + 10 + "\",\n" +
+                "\"" + ACTION + "\": \"" + ACTION_CONNECT_CHAT + "\" }";
+
+        ByteArrayOutputStream o7 = new ByteArrayOutputStream();
+        Socket socket7 = mock(Socket.class);
+        when(socket7.getInputStream())
+                .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList(s7))));
+        when(socket7.getOutputStream()).thenReturn(o7);
+
+        gameServer.handleIncomeRequest(socket7);
+
+        assertEquals(INVALID_RECONNECT, readAllStringFromObjectStream(o7));
     }
 
     @Test
