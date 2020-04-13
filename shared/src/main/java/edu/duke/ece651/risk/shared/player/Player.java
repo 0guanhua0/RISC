@@ -180,6 +180,11 @@ public abstract class Player<T> implements Serializable{
         if (!this.hasAlly()&&!p.hasAlly()&&this.allyRequest==p.getId()&&p.allyRequest==this.getId()&&this.allyRequest!=-1){
             return true;
         }else{
+//            System.out.println("I am "+getId());
+//            System.out.println("current "+this.allyRequest);
+//            System.out.println("other "+p.allyRequest);
+//            System.out.println(!this.hasAlly());
+//            System.out.println(!p.hasAlly());
             return false;
         }
     }

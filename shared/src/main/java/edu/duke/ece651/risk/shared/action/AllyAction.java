@@ -21,6 +21,8 @@ public class AllyAction implements Action{
     }
 
     /**
+     * it's worth noting that, an ally action is valid doesn't mean it will take effect final
+     * for example, it's valid for player A to make an ally action with B as long as A herself doesn't have an ally now
      * @param worldState: current state of the world
      * @return if this the current player can make a AllyAction, note that it doesn't mean such an ally action will be successful
      */
@@ -48,9 +50,7 @@ public class AllyAction implements Action{
         }
         Player<String> myPlayer = worldState.getMyPlayer();
         myPlayer.setAllyRequest(this.allyRequest);
-        Player<String> targetAlly = worldState.getPlayers().get(allyRequest);
-        //use the allyRequest as a field inside player class
-        myPlayer.setAllyRequest(this.allyRequest);
+        Player<String> targetAlly = worldState.getPlayers().get(allyRequest-1);
         //if both has such a request, accept
         if (targetAlly.canAllyWith(myPlayer)){
             myPlayer.allyWith(targetAlly);
