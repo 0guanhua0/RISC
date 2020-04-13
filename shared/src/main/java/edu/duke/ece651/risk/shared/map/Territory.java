@@ -133,7 +133,7 @@ public abstract class Territory implements Serializable {
 
     /**
      * add some basic units into this territory
-     * @param num： number of level0 units
+     * @param num: number of level0 units
      * @throws IllegalArgumentException
      */
     public abstract void addBasicUnits(int num) throws IllegalArgumentException;
@@ -147,7 +147,7 @@ public abstract class Territory implements Serializable {
 
     /**
      * let this territory lose some basic units
-     * @param num： number of level0 units
+     * @param num: number of level0 units
      * @throws IllegalArgumentException
      */
     public abstract void loseBasicUnits(int num);
