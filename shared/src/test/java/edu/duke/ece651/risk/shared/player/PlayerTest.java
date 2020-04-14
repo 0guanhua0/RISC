@@ -238,7 +238,7 @@ class PlayerTest {
     }
 
     @Test
-    void isAllyWith() throws IOException {
+    void getAlly() throws IOException {
         PlayerV2<String> player1 = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),new ByteArrayOutputStream());
         PlayerV2<String> player2 = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),new ByteArrayOutputStream());
         player1.setId(1);
@@ -246,6 +246,24 @@ class PlayerTest {
         player1.setAllyRequest(2);
         player2.setAllyRequest(1);
         player1.allyWith(player2);
+        assertEquals(player1,player2.getAlly());
+        assertEquals(player2,player1.getAlly());
+    }
+
+    @Test
+    void isAllyWith() throws IOException {
+        PlayerV2<String> player1 = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),new ByteArrayOutputStream());
+        PlayerV2<String> player2 = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),new ByteArrayOutputStream());
+        player1.setId(1);
+        player2.setId(2);
+
+        TerritoryImpl test = new TerritoryImpl("test", 3, 20, 20);
+        player1.addTerritory(test);
+
+        player1.setAllyRequest(2);
+        player2.setAllyRequest(1);
+        player1.allyWith(player2);
+
         assertTrue(player1.isAllyWith(player2));
         assertTrue(player2.isAllyWith(player1));
         player1.updateState();
@@ -255,7 +273,56 @@ class PlayerTest {
     }
 
     @Test
-    void ruputureAlly() {
+    void ruputureAlly() throws IOException {
+
+        Player<String> player1 = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),new ByteArrayOutputStream());
+        Player<String> player2 = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),new ByteArrayOutputStream());
+        assertThrows(IllegalStateException.class,()->{player1.ruptureAlly();});
+        player1.setId(1);
+        player2.setId(2);
+
+        TerritoryImpl test = new TerritoryImpl("test", 3, 20, 20);
+        player1.addTerritory(test);
+
+        player1.setAllyRequest(2);
+        player2.setAllyRequest(1);
+        player1.allyWith(player2);
+
+        assertEquals(2,test.getAllyId());
+        assertDoesNotThrow(()->{player1.ruptureAlly();});
+        assertEquals(null,player1.ally);
+        assertEquals(-1,player1.allyRequest);
+        assertEquals(null,player2.ally);
+        assertEquals(-1,player2.allyRequest);
+        assertEquals(-1,test.getAllyId());
+
+    }
+
+    @Test
+    void setTerrAlly() throws IOException {
+        Player<String> player1 = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),new ByteArrayOutputStream());
+        Player<String> player2 = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),new ByteArrayOutputStream());
+        assertThrows(IllegalStateException.class,()->{player1.ruptureAlly();});
+        player1.setId(1);
+        player2.setId(2);
+
+        TerritoryImpl test = new TerritoryImpl("test", 3, 20, 20);
+        player1.addTerritory(test);
+        TerritoryImpl test2 = new TerritoryImpl("test2", 3, 20, 20);
+        player1.addTerritory(test2);
+
+
+        player1.setAllyRequest(2);
+        player2.setAllyRequest(1);
+        player1.allyWith(player2);
+
+        player1.setTerrAlly();
+        assertEquals(2,test.getAllyId());
+        assertEquals(2,test2.getAllyId());
+
+
+
+
     }
 
 
