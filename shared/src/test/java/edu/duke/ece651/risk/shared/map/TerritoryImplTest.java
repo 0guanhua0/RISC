@@ -476,9 +476,6 @@ class TerritoryImplTest {
         test.updateDefender(2,1);
         assertEquals(1,test.allyUnits.get(2).size());
 
-
-
-
     }
 
     @Test
