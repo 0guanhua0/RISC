@@ -337,7 +337,9 @@ public class PlayGameActivity extends AppCompatActivity {
         List<String> allianceName = new ArrayList<>();
         for (SPlayer p : allPlayers){
             // TODO: exclude player himself
-            allianceName.add(p.getName());
+            if (p.getId() != player.getId()){
+                allianceName.add(p.getName());
+            }
         }
 
         ArrayAdapter<String> adapterName =

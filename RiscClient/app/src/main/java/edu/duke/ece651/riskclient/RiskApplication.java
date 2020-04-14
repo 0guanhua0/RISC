@@ -142,6 +142,7 @@ public class RiskApplication extends Application {
                 // https://stackoverflow.com/questions/21075453/objectinputstream-from-socket-getinputstream
                 RiskApplication.out = new ObjectOutputStream(gameSocket.getOutputStream());
                 RiskApplication.in = new ObjectInputStream(gameSocket.getInputStream());
+                Log.e(TAG, "initGameSocket success");
                 listener.onSuccessful();
             }catch (IOException e){
                 Log.e(TAG, "initGameSocket error");
@@ -188,21 +189,6 @@ public class RiskApplication extends Application {
             }catch (IOException | JSONException | ClassNotFoundException e){
                 Log.e(TAG, "initGameSocket error " + e.toString());
                 listener.onFailure("can't initialize the game socket");
-            }
-        });
-    }
-
-    /**
-     * Send data to remote server(use the game socket).
-     * @param object object going to be sent
-     */
-    public static void send(Object object) {
-        threadPool.execute(() -> {
-            try {
-                out.writeObject(object);
-                out.flush();
-            }catch (Exception e){
-                Log.e(TAG, "send error: " + e.toString());
             }
         });
     }
@@ -288,6 +274,7 @@ public class RiskApplication extends Application {
                 gameSocket.shutdownInput();
                 gameSocket.shutdownOutput();
                 gameSocket.close();
+                gameSocket = null;
             }
         }catch (IOException e){
             Log.e(TAG, "releaseGameSocket error");

@@ -151,11 +151,21 @@ public class HTTPUtils {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put(USER_NAME, getPlayerName());
             jsonObject.put(ACTION_TYPE, ACTION_CREATE_GAME);
-            send(jsonObject.toString());
-            // create a new room
-            sendAndCheckSuccessG("-1", listener);
+            send(jsonObject.toString(), new onResultListener() {
+                @Override
+                public void onFailure(String error) {
+                    Log.e(TAG, "createNewRoom: " + error);
+                }
+
+                @Override
+                public void onSuccessful() {
+                    // create a new room
+                    sendAndCheckSuccessG("-1", listener);
+                }
+            });
         }catch (JSONException e){
             Log.e(TAG, "createNewRoom: " + e.toString());
+            listener.onFailure(e.toString());
         }
     }
 
@@ -221,9 +231,18 @@ public class HTTPUtils {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put(USER_NAME, getPlayerName());
             jsonObject.put(ACTION_TYPE, ACTION_JOIN_GAME);
-            send(jsonObject.toString());
-            // join in an existing room
-            sendAndCheckSuccessG(String.valueOf(getRoomID()), listener);
+            send(jsonObject.toString(), new onResultListener() {
+                @Override
+                public void onFailure(String error) {
+                    Log.e(TAG, "joinRoom: " + error);
+                }
+
+                @Override
+                public void onSuccessful() {
+                    // join in an existing room
+                    sendAndCheckSuccessG(String.valueOf(getRoomID()), listener);
+                }
+            });
         }catch (JSONException e){
             Log.e(TAG, "joinRoom: " + e.toString());
         }
@@ -426,8 +445,17 @@ public class HTTPUtils {
      * @param listener result listener
      */
     static void sendAndCheckSuccessG(Object object, onResultListener listener){
-        send(object);
-        checkResult(listener);
+        send(object, new onResultListener() {
+            @Override
+            public void onFailure(String error) {
+                Log.e(TAG, "sendAndCheckSuccessG: " + error);
+            }
+
+            @Override
+            public void onSuccessful() {
+                checkResult(listener);
+            }
+        });
     }
 }
 

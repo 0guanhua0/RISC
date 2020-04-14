@@ -17,9 +17,6 @@ public interface MessageDao {
     @Query("SELECT * FROM message WHERE roomID=:roomID")
     List<Message> getMessageByRoom(int roomID);
 
-    @Query("SELECT * FROM message WHERE date BETWEEN :from AND :to")
-    List<Message> findUsersBornBetweenDates(Date from, Date to);
-
     @Insert
     void insert(Message message);
 }

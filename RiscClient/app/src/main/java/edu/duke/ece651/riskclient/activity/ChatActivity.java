@@ -103,7 +103,7 @@ public class ChatActivity extends AppCompatActivity
 
         setUpUI();
 
-        // load history data
+        // load history message
         getAllMessages(getRoomID(), new onReceiveListener() {
             @Override
             public void onFailure(String error) {
@@ -196,8 +196,10 @@ public class ChatActivity extends AppCompatActivity
         chatThread = new Thread(() -> {
             while (!Thread.currentThread().isInterrupted()){
                 Object object = recvChatBlock();
-                if (object instanceof Message){
-                    messagesAdapter.addToStart((Message) object, true);
+                if (object instanceof SMessage){
+                    runOnUiThread(() -> {
+                        messagesAdapter.addToStart(new Message((SMessage) object), true);
+                    });
                 }
             }
             Log.e(TAG, "release chat socket");
