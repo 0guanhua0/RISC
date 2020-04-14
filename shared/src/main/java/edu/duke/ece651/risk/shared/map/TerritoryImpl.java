@@ -449,18 +449,22 @@ public class TerritoryImpl extends Territory {
      * @param index: index inside array, which records which player here lose this unit
      * @param combinedAttack: the unified army from attacker
      */
-    void updateAttacker(int level,int index, List<TreeMap<Integer,Integer>> combinedAttack){
+    void updateAttacker(int level, int index, List<TreeMap<Integer,Integer>> combinedAttack){
         TreeMap<Integer, Integer> treeMap = combinedAttack.get(index);
-        if (1==treeMap.get(index)){//remove the entry when we no longer have
-            treeMap.remove(index);
+        if (treeMap.getOrDefault(level,0)<=0){
+            throw new IllegalArgumentException("Invalid level");
+        }
+        if (1==treeMap.get(level)){//remove the entry when we no longer have
+            treeMap.remove(level);
         }else{
-            treeMap.put(index,treeMap.get(index)-1);
+            treeMap.put(level,treeMap.get(level)-1);
         }
     }
 
     /**
      * when defender lose a unit with corresponding level, use this method to update the state
      * @param level: level of units
+     * @param idx: if 0, update owner, otherwise update the ally
      */
     void updateDefender(int level,int idx){
         if (0==idx){//update the owner

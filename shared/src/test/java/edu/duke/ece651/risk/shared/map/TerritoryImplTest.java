@@ -420,16 +420,64 @@ class TerritoryImplTest {
         List<Integer> list2 = test.selectMinAttackUnit(combinedAttack);
         assertEquals(0,list2.get(0));
         assertTrue(list1.get(1)==0||list2.get(1)==2);
-
     }
 
     @Test
     void updateAttacker() {
-
+        TerritoryImpl test = new TerritoryImpl("test", 3, 20, 20);
+        List<TreeMap<Integer,Integer>> combinedAttack = new ArrayList<>();
+        TreeMap<Integer, Integer> treeMap1 = new TreeMap<Integer, Integer>(){{
+            put(1,1);
+            put(0,2);
+        }};
+        TreeMap<Integer, Integer> treeMap2 = new TreeMap<>();
+        combinedAttack.add(treeMap1);
+        combinedAttack.add(treeMap2);
+        test.updateAttacker(1,0,combinedAttack);
+        assertFalse(treeMap1.containsKey(1));
+        test.updateAttacker(0,0,combinedAttack);
+        assertEquals(1,treeMap1.get(0));
+        assertThrows(IllegalArgumentException.class,()->{test.updateAttacker(2,0,combinedAttack);});
     }
 
     @Test
-    void updateDefender() {
+    void updateDefender() throws IOException {
+        //prepare the state
+        MapDataBase<String> mapDataBase = new MapDataBase<>();
+        WorldMap<String> worldMap = mapDataBase.getMap("a clash of kings");
+        PlayerV2<String> player1 = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),new ByteArrayOutputStream());
+        PlayerV2<String> player2 = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),new ByteArrayOutputStream());
+        player1.setId(1);
+        player2.setId(2);
+        TerritoryImpl test = new TerritoryImpl("test", 3, 20, 20);
+        player1.addTerritory(test);
+        WorldState worldState1 = new WorldState(player1, worldMap, Arrays.asList(player1,player2));
+        WorldState worldState2 = new WorldState(player2, worldMap, Arrays.asList(player1,player2));
+        AllyAction allyAction1 = new AllyAction(2);
+        allyAction1.perform(worldState1);
+        AllyAction allyAction2 = new AllyAction(1);
+        allyAction2.perform(worldState2);
+
+        test.addAllyUnit(new Unit(2));
+        test.addAllyUnit(new Unit(2));
+        test.addAllyUnit(new Unit(0));
+
+        test.addUnit(new Unit(0));
+        test.addUnit(new Unit(2));
+
+
+
+        assertTrue(test.unitGroup.containsKey(0));
+        test.updateDefender(0,0);
+        assertFalse(test.unitGroup.containsKey(0));
+
+        test.updateDefender(0,1);
+        assertFalse(test.allyUnits.containsKey(0));
+        test.updateDefender(2,1);
+        assertEquals(1,test.allyUnits.get(2).size());
+
+
+
 
     }
 
