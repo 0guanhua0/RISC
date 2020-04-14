@@ -1,6 +1,7 @@
 package edu.duke.ece651.riskclient.sql;
 
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 
@@ -19,4 +20,7 @@ public interface MessageDao {
 
     @Insert
     long insert(Message message);
+
+    @Delete
+    void deleteMessages(List<Message> messages);
 }

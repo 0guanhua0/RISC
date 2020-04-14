@@ -63,6 +63,8 @@
     <!--  chat activity  -->
     <string name="chat_hint_enter_a_message">Type a message…</string>
     <string name="chat_hint_to_player">To:</string>
+    <string name="chat_action_copy">Copy</string>
+    <string name="chat_action_delete">Delete</string>
 
     <string name="menu_home">Home</string>
     <string name="menu_update">Change Password</string>

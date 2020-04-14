@@ -1,11 +1,14 @@
 package edu.duke.ece651.riskclient.objects;
 
+import androidx.annotation.Nullable;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 import com.stfalcon.chatkit.commons.models.IMessage;
 import com.stfalcon.chatkit.commons.models.IUser;
+import com.stfalcon.chatkit.commons.models.MessageContentType;
+import com.stfalcon.chatkit.messages.MessageHolders;
 
 import java.util.Date;
 

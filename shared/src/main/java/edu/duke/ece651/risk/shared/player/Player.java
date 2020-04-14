@@ -169,11 +169,8 @@ public abstract class Player<T> implements Serializable{
      */
     public Object recvChatMessage() {
         try {
-            if (chatIn != null){
-                return chatIn.readObject();
-            }
-        }
-        catch (Exception ignored) {
+            return chatIn.readObject();
+        } catch (Exception ignored) {
             System.err.println(ignored.toString());
             this.setConnect(false);
         }

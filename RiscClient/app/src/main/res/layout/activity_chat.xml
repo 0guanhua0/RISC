@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -9,12 +9,17 @@
 
     <include
         android:id="@+id/app_bar"
-        layout="@layout/widget_app_bar"/>
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/widget_app_bar"
+        android:layout_alignParentTop="true"/>
 
     <com.stfalcon.chatkit.messages.MessagesList
         android:id="@+id/messagesList"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="match_parent"
+        android:layout_below="@id/app_bar"
+        android:layout_above="@id/dd_to_player"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@id/dd_to_player"
@@ -27,6 +32,7 @@
         android:layout_width="wrap_content"
         android:layout_marginHorizontal="@dimen/normal_margin"
         android:layout_marginVertical="@dimen/small_margin_vertical"
+        android:layout_above="@id/input"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toTopOf="@id/input"/>
 
@@ -36,6 +42,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:background="@color/gray_light"
+        android:layout_above="@id/input"
         app:layout_constraintBottom_toTopOf="@id/input"/>
 
     <com.stfalcon.chatkit.messages.MessageInput
@@ -44,8 +51,9 @@
         android:layout_height="wrap_content"
         app:inputHint="@string/chat_hint_enter_a_message"
         app:showAttachmentButton="false"
+        android:layout_alignParentBottom="true"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>
