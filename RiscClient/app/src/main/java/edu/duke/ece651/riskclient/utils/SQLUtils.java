@@ -2,6 +2,7 @@ package edu.duke.ece651.riskclient.utils;
 
 import androidx.room.Room;
 
+import edu.duke.ece651.riskclient.listener.onInsertListener;
 import edu.duke.ece651.riskclient.listener.onReceiveListener;
 import edu.duke.ece651.riskclient.objects.Message;
 import edu.duke.ece651.riskclient.sql.AppDatabase;
@@ -19,14 +20,26 @@ public class SQLUtils {
             .fallbackToDestructiveMigration()
             .build();
 
-    public static void insertMessage(Message message){
+    public static void insertMessageAsy(Message message){
         getThreadPool().execute(() -> {
             // store the message to Local database
             db.messageDao().insert(message);
         });
     }
 
-    public static void getAllMessages(int roomID, onReceiveListener listener){
+    public static void insertMessageAsy(Message message, onInsertListener listener){
+        getThreadPool().execute(() -> {
+            // store the message to Local database
+            long id = db.messageDao().insert(message);
+            listener.onSuccessful(id);
+        });
+    }
+
+    public static void insertMessage(Message message){
+        db.messageDao().insert(message);
+    }
+
+    public static void getAllMessagesAsy(int roomID, onReceiveListener listener){
         getThreadPool().execute(() -> {
             // store the message to Local database
             listener.onSuccessful(db.messageDao().getMessageByRoom(roomID));

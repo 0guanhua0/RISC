@@ -31,7 +31,7 @@ public class Converters {
     public static IUser fromString(String user){
         try {
             JSONObject object = new JSONObject(user);
-            return new SimplePlayer(object.getInt(USER_ID), object.optString(USER_NAME));
+            return new SimplePlayer(1, object.optString(USER_NAME, ""));
         }catch (Exception e){
             Log.e(TAG, "fromString: " + e.toString());
         }
@@ -42,7 +42,7 @@ public class Converters {
     public static String userTOString(IUser user){
         try {
             JSONObject object = new JSONObject();
-            object.put(USER_ID, user.getId());
+//            object.put(USER_ID, user.getId());
             object.put(USER_NAME, user.getName());
             return object.toString();
         }catch (Exception e){

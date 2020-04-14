@@ -19,7 +19,7 @@ public class Message implements IMessage {
      * Make all this field public, so that Room can access them directly.
      */
     @PrimaryKey(autoGenerate = true)
-    public int id;
+    public long id;
     @ColumnInfo(name = "roomID")
     public int roomID;
     @ColumnInfo(name = "author")
@@ -29,7 +29,7 @@ public class Message implements IMessage {
     @ColumnInfo(name = "date")
     public Date date;
 
-    public Message(int id, int roomID, IUser user, String msg) {
+    public Message(long id, int roomID, IUser user, String msg) {
         this.id = id;
         this.roomID = roomID;
         this.user = user;
@@ -45,6 +45,11 @@ public class Message implements IMessage {
         this.date = sMessage.getDate();
     }
 
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    /* ====== functions used by the ChatKit library ====== */
     @Override
     public String getId() {
         return String.valueOf(id);

@@ -14,9 +14,9 @@ public interface MessageDao {
     @Query("SELECT * FROM message")
     List<Message> getAll();
 
-    @Query("SELECT * FROM message WHERE roomID=:roomID")
+    @Query("SELECT * FROM message WHERE roomID=:roomID ORDER BY date DESC")
     List<Message> getMessageByRoom(int roomID);
 
     @Insert
-    void insert(Message message);
+    long insert(Message message);
 }
