@@ -16,6 +16,8 @@ import java.util.*;
  * @create: 2020-03-16 17:17
  **/
 public class ClientSelect implements Serializable {
+    private static final long serialVersionUID = 21L;
+
     int unitsTotal;
     WorldMap<String> map;
 

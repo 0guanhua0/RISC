@@ -18,7 +18,7 @@ import static edu.duke.ece651.risk.shared.Constant.PLAYER_ID;
  * @create: 2020-03-09 16:24
  **/
 public abstract class Player<T> implements Serializable{
-    private static final long serialVersionUID = 21L;
+    private static final long serialVersionUID = 16L;
 
     T color;
     int id;
@@ -138,7 +138,7 @@ public abstract class Player<T> implements Serializable{
     }
 
     public Object recv() throws ClassNotFoundException {
-        Object o = new Object();
+        Object o = null;
         try {
             o = in.readObject();
         }

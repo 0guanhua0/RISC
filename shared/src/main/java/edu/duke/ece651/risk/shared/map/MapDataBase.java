@@ -16,6 +16,8 @@ import java.util.*;
  **/
 
 public class MapDataBase<T extends Serializable> implements Serializable{
+    private static final long serialVersionUID = 9L;
+
     Map<String, WorldMap<T>> mapHub;
     private String baseDirStr = "../config_file/MapDB_config/";
 

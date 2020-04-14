@@ -7,7 +7,7 @@ import java.net.Socket;
 /**
  * This class wraps up network server socket, can be used to setup a simple TCP server.
  */
-public class Server {
+public class Server implements AutoCloseable{
     ServerSocket serverSocket;
 
     /**
@@ -38,5 +38,10 @@ public class Server {
         } catch (IOException e) {
             return null;
         }
+    }
+
+    @Override
+    public void close() throws Exception {
+        serverSocket.close();
     }
 }

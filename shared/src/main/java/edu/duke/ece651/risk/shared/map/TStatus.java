@@ -14,6 +14,7 @@ import java.io.Serializable;
  **/
 
 public class TStatus implements Serializable {
+    private static final long serialVersionUID = 12L;
 
     //player id of the owner of corresponding territory, 0 to represent this territory is currently free
     //when ownerId==0, corresponding territory is free and not owned by any player

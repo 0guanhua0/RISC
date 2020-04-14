@@ -9,6 +9,8 @@ import java.io.Serializable;
  * @create: 2020-03-28 19:01
  **/
 public class BasicResource implements Serializable {
+    private static final long serialVersionUID = 8L;
+
     int totalNum;
 
     public BasicResource(int totalNum) {

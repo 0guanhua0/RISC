@@ -11,6 +11,7 @@ import java.util.*;
 import static edu.duke.ece651.risk.shared.Utils.readFileToString;
 
 public abstract class Territory implements Serializable {
+    private static final long serialVersionUID = 10L;
 
     Set<Territory> neigh;
     //class to represent current status of this territory

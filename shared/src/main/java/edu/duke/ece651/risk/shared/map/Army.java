@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Army implements Serializable {
+    private static final long serialVersionUID = 7L;
+
     // where this army comes from(e.g. territory name)
     String src;
     Map<Integer,Integer> levelToNum;

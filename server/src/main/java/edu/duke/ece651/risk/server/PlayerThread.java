@@ -53,9 +53,11 @@ public class PlayerThread extends Thread{
         this.gameInfo = gameInfo;
         this.barrier = barrier;
         this.waitTimeOut = timeout;
-        // TODO: initialize the player list
-        allPlayers = new ArrayList<>(Collections.singleton(new SPlayer(player.getId(), player.getName())));
         this.players = players;
+        allPlayers = new ArrayList<>();
+        for (Player<String> p : this.players){
+            allPlayers.add(new SPlayer(p.getId(), p.getName()));
+        }
     }
 
     @Override
