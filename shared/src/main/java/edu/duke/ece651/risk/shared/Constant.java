@@ -71,6 +71,7 @@ public class Constant {
     public static final String ACTION_JOIN_GAME = "joinGame";
     public static final String ACTION_CREATE_GAME = "createGame";
     public static final String ACTION_RECONNECT_ROOM = "reconnect room";
+    public static final String ACTION_CONNECT_CHAT = "connect chat";
 
     public static final String ROOM_NAME = "roomName";
     public static final String MAP_NAME = "mapName";

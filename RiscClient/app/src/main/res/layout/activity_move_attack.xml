@@ -25,24 +25,13 @@
         app:layout_constraintEnd_toEndOf="parent"/>
 
     <include
-        android:id="@+id/action_dropdown"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginVertical="@dimen/small_margin_vertical"
-        android:layout_marginHorizontal="@dimen/normal_margin"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_resource"
-        layout="@layout/widget_dropdown" />
-
-    <include
         layout="@layout/widget_territory_units_list"
         android:id="@+id/src_territory"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginVertical="@dimen/small_margin_vertical"
         android:layout_marginHorizontal="@dimen/normal_margin"
-        app:layout_constraintTop_toBottomOf="@id/action_dropdown"
+        app:layout_constraintTop_toBottomOf="@id/tv_resource"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 

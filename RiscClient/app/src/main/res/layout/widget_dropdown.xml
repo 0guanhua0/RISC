@@ -7,7 +7,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <AutoCompleteTextView
-        android:id="@+id/input"
+        android:id="@+id/dd_input"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="none"

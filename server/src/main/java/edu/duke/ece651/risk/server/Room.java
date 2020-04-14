@@ -6,6 +6,7 @@ import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.risk.shared.player.Player;
+import edu.duke.ece651.risk.shared.player.SPlayer;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -26,6 +27,8 @@ public class Room {
     WorldMap<String> map;
     // some basic info we need for a game(e.g. winnerID, roundNum)
     GameInfo gameInfo;
+    // all new threads we create in this game(e.g. player thread, chat thread)
+    List<Thread> threads;
 
     /**
      * The constructor, initialize the whole game(room.
@@ -65,9 +68,10 @@ public class Room {
 
         System.out.println("successfully init the game");
         System.out.println("room name: " + this.roomName);
+        threads = new ArrayList<>();
     }
 
-    //constructor for testing
+    // constructor for testing
     public Room(int roomID, MapDataBase<String> mapDataBase) throws IllegalArgumentException {
         if (roomID < 0) {
             throw new IllegalArgumentException("Invalid value of Room Id");
@@ -148,7 +152,6 @@ public class Room {
             if (player.isConnect()) {
                 player.send(data);
             }
-
         }
     }
 
@@ -239,6 +242,10 @@ public class Room {
                 player.send(YOU_WINS);
             }
         }
+        // interrupt all thread in current room
+        for (Thread t : threads){
+            t.interrupt();
+        }
     }
 
     /**
@@ -266,10 +273,19 @@ public class Room {
         CyclicBarrier barrier = new CyclicBarrier(players.size() + 1);
 
         for (Player<String> player : players) {
+            Thread t = new PlayerThread(player, map, gameInfo, barrier);
+            threads.add(t);
+            t.start();
             new PlayerThread(player, map, gameInfo, barrier,players).start();
         }
         // wait for selecting territory
         barrierWait(barrier);
+
+        // open the chat thread
+        // TODO: pass in the list of players
+        Thread tChat = new ChatThread<String>(players);
+        threads.add(tChat);
+        tChat.start();
 
         while (true) {
             // wait for all player to ready start a round(give main thread some time to process round result)

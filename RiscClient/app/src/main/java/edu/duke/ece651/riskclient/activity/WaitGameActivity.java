@@ -50,7 +50,6 @@ public class WaitGameActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null){
             getSupportActionBar().setTitle(getRoomName());
-//            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
         // each time enter this activity, should fetch the latest room & player info from the server
@@ -76,7 +75,7 @@ public class WaitGameActivity extends AppCompatActivity {
         recv(new onReceiveListener() {
             @Override
             public void onFailure(String error) {
-
+                Log.e(TAG, "initPlayerInfo: " + error);
             }
 
             @Override
@@ -96,7 +95,7 @@ public class WaitGameActivity extends AppCompatActivity {
         recv(new onReceiveListener() {
             @Override
             public void onFailure(String error) {
-
+                Log.e(TAG, "getRoomInfo: " + error);
             }
 
             @Override

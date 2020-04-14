@@ -9,6 +9,7 @@ public class Constant {
 
     // CI server: vcm-12835.vm.duke.edu
     // testing server: vcm-13663.vm.duke.edu
+    // localhost: 192.168.1.102
     public static final String HOST = "192.168.1.102";
     public static final int PORT = 12345;
 

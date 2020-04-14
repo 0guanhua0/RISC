@@ -29,8 +29,6 @@ subprojects{
         // https://mvnrepository.com/artifact/org.postgresql/postgresql
         compile group: 'org.postgresql', name: 'postgresql', version: '42.1.4'
         compile group: 'org.hibernate.orm', name: 'hibernate-gradle-plugin', version: '6.0.0.Alpha4'
-
-
     }
     
     clover{

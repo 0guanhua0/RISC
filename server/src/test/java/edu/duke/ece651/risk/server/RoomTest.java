@@ -21,7 +21,6 @@ public class RoomTest {
 
     @Test
     void testConstructor() throws IOException, ClassNotFoundException {
-
         assertThrows(IllegalArgumentException.class,()->{new Room(-3,null, new MapDataBase<String>());});
         assertThrows(IllegalArgumentException.class,()->{new Room(-3, new MapDataBase<String>());});
 
@@ -72,6 +71,35 @@ public class RoomTest {
         room.addPlayer(new PlayerV1<>(setupMockInput(new ArrayList<>()), new ByteArrayOutputStream()));
         room.addPlayer(new PlayerV1<>(setupMockInput(new ArrayList<>()), new ByteArrayOutputStream()));
 
+        assertEquals(room.players.size(),3);
+        assertEquals(room.players.size(), room.map.getColorList().size());
+    }
+
+    @Test
+    public void testSendAll() throws IOException, ClassNotFoundException {
+        // prepare the DataBase
+        MapDataBase<String> mapDataBase = new MapDataBase<>();
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+
+        String m1 = "test";
+        String r1 = "1";
+
+        String s11 = "{\"" + MAP_NAME + "\": \"" + m1 + "\",\n" +
+                "\"" + ROOM_NAME +"\": \"" + r1 + "\" }";
+
+        Player<String> player = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList(s11))), stream);
+        Room room = new Room(0, player, mapDataBase);
+        Player<String> player1 = new PlayerV1<>(setupMockInput(new ArrayList<>()), new ByteArrayOutputStream());
+        room.addPlayer(player1);
+        room.addPlayer(new PlayerV1<>(setupMockInput(new ArrayList<>()), new ByteArrayOutputStream()));
+
+        // make player1 disconnect
+        assertTrue(player1.isConnect());
+        player1.recv();
+        assertFalse(player1.isConnect());
+
+        // sendAll
+        room.sendAll("hello");
         assertEquals(room.players.size(),3);
         assertEquals(room.players.size(), room.map.getColorList().size());
     }
