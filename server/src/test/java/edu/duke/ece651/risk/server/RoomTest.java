@@ -205,7 +205,7 @@ public class RoomTest {
         room.checkWinner();
         assertEquals(room.gameInfo.winnerID,1);
 
-        Territory test = new TerritoryV1("some name");
+        Territory test = new TerritoryImpl("some name",0,0,0);
         player1.addTerritory(test);
         assertThrows(IllegalStateException.class, room::checkWinner);
     }
@@ -243,9 +243,9 @@ public class RoomTest {
         player2.addTerritory(room.map.getTerritory(t5));
 
         // attacker lose
-        room.map.getTerritory(t1).addAttack(1, new Army(1, t3, 1));
+        room.map.getTerritory(t1).addAttack(player1, new Army(1, t3, 1));
         // attacker win
-        room.map.getTerritory(t5).addAttack(1, new Army(1, t2, 10));
+        room.map.getTerritory(t5).addAttack(player1, new Army(1, t2, 10));
 
         assertEquals(2, player1.getTerrNum());
         assertEquals(2, player2.getTerrNum());

@@ -7,5 +7,19 @@ import static edu.duke.ece651.risk.shared.Utils.getUnitUpCost;
 
 //have such a design for future use
 public class Unit implements Serializable {
-    public Unit() { }
+
+    int level;
+
+
+    public Unit(int level) {
+        if (!UNIT_BONUS.containsKey(level)){
+            throw new IllegalArgumentException("Invalid argument");
+        }
+        this.level = level;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
 }

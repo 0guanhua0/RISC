@@ -3,6 +3,7 @@ package edu.duke.ece651.risk.shared;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.risk.shared.player.Player;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,24 +16,37 @@ import java.util.List;
  **/
 public class WorldState {
 
-    // all players in current room
-    Player<String> player;
+    //Player for corresponding action
+    Player<String> myPlayer;
 
     // the map this room is playing
     WorldMap<String> map;
 
-    public WorldState(Player<String> player, WorldMap<String> map) {
-        this.player = player;
+    // all players in current room
+    List<Player<String>> players;
+
+    public WorldState(Player<String> myPlayer, WorldMap<String> map) {
+        this.myPlayer = myPlayer;
         this.map = map;
+        this.players = new ArrayList<>();
     }
 
+    public WorldState(Player<String> myPlayer, WorldMap<String> map, List<Player<String>> players) {
+        this.myPlayer = myPlayer;
+        this.map = map;
+        this.players = players;
+    }
 
     public WorldMap<String> getMap() {
         return map;
     }
 
-    public Player<String> getPlayer() {
-        return player;
+    public Player<String> getMyPlayer() {
+        return myPlayer;
+    }
+
+    public  List<Player<String>>  getPlayers() {
+        return players;
     }
 
 }

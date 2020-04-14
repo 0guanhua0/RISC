@@ -20,7 +20,7 @@ public class UpMaxTechAction implements Action, Serializable {
      * @return true if valid
      */
     public boolean isValid(WorldState worldState){
-        Player<String> player = worldState.getPlayer();
+        Player<String> player = worldState.getMyPlayer();
         return player.canUpMaxTech();
     }
 
@@ -32,7 +32,7 @@ public class UpMaxTechAction implements Action, Serializable {
         if (!isValid(worldState)){
             throw new IllegalArgumentException("Invalid action");
         }
-        Player<String> player = worldState.getPlayer();
+        Player<String> player = worldState.getMyPlayer();
         player.upMaxTech();
         return true;
     }

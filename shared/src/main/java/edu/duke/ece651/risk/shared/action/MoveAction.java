@@ -2,11 +2,11 @@ package edu.duke.ece651.risk.shared.action;
 
 import edu.duke.ece651.risk.shared.WorldState;
 import edu.duke.ece651.risk.shared.map.Territory;
+import edu.duke.ece651.risk.shared.map.Unit;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.risk.shared.player.Player;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,7 +48,7 @@ public class MoveAction implements Action, Serializable {
     @Override
     public boolean isValid(WorldState worldState) {
         WorldMap<String> map = worldState.getMap();
-        Player<String> player = worldState.getPlayer();
+        Player<String> player = worldState.getMyPlayer();
 
         //check if two input names are valid
         if (!map.hasTerritory(src) || !map.hasTerritory(dest)){
@@ -58,11 +58,11 @@ public class MoveAction implements Action, Serializable {
 
         int dist = map.getMinCtrlDist(src,dest);
 
-        //check ownerId
-        if (srcNode.getOwner() != playerId){
+        //check if such territory is owned by current player or the ally
+        if (srcNode.getOwner()!= playerId&&srcNode.getAllyId()!=playerId){
             return false;
         }
-        //check whether there is no such path under the control of current user
+        //check whether there is such a path under the control of current user
         if (Integer.MAX_VALUE==dist){
             return false;
         }
@@ -85,13 +85,22 @@ public class MoveAction implements Action, Serializable {
             throw new IllegalArgumentException("Invalid move action!");
         }
         WorldMap<String> map = worldState.getMap();
-        Player<String> player = worldState.getPlayer();
+        Player<String> player = worldState.getMyPlayer();
         //update the state of src and target territory
         Territory srcNode = map.getTerritory(src);
         Territory destNode = map.getTerritory(dest);
         for (Map.Entry<Integer, Integer> entry : levelToNum.entrySet()) {
-            srcNode.loseUnits(entry.getValue(),entry.getKey());
-            destNode.addUnits(entry.getValue(),entry.getKey());
+            int num = entry.getValue();
+            int level = entry.getKey();
+            srcNode.loseUnits(num, level);
+            assert(destNode.getOwner()==playerId||destNode.getAllyId()==playerId);
+            if (destNode.getOwner()==this.playerId){
+                destNode.addUnits(num, level);
+            }else{
+                for (int i=0;i<num;i++){
+                    destNode.addAllyUnit(new Unit(level));
+                }
+            }
         }
         //update the food storage
         int foodCost = map.getMinCtrlDist(src,dest)*unitsNum;

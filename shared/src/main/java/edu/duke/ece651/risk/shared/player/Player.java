@@ -32,12 +32,23 @@ public abstract class Player<T> implements Serializable{
     boolean isConnect;
     String name;
 
+    //used only in evolution3
+    //pay attention that in order to use the field below and make the state of territory remain legal
+    //you need to clearly understand the definition of allyRequest:
+    //the player id of target ally this player object receives from client side  during
+    int allyRequest;
+
+
+    Player ally;
+
     public Player(InputStream in, OutputStream out) throws IOException {
         this.territories = new HashSet<>();
         this.in = new ObjectInputStream(in);
         this.out = new ObjectOutputStream(out);
         this.id = -1;
         this.isConnect = true;
+        this.allyRequest = -1;
+        this.ally = null;
     }
 
     // since only after first player communicating with server and selecting the map
@@ -51,6 +62,8 @@ public abstract class Player<T> implements Serializable{
         this.in = new ObjectInputStream(in);
         this.out = new ObjectOutputStream(out);
         this.isConnect = true;
+        this.allyRequest = -1;
+        this.ally = null;
     }
 
     //this constructor should be called for all players except for first player
@@ -64,6 +77,8 @@ public abstract class Player<T> implements Serializable{
         this.in = new ObjectInputStream(in);
         this.out = new ObjectOutputStream(out);
         this.isConnect = true;
+        this.allyRequest = -1;
+        this.ally = null;
     }
 
     public int getId() {
@@ -85,12 +100,23 @@ public abstract class Player<T> implements Serializable{
         this.color = color;
     }
 
+
+    /**
+     * actually, it's not a very good to implement it like so, actually, we shouldn't decouple setOwner and addTerritory
+     * maybe change that in future commit
+     * @param territory: territory you want to add to this player
+     * @throws IllegalArgumentException
+     */
     public void addTerritory(Territory territory) throws IllegalArgumentException {
         if (!territory.isFree()) {
             throw new IllegalArgumentException("You can not occupy an occupied territory");
         }
         territories.add(territory);
-        territory.setOwner(this.id);
+        //based on current situation, the attack action will call setOwner directly
+        //thus we should execute the following logic
+        if(0==territory.getOwner()){
+            territory.setOwner(this.id);
+        }
     }
 
     public void loseTerritory(Territory territory) throws IllegalArgumentException {
@@ -169,6 +195,80 @@ public abstract class Player<T> implements Serializable{
     public int getTerrNum() {
         return territories.size();
     }
+
+    public void setAllyRequest(int allyRequest) {
+        if (this.allyRequest!=-1){
+            throw new IllegalArgumentException("Invalid argument!");
+        }
+        this.allyRequest = allyRequest;
+    }
+
+    public boolean hasRecvAlly(){
+        return this.allyRequest!=-1;
+    }
+
+    public boolean hasAlly(){
+        return this.ally!=null;
+    }
+
+    public boolean canAllyWith(Player p){
+        if (!this.hasAlly()&&!p.hasAlly()&&this.allyRequest==p.getId()&&p.allyRequest==this.getId()&&this.allyRequest!=-1){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public void allyWith(Player p){
+        if (!this.canAllyWith(p)){
+            throw new IllegalArgumentException("Invalid argument");
+        }
+        this.ally = p;
+        p.ally = this;
+        this.setTerrAlly();
+        p.setTerrAlly();
+    }
+
+    public boolean isAllyWith(Player p){
+        return this.ally==p;
+    }
+
+
+
+    public void setTerrAlly(){
+        for (Territory territory : this.territories) {
+            territory.setAlly(this.ally);
+        }
+    }
+
+
+    public Player getAlly() {
+        return ally;
+    }
+
+    /**
+     * rupture of alliance between this player and her ally
+     */
+    public void ruptureAlly(){
+        if (hasAlly()){
+            assert(ally.ally==this);//used only for debugging
+            //change the state of all territories
+            for (Territory territory : this.territories) {
+                territory.ruptureAlly();
+            }
+            for (Object o : this.ally.territories) {
+                Territory territory = (Territory)o;
+                territory.ruptureAlly();
+            }
+            this.ally.ally = null;
+            this.ally.allyRequest = -1;
+            this.allyRequest = -1;
+            this.ally = null;
+        }else{
+            throw new IllegalStateException("trying to rupture an not existed alliance");
+        }
+    }
+
 
     /**
      * this method is called to add the resource production of each territory

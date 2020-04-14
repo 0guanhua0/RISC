@@ -28,6 +28,8 @@ public class PlayerThread extends Thread{
     GameInfo gameInfo;
     CyclicBarrier barrier;
     int waitTimeOut;
+    List<Player<String>> players;
+
 
     /**
      *
@@ -36,14 +38,16 @@ public class PlayerThread extends Thread{
      * @param gameInfo current game info(e.g. round number, winner ID etc.)
      * @param barrier barrier, used to synchronous multi-threading
      */
-    public PlayerThread(Player<String> player, WorldMap<String> map, GameInfo gameInfo, CyclicBarrier barrier) {
-        this(player, map, gameInfo, barrier, WAIT_TIME_OUT);
+    public PlayerThread(Player<String> player, WorldMap<String> map,
+                        GameInfo gameInfo, CyclicBarrier barrier,List<Player<String>> players) {
+        this(player, map, gameInfo, barrier, WAIT_TIME_OUT,players);
     }
 
     /**
      * This is mainly for testing purpose, control the timeout
      */
-    public PlayerThread(Player<String> player, WorldMap<String> map, GameInfo gameInfo, CyclicBarrier barrier, int timeout) {
+    public PlayerThread(Player<String> player, WorldMap<String> map,
+                        GameInfo gameInfo, CyclicBarrier barrier, int timeout,List<Player<String>> players) {
         this.player = player;
         this.map = map;
         this.gameInfo = gameInfo;
@@ -51,6 +55,7 @@ public class PlayerThread extends Thread{
         this.waitTimeOut = timeout;
         // TODO: initialize the player list
         allPlayers = new ArrayList<>(Collections.singleton(new SPlayer(player.getId(), player.getName())));
+        this.players = players;
     }
 
     @Override
@@ -99,8 +104,8 @@ public class PlayerThread extends Thread{
                     // if valid, update the map
                     for (String terrName : serverSelect.getAllName()) {
                         Territory territory = map.getTerritory(terrName);
-                        territory.addBasicUnits(serverSelect.getUnitsNum(terrName));
                         player.addTerritory(territory);
+                        territory.addBasicUnits(serverSelect.getUnitsNum(terrName));
                     }
                     player.send(SUCCESSFUL);
                     break;
@@ -123,7 +128,7 @@ public class PlayerThread extends Thread{
         player.send(roundInfo);
 
         // build the current state of game
-        WorldState worldState = new WorldState(this.player, this.map);
+        WorldState worldState = new WorldState(this.player,this.map,this.players);
         // if player hasn't lose yet, let him or her play another round of game
         if (this.player.getTerrNum() > 0){
             int checkCnt = 0;

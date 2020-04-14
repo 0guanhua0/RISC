@@ -77,7 +77,7 @@ public class PlayerThreadTest {
         WorldMap<String> map = new MapDataBase<String>().getMap("a clash of kings");
         CyclicBarrier b = new CyclicBarrier(2);
         CyclicBarrier barrier = spy(b);
-        PlayerThread playerThread = new PlayerThread(player, map, gameInfo, barrier);
+        PlayerThread playerThread = new PlayerThread(player, map, gameInfo, barrier,new ArrayList<>());
         playerThread.start();
 
         barrier.await(); // select territory
@@ -118,7 +118,7 @@ public class PlayerThreadTest {
 
         CyclicBarrier b = new CyclicBarrier(2);
         CyclicBarrier barrier = spy(b);
-        PlayerThread playerThread = new PlayerThread(player, map, gameInfo, barrier);
+        PlayerThread playerThread = new PlayerThread(player, map, gameInfo, barrier,new ArrayList<>());
         playerThread.start();
 
         barrier.await(); // select territory
@@ -163,7 +163,7 @@ public class PlayerThreadTest {
 
         CyclicBarrier b = new CyclicBarrier(2);
         CyclicBarrier barrier = spy(b);
-        PlayerThread playerThread = new PlayerThread(player, map, gameInfo, barrier, 3);
+        PlayerThread playerThread = new PlayerThread(player, map, gameInfo, barrier, 3,Arrays.asList());
         playerThread.start();
 
         barrier.await(); // select territory

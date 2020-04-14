@@ -9,12 +9,12 @@ import java.util.*;
  * @author: Chengda Wu
  * @create: 2020-03-28 14:10
  **/
-public class WorldMapV2<T extends Serializable> extends WorldMap{
+public class WorldMapImpl<T extends Serializable> extends WorldMap{
     private static final long serialVersionUID = 12L;
 
-    public WorldMapV2(Map<String, Set<String>> adjaList, List<T> colorList,
-                      Map<Set<String>, Boolean> groups, Map<String,Integer> sizes,
-                      Map<String,Integer> food, Map<String,Integer> tech){
+    public WorldMapImpl(Map<String, Set<String>> adjaList, List<T> colorList,
+                        Map<Set<String>, Boolean> groups, Map<String,Integer> sizes,
+                        Map<String,Integer> food, Map<String,Integer> tech){
 
         //check legality of groups
         Set<String> allName = new HashSet<>();
@@ -43,18 +43,18 @@ public class WorldMapV2<T extends Serializable> extends WorldMap{
             int size = sizes.get(terriName);
             int foodYield = food.get(terriName);
             int techYield = tech.get(terriName);
-            Territory territory = new TerritoryV2(terriName,size,foodYield,techYield);
+            Territory territory = new TerritoryImpl(terriName,size,foodYield,techYield);
             atlas.put(terriName,territory);
         }
 
         //connect them to each other
         for (Map.Entry<String, Set<String>> entry : adjaList.entrySet()) {
             String terriName = entry.getKey();
-            Territory curTerri = (TerritoryV2) this.atlas.get(terriName);
+            Territory curTerri = (TerritoryImpl) this.atlas.get(terriName);
             Set<String> neighNames = adjaList.get(terriName);
             Set<Territory> neigh = new HashSet<>();
             for (String neighName : neighNames) {
-                neigh.add((TerritoryV2)atlas.get(neighName));
+                neigh.add((TerritoryImpl)atlas.get(neighName));
             }
             curTerri.setNeigh(neigh);
         }
