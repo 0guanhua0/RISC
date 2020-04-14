@@ -275,10 +275,6 @@ class TerritoryImplTest {
         player2.addTerritory(reach);
         player2.addTerritory(storm);
 
-        vale.addAllyUnit(new Unit(1));
-        vale.addAllyUnit(new Unit(1));
-        storm.addUnit(new Unit(1));
-        storm.addUnit(new Unit(2));
 
         assertThrows(IllegalStateException.class,()->{vale.ruptureAlly();});
 
@@ -288,6 +284,12 @@ class TerritoryImplTest {
         //2 submit an ally request to ally with 1
         AllyAction allyAction2 = new AllyAction(1);
         allyAction2.perform(worldState2);
+
+        vale.addAllyUnit(new Unit(1));
+        vale.addAllyUnit(new Unit(1));
+        storm.addUnit(new Unit(1));
+        storm.addUnit(new Unit(2));
+
 
         vale.ruptureAlly();
         assertEquals(3,storm.getUnitsNum(1));
@@ -479,7 +481,63 @@ class TerritoryImplTest {
     }
 
     @Test
-    void updateForceState() {
+    void updateForceState() throws IOException {
+        //prepare the state
+        MapDataBase<String> mapDataBase = new MapDataBase<>();
+        WorldMap<String> worldMap = mapDataBase.getMap("a clash of kings");
+        PlayerV2<String> player1 = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),new ByteArrayOutputStream());
+        PlayerV2<String> player2 = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),new ByteArrayOutputStream());
+        PlayerV2<String> player3 = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),new ByteArrayOutputStream());
+        PlayerV2<String> player4 = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),new ByteArrayOutputStream());
+        PlayerV2<String> player5 = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),new ByteArrayOutputStream());
+
+        player1.setId(1);
+        player2.setId(2);
+
+        player3.setId(3);
+        player4.setId(4);
+
+        player5.setId(5);
+
+
+
+        TerritoryImpl test = new TerritoryImpl("test", 3, 20, 20);
+        player1.addTerritory(test);
+
+        //player1 ally with player2
+        WorldState worldState1 = new WorldState(player1, worldMap, Arrays.asList(player1,player2));
+        WorldState worldState2 = new WorldState(player2, worldMap, Arrays.asList(player1,player2));
+        AllyAction allyAction1 = new AllyAction(2);
+        allyAction1.perform(worldState1);
+        AllyAction allyAction2 = new AllyAction(1);
+        allyAction2.perform(worldState2);
+
+        List<Player> attackers1 = Arrays.asList(player3, player4);
+        TreeMap<Integer, Integer> treeMap1 = new TreeMap<Integer, Integer>(){{
+            put(1,1);
+            put(0,2);
+        }};
+        TreeMap<Integer, Integer> treeMap2 = new TreeMap<Integer, Integer>(){{
+            put(3,1);
+        }};
+        List<TreeMap<Integer,Integer>> combinedAttack1 = Arrays.asList(treeMap1,treeMap2);
+
+        int x = test.updateForceState(attackers1, combinedAttack1);
+        assertTrue(x==4||x==3);
+        assertTrue(3==test.getOwner()&&4==test.getAllyId()||4==test.getOwner()&&3==test.getAllyId());
+        assertTrue(
+                (2==test.allyUnits.getOrDefault(0,new ArrayList<>()).size()
+                &&1==test.unitGroup.getOrDefault(3,new ArrayList<>()).size())
+                ||(2==test.unitGroup.getOrDefault(0,new ArrayList<>()).size()
+                &&1==test.allyUnits.getOrDefault(3,new ArrayList<>()).size())
+        );
+
+
+        List<Player> attackers2 = Arrays.asList(player5);
+        List<TreeMap<Integer,Integer>> combinedAttack2 = Arrays.asList(new TreeMap<>());
+        assertEquals(-1,test.updateForceState(attackers2, combinedAttack2));
+
+
 
     }
 }
