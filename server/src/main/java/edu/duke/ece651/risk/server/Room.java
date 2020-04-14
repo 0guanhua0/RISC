@@ -273,10 +273,9 @@ public class Room {
         CyclicBarrier barrier = new CyclicBarrier(players.size() + 1);
 
         for (Player<String> player : players) {
-            Thread t = new PlayerThread(player, map, gameInfo, barrier);
+            Thread t = new PlayerThread(player, map, gameInfo, barrier,this.players);
             threads.add(t);
             t.start();
-            new PlayerThread(player, map, gameInfo, barrier,players).start();
         }
         // wait for selecting territory
         barrierWait(barrier);

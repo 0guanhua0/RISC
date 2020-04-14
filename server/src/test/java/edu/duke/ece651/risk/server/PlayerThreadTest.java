@@ -163,7 +163,7 @@ public class PlayerThreadTest {
 
         CyclicBarrier b = new CyclicBarrier(2);
         CyclicBarrier barrier = spy(b);
-        PlayerThread playerThread = new PlayerThread(player, map, gameInfo, barrier, 3);
+        PlayerThread playerThread = new PlayerThread(player, map, gameInfo, barrier, 3,Arrays.asList());
         playerThread.start();
 
         barrier.await(); // select territory
