@@ -215,9 +215,9 @@ public class RoomTest {
         player2.addTerritory(room.map.getTerritory(t5));
 
         // attacker lose
-        room.map.getTerritory(t1).addAttack(1, new Army(1, t3, 1));
+        room.map.getTerritory(t1).addAttack(player1, new Army(1, t3, 1));
         // attacker win
-        room.map.getTerritory(t5).addAttack(1, new Army(1, t2, 10));
+        room.map.getTerritory(t5).addAttack(player1, new Army(1, t2, 10));
 
         assertEquals(2, player1.getTerrNum());
         assertEquals(2, player2.getTerrNum());
