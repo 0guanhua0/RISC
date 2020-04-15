@@ -129,6 +129,15 @@ public abstract class Territory implements Serializable {
      */
     public abstract int getUnitsNum(int level);
 
+
+
+    /**
+     * get the number of units from ally with certain tech level
+     * @param level: technology level for units you want
+     * @return number of units, 0 when level not exist or ally not existed
+     */
+    public abstract int getAllyUnitsNum(int level);
+
     public abstract void addUnit(Unit unit);
 
 

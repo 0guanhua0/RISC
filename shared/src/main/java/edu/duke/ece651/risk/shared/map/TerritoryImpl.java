@@ -7,8 +7,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static edu.duke.ece651.risk.shared.Constant.UNIT_BONUS;
-import static edu.duke.ece651.risk.shared.Utils.getMaxKey;
-import static edu.duke.ece651.risk.shared.Utils.getMinKey;
 
 /**
  * @program: risk
@@ -113,7 +111,7 @@ public class TerritoryImpl extends Territory {
             isDefenderTurn = !isDefenderTurn;
         }
         //update the ownership , ally-relation ship and unit state if attackers win the battle
-        int ownerId = updateForceState(attackers, combinedAttack);
+        int ownerId = updateState(attackers, combinedAttack);
         //TODO note that since we can multiple attackers, the logic here need to be changed
         return new AttackResult(ownerId==-1?attackers.get(0).getId():ownerId, defenderID, srcNames, destName, !attackerDone(combinedAttack));
     }
@@ -490,7 +488,7 @@ public class TerritoryImpl extends Territory {
      * @param combinedAttack: all force from attackers
      * @return return player id of owner if attackers win, -1 otherwise
      */
-    int updateForceState(List<Player> attackers, List<TreeMap<Integer,Integer>> combinedAttack){
+    int updateState(List<Player> attackers, List<TreeMap<Integer,Integer>> combinedAttack){
         // update the ownership only if attacker has units left
         if (!attackerDone(combinedAttack)) {
             //if there are multiple attackers decide, randomly pick one to be the owner of this territory
@@ -534,5 +532,12 @@ public class TerritoryImpl extends Territory {
         }
         return output;
     }
+
+    @Override
+    public int getAllyUnitsNum(int level){
+        if (allyUnits.isEmpty()) return 0;
+        else return allyUnits.getOrDefault(level,new ArrayList<>()).size();
+    }
+
 
 }

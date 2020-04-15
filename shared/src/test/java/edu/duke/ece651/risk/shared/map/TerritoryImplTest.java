@@ -522,7 +522,7 @@ class TerritoryImplTest {
         }};
         List<TreeMap<Integer,Integer>> combinedAttack1 = Arrays.asList(treeMap1,treeMap2);
 
-        int x = test.updateForceState(attackers1, combinedAttack1);
+        int x = test.updateState(attackers1, combinedAttack1);
         assertTrue(x==4||x==3);
         assertTrue(3==test.getOwner()&&4==test.getAllyId()||4==test.getOwner()&&3==test.getAllyId());
         assertTrue(
@@ -535,7 +535,7 @@ class TerritoryImplTest {
 
         List<Player> attackers2 = Arrays.asList(player5);
         List<TreeMap<Integer,Integer>> combinedAttack2 = Arrays.asList(new TreeMap<>());
-        assertEquals(-1,test.updateForceState(attackers2, combinedAttack2));
+        assertEquals(-1,test.updateState(attackers2, combinedAttack2));
 
 
 
