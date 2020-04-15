@@ -89,6 +89,9 @@ public abstract class Player<T> implements Serializable{
         if (id <= 0) {
             throw new IllegalArgumentException("ID must large than 0.");
         }
+        if (this.id>0){
+            throw new IllegalStateException("can't assign an id twice!");
+        }
         this.id = id;
     }
 
