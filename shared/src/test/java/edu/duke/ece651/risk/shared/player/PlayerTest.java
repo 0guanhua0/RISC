@@ -246,6 +246,12 @@ class PlayerTest {
         PlayerV2<String> player2 = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),new ByteArrayOutputStream());
         player1.setId(1);
         player2.setId(2);
+
+        TerritoryImpl test = new TerritoryImpl("test", 3, 20, 20);
+        player1.addTerritory(test);
+        TerritoryImpl test2 = new TerritoryImpl("test2", 3, 20, 20);
+        player2.addTerritory(test2);
+
         assertThrows(IllegalArgumentException.class,()->{player1.allyWith(player2);});
         player1.setAllyRequest(2);
         player2.setAllyRequest(1);
