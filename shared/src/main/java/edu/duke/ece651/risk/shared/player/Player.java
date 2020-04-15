@@ -156,7 +156,8 @@ public abstract class Player<T> implements Serializable{
             chatOut.writeObject(message);
             chatOut.flush();
         } catch (IOException ignored){
-            this.setConnect(false);
+            // user disconnect from chat, not mean disconnect from game
+            // this.setConnect(false);
         }
     }
 
@@ -169,8 +170,8 @@ public abstract class Player<T> implements Serializable{
         try {
             return chatIn.readObject();
         } catch (Exception ignored) {
-            System.err.println(ignored.toString());
-            this.setConnect(false);
+            // user disconnect from chat, not mean disconnect from game
+            // this.setConnect(false);
         }
         return null;
     }

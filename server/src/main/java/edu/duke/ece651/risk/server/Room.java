@@ -281,7 +281,6 @@ public class Room {
         barrierWait(barrier);
 
         // open the chat thread
-        // TODO: pass in the list of players
         Thread tChat = new ChatThread<String>(players);
         threads.add(tChat);
         tChat.start();

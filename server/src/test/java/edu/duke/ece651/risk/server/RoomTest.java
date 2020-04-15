@@ -105,7 +105,7 @@ public class RoomTest {
     }
 
     @Test
-    public void testAskForMap() throws IOException, ClassNotFoundException, EOFException {
+    public void testAskForMap() throws IOException, ClassNotFoundException {
         assertThrows(IllegalArgumentException.class,()->{new Room(-1,null, new MapDataBase<String>());});
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
