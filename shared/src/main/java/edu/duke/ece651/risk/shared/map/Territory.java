@@ -81,19 +81,16 @@ public abstract class Territory implements Serializable {
     }
 
     /**
-     * This function will resolve all combats happen in current territory.
-     * @return list of combat result
+     * the method is used to unify all players' army with their friends' army (if existed) and let them engage in the same battle
+     * @return the list of unified army, each single map represents a unified army, key is player, value is their army
      */
-    public List<AttackResult> resolveCombats() throws IOException{
-        JSONObject jsonObject = new JSONObject(readFileToString("../config_file/random_seed_config.txt"));
-        Random diceAttack = new Random(jsonObject.getInt("attackSeed"));
-        Random diceDefend = new Random(jsonObject.getInt("defendSeed"));
-
+    List<Map<Player,List<Army>>> buildUnifiedArmy(){
         List<Map<Player,List<Army>>> unifiedArmies = new ArrayList<>();
         Set<Player> visited = new HashSet<>();
-
         for (Player player : attackAct.keySet()) {
             if (!visited.contains(player)){
+                //this if block can handle each single player and corresponding friend
+                //visited make sure friend will not be counted twice
                 Map<Player,List<Army>> unifiedArmy = new HashMap<>();
                 unifiedArmy.put(player,attackAct.get(player));
                 visited.add(player);
@@ -105,6 +102,20 @@ public abstract class Territory implements Serializable {
                 unifiedArmies.add(unifiedArmy);
             }
         }
+        return unifiedArmies;
+    }
+
+
+    /**
+     * This function will resolve all combats happen in current territory.
+     * @return list of combat result
+     */
+    public List<AttackResult> resolveCombats() throws IOException{
+        JSONObject jsonObject = new JSONObject(readFileToString("../config_file/random_seed_config.txt"));
+        Random diceAttack = new Random(jsonObject.getInt("attackSeed"));
+        Random diceDefend = new Random(jsonObject.getInt("defendSeed"));
+
+        List<Map<Player,List<Army>>> unifiedArmies = buildUnifiedArmy();
 
         // store the whole result of combat
         ArrayList<AttackResult> attackResults = new ArrayList<>();
@@ -128,6 +139,15 @@ public abstract class Territory implements Serializable {
      * @return number of units, 0 when level not exist
      */
     public abstract int getUnitsNum(int level);
+
+
+
+    /**
+     * get the number of units from ally with certain tech level
+     * @param level: technology level for units you want
+     * @return number of units, 0 when level not exist or ally not existed
+     */
+    public abstract int getAllyUnitsNum(int level);
 
     public abstract void addUnit(Unit unit);
 
@@ -206,6 +226,9 @@ public abstract class Territory implements Serializable {
      */
     public abstract void upUnit(int num, int curLevel,int targetLevel);
 
+    /**
+     * rupture the alliance with ally, called inside attack action
+     */
     public abstract void ruptureAlly();
 
     public abstract void addAllyUnit(Unit unit);

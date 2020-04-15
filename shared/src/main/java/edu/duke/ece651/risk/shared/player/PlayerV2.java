@@ -108,5 +108,11 @@ public class PlayerV2<T> extends PlayerV1<T> implements Serializable {
         return this.techLevel;
     }
 
-
+    @Override
+    public void setId(int id) {
+        if (this.id>0){
+            throw new IllegalStateException("can't assign an id twice!");
+        }
+        super.setId(id);
+    }
 }

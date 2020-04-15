@@ -57,9 +57,8 @@ public class MoveAction implements Action, Serializable {
         Territory srcNode = map.getTerritory(src);
 
         int dist = map.getMinCtrlDist(src,dest);
-
         //check if such territory is owned by current player or the ally
-        if (srcNode.getOwner()!= playerId&&srcNode.getAllyId()!=playerId){
+        if (srcNode.getOwner()!= player.getId()&&srcNode.getAllyId()!=player.getId()){
             return false;
         }
         //check whether there is such a path under the control of current user
@@ -93,8 +92,8 @@ public class MoveAction implements Action, Serializable {
             int num = entry.getValue();
             int level = entry.getKey();
             srcNode.loseUnits(num, level);
-            assert(destNode.getOwner()==playerId||destNode.getAllyId()==playerId);
-            if (destNode.getOwner()==this.playerId){
+            assert(destNode.getOwner()==player.getId()||destNode.getAllyId()==player.getId());
+            if (destNode.getOwner()==player.getId()){
                 destNode.addUnits(num, level);
             }else{
                 for (int i=0;i<num;i++){

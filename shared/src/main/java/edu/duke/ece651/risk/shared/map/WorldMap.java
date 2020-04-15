@@ -98,7 +98,7 @@ public abstract class WorldMap<T extends Serializable> implements Serializable {
         Territory target = this.atlas.get(targetName);
 
         int owner = src.getOwner();
-        if (owner!=target.getOwner()){
+        if (owner!=target.getOwner()&&owner!=target.getAllyId()){
             return Integer.MAX_VALUE;
         }
 
@@ -111,19 +111,27 @@ public abstract class WorldMap<T extends Serializable> implements Serializable {
 
         PriorityQueue<Territory> pq = new PriorityQueue<Territory>(Comparator.comparingInt(dist::get));
         pq.offer(src);
-
+//        System.out.println("Owner id is "+src.getOwner());
         while(!pq.isEmpty()){
             Territory curTerr = pq.poll();
+//            System.out.println("curTerr is "+curTerr.getName());
+//            System.out.println("target is "+target.getName());
             if (curTerr==target){
+//                System.out.println("is equal");
+//                System.out.println(dist.get(curTerr));
                 return dist.get(curTerr);
             }
             if(!visited.contains(curTerr)){
                 visited.add(curTerr);
                 int neighDist = curTerr.getSize()+dist.get(curTerr);
                 for(Territory neigh:curTerr.getNeigh()){
+//                    System.out.println("Terr name is "+neigh.getName());
+//                    System.out.println("Terr ally id "+neigh.getAllyId());
                     if (neigh.getOwner()!=owner&&neigh.getAllyId()!=owner){
+//                        System.out.println("is ignored terr. ");
                         continue;
                     }
+//                    System.out.println("is accepted terr. ");
                     dist.put(neigh,Math.min(dist.getOrDefault(neigh,Integer.MAX_VALUE),neighDist));
                     pq.offer(neigh);
                 }
