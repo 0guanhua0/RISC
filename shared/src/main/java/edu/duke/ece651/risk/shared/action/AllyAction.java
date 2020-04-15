@@ -12,6 +12,7 @@ import java.util.List;
  * @create: 2020-04-10 17:13
  **/
 public class AllyAction implements Action{
+    private static final long serialVersionUID = 1L;
 
     //below the id of the player that you want ally to ally with at this round
     int allyRequest;
@@ -56,5 +57,11 @@ public class AllyAction implements Action{
             myPlayer.allyWith(targetAlly);
         }
         return true;
+    }
+
+    @Override
+    public String toString() {
+        // TODO: finish this
+        return String.format("allay with %d", allyRequest);
     }
 }

@@ -12,7 +12,7 @@ import java.io.Serializable;
  * @create: 2020-03-30 17:33
  **/
 public class UpMaxTechAction implements Action, Serializable {
-    private static final long serialVersionUID = 3L;
+    private static final long serialVersionUID = 5L;
 
     public UpMaxTechAction(){}
     /**

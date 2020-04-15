@@ -13,7 +13,7 @@ import java.util.Map;
 import static edu.duke.ece651.risk.shared.Constant.UNIT_NAME;
 
 public class MoveAction implements Action, Serializable {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 4L;
 
     String src;
     String dest;

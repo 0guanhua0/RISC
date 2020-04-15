@@ -11,7 +11,7 @@ import java.io.Serializable;
 import java.util.Map;
 
 public class RoundInfo implements Serializable {
-    private static final long serialVersionUID = 15L;
+    private static final long serialVersionUID = 22L;
 
     int roundNum;
     WorldMap<String> map;

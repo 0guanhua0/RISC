@@ -136,7 +136,7 @@ public class HomeFragment extends Fragment {
             initGameSocket(new onResultListener() {
                 @Override
                 public void onFailure(String error) {
-
+                    Log.e(TAG, "join room: " + error);
                 }
 
                 @Override
@@ -146,7 +146,7 @@ public class HomeFragment extends Fragment {
                         backGame(new onResultListener() {
                             @Override
                             public void onFailure(String error) {
-
+                                Log.e(TAG, "back room: " + error);
                             }
 
                             @Override
@@ -160,7 +160,7 @@ public class HomeFragment extends Fragment {
                         joinGame(new onResultListener() {
                             @Override
                             public void onFailure(String error) {
-
+                                Log.e(TAG, "join room: " + error);
                             }
 
                             @Override

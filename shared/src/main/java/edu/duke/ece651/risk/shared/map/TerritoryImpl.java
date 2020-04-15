@@ -17,6 +17,7 @@ import static edu.duke.ece651.risk.shared.Utils.getMinKey;
  * @create: 2020-03-28 10:20
  **/
 public class TerritoryImpl extends Territory {
+    private static final long serialVersionUID = 11L;
 
     int size;
     int foodYield;

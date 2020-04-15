@@ -12,7 +12,7 @@ import java.util.*;
  **/
 
 public abstract class WorldMap<T extends Serializable> implements Serializable {
-    private static final long serialVersionUID = 10L;
+    private static final long serialVersionUID = 14L;
 
     String name;
     Map<String, Territory> atlas;

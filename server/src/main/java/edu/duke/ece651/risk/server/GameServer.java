@@ -281,7 +281,7 @@ public class GameServer {
     }
 
     public static void main(String[] args) throws IOException, SQLException, ClassNotFoundException {
-        GameServer gameServer = new GameServer(new Server());
+        GameServer gameServer = new GameServer(new Server(12345));
         gameServer.run();
     }
 }

@@ -1,6 +1,7 @@
 package edu.duke.ece651.riskclient.sql;
 
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 
@@ -14,12 +15,12 @@ public interface MessageDao {
     @Query("SELECT * FROM message")
     List<Message> getAll();
 
-    @Query("SELECT * FROM message WHERE roomID=:roomID")
+    @Query("SELECT * FROM message WHERE roomID=:roomID ORDER BY date DESC")
     List<Message> getMessageByRoom(int roomID);
 
-    @Query("SELECT * FROM message WHERE date BETWEEN :from AND :to")
-    List<Message> findUsersBornBetweenDates(Date from, Date to);
-
     @Insert
-    void insert(Message message);
+    long insert(Message message);
+
+    @Delete
+    void deleteMessages(List<Message> messages);
 }

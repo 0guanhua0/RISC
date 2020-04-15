@@ -18,7 +18,7 @@ import static edu.duke.ece651.risk.shared.Constant.PLAYER_ID;
  * @create: 2020-03-09 16:24
  **/
 public abstract class Player<T> implements Serializable{
-    private static final long serialVersionUID = 21L;
+    private static final long serialVersionUID = 16L;
 
     T color;
     int id;
@@ -132,18 +132,16 @@ public abstract class Player<T> implements Serializable{
             out.writeObject(data);
             out.flush();
         } catch (IOException ignored) {
-            System.err.println(ignored.toString());
             this.setConnect(false);
         }
     }
 
     public Object recv() throws ClassNotFoundException {
-        Object o = new Object();
+        Object o = null;
         try {
             o = in.readObject();
         }
         catch (IOException ignored) {
-            System.err.println(ignored.toString());
             this.setConnect(false);
         }
         return o;
@@ -158,7 +156,8 @@ public abstract class Player<T> implements Serializable{
             chatOut.writeObject(message);
             chatOut.flush();
         } catch (IOException ignored){
-            this.setConnect(false);
+            // user disconnect from chat, not mean disconnect from game
+            // this.setConnect(false);
         }
     }
 
@@ -169,13 +168,10 @@ public abstract class Player<T> implements Serializable{
      */
     public Object recvChatMessage() {
         try {
-            if (chatIn != null){
-                return chatIn.readObject();
-            }
-        }
-        catch (Exception ignored) {
-            System.err.println(ignored.toString());
-            this.setConnect(false);
+            return chatIn.readObject();
+        } catch (Exception ignored) {
+            // user disconnect from chat, not mean disconnect from game
+            // this.setConnect(false);
         }
         return null;
     }

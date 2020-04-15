@@ -10,6 +10,11 @@ public class SQL {
     static String dbUser = "gqjnslms";
     static String dbPassword = "lgdCePb8sUPuaIh1NxvkcXVcRIxc-lVp";
 
+    // local test config
+//    static String dbUrl = "jdbc:postgresql://localhost:5432/risk";
+//    static String dbUser = "postgres";
+//    static String dbPassword = "postgres";
+
     public SQL() throws ClassNotFoundException, SQLException {
         //drop table if exists
         dropTable();

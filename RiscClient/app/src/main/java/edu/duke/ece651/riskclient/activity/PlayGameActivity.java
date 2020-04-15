@@ -35,6 +35,7 @@ import java.util.TimerTask;
 import edu.duke.ece651.risk.shared.ToClientMsg.RoundInfo;
 import edu.duke.ece651.risk.shared.WorldState;
 import edu.duke.ece651.risk.shared.action.Action;
+import edu.duke.ece651.risk.shared.action.AllyAction;
 import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.Unit;
 import edu.duke.ece651.risk.shared.map.WorldMap;
@@ -53,11 +54,13 @@ import static edu.duke.ece651.riskclient.Constant.MAP_NAME_TO_RESOURCE_ID;
 import static edu.duke.ece651.riskclient.Constant.NETWORK_PROBLEM;
 import static edu.duke.ece651.riskclient.RiskApplication.getPlayerID;
 import static edu.duke.ece651.riskclient.RiskApplication.getRoomName;
-import static edu.duke.ece651.riskclient.RiskApplication.initChatSocket;
 import static edu.duke.ece651.riskclient.RiskApplication.recv;
 import static edu.duke.ece651.riskclient.RiskApplication.send;
 import static edu.duke.ece651.riskclient.RiskApplication.setPlayerID;
+import static edu.duke.ece651.riskclient.RiskApplication.startChatThread;
+import static edu.duke.ece651.riskclient.RiskApplication.stopChatThread;
 import static edu.duke.ece651.riskclient.utils.HTTPUtils.recvAttackResult;
+import static edu.duke.ece651.riskclient.utils.HTTPUtils.sendAction;
 import static edu.duke.ece651.riskclient.utils.UIUtils.showToastUI;
 
 public class PlayGameActivity extends AppCompatActivity {
@@ -129,12 +132,22 @@ public class PlayGameActivity extends AppCompatActivity {
         actionType = TYPE_MOVE;
 
         setUpUI();
-
         // make sure user can't do anything before we receive the first round data
         setAllButtonClickable(false);
-
         // these two function use separate sockets, can perform them in parallel
         receiveLatestInfo();
+        // connect to the chat room & start receiving incoming message(store into DB)
+        startChatThread(new onResultListener() {
+            @Override
+            public void onFailure(String error) {
+                Log.e(TAG, "start chat thread: " + error);
+            }
+
+            @Override
+            public void onSuccessful() {
+                showToastUI(PlayGameActivity.this, "Successfully connect to the chat room.");
+            }
+        });
     }
 
     @Override
@@ -336,8 +349,9 @@ public class PlayGameActivity extends AppCompatActivity {
 
         List<String> allianceName = new ArrayList<>();
         for (SPlayer p : allPlayers){
-            // TODO: exclude player himself
-            allianceName.add(p.getName());
+            if (!p.getName().equals(player.getName())){
+                allianceName.add(p.getName());
+            }
         }
 
         ArrayAdapter<String> adapterName =
@@ -360,7 +374,27 @@ public class PlayGameActivity extends AppCompatActivity {
         mBuilder.setPositiveButton("Confirm", ((dialogInterface, i) -> {
             String name = dpAlliance.getText().toString();
             showToastUI(PlayGameActivity.this, "form alliance with " + name);
-            // TODO: send the form alliance action
+            for (SPlayer p : allPlayers){
+                if (name.equals(p.getName())){
+                    // construct and send the ally action
+                    AllyAction action = new AllyAction(p.getId());
+                    sendAction(action, new onResultListener() {
+                        @Override
+                        public void onFailure(String error) {
+                            // either invalid action or networking problem
+                            showToastUI(PlayGameActivity.this, error);
+                            Log.e(TAG, "alliance fail: " + error);
+                        }
+
+                        @Override
+                        public void onSuccessful() {
+                            // valid action
+                            performedActions.add(action);
+                            showPerformedActions();
+                        }
+                    });
+                }
+            }
         }));
         mBuilder.setNegativeButton("Cancel", ((dialogInterface, i) -> {
         }));
@@ -648,6 +682,7 @@ public class PlayGameActivity extends AppCompatActivity {
         if (isLose){
             AlertDialog.Builder builder = new AlertDialog.Builder(PlayGameActivity.this);
             builder.setPositiveButton("Yes", (dialog1, which) -> {
+                stopChatThread();
                 onBackPressed();
             });
             builder.setNegativeButton("No", (dialog2, which) -> {
@@ -664,6 +699,7 @@ public class PlayGameActivity extends AppCompatActivity {
             });
             dialog.show();
         }else {
+            stopChatThread();
             // if not lose, can go out and come back as you want
             onBackPressed();
         }

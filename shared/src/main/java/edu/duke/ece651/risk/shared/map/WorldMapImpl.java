@@ -10,7 +10,7 @@ import java.util.*;
  * @create: 2020-03-28 14:10
  **/
 public class WorldMapImpl<T extends Serializable> extends WorldMap{
-    private static final long serialVersionUID = 12L;
+    private static final long serialVersionUID = 15L;
 
     public WorldMapImpl(Map<String, Set<String>> adjaList, List<T> colorList,
                         Map<Set<String>, Boolean> groups, Map<String,Integer> sizes,

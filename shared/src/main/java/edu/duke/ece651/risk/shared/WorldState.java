@@ -15,6 +15,7 @@ import java.util.List;
  * @create: 2020-03-29 14:58
  **/
 public class WorldState {
+    private static final long serialVersionUID = 25L;
 
     //Player for corresponding action
     Player<String> myPlayer;
