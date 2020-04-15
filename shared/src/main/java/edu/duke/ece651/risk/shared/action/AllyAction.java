@@ -58,4 +58,10 @@ public class AllyAction implements Action{
         }
         return true;
     }
+
+    @Override
+    public String toString() {
+        // TODO: finish this
+        return String.format("allay with %d", allyRequest);
+    }
 }

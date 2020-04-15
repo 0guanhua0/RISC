@@ -132,7 +132,6 @@ public abstract class Player<T> implements Serializable{
             out.writeObject(data);
             out.flush();
         } catch (IOException ignored) {
-            System.err.println(ignored.toString());
             this.setConnect(false);
         }
     }
@@ -143,7 +142,6 @@ public abstract class Player<T> implements Serializable{
             o = in.readObject();
         }
         catch (IOException ignored) {
-            System.err.println(ignored.toString());
             this.setConnect(false);
         }
         return o;

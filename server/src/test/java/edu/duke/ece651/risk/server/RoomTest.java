@@ -105,7 +105,7 @@ public class RoomTest {
     }
 
     @Test
-    public void testAskForMap() throws IOException, ClassNotFoundException {
+    public void testAskForMap() throws IOException, ClassNotFoundException, EOFException {
         assertThrows(IllegalArgumentException.class,()->{new Room(-1,null, new MapDataBase<String>());});
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -127,7 +127,6 @@ public class RoomTest {
 
         String s13 = "{\"" + MAP_NAME + "\": \"" + m3 + "\",\n" +
                 "\"" + ROOM_NAME +"\": \"" + r3 + "\" }";
-
 
         Player<String> player = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList(s11, s12, s13))), stream);
         MapDataBase<String> mapDataBase = new MapDataBase<>();
@@ -301,13 +300,11 @@ public class RoomTest {
 
         ServerSelect s1 = new ServerSelect(p1Chosen1);
 
-
         //valid select group of objects for p2
         Set<String> p2Group = new HashSet<>();
         p2Group.add("kingdom of the rock");
         p2Group.add("kingdom of the reach");
         p2Group.add("principality of dorne");
-
 
         // valid input objects for p2
         HashMap<String, Integer> p2Chosen1  = new HashMap<>();
