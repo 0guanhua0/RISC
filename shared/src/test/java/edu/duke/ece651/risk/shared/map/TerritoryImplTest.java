@@ -540,4 +540,30 @@ class TerritoryImplTest {
 
 
     }
+
+    @Test
+    void getAllyUnitsNum() throws IOException {
+        //prepare the state
+        MapDataBase<String> mapDataBase = new MapDataBase<>();
+        WorldMap<String> worldMap = mapDataBase.getMap("a clash of kings");
+        PlayerV2<String> player1 = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),new ByteArrayOutputStream());
+        PlayerV2<String> player2 = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),new ByteArrayOutputStream());
+        player1.setId(1);
+        player2.setId(2);
+        TerritoryImpl test = new TerritoryImpl("test", 3, 20, 20);
+        player1.addTerritory(test);
+        test.addUnit(new Unit(0));
+
+        assertEquals(0,test.getAllyUnitsNum(0));
+        WorldState worldState1 = new WorldState(player1, worldMap, Arrays.asList(player1,player2));
+        WorldState worldState2 = new WorldState(player2, worldMap, Arrays.asList(player1,player2));
+        AllyAction allyAction1 = new AllyAction(2);
+        allyAction1.perform(worldState1);
+        AllyAction allyAction2 = new AllyAction(1);
+        allyAction2.perform(worldState2);
+
+        test.addAllyUnit(new Unit(0));
+        assertEquals(1,test.getAllyUnitsNum(0));
+
+    }
 }

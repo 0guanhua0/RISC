@@ -14,7 +14,7 @@ import java.util.List;
 public class AllyAction implements Action{
     private static final long serialVersionUID = 1L;
 
-    //below the id of the player that you want ally to ally with at this round
+    //below is the id of the player that you want to ally with at this round
     int allyRequest;
 
     public AllyAction(int allyRequest) {
@@ -59,9 +59,9 @@ public class AllyAction implements Action{
         return true;
     }
 
+    //TODO maybe change id to real name
     @Override
     public String toString() {
-        // TODO: finish this
-        return String.format("allay with %d", allyRequest);
+        return String.format("You choose to allay with Player %d", allyRequest);
     }
 }

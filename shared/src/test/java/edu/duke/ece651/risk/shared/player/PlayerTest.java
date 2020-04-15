@@ -320,6 +320,10 @@ class PlayerTest {
         TerritoryImpl test = new TerritoryImpl("test", 3, 20, 20);
         player1.addTerritory(test);
 
+        TerritoryImpl test2 = new TerritoryImpl("test", 3, 20, 20);
+        player2.addTerritory(test2);
+
+
         player1.setAllyRequest(2);
         player2.setAllyRequest(1);
         player1.allyWith(player2);
@@ -331,6 +335,7 @@ class PlayerTest {
         assertEquals(null,player2.ally);
         assertEquals(-1,player2.allyRequest);
         assertEquals(-1,test.getAllyId());
+        assertEquals(-1,test2.getAllyId());
 
     }
 

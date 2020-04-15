@@ -67,4 +67,10 @@ class AllyActionTest {
         assertThrows(IllegalArgumentException.class,()->{new AllyAction(3).perform(worldState1);});
 
     }
+
+    @Test
+    void testToString() throws IOException {
+        AllyAction allyAction1 = new AllyAction(1);
+        System.out.println(allyAction1.toString());
+    }
 }
