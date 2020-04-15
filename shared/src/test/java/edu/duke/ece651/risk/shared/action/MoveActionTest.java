@@ -249,10 +249,6 @@ class MoveActionTest {
         AllyAction allyAction2 = new AllyAction(1);
         allyAction2.perform(worldState2);
 
-        System.out.println(stormTerr.getAllyId());
-        System.out.println(valeTerr.getAllyId());
-        System.out.println(dorneTerr.getAllyId());
-
         valeTerr.addUnit(new Unit(0));
         valeTerr.addUnit(new Unit(0));
 
@@ -276,13 +272,17 @@ class MoveActionTest {
         assertEquals(0,valeTerr.getUnitsNum(0));
         assertEquals(1,dorneTerr.getUnitsNum(0));
 
+        Map<Integer, Integer> unitMap2 = new HashMap<Integer, Integer>(){{
+            put(2,1);
+        }};
+        MoveAction moveAction3 = new MoveAction(storm, vale, 1, unitMap2);
+        assertDoesNotThrow(()->{moveAction3.perform(worldState1);});
+        assertEquals(0,stormTerr.getUnitsNum(2));
+        assertEquals(1,valeTerr.getAllyUnitsNum(2));
+
 
 
 
     }
 
-    @Test
-    void testMovePerformWithAlly(){
-
-    }
 }
