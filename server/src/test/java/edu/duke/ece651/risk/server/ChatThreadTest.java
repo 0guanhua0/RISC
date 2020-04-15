@@ -63,7 +63,7 @@ public class ChatThreadTest {
         ChatThread<String> thread = new ChatThread<>(players);
         thread.start();
         // give the thread enough time to send & receive message
-	    Thread.sleep(1000);
+        Thread.sleep(2000);
         thread.interrupt();
         thread.join();
         // player1 only receive the broadcast message
