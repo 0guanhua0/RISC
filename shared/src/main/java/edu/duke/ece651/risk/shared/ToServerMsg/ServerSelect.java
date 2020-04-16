@@ -15,6 +15,8 @@ import java.util.Set;
  * @create: 2020-03-16 17:21
  **/
 public class ServerSelect implements Serializable {
+    private static final long serialVersionUID = 23L;
+
     //key is the name of territories this player has just chosen
     //value is the number of units this player wants to assign to the corresponding territory
     Map<String,Integer> chosen;

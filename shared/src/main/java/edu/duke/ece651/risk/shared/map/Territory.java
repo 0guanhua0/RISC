@@ -1,6 +1,7 @@
 package edu.duke.ece651.risk.shared.map;
 
 import edu.duke.ece651.risk.shared.action.AttackResult;
+import edu.duke.ece651.risk.shared.player.Player;
 import org.json.JSONObject;
 import org.mongodb.morphia.annotations.Embedded;
 import org.mongodb.morphia.annotations.Transient;
@@ -13,19 +14,24 @@ import static edu.duke.ece651.risk.shared.Utils.readFileToString;
 
 @Embedded
 public abstract class Territory implements Serializable {
+    private static final long serialVersionUID = 10L;
 
     @Transient
     Set<Territory> neigh;
     //class to represent current status of this territory
     @Embedded
     TStatus status;
-    @Embedded
-    HashMap<Integer, List<Army>> attackAct;
+
+    HashMap<Player, List<Army>> attackAct;
+
+    //use null to represent don't have any friends
+    Player ally;
 
     public Territory(String name) {
         this.neigh = new HashSet<>();
         this.status = new TStatus(name);
         this.attackAct = new HashMap<>();
+        this.ally = null;
     }
 
     //morphia constructor
@@ -70,32 +76,45 @@ public abstract class Territory implements Serializable {
         status.setOwnerId(0);
     }
 
-//    //helper function to check if two territories are adjacent to each other
-//    private boolean DFSHelper(Territory current, Territory target, Set<Territory> visited) {
-//        if (visited.contains(current) || current.getOwner() != this.getOwner()) {
-//            return false;
-//        } else if (current == target) {
-//            return true;
-//        } else {
-//            visited.add(current);
-//            for (Territory neigh : current.getNeigh()) {
-//                if (DFSHelper(neigh, target, visited)) {
-//                    return true;
-//                }
-//            }
-//            return false;
-//        }
-//    }
-//
-//    //return true only when there is path from current territory to the target territory,
-//    //and all territories along the path should under the control of owner of current territory
-//    public boolean hasPathTo(Territory target) {
-//        if (this == target || target.getOwner() != this.getOwner()) {//a territory is not adjacent to itself
-//            return false;
-//        }
-//        Set<Territory> visited = new HashSet<>();
-//        return DFSHelper(this, target, visited);
-//    }
+    /**
+     * @return ally id of this this territory, -1 when don't have ally
+     */
+    public int getAllyId() {
+        if (null==this.ally){
+            return -1;
+        }
+        return ally.getId();
+    }
+
+    public void setAlly(Player ally) {
+        this.ally = ally;
+    }
+
+    /**
+     * the method is used to unify all players' army with their friends' army (if existed) and let them engage in the same battle
+     * @return the list of unified army, each single map represents a unified army, key is player, value is their army
+     */
+    List<Map<Player,List<Army>>> buildUnifiedArmy(){
+        List<Map<Player,List<Army>>> unifiedArmies = new ArrayList<>();
+        Set<Player> visited = new HashSet<>();
+        for (Player player : attackAct.keySet()) {
+            if (!visited.contains(player)){
+                //this if block can handle each single player and corresponding friend
+                //visited make sure friend will not be counted twice
+                Map<Player,List<Army>> unifiedArmy = new HashMap<>();
+                unifiedArmy.put(player,attackAct.get(player));
+                visited.add(player);
+                Player ally = player.getAlly();
+                if (null!=ally&&!visited.contains(ally)&&attackAct.containsKey(ally)){
+                    visited.add(ally);
+                    unifiedArmy.put(ally,attackAct.get(ally));
+                }
+                unifiedArmies.add(unifiedArmy);
+            }
+        }
+        return unifiedArmies;
+    }
+
 
     /**
      * This function will resolve all combats happen in current territory.
@@ -106,11 +125,13 @@ public abstract class Territory implements Serializable {
         Random diceAttack = new Random(jsonObject.getInt("attackSeed"));
         Random diceDefend = new Random(jsonObject.getInt("defendSeed"));
 
+        List<Map<Player,List<Army>>> unifiedArmies = buildUnifiedArmy();
+
         // store the whole result of combat
         ArrayList<AttackResult> attackResults = new ArrayList<>();
-        // iterate through attack list
-        for (Map.Entry<Integer, List<Army>> entry : attackAct.entrySet()) {
-            attackResults.add(resolveCombat(entry.getKey(), entry.getValue(), diceAttack, diceDefend));
+        // iterate through unified armies
+        for (Map<Player, List<Army>> unifiedArmy : unifiedArmies) {
+            attackResults.add(resolveCombat(unifiedArmy, diceAttack, diceDefend));
         }
         // clean up attackMap
         attackAct.clear();
@@ -128,6 +149,17 @@ public abstract class Territory implements Serializable {
      * @return number of units, 0 when level not exist
      */
     public abstract int getUnitsNum(int level);
+
+
+
+    /**
+     * get the number of units from ally with certain tech level
+     * @param level: technology level for units you want
+     * @return number of units, 0 when level not exist or ally not existed
+     */
+    public abstract int getAllyUnitsNum(int level);
+
+    public abstract void addUnit(Unit unit);
 
 
     /**
@@ -176,9 +208,9 @@ public abstract class Territory implements Serializable {
      */
     public abstract boolean canLoseUnits(int num, int level);
 
-    public abstract void addAttack(int playerId, Army army);
+    public abstract void addAttack(Player player, Army army);
 
-    abstract AttackResult resolveCombat(int attackerID, List<Army> armies, Random diceAttack, Random diceDefend);
+    abstract AttackResult resolveCombat(Map<Player, List<Army>> unifiedArmy, Random diceAttack, Random diceDefend);
 
     abstract int getSize();
 
@@ -203,5 +235,14 @@ public abstract class Territory implements Serializable {
      * @param targetLevel: target level of units
      */
     public abstract void upUnit(int num, int curLevel,int targetLevel);
+
+    /**
+     * rupture the alliance with ally, called inside attack action
+     */
+    public abstract void ruptureAlly();
+
+    public abstract void addAllyUnit(Unit unit);
+
+    public abstract void addUnits(List<Unit> units);
 
 }

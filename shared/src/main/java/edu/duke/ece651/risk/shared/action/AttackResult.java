@@ -9,6 +9,8 @@ import java.util.Objects;
  * record the result of attack
  */
 public class AttackResult {
+    private static final long serialVersionUID = 3L;
+
     int attackerID;
     int defenderID;
     List<String> srcTerritories;

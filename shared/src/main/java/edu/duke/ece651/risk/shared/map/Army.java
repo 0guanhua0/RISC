@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 @Embedded
 public class Army implements Serializable {
+    private static final long serialVersionUID = 7L;
+
     // where this army comes from(e.g. territory name)
     String src;
     Map<Integer,Integer> levelToNum;
@@ -19,6 +21,7 @@ public class Army implements Serializable {
         this.levelToNum = levelToNuml;
         this.playerId = playerID;
     }
+
 
     public Army(int playerID, String src, int unitNum) {
         this.src = src;

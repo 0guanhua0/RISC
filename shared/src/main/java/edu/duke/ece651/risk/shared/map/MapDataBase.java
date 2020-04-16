@@ -5,7 +5,6 @@ import edu.duke.ece651.risk.shared.Utils;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
@@ -17,6 +16,8 @@ import java.util.*;
  **/
 
 public class MapDataBase<T extends Serializable> implements Serializable{
+    private static final long serialVersionUID = 9L;
+
     Map<String, WorldMap<T>> mapHub;
     private String baseDirStr = "../config_file/MapDB_config/";
 
@@ -43,7 +44,7 @@ public class MapDataBase<T extends Serializable> implements Serializable{
             Map<String, Integer> tech = Utils.readSizeConfig(techPath);
 
 
-            WorldMap<T> worldMap = new WorldMapV2(atlas,colorList,groups,size,food,tech);
+            WorldMap<T> worldMap = new WorldMapImpl(atlas,colorList,groups,size,food,tech);
             worldMap.setName(mapName);
             mapHub.put(mapName,worldMap);
         }

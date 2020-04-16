@@ -4,6 +4,7 @@ import edu.duke.ece651.risk.shared.Mock;
 import edu.duke.ece651.risk.shared.WorldState;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.map.Territory;
+import edu.duke.ece651.risk.shared.map.Unit;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.risk.shared.player.Player;
 import edu.duke.ece651.risk.shared.player.PlayerV2;
@@ -210,4 +211,78 @@ class MoveActionTest {
         MoveAction a1 = new MoveAction("kingdom of the north", "kingdom of mountain and vale", 1, map);
         System.out.println(a1.toString());
     }
+
+
+
+
+    @Test
+    void testMoveWithAlly() throws IOException {
+        MapDataBase<String> mapDataBase = new MapDataBase<String>();
+        //prepare the world
+        WorldMap<String> worldMap = mapDataBase.getMap("a clash of kings");
+        Territory stormTerr = worldMap.getTerritory("the storm kingdom");
+        Territory reachTerr = worldMap.getTerritory("kingdom of the reach");
+        Territory rockTerr = worldMap.getTerritory("kingdom of the rock");
+        Territory valeTerr = worldMap.getTerritory("kingdom of mountain and vale");
+        Territory northTerr = worldMap.getTerritory("kingdom of the north");
+        Territory dorneTerr = worldMap.getTerritory("principality of dorne");
+
+        //two players join this game
+        Player<String> player1 = new PlayerV2<>(Mock.setupMockInput(Arrays.asList()),new ByteArrayOutputStream());
+        player1.setId(1);
+        Player<String> player2 = new PlayerV2<>(Mock.setupMockInput(Arrays.asList()),new ByteArrayOutputStream());
+        player2.setId(2);
+
+        player1.addTerritory(stormTerr);
+        player2.addTerritory(valeTerr);
+        player2.addTerritory(dorneTerr);
+
+
+        WorldState worldState1 = new WorldState(player1, worldMap, Arrays.asList(player1,player2));
+        WorldState worldState2 = new WorldState(player2, worldMap, Arrays.asList(player1,player2));
+
+
+        //1 submit an ally request to ally with 2
+        AllyAction allyAction1 = new AllyAction(2);
+        allyAction1.perform(worldState1);
+        //2 submit an ally request to ally with 1
+        AllyAction allyAction2 = new AllyAction(1);
+        allyAction2.perform(worldState2);
+
+        valeTerr.addUnit(new Unit(0));
+        valeTerr.addUnit(new Unit(0));
+
+        stormTerr.addUnit(new Unit(1));
+        stormTerr.addUnit(new Unit(2));
+
+        dorneTerr.addUnit(new Unit(3));
+        dorneTerr.addUnit(new Unit(4));
+
+        assertEquals(0,dorneTerr.getUnitsNum(0));
+        Map<Integer, Integer> unitMap = new HashMap<Integer, Integer>(){{
+            put(0,1);
+        }};
+
+        MoveAction moveAction1 = new MoveAction(vale, storm, 2, unitMap);
+        assertDoesNotThrow(()->{moveAction1.perform(worldState2);});
+        assertEquals(1,stormTerr.getAllyUnitsNum(0));
+
+        MoveAction moveAction2 = new MoveAction(vale, dorne, 2, unitMap);
+        assertDoesNotThrow(()->{moveAction2.perform(worldState2);});
+        assertEquals(0,valeTerr.getUnitsNum(0));
+        assertEquals(1,dorneTerr.getUnitsNum(0));
+
+        Map<Integer, Integer> unitMap2 = new HashMap<Integer, Integer>(){{
+            put(2,1);
+        }};
+        MoveAction moveAction3 = new MoveAction(storm, vale, 1, unitMap2);
+        assertDoesNotThrow(()->{moveAction3.perform(worldState1);});
+        assertEquals(0,stormTerr.getUnitsNum(2));
+        assertEquals(1,valeTerr.getAllyUnitsNum(2));
+
+
+
+
+    }
+
 }

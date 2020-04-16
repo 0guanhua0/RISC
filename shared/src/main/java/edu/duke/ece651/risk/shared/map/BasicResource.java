@@ -12,6 +12,8 @@ import java.io.Serializable;
  **/
 @Embedded
 public class BasicResource implements Serializable {
+    private static final long serialVersionUID = 8L;
+
     int totalNum;
 
     public BasicResource(int totalNum) {

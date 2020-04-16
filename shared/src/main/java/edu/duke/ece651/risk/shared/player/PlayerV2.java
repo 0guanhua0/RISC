@@ -13,20 +13,23 @@ import static edu.duke.ece651.risk.shared.Constant.*;
 
 /**
  * @program: risk
- * @description: this is player class for evolution2
+ * @description: this is player class for evolution2&evolution3
  * @author: Chengda Wu
  * @create: 2020-03-28 20:16
  **/
 @Embedded
 public class PlayerV2<T> extends PlayerV1<T> implements Serializable {
-    private static final long serialVersionUID = 22L;
-    @Embedded
+
+
+    private static final long serialVersionUID = 18L;
+
     BasicResource tech;
     @Embedded
     BasicResource food;
     //this variable marks that this user have right to upgrade her maximum technology
     boolean upTechRight;
     int techLevel;
+
     private void initResource(){
         tech = new BasicResource(INITIAL_TECH_NUM);
         food = new BasicResource(INITIAL_FOOD_NUM);
@@ -58,6 +61,7 @@ public class PlayerV2<T> extends PlayerV1<T> implements Serializable {
             this.upTechRight = true;
             techLevel++;
         }
+        this.allyRequest = -1;
 
     }
 
@@ -110,10 +114,16 @@ public class PlayerV2<T> extends PlayerV1<T> implements Serializable {
         upTechRight = false;
     }
 
-
-
     @Override
     public int getTechLevel() {
         return this.techLevel;
+    }
+
+    @Override
+    public void setId(int id) {
+        if (this.id>0){
+            throw new IllegalStateException("can't assign an id twice!");
+        }
+        super.setId(id);
     }
 }

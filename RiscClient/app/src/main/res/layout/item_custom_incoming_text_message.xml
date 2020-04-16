@@ -24,7 +24,7 @@
         android:layout_marginEnd="5dp" />
 
     <TextView
-        android:id="@+id/a123"
+        android:id="@+id/tv_sender_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="player1"
@@ -37,7 +37,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="30dp"
-        android:layout_below="@id/a123"
+        android:layout_below="@id/tv_sender_name"
         android:layout_toEndOf="@id/messageUserAvatar"
         android:orientation="vertical">
 

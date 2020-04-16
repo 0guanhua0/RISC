@@ -14,6 +14,7 @@ import static edu.duke.ece651.risk.shared.Mock.setupMockInput;
  * @create: 2020-03-09 17:42
  **/
 public class PlayerV1<T> extends Player<T> implements Serializable {
+    private static final long serialVersionUID = 17L;
 
     public PlayerV1(InputStream in, OutputStream out) throws IOException {
         super(in, out);

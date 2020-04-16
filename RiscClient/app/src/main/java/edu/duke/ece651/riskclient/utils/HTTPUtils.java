@@ -16,7 +16,6 @@ import edu.duke.ece651.riskclient.listener.onNewPlayerListener;
 import edu.duke.ece651.riskclient.listener.onReceiveListener;
 import edu.duke.ece651.riskclient.listener.onRecvAttackResultListener;
 import edu.duke.ece651.riskclient.listener.onResultListener;
-import edu.duke.ece651.riskclient.objects.Message;
 import edu.duke.ece651.riskclient.objects.SimplePlayer;
 
 import static edu.duke.ece651.risk.shared.Constant.ACTION_CREATE_GAME;
@@ -46,7 +45,6 @@ import static edu.duke.ece651.riskclient.RiskApplication.getRoomID;
 import static edu.duke.ece651.riskclient.RiskApplication.getThreadPool;
 import static edu.duke.ece651.riskclient.RiskApplication.getTmpSocket;
 import static edu.duke.ece651.riskclient.RiskApplication.recv;
-import static edu.duke.ece651.riskclient.RiskApplication.recvChat;
 import static edu.duke.ece651.riskclient.RiskApplication.send;
 
 /**
@@ -151,11 +149,21 @@ public class HTTPUtils {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put(USER_NAME, getPlayerName());
             jsonObject.put(ACTION_TYPE, ACTION_CREATE_GAME);
-            send(jsonObject.toString());
-            // create a new room
-            sendAndCheckSuccessG("-1", listener);
+            send(jsonObject.toString(), new onResultListener() {
+                @Override
+                public void onFailure(String error) {
+                    Log.e(TAG, "createNewRoom: " + error);
+                }
+
+                @Override
+                public void onSuccessful() {
+                    // create a new room
+                    sendAndCheckSuccessG("-1", listener);
+                }
+            });
         }catch (JSONException e){
             Log.e(TAG, "createNewRoom: " + e.toString());
+            listener.onFailure(e.toString());
         }
     }
 
@@ -221,9 +229,18 @@ public class HTTPUtils {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put(USER_NAME, getPlayerName());
             jsonObject.put(ACTION_TYPE, ACTION_JOIN_GAME);
-            send(jsonObject.toString());
-            // join in an existing room
-            sendAndCheckSuccessG(String.valueOf(getRoomID()), listener);
+            send(jsonObject.toString(), new onResultListener() {
+                @Override
+                public void onFailure(String error) {
+                    Log.e(TAG, "joinRoom: " + error);
+                }
+
+                @Override
+                public void onSuccessful() {
+                    // join in an existing room
+                    sendAndCheckSuccessG(String.valueOf(getRoomID()), listener);
+                }
+            });
         }catch (JSONException e){
             Log.e(TAG, "joinRoom: " + e.toString());
         }
@@ -342,28 +359,6 @@ public class HTTPUtils {
         });
     }
 
-    /**
-     * This method will listen the chat message as long as the socket is open.
-     * @param listener receive listener
-     */
-    public static void listenChatMessage(onReceiveListener listener){
-        recvChat(new onReceiveListener() {
-            @Override
-            public void onFailure(String error) {
-                listener.onFailure(error);
-            }
-
-            @Override
-            public void onSuccessful(Object object) {
-                if (object instanceof Message){
-                    listener.onSuccessful(object);
-                    // keep receiving
-                    listenChatMessage(listener);
-                }
-            }
-        });
-    }
-
     /* ====== helper function ====== */
     /**
      * Send the request string and check the response is successful or not(using a tmp socket).
@@ -426,8 +421,17 @@ public class HTTPUtils {
      * @param listener result listener
      */
     static void sendAndCheckSuccessG(Object object, onResultListener listener){
-        send(object);
-        checkResult(listener);
+        send(object, new onResultListener() {
+            @Override
+            public void onFailure(String error) {
+                Log.e(TAG, "sendAndCheckSuccessG: " + error);
+            }
+
+            @Override
+            public void onSuccessful() {
+                checkResult(listener);
+            }
+        });
     }
 }
 

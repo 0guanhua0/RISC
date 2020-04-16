@@ -11,6 +11,8 @@ import java.util.List;
  * This class stands for one room of the game.(mostly for evolution 2)
  */
 public class RoomInfo implements Serializable {
+    private static final long serialVersionUID = 24L;
+
     int roomID;
     String roomName;
     // player inside

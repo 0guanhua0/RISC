@@ -128,7 +128,6 @@ public class RoomTest {
         String s13 = "{\"" + MAP_NAME + "\": \"" + m3 + "\",\n" +
                 "\"" + ROOM_NAME +"\": \"" + r3 + "\" }";
 
-
         Player<String> player = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList(s11, s12, s13))), stream);
         MapDataBase<String> mapDataBase = new MapDataBase<>();
         Room room = new Room(0, player, mapDataBase);
@@ -205,7 +204,7 @@ public class RoomTest {
         room.checkWinner();
         assertEquals(room.gameInfo.winnerID,1);
 
-        Territory test = new TerritoryV1("some name");
+        Territory test = new TerritoryImpl("some name",0,0,0);
         player1.addTerritory(test);
         assertThrows(IllegalStateException.class, room::checkWinner);
     }
@@ -243,9 +242,9 @@ public class RoomTest {
         player2.addTerritory(room.map.getTerritory(t5));
 
         // attacker lose
-        room.map.getTerritory(t1).addAttack(1, new Army(1, t3, 1));
+        room.map.getTerritory(t1).addAttack(player1, new Army(1, t3, 1));
         // attacker win
-        room.map.getTerritory(t5).addAttack(1, new Army(1, t2, 10));
+        room.map.getTerritory(t5).addAttack(player1, new Army(1, t2, 10));
 
         assertEquals(2, player1.getTerrNum());
         assertEquals(2, player2.getTerrNum());
@@ -301,13 +300,11 @@ public class RoomTest {
 
         ServerSelect s1 = new ServerSelect(p1Chosen1);
 
-
         //valid select group of objects for p2
         Set<String> p2Group = new HashSet<>();
         p2Group.add("kingdom of the rock");
         p2Group.add("kingdom of the reach");
         p2Group.add("principality of dorne");
-
 
         // valid input objects for p2
         HashMap<String, Integer> p2Chosen1  = new HashMap<>();

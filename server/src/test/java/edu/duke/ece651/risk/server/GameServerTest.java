@@ -1,7 +1,7 @@
 package edu.duke.ece651.risk.server;
 
 import edu.duke.ece651.risk.shared.map.MapDataBase;
-import edu.duke.ece651.risk.shared.map.TerritoryV1;
+import edu.duke.ece651.risk.shared.map.TerritoryImpl;
 import edu.duke.ece651.risk.shared.network.Client;
 import edu.duke.ece651.risk.shared.network.Server;
 import edu.duke.ece651.risk.shared.player.Player;
@@ -551,7 +551,7 @@ public class GameServerTest {
                         ))), new ByteArrayOutputStream());
         player1.setName("1");
         player1.setId(10);
-        player1.addTerritory(new TerritoryV1("test"));
+        player1.addTerritory(new TerritoryImpl("test",0,0,0));
 
         Player<String> player2 = new PlayerV1<>(
                 setupMockInput(

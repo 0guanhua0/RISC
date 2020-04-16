@@ -3,12 +3,12 @@ package edu.duke.ece651.risk.shared.action;
 import edu.duke.ece651.risk.shared.WorldState;
 import edu.duke.ece651.risk.shared.map.Army;
 import edu.duke.ece651.risk.shared.map.Territory;
-import edu.duke.ece651.risk.shared.map.Unit;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.risk.shared.player.Player;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static edu.duke.ece651.risk.shared.Constant.UNIT_NAME;
@@ -53,7 +53,7 @@ public class AttackAction implements Action, Serializable {
     @Override
     public boolean isValid(WorldState worldState) {
         WorldMap<String> worldMap = worldState.getMap();
-        Player<String> player = worldState.getPlayer();
+        Player<String> player = worldState.getMyPlayer();
 
         //validate src & dst & unit num
         if (!worldMap.hasTerritory(this.src) || !worldMap.hasTerritory(this.dest)) {
@@ -102,11 +102,12 @@ public class AttackAction implements Action, Serializable {
             throw new IllegalArgumentException("Invalid attack action!");
         }
         WorldMap<String> worldMap = worldState.getMap();
-        Player<String> player = worldState.getPlayer();
+        Player<String> myPlayer = worldState.getMyPlayer();
+
 
         //use some food to finish this attack operation
         int foodCost = unitsNum;
-        player.useFood(unitsNum);
+        myPlayer.useFood(unitsNum);
 
         for (Map.Entry<Integer, Integer> entry : levelToNum.entrySet()) {
             // reduce src units
@@ -114,7 +115,15 @@ public class AttackAction implements Action, Serializable {
         }
 
         // add attack units to target territory's attack buffer
-        worldMap.getTerritory(dest).addAttack(playerId, new Army(playerId, src,levelToNum));
+        worldMap.getTerritory(dest).addAttack(myPlayer, new Army(playerId, src,levelToNum));
+
+        int destOwner = worldMap.getTerritory(dest).getOwner();
+        //break the alliance if trying to attack an ally
+        List<Player<String>> players = worldState.getPlayers();
+        if (myPlayer.hasAlly()&&destOwner==myPlayer.getAlly().getId()){
+            myPlayer.ruptureAlly();
+        }
+
 
         return true;
     }

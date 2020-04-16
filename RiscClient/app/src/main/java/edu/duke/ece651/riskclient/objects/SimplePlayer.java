@@ -31,7 +31,7 @@ public class SimplePlayer implements Serializable, IUser {
 
     @Override
     public String getId() {
-        return String.valueOf(id);
+        return name;
     }
 
     @Override

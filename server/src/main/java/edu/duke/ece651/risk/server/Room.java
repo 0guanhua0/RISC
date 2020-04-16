@@ -291,7 +291,7 @@ public class Room {
         CyclicBarrier barrier = new CyclicBarrier(players.size() + 1);
 
         for (Player<String> player : players) {
-            Thread t = new PlayerThread(player, map, gameInfo, barrier);
+            Thread t = new PlayerThread(player, map, gameInfo, barrier,this.players);
             threads.add(t);
             t.start();
         }
@@ -299,7 +299,6 @@ public class Room {
         barrierWait(barrier);
 
         // open the chat thread
-        // TODO: pass in the list of players
         Thread tChat = new ChatThread<String>(players);
         threads.add(tChat);
         tChat.start();
