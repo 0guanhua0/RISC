@@ -13,7 +13,7 @@ public class Mongo {
     static MongoClient mongoClient = new MongoClient(new MongoClientURI(MONGO_URL));
 
     //save all value
-    void save(Object object) {
+    public Datastore morCon() {
 
         final Morphia morphia = new Morphia();
         morphia.mapPackage("edu.duke.ece651.risk");
@@ -21,7 +21,7 @@ public class Mongo {
         final Datastore datastore = morphia.createDatastore(mongoClient, MONGO_DB_NAME);
         datastore.ensureIndexes();
 
-        datastore.save(object);
+        return datastore;
     }
 
 }

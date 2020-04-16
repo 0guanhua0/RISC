@@ -48,18 +48,13 @@ class MongoTest {
         room.gameInfo.idToName.put(1, "1");
 
         Mongo m = new Mongo();
-        m.save(room);
-
-        final Morphia morphia = new Morphia();
-
-        MongoClient mongoClient = new MongoClient(new MongoClientURI(MONGO_URL));
-        final Datastore datastore = morphia.createDatastore(mongoClient, MONGO_DB_NAME);
+        Datastore datastore = m.morCon();
+        datastore.save(room);
 
         final Query<Room> query = datastore.createQuery(Room.class);
         final List<Room> rooms = query.asList();
 
-        rooms.get(0);
-        System.out.println(rooms.get(0).roomID);
+        assertEquals(0, rooms.get(0).roomID);
 
     }
 
