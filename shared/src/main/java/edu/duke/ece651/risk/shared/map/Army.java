@@ -14,6 +14,8 @@ public class Army implements Serializable {
     Map<Integer,Integer> levelToNum;
     int playerId;
 
+    //morphia con
+    public Army(){}
 
 
     public Army(int playerID, String src, Map<Integer,Integer> levelToNuml) {

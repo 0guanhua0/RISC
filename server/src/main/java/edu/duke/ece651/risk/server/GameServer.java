@@ -6,6 +6,8 @@ import edu.duke.ece651.risk.shared.network.Server;
 import edu.duke.ece651.risk.shared.player.Player;
 import edu.duke.ece651.risk.shared.player.PlayerV2;
 import org.json.JSONObject;
+import org.mongodb.morphia.Datastore;
+import org.mongodb.morphia.query.Query;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -38,12 +40,32 @@ public class GameServer {
         this.db = new SQL();
         this.userList = new UserList();
 
+        //recover
+        recover();
+
         // TODO: debug info
         db.addUser("xkw", "1234");
         db.addUser("xkx", "1234");
         db.addUser("xxx", "1234");
     }
 
+    /**
+     * recover function will try to read from mongo db
+     * then will put the info back to room list
+     */
+
+    void recover() {
+        //connect to mongo
+        Mongo m = new Mongo();
+        Datastore datastore = m.morCon();
+        Query<Room> query = datastore.createQuery(Room.class);
+        List<Room> rooms = query.asList();
+
+        //it through rooms, put back to map
+        for (Room r : rooms) {
+            this.rooms.put(r.roomID, r);
+        }
+    }
     /**
      * This will run forever(until the thread is killed), keep listen for new connection and handle it.
      */
