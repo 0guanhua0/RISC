@@ -60,7 +60,7 @@ public class WorldMapImpl<T extends Serializable> extends WorldMap{
         }
     }
 
-    //morphia constructor
-    public WorldMapV2(){}
 
+    //morphia
+    public WorldMapImpl(){}
 }

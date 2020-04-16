@@ -26,6 +26,8 @@ public class TerritoryImpl extends Territory {
     //unit from ally
     TreeMap<Integer, List<Unit>> allyUnits;
 
+    //morphia con
+    public TerritoryImpl(){}
 
 
     public TerritoryImpl(String name, int size, int foodYield, int techYield) {
