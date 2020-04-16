@@ -2,6 +2,8 @@ package edu.duke.ece651.risk.shared.map;
 
 import edu.duke.ece651.risk.shared.action.AttackResult;
 import org.json.JSONObject;
+import org.mongodb.morphia.annotations.Embedded;
+import org.mongodb.morphia.annotations.Transient;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -9,11 +11,15 @@ import java.util.*;
 
 import static edu.duke.ece651.risk.shared.Utils.readFileToString;
 
+@Embedded
 public abstract class Territory implements Serializable {
 
+    @Transient
     Set<Territory> neigh;
     //class to represent current status of this territory
+    @Embedded
     TStatus status;
+    @Embedded
     HashMap<Integer, List<Army>> attackAct;
 
     public Territory(String name) {

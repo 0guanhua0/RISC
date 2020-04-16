@@ -2,6 +2,7 @@ package edu.duke.ece651.risk.shared.player;
 
 import edu.duke.ece651.risk.shared.map.BasicResource;
 import edu.duke.ece651.risk.shared.map.Territory;
+import org.mongodb.morphia.annotations.Embedded;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,9 +17,12 @@ import static edu.duke.ece651.risk.shared.Constant.*;
  * @author: Chengda Wu
  * @create: 2020-03-28 20:16
  **/
+@Embedded
 public class PlayerV2<T> extends PlayerV1<T> implements Serializable {
     private static final long serialVersionUID = 22L;
+    @Embedded
     BasicResource tech;
+    @Embedded
     BasicResource food;
     //this variable marks that this user have right to upgrade her maximum technology
     boolean upTechRight;

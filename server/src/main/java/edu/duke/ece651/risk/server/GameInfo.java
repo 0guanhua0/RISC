@@ -1,8 +1,11 @@
 package edu.duke.ece651.risk.server;
 
+import org.mongodb.morphia.annotations.Embedded;
+
 import java.util.HashMap;
 import java.util.Map;
 
+@Embedded
 public class GameInfo {
     int winnerID;
     int roundNum;

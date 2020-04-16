@@ -2,6 +2,7 @@ package edu.duke.ece651.risk.shared.player;
 
 import edu.duke.ece651.risk.shared.map.Territory;
 import org.json.JSONObject;
+import org.mongodb.morphia.annotations.Embedded;
 
 import java.io.*;
 import java.util.HashSet;
@@ -17,6 +18,7 @@ import static edu.duke.ece651.risk.shared.Constant.PLAYER_ID;
  * @author: Chengda Wu(cw402)
  * @create: 2020-03-09 16:24
  **/
+@Embedded
 public abstract class Player<T> implements Serializable{
     private static final long serialVersionUID = 21L;
 
@@ -26,6 +28,7 @@ public abstract class Player<T> implements Serializable{
     transient ObjectOutputStream out;
     transient ObjectInputStream chatIn;
     transient ObjectOutputStream chatOut;
+    @Embedded
     Set<Territory> territories;
 
     //status mark connected / dis

@@ -1,5 +1,7 @@
 package edu.duke.ece651.risk.shared.map;
 
+import org.mongodb.morphia.annotations.Embedded;
+
 import java.io.Serializable;
 
 /**
@@ -13,6 +15,7 @@ import java.io.Serializable;
  * @create: 2020-03-08 20:32
  **/
 
+@Embedded
 public class TStatus implements Serializable {
 
     //player id of the owner of corresponding territory, 0 to represent this territory is currently free

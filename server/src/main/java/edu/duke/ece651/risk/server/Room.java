@@ -8,6 +8,10 @@ import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.risk.shared.player.Player;
 import edu.duke.ece651.risk.shared.player.SPlayer;
 import org.json.JSONObject;
+import org.mongodb.morphia.annotations.Embedded;
+import org.mongodb.morphia.annotations.Entity;
+import org.mongodb.morphia.annotations.Id;
+import org.mongodb.morphia.annotations.Transient;
 
 import java.io.IOException;
 import java.util.*;
@@ -18,16 +22,25 @@ import static edu.duke.ece651.risk.shared.Constant.*;
 
 //TODO for every method that have networking, take client losing connection into consideration
 //TODO for every method that have networking, handle some exceptions rather than just throwing it
+
+@Entity
 public class Room {
+    @Id
     int roomID;
+
     String roomName;
     // all players in current room
+    @Embedded
     List<Player<String>> players;
     // the map this room is playing
+    @Embedded
     WorldMap<String> map;
     // some basic info we need for a game(e.g. winnerID, roundNum)
+    @Embedded
     GameInfo gameInfo;
     // all new threads we create in this game(e.g. player thread, chat thread)
+    //ignore this field to store in mongo db
+    @Transient
     List<Thread> threads;
 
     /**

@@ -1,5 +1,8 @@
 package edu.duke.ece651.risk.shared.map;
 
+import org.mongodb.morphia.annotations.Embedded;
+import org.mongodb.morphia.annotations.Transient;
+
 import java.io.Serializable;
 import java.util.*;
 
@@ -11,11 +14,15 @@ import java.util.*;
  * @create: 2020-03-08 20:49
  **/
 
+@Embedded
 public abstract class WorldMap<T extends Serializable> implements Serializable {
     private static final long serialVersionUID = 10L;
 
     String name;
+    @Transient
     Map<String, Territory> atlas;
+
+    @Transient
     List<T> colorList;
     //key is the set of names of territory, value is there are currently selected or not
     Map<Set<String>,Boolean> groups;

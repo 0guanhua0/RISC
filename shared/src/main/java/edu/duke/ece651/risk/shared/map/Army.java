@@ -1,9 +1,11 @@
 package edu.duke.ece651.risk.shared.map;
 
+import org.mongodb.morphia.annotations.Embedded;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-
+@Embedded
 public class Army implements Serializable {
     // where this army comes from(e.g. territory name)
     String src;

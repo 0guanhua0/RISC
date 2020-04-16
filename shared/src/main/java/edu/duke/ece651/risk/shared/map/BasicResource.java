@@ -1,5 +1,7 @@
 package edu.duke.ece651.risk.shared.map;
 
+import org.mongodb.morphia.annotations.Embedded;
+
 import java.io.Serializable;
 
 /**
@@ -8,6 +10,7 @@ import java.io.Serializable;
  * @author: Chengda Wu
  * @create: 2020-03-28 19:01
  **/
+@Embedded
 public class BasicResource implements Serializable {
     int totalNum;
 
