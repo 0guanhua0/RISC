@@ -17,6 +17,11 @@ public class GameInfoTest {
         assertTrue(gameInfo.hasFinished());
         assertEquals(1, gameInfo.getWinnerID());
         assertEquals("Green", gameInfo.getWinnerName());
+
+        //test morphia
+        GameInfo g1 = new GameInfo();
+        g1.roundNum = 1;
+        assertEquals(1, g1.getRoundNum());
     }
 
     @Test

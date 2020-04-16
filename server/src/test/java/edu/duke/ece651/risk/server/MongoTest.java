@@ -56,6 +56,9 @@ class MongoTest {
 
         assertEquals(0, rooms.get(0).roomID);
 
+        MongoClient mongoClient = new MongoClient(new MongoClientURI(MONGO_URL));
+        mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_COLLECTION).drop();
+
     }
 
 

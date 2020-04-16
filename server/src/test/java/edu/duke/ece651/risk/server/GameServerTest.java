@@ -1,5 +1,7 @@
 package edu.duke.ece651.risk.server;
 
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.map.TerritoryImpl;
 import edu.duke.ece651.risk.shared.network.Client;
@@ -26,6 +28,11 @@ public class GameServerTest {
 
     @Test
     public void testConstructor() throws IOException, SQLException, ClassNotFoundException {
+        //clean mongo
+        MongoClient mongoClient = new MongoClient(new MongoClientURI(MONGO_URL));
+        mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_COLLECTION).drop();
+
+
         GameServer gameServer = new GameServer(new Server(8000));
         assertEquals(gameServer.rooms.size(), 0);
         assertNotNull(gameServer.threadPool);
@@ -45,6 +52,9 @@ public class GameServerTest {
 
     @Test
     public void testRun() throws IOException, InterruptedException {
+        MongoClient mongoClient = new MongoClient(new MongoClientURI(MONGO_URL));
+        mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_COLLECTION).drop();
+
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         Socket socket1 = mock(Socket.class);
 
@@ -110,6 +120,9 @@ public class GameServerTest {
      */
     @Test
     public void testHandleIncomeRequest() throws IOException, ClassNotFoundException, SQLException {
+        MongoClient mongoClient = new MongoClient(new MongoClientURI(MONGO_URL));
+        mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_COLLECTION).drop();
+
         GameServer gameServer = new GameServer(null);
         //1 valid signup
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -254,6 +267,9 @@ public class GameServerTest {
      */
     @Test
     public void testLongSocket() throws SQLException, ClassNotFoundException, IOException {
+        MongoClient mongoClient = new MongoClient(new MongoClientURI(MONGO_URL));
+        mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_COLLECTION).drop();
+
         GameServer gameServer = new GameServer(null);
 
         //1 login user create room
@@ -384,6 +400,9 @@ public class GameServerTest {
 
     @Test
     public void testAskValidRoomNum() throws IOException, ClassNotFoundException, SQLException {
+        MongoClient mongoClient = new MongoClient(new MongoClientURI(MONGO_URL));
+        mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_COLLECTION).drop();
+
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
         //p1
@@ -411,6 +430,9 @@ public class GameServerTest {
 
     @Test
     public void testGetRoomList() throws IOException, ClassNotFoundException, SQLException {
+        MongoClient mongoClient = new MongoClient(new MongoClientURI(MONGO_URL));
+        mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_COLLECTION).drop();
+
         String r1 = "1";
 
         String s11 = "{\"" + MAP_NAME + "\": \"" + MAP_0 + "\",\n" +
@@ -443,6 +465,9 @@ public class GameServerTest {
 
     @Test
     public void testMain() throws IOException, InterruptedException, ClassNotFoundException {
+        MongoClient mongoClient = new MongoClient(new MongoClientURI(MONGO_URL));
+        mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_COLLECTION).drop();
+
         Thread th = new Thread(() -> {
             try {
                 GameServer.main(null);
@@ -472,6 +497,9 @@ public class GameServerTest {
 
     @Test
     void testStartGame() throws IOException, SQLException, ClassNotFoundException {
+        MongoClient mongoClient = new MongoClient(new MongoClientURI(MONGO_URL));
+        mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_COLLECTION).drop();
+
         GameServer gameServer = new GameServer(null);
         assertEquals(0, gameServer.rooms.size());
 
@@ -539,6 +567,9 @@ public class GameServerTest {
 
     @Test
     void UserRoom() throws IOException, SQLException, ClassNotFoundException {
+        MongoClient mongoClient = new MongoClient(new MongoClientURI(MONGO_URL));
+        mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_COLLECTION).drop();
+
         String r1 = "1";
 
         String s11 = "{\"" + MAP_NAME + "\": \"" + MAP_0 + "\",\n" +

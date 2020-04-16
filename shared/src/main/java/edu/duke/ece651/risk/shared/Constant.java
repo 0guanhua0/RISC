@@ -85,6 +85,7 @@ public class Constant {
     //mongo
     public static final String MONGO_URL = "mongodb://risc:risc@vcm-12835.vm.duke.edu/risc";
     public static final String MONGO_DB_NAME = "risc";
+    public static final String MONGO_COLLECTION = "Room";
 
 
     // the key is current technical level, value is the cost of tech resources to upgrade maximum tech level to the next technical level
