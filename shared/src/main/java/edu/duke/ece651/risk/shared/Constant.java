@@ -82,6 +82,10 @@ public class Constant {
     // i.e. a player disconnect but don't reconnect in 60s, his/her round will be forced finished
     public static final int WAIT_TIME_OUT = 60;
 
+    //mongo
+    public static final String MONGO_URL = "mongodb://risc:risc@vcm-12835.vm.duke.edu/risc";
+    public static final String MONGO_DB_NAME = "risc";
+
 
     // the key is current technical level, value is the cost of tech resources to upgrade maximum tech level to the next technical level
     public static final Map<Integer, Integer> TECH_MAP = new HashMap<Integer, Integer>() {

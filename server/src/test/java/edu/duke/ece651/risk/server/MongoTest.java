@@ -26,17 +26,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class MongoTest {
     @Test
-    public void init() throws IOException, ClassNotFoundException {
-        MongoClient mongoClient = new MongoClient(new MongoClientURI("mongodb://risc:risc@vcm-12835.vm.duke.edu/risc"));
-        DB database = mongoClient.getDB("risc");
-        DBCollection collection = database.getCollection("movie");
-        //System.out.println(collection.findOne());
+    public void save() throws IOException, ClassNotFoundException {
 
-        final Morphia morphia = new Morphia();
-        morphia.mapPackage("edu.duke.ece651.risk");
-
-        final Datastore datastore = morphia.createDatastore(mongoClient, "risc");
-        datastore.ensureIndexes();
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
@@ -52,7 +43,8 @@ class MongoTest {
         player.addTerritory(storm);
 
 
-        datastore.save(room);
+        Mongo m = new Mongo();
+        m.save(room);
 
     }
 
