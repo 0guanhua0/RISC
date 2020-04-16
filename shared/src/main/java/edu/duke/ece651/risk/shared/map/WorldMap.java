@@ -27,6 +27,8 @@ public abstract class WorldMap<T extends Serializable> implements Serializable {
     //key is the set of names of territory, value is there are currently selected or not
     Map<Set<String>,Boolean> groups;
 
+    //morphia constructor
+    public WorldMap(){}
 
     public String getName() {
         return name;

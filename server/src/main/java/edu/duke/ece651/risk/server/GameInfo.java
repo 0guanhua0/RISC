@@ -18,6 +18,8 @@ public class GameInfo {
         this.idToName = new HashMap<>();
     }
 
+    //morphia constructor
+    public GameInfo(){}
     public int getWinnerID() {
         return winnerID;
     }

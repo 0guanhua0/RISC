@@ -97,6 +97,11 @@ public class Room {
         gameInfo = new GameInfo(-1, 1);
     }
 
+    //constructor for mongo
+    public Room() {
+
+    }
+
     /**
      * call this method to add a new player into this room
      * after the last player enter the room, game will begin automatically

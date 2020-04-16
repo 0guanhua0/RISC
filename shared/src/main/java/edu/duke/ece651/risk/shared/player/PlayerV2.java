@@ -39,6 +39,11 @@ public class PlayerV2<T> extends PlayerV1<T> implements Serializable {
         initResource();
     }
 
+    //constructor for mongo
+    public PlayerV2() {
+        super();
+
+    }
     //TODO add more testing for this method
     @Override
     public void updateState() {

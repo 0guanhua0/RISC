@@ -31,6 +31,10 @@ public class TerritoryV2 extends TerritoryV1 {
         this.unitGroup = new HashMap<>();;
     }
 
+    //morphia
+    public TerritoryV2(){
+        super();
+    }
     public int getSize() {
         return size;
     }

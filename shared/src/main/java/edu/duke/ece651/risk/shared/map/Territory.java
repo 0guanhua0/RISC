@@ -28,6 +28,11 @@ public abstract class Territory implements Serializable {
         this.attackAct = new HashMap<>();
     }
 
+    //morphia constructor
+    public Territory() {
+
+    }
+
     //get the owner id of corresponding territory
     public int getOwner() {
         return status.getOwnerId();

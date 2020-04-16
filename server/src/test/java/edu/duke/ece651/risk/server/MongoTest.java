@@ -13,14 +13,15 @@ import edu.duke.ece651.risk.shared.player.PlayerV2;
 import org.junit.jupiter.api.Test;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
+import org.mongodb.morphia.query.Query;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
-import static edu.duke.ece651.risk.shared.Constant.MAP_NAME;
-import static edu.duke.ece651.risk.shared.Constant.ROOM_NAME;
+import static edu.duke.ece651.risk.shared.Constant.*;
 import static edu.duke.ece651.risk.shared.Mock.setupMockInput;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -42,9 +43,22 @@ class MongoTest {
         room.map = worldMap;
         player.addTerritory(storm);
 
+        room.gameInfo.idToName.clear();
+        room.gameInfo.idToName.put(1, "1");
 
         Mongo m = new Mongo();
         m.save(room);
+
+        final Morphia morphia = new Morphia();
+
+        MongoClient mongoClient = new MongoClient(new MongoClientURI(MONGO_URL));
+        final Datastore datastore = morphia.createDatastore(mongoClient, MONGO_DB_NAME);
+
+        final Query<Room> query = datastore.createQuery(Room.class);
+        final List<Room> rooms = query.asList();
+
+        rooms.get(0);
+        System.out.println(rooms.get(0).roomID);
 
     }
 

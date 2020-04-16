@@ -3,6 +3,7 @@ package edu.duke.ece651.risk.shared.player;
 import edu.duke.ece651.risk.shared.map.Territory;
 import org.json.JSONObject;
 import org.mongodb.morphia.annotations.Embedded;
+import org.mongodb.morphia.annotations.Transient;
 
 import java.io.*;
 import java.util.HashSet;
@@ -22,6 +23,7 @@ import static edu.duke.ece651.risk.shared.Constant.PLAYER_ID;
 public abstract class Player<T> implements Serializable{
     private static final long serialVersionUID = 21L;
 
+    @Transient
     T color;
     int id;
     transient ObjectInputStream in;
@@ -67,6 +69,11 @@ public abstract class Player<T> implements Serializable{
         this.in = new ObjectInputStream(in);
         this.out = new ObjectOutputStream(out);
         this.isConnect = true;
+    }
+
+    //constructor for mongo
+    public Player() {
+
     }
 
     public int getId() {

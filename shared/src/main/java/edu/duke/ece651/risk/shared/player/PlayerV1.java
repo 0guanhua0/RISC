@@ -31,6 +31,10 @@ public class PlayerV1<T> extends Player<T> implements Serializable {
         super(id, in, out);
     }
 
+    public PlayerV1() {
+        super();
+    }
+
     @Override
     public void updateState() {
         for (Territory territory : territories) {

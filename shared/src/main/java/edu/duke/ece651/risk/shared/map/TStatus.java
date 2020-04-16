@@ -30,6 +30,9 @@ public class TStatus implements Serializable {
         this.ownerId = 0;
     }
 
+    //morphia constructor
+    public TStatus(){}
+
     public void setOwnerId(int ownerId) {
         this.ownerId = ownerId;
     }

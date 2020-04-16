@@ -21,6 +21,11 @@ public class TerritoryV1 extends Territory{
        this.unitsV1 = new LinkedList<Unit>();//use linked list since there will be some remove operation
     }
 
+    //morphia constructor
+    public TerritoryV1() {
+        super();
+    }
+
     public void addBasicUnits(int num) throws IllegalArgumentException {
         if (!canAddUnits(num,0)){
             throw new IllegalArgumentException("Input number can't be negative");
