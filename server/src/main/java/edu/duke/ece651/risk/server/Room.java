@@ -106,6 +106,7 @@ public class Room {
      * recover
      */
     void recover(MapDataBase mapDataBase) throws IOException {
+
         //player ally
         for (Player p : players) {
             if (p.getAllyRequest() != -1) {

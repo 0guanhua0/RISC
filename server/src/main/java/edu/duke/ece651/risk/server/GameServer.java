@@ -69,6 +69,10 @@ public class GameServer {
             r.recover(new MapDataBase<>());
             this.rooms.put(r.roomID, r);
         }
+
+        //recover user list
+        List<UserList> userLists = datastore.createQuery(UserList.class).asList();
+        this.userList = userLists.get(0);
     }
 
     /**
@@ -136,6 +140,10 @@ public class GameServer {
                 if (!userList.hasUser(userName)) {
                     User user = new User(userName, userPassword);
                     userList.addUser(user);
+
+                    //store userList
+                    Mongo m = new Mongo();
+                    m.morCon().save(this.userList);
                 }
             } else {
                 player.send(INVALID_LOGIN);

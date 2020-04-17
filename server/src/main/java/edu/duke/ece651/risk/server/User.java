@@ -1,5 +1,7 @@
 package edu.duke.ece651.risk.server;
 
+import org.mongodb.morphia.annotations.Embedded;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,6 +9,7 @@ import java.util.List;
  * each validate user has:
  * room has join
  */
+@Embedded
 public class User {
     //list store the room user join
     List<Integer> roomList = new ArrayList<>();
