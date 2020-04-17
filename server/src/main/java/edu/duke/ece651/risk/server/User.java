@@ -21,6 +21,9 @@ public class User {
         this.userName = userName;
     }
 
+    //morphia
+    public User(){}
+
     //update the room info
     public void addRoom(Integer roomID) {
         roomList.add(roomID);
