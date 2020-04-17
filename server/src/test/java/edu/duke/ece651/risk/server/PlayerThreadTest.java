@@ -81,7 +81,7 @@ public class PlayerThreadTest {
         playerThread.start();
 
         barrier.await(); // select territory
-        barrier.await(); // start playing game
+        barrier.await(); // start playing playGame
         barrier.await(); // finish one round
         player.loseTerritory(map.getTerritory("kingdom of the north"));
         player.loseTerritory(map.getTerritory("kingdom of mountain and vale"));
@@ -122,7 +122,7 @@ public class PlayerThreadTest {
         playerThread.start();
 
         barrier.await(); // select territory
-        barrier.await(); // start playing game
+        barrier.await(); // start playing playGame
         // sleep some time and then reconnect
         Thread.sleep(1000);
         player.setConnect(true);
@@ -167,7 +167,7 @@ public class PlayerThreadTest {
         playerThread.start();
 
         barrier.await(); // select territory
-        barrier.await(); // start playing game
+        barrier.await(); // start playing playGame
         // sleep some time and then reconnect
         Thread.sleep(5000);
         player.setConnect(true);
