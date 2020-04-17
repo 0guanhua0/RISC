@@ -47,6 +47,9 @@ public class GameServer {
         db.addUser("xkw", "1234");
         db.addUser("xkx", "1234");
         db.addUser("xxx", "1234");
+        db.addUser("a", "a");
+        db.addUser("s", "s");
+
     }
 
     /**
