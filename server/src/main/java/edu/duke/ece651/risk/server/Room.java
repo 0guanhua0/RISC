@@ -105,7 +105,7 @@ public class Room {
     /**
      * recover
      */
-    void recover() throws IOException {
+    void recover(MapDataBase mapDataBase) throws IOException {
         //player ally
         for (Player p : players) {
             if (p.getAllyRequest() != -1) {
@@ -116,7 +116,6 @@ public class Room {
 
 
         //world map territory
-        MapDataBase mapDataBase = new MapDataBase<>();
         this.map = mapDataBase.getMap(this.map.getName());
 
         // + 1 for main thread

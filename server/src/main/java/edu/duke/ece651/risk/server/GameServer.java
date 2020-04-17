@@ -66,7 +66,7 @@ public class GameServer {
 
         //it through rooms, put back to map
         for (Room r : rooms) {
-            r.recover();
+            r.recover(new MapDataBase<>());
             this.rooms.put(r.roomID, r);
         }
     }
