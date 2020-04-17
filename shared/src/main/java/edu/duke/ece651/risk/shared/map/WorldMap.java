@@ -25,6 +25,7 @@ public abstract class WorldMap<T extends Serializable> implements Serializable {
     @Transient
     List<T> colorList;
     //key is the set of names of territory, value is there are currently selected or not
+    @Transient
     Map<Set<String>,Boolean> groups;
 
     //morphia constructor

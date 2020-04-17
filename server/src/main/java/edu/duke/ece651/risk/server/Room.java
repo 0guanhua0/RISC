@@ -103,6 +103,20 @@ public class Room {
     }
 
     /**
+     * recover
+     */
+    void recover() {
+        //player ally
+
+        //territory neigh
+
+        //world map territory
+
+        //thread
+
+    }
+
+    /**
      * call this method to add a new player into this room
      * after the last player enter the room, game will begin automatically
      *
@@ -314,6 +328,10 @@ public class Room {
 
             // after execute all actions, tell the player to enter next round
             sendAll(ROUND_OVER);
+
+            //save current game to db
+            Mongo m = new Mongo();
+            m.morCon().save(this);
             // check the game result
             checkWinner();
             if (!gameInfo.hasFinished()) {

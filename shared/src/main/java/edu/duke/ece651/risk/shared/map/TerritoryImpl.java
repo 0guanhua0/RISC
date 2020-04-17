@@ -2,6 +2,7 @@ package edu.duke.ece651.risk.shared.map;
 
 import edu.duke.ece651.risk.shared.action.AttackResult;
 import edu.duke.ece651.risk.shared.player.Player;
+import org.mongodb.morphia.annotations.Embedded;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -21,9 +22,11 @@ public class TerritoryImpl extends Territory {
     int foodYield;
     int techYield;
     //key is the technology level of units, value is the set of units
+    @Embedded
     TreeMap<Integer, List<Unit>> unitGroup;
 
     //unit from ally
+    @Embedded
     TreeMap<Integer, List<Unit>> allyUnits;
 
     //morphia con

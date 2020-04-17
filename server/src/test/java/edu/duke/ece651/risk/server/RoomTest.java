@@ -1,5 +1,7 @@
 package edu.duke.ece651.risk.server;
 
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
 import edu.duke.ece651.risk.shared.ToServerMsg.ServerSelect;
 import edu.duke.ece651.risk.shared.action.AttackAction;
 import edu.duke.ece651.risk.shared.action.MoveAction;
@@ -360,9 +362,14 @@ public class RoomTest {
 
         Room room = new Room(1, player1, new MapDataBase<>());
         room.addPlayer(player2);
+
+
         // player 1 should win the game
-        Thread.sleep(500); // because the game will run in a separate thread, we will need to wait some time and then check the result
+        Thread.sleep(5000); // because the game will run in a separate thread, we will need to wait some time and then check the result
         assertEquals(1, room.gameInfo.winnerID);
+
+        MongoClient mongoClient = new MongoClient(new MongoClientURI(MONGO_URL));
+        mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_COLLECTION).drop();
     }
 
     @Test

@@ -63,9 +63,11 @@ public class GameServer {
 
         //it through rooms, put back to map
         for (Room r : rooms) {
+            r.recover();
             this.rooms.put(r.roomID, r);
         }
     }
+
     /**
      * This will run forever(until the thread is killed), keep listen for new connection and handle it.
      */
@@ -225,6 +227,7 @@ public class GameServer {
 
     /**
      * This function asks the player whether he/she want to start a new room or join an existing room.
+     *
      * @param player player object, handle the communication
      * @return room number/ID, e.g. -1(or any negative number) stands for a new room, > 0 stands for an existing room
      */
@@ -269,6 +272,7 @@ public class GameServer {
 
     /**
      * This function will return the current running room list.
+     *
      * @return list of RoomInfo object
      */
     List<RoomInfo> getRoomList() {
@@ -287,6 +291,7 @@ public class GameServer {
 
     /**
      * This function will return the current running room list of one specific player.
+     *
      * @return list of RoomInfo object
      */
     List<RoomInfo> getUserRoom(String user) {

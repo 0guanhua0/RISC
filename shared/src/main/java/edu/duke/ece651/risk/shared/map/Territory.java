@@ -22,11 +22,11 @@ public abstract class Territory implements Serializable {
     @Embedded
     TStatus status;
 
-    @Embedded
+    @Transient
     HashMap<Player, List<Army>> attackAct;
 
     //use null to represent don't have any friends
-    @Embedded
+    @Transient
     Player ally;
 
     public Territory(String name) {

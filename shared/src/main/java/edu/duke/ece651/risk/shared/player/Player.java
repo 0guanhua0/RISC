@@ -44,6 +44,7 @@ public abstract class Player<T> implements Serializable{
     int allyRequest;
 
 
+    @Transient
     Player ally;
 
     public Player(InputStream in, OutputStream out) throws IOException {
