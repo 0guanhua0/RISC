@@ -241,6 +241,9 @@ public abstract class Player<T> implements Serializable{
     }
 
 
+    public int getAllyRequest() {
+        return allyRequest;
+    }
 
     public void setTerrAlly(){
         for (Territory territory : this.territories) {

@@ -32,7 +32,7 @@ public class GameServer {
     // map of all rooms(each room represent a running game), key is the room id
     Map<Integer, Room> rooms;
 
-    public GameServer(Server server) throws SQLException, ClassNotFoundException {
+    public GameServer(Server server) throws SQLException, ClassNotFoundException, IOException {
         this.server = server;
         BlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<>(32);
         this.threadPool = new ThreadPoolExecutor(4, 16, 5, TimeUnit.SECONDS, workQueue);
@@ -54,7 +54,7 @@ public class GameServer {
      * then will put the info back to room list
      */
 
-    void recover() {
+    void recover() throws IOException {
         //connect to mongo
         Mongo m = new Mongo();
         Datastore datastore = m.morCon();

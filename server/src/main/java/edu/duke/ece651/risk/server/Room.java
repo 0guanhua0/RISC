@@ -105,14 +105,34 @@ public class Room {
     /**
      * recover
      */
-    void recover() {
+    void recover() throws IOException {
         //player ally
+        for (Player p : players) {
+            if (p.hasAlly()) {
+                Player ally = players.get(p.getAllyRequest());
+                p.allyWith(ally);
+            }
+        }
 
-        //territory neigh
 
         //world map territory
+        MapDataBase mapDataBase = new MapDataBase<>();
+        this.map = mapDataBase.getMap(this.map.getName());
 
-        //thread
+        // + 1 for main thread
+        CyclicBarrier barrier = new CyclicBarrier(players.size() + 1);
+
+        for (Player<String> player : players) {
+            Thread t = new PlayerThread(player, map, gameInfo, barrier,this.players);
+            threads.add(t);
+            t.start();
+        }
+
+        // open the chat thread
+        Thread tChat = new ChatThread<String>(players);
+        threads.add(tChat);
+        tChat.start();
+
 
     }
 
