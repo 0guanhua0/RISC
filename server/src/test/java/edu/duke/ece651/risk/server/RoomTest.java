@@ -457,4 +457,8 @@ public class RoomTest {
         assertTrue(room.isPlayerLose("1"));
 
     }
+
+    @Test
+    void recover() {
+    }
 }

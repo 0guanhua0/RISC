@@ -108,7 +108,7 @@ public class Room {
     void recover() throws IOException {
         //player ally
         for (Player p : players) {
-            if (p.hasAlly()) {
+            if (p.getAllyRequest() != -1) {
                 Player ally = players.get(p.getAllyRequest());
                 p.allyWith(ally);
             }
