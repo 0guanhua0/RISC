@@ -72,7 +72,10 @@ public class GameServer {
 
         //recover user list
         List<UserList> userLists = datastore.createQuery(UserList.class).asList();
-        this.userList = userLists.get(0);
+        if (!userLists.isEmpty()) {
+            this.userList = userLists.get(0);
+        }
+
     }
 
     /**
