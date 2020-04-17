@@ -97,7 +97,7 @@ public class GameServerTest {
             GameServer gameServer = null;
             try {
                 gameServer = new GameServer(server);
-            } catch (SQLException | ClassNotFoundException ignored) {
+            } catch (SQLException | ClassNotFoundException | IOException ignored) {
                 //unreachable
             }
             gameServer.run();
