@@ -230,10 +230,16 @@ public class GameServer {
                 rooms.put(roomID, new Room(roomID, player, new MapDataBase<>()));
                 //add the roomID to the user list
                 userList.getUser(player.getName()).addRoom(roomID);
+                //store userList
+                Mongo m = new Mongo();
+                m.morCon().save(this.userList);
             } else {
                 // join an existing room
                 rooms.get(choice).addPlayer(player);
                 userList.getUser(player.getName()).addRoom(choice);
+                //store userList
+                Mongo m = new Mongo();
+                m.morCon().save(this.userList);
             }
         }
 
