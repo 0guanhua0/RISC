@@ -60,6 +60,10 @@ public class PlayerThread extends Thread{
         }
     }
 
+    public PlayerThread() {
+
+    }
+
     @Override
     public void run() {
         try {

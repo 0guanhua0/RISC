@@ -118,11 +118,12 @@ public class Room {
         //world map territory
         this.map = mapDataBase.getMap(this.map.getName());
 
+        threads = new ArrayList<>();
         // + 1 for main thread
         CyclicBarrier barrier = new CyclicBarrier(players.size() + 1);
 
         for (Player<String> player : players) {
-            Thread t = new PlayerThread(player, map, gameInfo, barrier,this.players);
+            Thread t = new PlayerThreadRecover(player, map, gameInfo, barrier,WAIT_TIME_OUT,this.players);
             threads.add(t);
             t.start();
         }
