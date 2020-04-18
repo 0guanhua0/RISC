@@ -35,7 +35,7 @@ public class PlayerThread extends Thread{
      *
      * @param player current player
      * @param map the map playing
-     * @param gameInfo current game info(e.g. round number, winner ID etc.)
+     * @param gameInfo current playGame info(e.g. round number, winner ID etc.)
      * @param barrier barrier, used to synchronous multi-threading
      */
     public PlayerThread(Player<String> player, WorldMap<String> map,
@@ -129,9 +129,9 @@ public class PlayerThread extends Thread{
         RoundInfo roundInfo = new RoundInfo(gameInfo.getRoundNum(), map, gameInfo.getIdToName(), player);
         player.send(roundInfo);
 
-        // build the current state of game
+        // build the current state of playGame
         WorldState worldState = new WorldState(this.player,this.map,this.players);
-        // if player hasn't lose yet, let him or her play another round of game
+        // if player hasn't lose yet, let him or her play another round of playGame
         if (this.player.getTerrNum() > 0){
             int checkCnt = 0;
             boolean reconnect = false;

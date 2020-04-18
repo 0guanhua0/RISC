@@ -13,9 +13,12 @@ import java.util.List;
 public class RoomInfo implements Serializable {
     private static final long serialVersionUID = 24L;
 
+    // ID of the room
     int roomID;
+    // ID of current player
+    int playerID;
     String roomName;
-    // player inside
+    // all players inside
     List<String> players;
     // map this room playing
     WorldMap<String> map;
