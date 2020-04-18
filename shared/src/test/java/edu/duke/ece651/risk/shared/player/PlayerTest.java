@@ -52,6 +52,7 @@ class PlayerTest {
         Player<String> p1 = new PlayerV1<String>("Red", 1);
         Territory n1 = new TerritoryImpl("n1",0,0,0);
         Territory n2 = new TerritoryImpl("n2",0,0,0);
+        System.out.println(n1.getOwner());
         HashSet<Territory> n1Neigh = new HashSet<Territory>() {{
             add(n2);
         }};
