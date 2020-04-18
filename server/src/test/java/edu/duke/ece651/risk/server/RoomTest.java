@@ -360,8 +360,8 @@ public class RoomTest {
 
         Room room = new Room(1, player1, new MapDataBase<>());
         room.addPlayer(player2);
-        // player 1 should win the game
-        Thread.sleep(500); // because the game will run in a separate thread, we will need to wait some time and then check the result
+        // player 1 should win the playGame
+        Thread.sleep(500); // because the playGame will run in a separate thread, we will need to wait some time and then check the result
         assertEquals(1, room.gameInfo.winnerID);
     }
 

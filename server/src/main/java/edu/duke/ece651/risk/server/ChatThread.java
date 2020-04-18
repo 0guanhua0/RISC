@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This is the thread for chat function in one game.
+ * This is the thread for chat function in one playGame.
  * This thread will open another N thread for N players in current room.
  */
 public class ChatThread<T> extends Thread{

@@ -54,6 +54,7 @@ public class Constant {
     public static final String INVALID_VALIDATION_ACTION = "invalid validation action";
     public static final String VALIDATE_SUCCESSFUL = "SUCCESSFUL";
     public static final String INVALID_USER = "invalid user / not login";
+    public static final String INVALID_ACTION_TYPE = "unrecognized action";
     public static final String INVALID_RECONNECT = "the room ID you want to reconnect is invalid";
 
 
