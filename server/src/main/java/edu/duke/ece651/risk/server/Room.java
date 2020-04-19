@@ -118,6 +118,10 @@ public class Room {
         this.map = mapDataBase.getMap(this.map.getName());
 
         threads = new ArrayList<>();
+
+        //ready to start game
+        sendAll(INFO_ALL_PLAYER);
+
         new Thread(() -> {
             try {
                 reGame();
@@ -335,13 +339,14 @@ public class Room {
     }
 
     //recover game
-    //only difference is that no need to select territory
+    //diff: no need to select territory
+    //use recover player thread
     void reGame() throws IOException {
         // + 1 for main thread
         CyclicBarrier barrier = new CyclicBarrier(players.size() + 1);
 
         for (Player<String> player : players) {
-            Thread t = new PlayerThread(player, map, gameInfo, barrier, this.players);
+            Thread t = new PlayerThreadRecover(player, map, gameInfo, barrier, this.players);
             threads.add(t);
             t.start();
         }

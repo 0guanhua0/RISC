@@ -24,13 +24,14 @@ public class PlayerThreadRecover extends PlayerThread {
     int waitTimeOut;
     List<Player<String>> players;
 
-    public PlayerThreadRecover(Player<String> player, WorldMap<String> map, GameInfo gameInfo, CyclicBarrier barrier, int timeout,List<Player<String>> players) {
-        super();
+    //actual player thread in game
+    public PlayerThreadRecover(Player<String> player, WorldMap<String> map,
+                               GameInfo gameInfo, CyclicBarrier barrier, List<Player<String>> players) {
         this.player = player;
         this.map = map;
         this.gameInfo = gameInfo;
         this.barrier = barrier;
-        this.waitTimeOut = timeout;
+        this.waitTimeOut = WAIT_TIME_OUT;
         this.players = players;
         allPlayers = new ArrayList<>();
         for (Player<String> p : this.players){
@@ -38,9 +39,11 @@ public class PlayerThreadRecover extends PlayerThread {
         }
     }
 
+
     @Override
     public void run() {
         try {
+            player.send(allPlayers);
             while (!gameInfo.hasFinished()){
                 playGame();
                 // give main thread some time to process round result
