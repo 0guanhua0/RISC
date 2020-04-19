@@ -33,7 +33,7 @@ public class Room {
     String roomName;
     // all players in current room
     @Embedded
-    List<Player<String>> players;
+    List<Player<String>>players;
     // the map this room is playing
     @Embedded
     WorldMap<String> map;
@@ -106,7 +106,7 @@ public class Room {
     /**
      * recover
      */
-    void recover(MapDataBase mapDataBase) throws IOException {
+    void recover(MapDataBase mapDataBase)  {
 
         //player ally
         for (Player p : players) {
