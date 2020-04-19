@@ -26,6 +26,8 @@ public class WorldState {
     // all players in current room
     List<Player<String>> players;
 
+
+
     public WorldState(Player<String> myPlayer, WorldMap<String> map) {
         this.myPlayer = myPlayer;
         this.map = map;

@@ -34,6 +34,7 @@ public class UpMaxTechAction implements Action, Serializable {
         }
         Player<String> player = worldState.getMyPlayer();
         player.upMaxTech();
+        player.addAction(this);
         return true;
     }
 

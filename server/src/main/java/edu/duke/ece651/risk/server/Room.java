@@ -1,6 +1,7 @@
 package edu.duke.ece651.risk.server;
 
 import edu.duke.ece651.risk.shared.RoomInfo;
+import edu.duke.ece651.risk.shared.action.Action;
 import edu.duke.ece651.risk.shared.action.AttackResult;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.map.Territory;
@@ -12,6 +13,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CyclicBarrier;
 
 import static edu.duke.ece651.risk.shared.Constant.*;
@@ -30,6 +32,8 @@ public class Room {
     // all new threads we create in this playGame(e.g. player thread, chat thread)
     List<Thread> threads;
 
+
+
     /**
      * The constructor, initialize the whole playGame(room.
      *
@@ -45,7 +49,6 @@ public class Room {
         }
         this.roomID = roomID;
         this.roomName = "";
-
         players = new ArrayList<>();
         players.add(player);
         player.setId(players.size());
@@ -257,7 +260,6 @@ public class Room {
         for (Player<String> player : players) {
             player.updateState();
         }
-
     }
 
     boolean hasFinished() {

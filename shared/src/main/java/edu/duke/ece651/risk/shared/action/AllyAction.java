@@ -56,6 +56,7 @@ public class AllyAction implements Action{
         if (targetAlly.canAllyWith(myPlayer)){
             myPlayer.allyWith(targetAlly);
         }
+        myPlayer.addAction(this);
         return true;
     }
 

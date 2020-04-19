@@ -1,8 +1,11 @@
 package edu.duke.ece651.risk.shared.player;
 
 import edu.duke.ece651.risk.shared.Mock;
+import edu.duke.ece651.risk.shared.action.AllyAction;
+import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.TerritoryImpl;
+import edu.duke.ece651.risk.shared.map.WorldMap;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
@@ -52,6 +55,7 @@ class PlayerTest {
         Player<String> p1 = new PlayerV1<String>("Red", 1);
         Territory n1 = new TerritoryImpl("n1",0,0,0);
         Territory n2 = new TerritoryImpl("n2",0,0,0);
+        System.out.println(n1.getOwner());
         HashSet<Territory> n1Neigh = new HashSet<Territory>() {{
             add(n2);
         }};
@@ -367,9 +371,76 @@ class PlayerTest {
         assertEquals(2,test.getAllyId());
         assertEquals(2,test2.getAllyId());
 
+    }
 
+    @Test
+    void addAction() throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        PlayerV2<String> player = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),out);
+        player.setId(1);
+        assertEquals(0,player.actions.size());
+        player.addAction(new AllyAction(1));
+        assertEquals(1,player.actions.size());
+    }
 
+    @Test
+    void setIsSpying() throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        PlayerV2<String> player = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),out);
+        player.setId(1);
 
+        assertFalse(player.isSpying);
+        player.setIsSpying();
+        assertTrue(player.isSpying);
+        assertThrows(IllegalStateException.class,()->{player.setIsSpying();});
+        player.updateState();
+
+        assertDoesNotThrow(()->{player.setIsSpying();});
+    }
+
+    @Test
+    void isSpying() throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        PlayerV2<String> player = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),out);
+        player.setId(1);
+
+        assertFalse(player.isSpying());
+        player.setIsSpying();
+        assertTrue(player.isSpying());
+
+        player.updateState();
+        assertFalse(player.isSpying());
+    }
+
+    @Test
+    void canAffordSpy() throws IOException {
+        MapDataBase<String> mapDataBase = new MapDataBase<String>();
+        WorldMap<String> worldMap = mapDataBase.getMap("a clash of kings");
+        Territory storm = worldMap.getTerritory("the storm kingdom");
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        PlayerV2<String> player = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),out);
+        player.setId(1);
+
+        player.addTerritory(storm);
+
+        assertFalse(player.canAffordSpy());
+        for (int i=0;i<5;i++){
+            player.updateState();
+        }
+        assertTrue(player.canAffordSpy());
+    }
+
+    @Test
+    void getActions() throws IOException {
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        PlayerV2<String> player = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),out);
+        player.setId(1);
+
+        assertEquals(0,player.getActions().size());
+        player.addAction(new AllyAction(1));
+        assertEquals(1,player.getActions().size());
     }
 
 
