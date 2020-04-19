@@ -43,7 +43,6 @@ public class PlayerThreadRecover extends PlayerThread {
     @Override
     public void run() {
         try {
-            player.send(allPlayers);
             while (!gameInfo.hasFinished()){
                 playGame();
                 // give main thread some time to process round result

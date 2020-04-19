@@ -122,9 +122,11 @@ public class Room {
 
         threads = new ArrayList<>();
 
-        //ready to start game
-        sendAll(INFO_ALL_PLAYER);
-
+        //set all player disconnect
+        for (Player p : players) {
+            p.setConnect(false);
+        }
+        //ready to restart game
         new Thread(() -> {
             try {
                 reGame();
