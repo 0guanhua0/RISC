@@ -114,9 +114,7 @@ public abstract class Player<T> implements Serializable{
         territories.add(territory);
         //based on current situation, the attack action will call setOwner directly
         //thus we should execute the following logic
-        if(0==territory.getOwner()){
-            territory.setOwner(this.id);
-        }
+        territory.setOwner(this.id);
     }
 
     public void loseTerritory(Territory territory) throws IllegalArgumentException {

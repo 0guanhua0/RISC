@@ -66,10 +66,6 @@ class PlayerTest {
         assertTrue(p1.territories.contains(n2));
         assertEquals(1, n1.getOwner());
         assertEquals(1, n2.getOwner());
-        Territory n3 = new TerritoryImpl("n3",0,0,0);
-        n3.setOwner(2);
-        p1.addTerritory(n3);
-        assertEquals(2,n3.getOwner());
     }
 
     @Test
