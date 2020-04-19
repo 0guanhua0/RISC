@@ -409,7 +409,10 @@ class TerritoryImplTest {
         assertEquals(1,list2.get(0));
         assertTrue(list1.get(1)==0||list2.get(1)==2);
 
-
+        treeMap3.put(2,1);
+        List<Integer> list3 = test.selectMaxAttackUnit(combinedAttack);
+        assertEquals(2,list3.get(0));
+        assertEquals(2,list3.get(1));
 
     }
 
@@ -419,7 +422,7 @@ class TerritoryImplTest {
         List<TreeMap<Integer,Integer>> combinedAttack = new ArrayList<>();
         TreeMap<Integer, Integer> treeMap1 = new TreeMap<Integer, Integer>(){{
             put(1,1);
-            put(0,2);
+            put(2,2);
         }};
         TreeMap<Integer, Integer> treeMap2 = new TreeMap<>();
         TreeMap<Integer, Integer> treeMap3 = new TreeMap<>();
@@ -428,12 +431,18 @@ class TerritoryImplTest {
         combinedAttack.add(treeMap3);
 
         List<Integer> list1 = test.selectMinAttackUnit(combinedAttack);
-        assertEquals(0,list1.get(0));
+        assertEquals(1,list1.get(0));
         assertEquals(0,list1.get(1));
-        treeMap3.put(0,1);
+        treeMap3.put(1,1);
         List<Integer> list2 = test.selectMinAttackUnit(combinedAttack);
-        assertEquals(0,list2.get(0));
+        assertEquals(1,list2.get(0));
         assertTrue(list1.get(1)==0||list2.get(1)==2);
+
+        treeMap3.put(0,1);
+        List<Integer> list3 = test.selectMinAttackUnit(combinedAttack);
+        assertEquals(0,list3.get(0));
+        assertEquals(2,list3.get(1));
+
     }
 
     @Test
