@@ -45,7 +45,9 @@ public class SpyAction implements Action{
             myPlayer.setIsSpying();
         }
         List<Action> actions = worldState.getPlayers().get(targetId-1).getActions();
-        //TODO communication logic here
+
+        //TODO use communication to replace the standard output here
+        System.out.println(actions);
         return true;
     }
 }
