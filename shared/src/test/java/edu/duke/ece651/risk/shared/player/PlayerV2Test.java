@@ -187,4 +187,13 @@ class PlayerV2Test {
         assertDoesNotThrow(()->{player.upMaxTech();});
         assertThrows(IllegalArgumentException.class,()->{player.upMaxTech();});
     }
+
+    @Test
+    void setId() throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        PlayerV2<String> player = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),out);
+        player.setId(1);
+        assertEquals(1,player.getId());
+        assertThrows(IllegalStateException.class,()->{player.setId(2);});
+    }
 }

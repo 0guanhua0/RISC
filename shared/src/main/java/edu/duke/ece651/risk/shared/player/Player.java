@@ -1,16 +1,18 @@
 package edu.duke.ece651.risk.shared.player;
 
+import edu.duke.ece651.risk.shared.action.Action;
 import edu.duke.ece651.risk.shared.map.Territory;
 import org.json.JSONObject;
 import org.mongodb.morphia.annotations.Embedded;
 import org.mongodb.morphia.annotations.Transient;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
-import static edu.duke.ece651.risk.shared.Constant.PLAYER_COLOR;
-import static edu.duke.ece651.risk.shared.Constant.PLAYER_ID;
+import static edu.duke.ece651.risk.shared.Constant.*;
 
 /**
  * @program: risk
@@ -43,6 +45,8 @@ public abstract class Player<T> implements Serializable{
     //the player id of target ally this player object receives from client side  during
     int allyRequest;
 
+    List<Action> actions;
+    boolean isSpying;
 
     @Transient
     Player ally;
@@ -55,6 +59,8 @@ public abstract class Player<T> implements Serializable{
         this.isConnect = true;
         this.allyRequest = -1;
         this.ally = null;
+        actions = new ArrayList<>();
+        isSpying = false;
     }
 
     // since only after first player communicating with server and selecting the map
@@ -70,6 +76,8 @@ public abstract class Player<T> implements Serializable{
         this.isConnect = true;
         this.allyRequest = -1;
         this.ally = null;
+        actions = new ArrayList<>();
+        isSpying = false;
     }
 
     //this constructor should be called for all players except for first player
@@ -85,6 +93,8 @@ public abstract class Player<T> implements Serializable{
         this.isConnect = true;
         this.allyRequest = -1;
         this.ally = null;
+        actions = new ArrayList<>();
+        isSpying = false;
     }
 
     //constructor for mongo
@@ -125,9 +135,7 @@ public abstract class Player<T> implements Serializable{
         territories.add(territory);
         //based on current situation, the attack action will call setOwner directly
         //thus we should execute the following logic
-        if(0==territory.getOwner()){
-            territory.setOwner(this.id);
-        }
+        territory.setOwner(this.id);
     }
 
     public void loseTerritory(Territory territory) throws IllegalArgumentException {
@@ -279,6 +287,28 @@ public abstract class Player<T> implements Serializable{
         }
     }
 
+    public void addAction(Action action){
+        this.actions.add(action);
+    }
+
+    public void setIsSpying(){
+        if (isSpying){
+            throw new IllegalStateException("Invalid state");
+        }
+        this.isSpying = true;
+    }
+
+    public boolean isSpying(){
+        return this.isSpying;
+    }
+
+    public boolean canAffordSpy(){
+        return this.getTechNum()>=SPY_COST;
+    }
+
+    public List<Action> getActions(){
+        return this.actions;
+    }
 
     /**
      * this method is called to add the resource production of each territory

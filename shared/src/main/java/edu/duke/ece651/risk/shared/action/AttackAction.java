@@ -109,6 +109,13 @@ public class AttackAction implements Action, Serializable {
         int foodCost = unitsNum;
         myPlayer.useFood(unitsNum);
 
+        int destOwner = worldMap.getTerritory(dest).getOwner();
+        //break the alliance if trying to attack an ally
+        List<Player<String>> players = worldState.getPlayers();
+        if (myPlayer.hasAlly()&&destOwner==myPlayer.getAlly().getId()){
+            myPlayer.ruptureAlly();
+        }
+
         for (Map.Entry<Integer, Integer> entry : levelToNum.entrySet()) {
             // reduce src units
             worldMap.getTerritory(src).loseUnits(entry.getValue(),entry.getKey());
@@ -117,14 +124,7 @@ public class AttackAction implements Action, Serializable {
         // add attack units to target territory's attack buffer
         worldMap.getTerritory(dest).addAttack(myPlayer, new Army(playerId, src,levelToNum));
 
-        int destOwner = worldMap.getTerritory(dest).getOwner();
-        //break the alliance if trying to attack an ally
-        List<Player<String>> players = worldState.getPlayers();
-        if (myPlayer.hasAlly()&&destOwner==myPlayer.getAlly().getId()){
-            myPlayer.ruptureAlly();
-        }
-
-
+        myPlayer.addAction(this);
         return true;
     }
 

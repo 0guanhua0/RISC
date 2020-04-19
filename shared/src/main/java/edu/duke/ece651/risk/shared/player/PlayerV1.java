@@ -41,6 +41,8 @@ public class PlayerV1<T> extends Player<T> implements Serializable {
         for (Territory territory : territories) {
             territory.addBasicUnits(1);
         }
+        this.actions = new ArrayList<>();
+        isSpying = false;
     }
 
     @Override

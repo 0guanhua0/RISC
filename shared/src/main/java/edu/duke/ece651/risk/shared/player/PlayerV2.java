@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import static edu.duke.ece651.risk.shared.Constant.*;
 
@@ -62,6 +63,8 @@ public class PlayerV2<T> extends PlayerV1<T> implements Serializable {
             techLevel++;
         }
         this.allyRequest = -1;
+        this.actions = new ArrayList<>();
+        isSpying = false;
 
     }
 
