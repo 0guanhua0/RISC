@@ -1,6 +1,7 @@
 package edu.duke.ece651.risk.server;
 
 import edu.duke.ece651.risk.shared.RoomInfo;
+import edu.duke.ece651.risk.shared.UnauthorizedUserException;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.network.Server;
 import edu.duke.ece651.risk.shared.player.Player;
@@ -14,6 +15,7 @@ import java.net.Socket;
 import java.security.InvalidKeyException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
@@ -29,8 +31,10 @@ public class GameServer {
     UserList userList;
     // db for user name & password
     SQL db;
-    // map of all rooms(each room represent a running game), key is the room id
+    // map of all rooms(each room represent a running playGame), key is the room id
     Map<Integer, Room> rooms;
+    // action map, store the relation between action type and corresponding handling function
+    Map<String, actionHandler> actionMap;
 
     public GameServer(Server server) throws SQLException, ClassNotFoundException, IOException {
         this.server = server;
@@ -39,6 +43,17 @@ public class GameServer {
         this.rooms = new ConcurrentHashMap<>();
         this.db = new SQL();
         this.userList = new UserList();
+        this.actionMap = new HashMap<>();
+        // initialize the action handler
+        // we abstract a corresponding function for each action
+        actionMap.put(SIGNUP, this::signup);
+        actionMap.put(LOGIN, this::login);
+        actionMap.put(ACTION_GET_WAIT_ROOM, this::getWaitRoom);
+        actionMap.put(ACTION_GET_IN_ROOM, this::getInRoom);
+        actionMap.put(ACTION_CREATE_GAME, this::playGame);
+        actionMap.put(ACTION_JOIN_GAME, this::playGame);
+        actionMap.put(ACTION_RECONNECT_ROOM, this::reconnect);
+        actionMap.put(ACTION_CONNECT_CHAT, this::connectChat);
 
         //recover
         recover();
@@ -123,100 +138,161 @@ public class GameServer {
         String action = obj.getString(ACTION);
         player.setName(userName);
 
-        // user try to sign up
-        if (action.equals(SIGNUP)) {
-            String userPassword = obj.getString(USER_PASSWORD);
-            if (db.addUser(userName, userPassword)) {
-                player.send(SUCCESSFUL);
-            } else {
-                player.send(INVALID_SIGNUP);
+
+        // recognized action
+        if (actionMap.containsKey(action)){
+            try {
+                // use action mapping to avoid if-else
+                actionMap.get(action).apply(player, obj);
+            }catch (UnauthorizedUserException e){
+                // unauthorized user try to do something needed login
+                System.err.println(e.toString());
             }
-            return;
+        }else {
+            System.err.println("Unrecognized action type: " + action);
+            player.send(INVALID_ACTION_TYPE);
         }
+    }
 
-        // login
-        if (action.equals(LOGIN)) {
-            String userPassword = obj.getString(USER_PASSWORD);
-            if (db.authUser(userName, userPassword)) {
-                player.send(SUCCESSFUL);
-                //add to active user list & keep tracking room info
-                if (!userList.hasUser(userName)) {
-                    User user = new User(userName, userPassword);
-                    userList.addUser(user);
-
-                    //store userList
-                    Mongo m = new Mongo();
-                    m.morCon().save(this.userList);
-                }
-            } else {
-                player.send(INVALID_LOGIN);
-            }
-            return;
-        }
-
-        /* ====== actions below all need user login first(so we will check the user list) ====== */
-
-        // if not login, return error
+    /* ============ below are the functions which follows the same interface and used to handle incoming request ============ */
+    /**
+     * Check whether a user has already logined.
+     * @param player the player to be checked
+     * @param obj JSON object contains some other info we may need
+     * @throws UnauthorizedUserException user doesn't login
+     */
+    void checkLogin(Player<String> player, JSONObject obj) throws UnauthorizedUserException {
+        String userName = obj.getString(USER_NAME);
         if (!userList.hasUser(userName)) {
             //invalid user
             player.send(INVALID_USER);
-            return;
-        }
-        // successful login
-
-        // get all rooms which waiting for new players
-        if (action.equals(ACTION_GET_WAIT_ROOM)) {
-            player.send(getRoomList());
-            return;
-        }
-
-        // the room user has joined
-        if (action.equals(ACTION_GET_IN_ROOM)) {
-            player.send(getUserRoom(userName));
-            return;
-        }
-
-        // create a new room or join an existing room
-        if (action.equals(ACTION_CREATE_GAME) || action.equals(ACTION_JOIN_GAME)) {
-            // proceed to original process
-            startGame(player);
-            return;
-
-        }
-
-        // reconnect to the room
-        if (action.equals(ACTION_RECONNECT_ROOM)) {
-            int roomID = obj.getInt(ROOM_ID);
-            // user is a player already in room
-            // redirect io
-            if (userList.getUser(userName).isInRoom(roomID)) {
-                // go to the room, find that player and replace the stream with new one
-                Player<?> currPlayer = rooms.get(roomID).getPlayer(userName);
-                currPlayer.setIn(player.getIn());
-                currPlayer.setOut(player.getOut());
-                currPlayer.setConnect(true);
-                currPlayer.send(SUCCESSFUL);
-            } else {
-                player.send(INVALID_RECONNECT);
-            }
-        }
-
-        // user want to connect to the chat
-        if (action.equals(ACTION_CONNECT_CHAT)) {
-            int roomID = obj.getInt(ROOM_ID);
-            // user is a player already in room
-            // redirect io
-            if (userList.getUser(userName).isInRoom(roomID)) {
-                // go to the room, find that player and replace the stream with new one
-                Player<?> currPlayer = rooms.get(roomID).getPlayer(userName);
-                currPlayer.setChatStream(player.getIn(), player.getOut());
-                currPlayer.setConnect(true);
-                currPlayer.sendChatMessage(SUCCESSFUL);
-            } else {
-                player.send(INVALID_RECONNECT);
-            }
+            throw new UnauthorizedUserException("Unauthorized user try to do something.");
         }
     }
+
+    /**
+     * Handle the sign up related stuff(e.g. store to DB).
+     * @param player new connection(wrap by player object)
+     * @param obj JSON object contains some other info we may need
+     * @throws SQLException database problem
+     * @throws ClassNotFoundException receive unexpected data
+     */
+    void signup(Player<String> player, JSONObject obj) throws SQLException, ClassNotFoundException{
+        String userName = obj.getString(USER_NAME);
+        String userPassword = obj.getString(USER_PASSWORD);
+        if (db.addUser(userName, userPassword)) {
+            player.send(SUCCESSFUL);
+        } else {
+            player.send(INVALID_SIGNUP);
+        }
+    }
+
+    /**
+     * Handle the login related stuff(e.g. verify).
+     * @param player new connection(wrap by player object)
+     * @param obj JSON object contains some other info we may need
+     * @throws SQLException database problem
+     * @throws ClassNotFoundException receive unexpected data
+     */
+    void login(Player<String> player, JSONObject obj) throws SQLException, ClassNotFoundException{
+        String userName = obj.getString(USER_NAME);
+        String userPassword = obj.getString(USER_PASSWORD);
+        if (db.authUser(userName, userPassword)) {
+            player.send(SUCCESSFUL);
+            //add to active user list & keep tracking room info
+            if (!userList.hasUser(userName)) {
+                User user = new User(userName, userPassword);
+                userList.addUser(user);
+            }
+        } else {
+            player.send(INVALID_LOGIN);
+        }
+    }
+
+    /**
+     * Get all rooms which is still waiting for new players.
+     * @param player new connection(wrap by player object)
+     * @param obj JSON object contains some other info we may need
+     * @throws UnauthorizedUserException use not login, can't perform this action
+     */
+    void getWaitRoom(Player<String> player, JSONObject obj) throws UnauthorizedUserException {
+        checkLogin(player, obj);
+        player.send(getRoomList());
+    }
+
+    /**
+     * Get all rooms which current player is inside.
+     * @param player new connection(wrap by player object)
+     * @param obj JSON object contains some other info we may need
+     * @throws UnauthorizedUserException use not login, can't perform this action
+     */
+    void getInRoom(Player<String> player, JSONObject obj) throws UnauthorizedUserException {
+        String userName = obj.getString(USER_NAME);
+        checkLogin(player, obj);
+        player.send(getUserRoom(userName));
+    }
+
+    /**
+     * Create a new room or join an existing room
+     * @param player new connection(wrap by player object)
+     * @param obj JSON object contains some other info we may need
+     * @throws UnauthorizedUserException use not login, can't perform this action
+     * @throws IOException stream error
+     * @throws ClassNotFoundException receive unexpected data
+     */
+    void playGame(Player<String> player, JSONObject obj) throws UnauthorizedUserException, IOException, ClassNotFoundException {
+        checkLogin(player, obj);
+        startGame(player);
+    }
+
+    /**
+     * Player try to reconnect to a previous room.
+     * @param player new connection(wrap by player object)
+     * @param obj JSON object contains some other info we may need
+     * @throws UnauthorizedUserException use not login, can't perform this action
+     */
+    void reconnect(Player<String> player, JSONObject obj) throws UnauthorizedUserException {
+        checkLogin(player, obj);
+        String userName = obj.getString(USER_NAME);
+        int roomID = obj.getInt(ROOM_ID);
+        // user is a player already in room
+        // redirect io
+        if (userList.getUser(userName).isInRoom(roomID)) {
+            // go to the room, find that player and replace the stream with new one
+            Player<?> currPlayer = rooms.get(roomID).getPlayer(userName);
+            currPlayer.setIn(player.getIn());
+            currPlayer.setOut(player.getOut());
+            currPlayer.setConnect(true);
+            currPlayer.send(SUCCESSFUL);
+        } else {
+            player.send(INVALID_RECONNECT);
+        }
+    }
+
+    /**
+     * Player try to connect to the chat channel of a room.
+     * @param player new connection(wrap by player object)
+     * @param obj JSON object contains some other info we may need
+     * @throws UnauthorizedUserException use not login, can't perform this action
+     */
+    void connectChat(Player<String> player, JSONObject obj) throws UnauthorizedUserException {
+        checkLogin(player, obj);
+        String userName = obj.getString(USER_NAME);
+        int roomID = obj.getInt(ROOM_ID);
+        // user is a player already in room
+        // redirect io
+        if (userList.getUser(userName).isInRoom(roomID)) {
+            // go to the room, find that player and replace the stream with new one
+            Player<?> currPlayer = rooms.get(roomID).getPlayer(userName);
+            currPlayer.setChatStream(player.getIn(), player.getOut());
+            currPlayer.setConnect(true);
+            currPlayer.sendChatMessage(SUCCESSFUL);
+        } else {
+            player.send(INVALID_RECONNECT);
+        }
+    }
+
+    /* ============ end ============ */
 
     /**
      * user want to create a room or add a room

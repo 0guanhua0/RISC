@@ -35,6 +35,7 @@ public class Room {
     // the map this room is playing
     @Embedded
     WorldMap<String> map;
+
     // some basic info we need for a game(e.g. winnerID, roundNum)
     @Embedded
     GameInfo gameInfo;
@@ -44,7 +45,7 @@ public class Room {
     List<Thread> threads;
 
     /**
-     * The constructor, initialize the whole game(room.
+     * The constructor, initialize the whole playGame(room.
      *
      * @param roomID      roomID for this room
      * @param player      the "beginner", the player create this room
@@ -74,12 +75,12 @@ public class Room {
         player.send(new RoomInfo(roomID, roomName, map, players));
 
         // don't need this message anymore
-//        player.send(String.format("Please wait other players to join th game(need %d, joined %d)", colorList.size(), players.size()));
+//        player.send(String.format("Please wait other players to join th playGame(need %d, joined %d)", colorList.size(), players.size()));
 
         gameInfo = new GameInfo(-1, 1);
         gameInfo.addPlayer(player.getId(), player.getName());
 
-        System.out.println("successfully init the game");
+        System.out.println("successfully init the playGame");
         System.out.println("room name: " + this.roomName);
         threads = new ArrayList<>();
     }
@@ -139,12 +140,12 @@ public class Room {
 
     /**
      * call this method to add a new player into this room
-     * after the last player enter the room, game will begin automatically
+     * after the last player enter the room, playGame will begin automatically
      *
      * @param player new player
      */
     void addPlayer(Player<String> player) {
-        // only accept new player if the game is not start yet
+        // only accept new player if the playGame is not start yet
         if (players.size() < map.getColorList().size()) {
             players.add(player);
 
@@ -161,11 +162,11 @@ public class Room {
             // broadcast the newly joined player info
             sendAllExcept(player.getName(), player);
 
-            // check whether has enough player to start the game
+            // check whether has enough player to start the playGame
             if (players.size() == map.getColorList().size()) {
-                // broadcast enough players join the game
+                // broadcast enough players join the playGame
                 sendAll(INFO_ALL_PLAYER);
-                // use a separate thread to run the game
+                // use a separate thread to run the playGame
                 new Thread(() -> {
                     try {
                         runGame();
@@ -303,7 +304,7 @@ public class Room {
 
     /**
      * update the state(e.g. num of units and resources)
-     * of current map after the end of each single round of game
+     * of current map after the end of each single round of playGame
      */
     void updateWorld(){
         // update tech&food resources for every player
@@ -353,7 +354,10 @@ public class Room {
             //save current game to db
             Mongo m = new Mongo();
             m.morCon().save(this);
-            // check the game result
+
+
+            // check the playGame result
+
             checkWinner();
             if (!gameInfo.hasFinished()) {
                 sendAll("continue");

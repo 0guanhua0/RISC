@@ -1,7 +1,10 @@
 package edu.duke.ece651.risk.server;
 
+
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
+import edu.duke.ece651.risk.shared.UnauthorizedUserException;
+
 import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.map.TerritoryImpl;
 import edu.duke.ece651.risk.shared.network.Client;
@@ -48,7 +51,6 @@ public class GameServerTest {
         MongoClient mongoClient = new MongoClient(new MongoClientURI(MONGO_URL));
         mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_COLLECTION).drop();
     }
-
 
     @Test
     public void testRun() throws IOException, InterruptedException {
@@ -111,13 +113,6 @@ public class GameServerTest {
         mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_COLLECTION).drop();
     }
 
-    /**
-     * short socket
-     *
-     * @throws IOException
-     * @throws ClassNotFoundException
-     * @throws SQLException
-     */
     @Test
     public void testHandleIncomeRequest() throws IOException, ClassNotFoundException, SQLException {
 
@@ -225,7 +220,7 @@ public class GameServerTest {
         when(socket5.getOutputStream()).thenReturn(outputStream);
 
         gameServer.handleIncomeRequest(socket5);
-        assertEquals(INVALID_USER, readAllStringFromObjectStream(outputStream));
+        assertEquals(INVALID_ACTION_TYPE, readAllStringFromObjectStream(outputStream));
 
         //6 login user get available room
         outputStream.reset();
@@ -242,7 +237,7 @@ public class GameServerTest {
         gameServer.handleIncomeRequest(socket6);
         assertEquals("", readAllStringFromObjectStream(outputStream));
 
-        //7 login user get room he is in
+        // 7 login user get room he is in
         outputStream.reset();
 
         String s7 = "{\"" + USER_NAME + "\": \"" + userName2 + "\",\n" +
@@ -258,13 +253,30 @@ public class GameServerTest {
         assertEquals("", readAllStringFromObjectStream(outputStream));
 
         outputStream.reset();
+
+
+
+        // 8 unauthorized user get room he is in
+        outputStream.reset();
+
+        String s8 = "{\"" + USER_NAME + "\": \"" + "zxc" + "\",\n" +
+                "\"" + USER_PASSWORD + "\": \"" + "zxc" + "\",\n" +
+                "\"" + ACTION + "\": \"" + ACTION_GET_IN_ROOM + "\" }";
+
+        Socket socket8 = mock(Socket.class);
+        when(socket8.getInputStream())
+                .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList(s8))));
+        when(socket8.getOutputStream()).thenReturn(outputStream);
+
+        gameServer.handleIncomeRequest(socket8);
+        assertEquals(INVALID_USER, readAllStringFromObjectStream(outputStream));
+
+        outputStream.reset();
+
         MongoClient mongoClient = new MongoClient(new MongoClientURI(MONGO_URL));
         mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_COLLECTION).drop();
     }
 
-    /**
-     * long socket
-     */
     @Test
     public void testLongSocket() throws SQLException, ClassNotFoundException, IOException {
         MongoClient mongoClient = new MongoClient(new MongoClientURI(MONGO_URL));
@@ -364,7 +376,7 @@ public class GameServerTest {
 
         gameServer.handleIncomeRequest(socket5);
 
-        assertEquals("", readAllStringFromObjectStream(o5));
+        assertEquals(INVALID_ACTION_TYPE, readAllStringFromObjectStream(o5));
 
 
         //6 login user connect to the chat

@@ -55,7 +55,6 @@ public class WaitGameActivity extends AppCompatActivity {
         // each time enter this activity, should fetch the latest room & player info from the server
         // get the player info first, and then get the room info
         initPlayerInfo();
-        getRoomInfo();
     }
 
     @Override
@@ -84,6 +83,7 @@ public class WaitGameActivity extends AppCompatActivity {
                     String playerInfo = (String) object;
                     JSONObject jsonObject = new JSONObject(playerInfo);
                     setPlayerID(jsonObject.optInt(PLAYER_ID, 1));
+                    getRoomInfo();
                 }catch (JSONException e){
                     Log.e(TAG, "initPlayerInfo: " + e.toString());
                 }
