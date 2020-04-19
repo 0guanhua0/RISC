@@ -502,9 +502,9 @@ public class TerritoryImpl extends Territory {
                 ownerAlly = attackers.get(Math.abs(1-random));
                 allyForce = combinedAttack.get(Math.abs(1 - random));
             }
-            //change the ownership and ally for this territory
-            setOwner(finalOwner.getId());
-            setAlly(ownerAlly);
+//            //change the ownership and ally for this territory
+//            setOwner(finalOwner.getId());
+//            setAlly(ownerAlly);
             //rebuild the defender group based on the attacker side force
             this.unitGroup = buildForce(ownerForce);
             this.allyUnits = buildForce(allyForce);
