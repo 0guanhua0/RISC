@@ -12,6 +12,9 @@ import edu.duke.ece651.risk.shared.network.Server;
 import edu.duke.ece651.risk.shared.player.Player;
 import edu.duke.ece651.risk.shared.player.PlayerV1;
 import edu.duke.ece651.risk.shared.player.PlayerV2;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -28,6 +31,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class GameServerTest {
+    //clean mongo db
+    @AfterEach
+    public void cleanMongo() {
+        MongoClient mongoClient = new MongoClient(new MongoClientURI(MONGO_URL));
+        mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_COLLECTION).drop();
+        mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_USERLIST).drop();
+    }
 
     @Test
     public void testConstructor() throws IOException, SQLException, ClassNotFoundException {
@@ -47,9 +57,6 @@ public class GameServerTest {
         }).start();
         Client client = new Client();
         client.init("127.0.0.1", 8000);
-        //clean mongo
-        MongoClient mongoClient = new MongoClient(new MongoClientURI(MONGO_URL));
-        mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_COLLECTION).drop();
     }
 
     @Test
@@ -105,12 +112,10 @@ public class GameServerTest {
             gameServer.run();
         });
         thread.start();
-        Thread.sleep(10000);
+        Thread.sleep(5000);
         thread.interrupt();
         thread.join();
         verify(server, atLeast(3)).accept();
-        MongoClient mongoClient = new MongoClient(new MongoClientURI(MONGO_URL));
-        mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_COLLECTION).drop();
     }
 
     @Test
@@ -273,15 +278,10 @@ public class GameServerTest {
 
         outputStream.reset();
 
-        MongoClient mongoClient = new MongoClient(new MongoClientURI(MONGO_URL));
-        mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_COLLECTION).drop();
     }
 
     @Test
     public void testLongSocket() throws SQLException, ClassNotFoundException, IOException {
-        MongoClient mongoClient = new MongoClient(new MongoClientURI(MONGO_URL));
-        mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_COLLECTION).drop();
-
         GameServer gameServer = new GameServer(null);
 
         //1 login user create room
@@ -412,9 +412,6 @@ public class GameServerTest {
 
     @Test
     public void testAskValidRoomNum() throws IOException, ClassNotFoundException, SQLException {
-        MongoClient mongoClient = new MongoClient(new MongoClientURI(MONGO_URL));
-        mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_COLLECTION).drop();
-
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
         //p1
@@ -471,8 +468,6 @@ public class GameServerTest {
         assertEquals(3, gameServer.rooms.size());
         assertEquals(1, gameServer.getRoomList().size()); // only one room waiting for new player
         assertEquals(2, gameServer.rooms.size()); // the room finished is removed
-        MongoClient mongoClient = new MongoClient(new MongoClientURI(MONGO_URL));
-        mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_COLLECTION).drop();
     }
 
     @Test
@@ -503,8 +498,7 @@ public class GameServerTest {
 
         th.interrupt();
         th.join();
-        MongoClient mongoClient = new MongoClient(new MongoClientURI(MONGO_URL));
-        mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_COLLECTION).drop();
+
     }
 
     @Test
@@ -572,8 +566,6 @@ public class GameServerTest {
         assertEquals(1, gameServer.rooms.size());
         assertEquals(3, gameServer.rooms.get(0).players.size());
         assertEquals(0, gameServer.rooms.get(0).roomID);
-        MongoClient mongoClient = new MongoClient(new MongoClientURI(MONGO_URL));
-        mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_COLLECTION).drop();
     }
 
 
@@ -636,8 +628,6 @@ public class GameServerTest {
         assertFalse(u1.isInRoom(3));
         // room 1 & 2 should in this list
         assertEquals(2, gameServer.getUserRoom("1").size());
-        MongoClient mongoClient = new MongoClient(new MongoClientURI(MONGO_URL));
-        mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_COLLECTION).drop();
     }
 
 }
