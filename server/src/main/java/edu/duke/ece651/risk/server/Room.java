@@ -74,9 +74,6 @@ public class Room {
 
         player.send(new RoomInfo(roomID, roomName, map, players));
 
-        // don't need this message anymore
-//        player.send(String.format("Please wait other players to join th playGame(need %d, joined %d)", colorList.size(), players.size()));
-
         gameInfo = new GameInfo(-1, 1);
         gameInfo.addPlayer(player.getId(), player.getName());
 
@@ -121,19 +118,12 @@ public class Room {
         this.map = mapDataBase.getMap(this.map.getName());
 
         threads = new ArrayList<>();
-        // + 1 for main thread
-        CyclicBarrier barrier = new CyclicBarrier(players.size() + 1);
-
-        for (Player<String> player : players) {
-            Thread t = new PlayerThreadRecover(player, map, gameInfo, barrier,WAIT_TIME_OUT,this.players);
-            threads.add(t);
-            t.start();
-        }
-
-        // open the chat thread
-        Thread tChat = new ChatThread<String>(players);
-        threads.add(tChat);
-        tChat.start();
+        new Thread(() -> {
+            try {
+                runGame();
+            } catch (Exception ignored) {
+            }
+        }).start();
 
 
     }
@@ -201,7 +191,7 @@ public class Room {
      *
      * @param data data to be sent
      */
-    void sendAll(Object data)  {
+    void sendAll(Object data) {
         for (Player<String> player : players) {
             if (player.isConnect()) {
                 player.send(data);
@@ -211,10 +201,11 @@ public class Room {
 
     /**
      * This function will send the data to all players except p.
+     *
      * @param data data to be sent
-     * @param p except this player
+     * @param p    except this player
      */
-    void sendAllExcept(Object data, Player<String> p)  {
+    void sendAllExcept(Object data, Player<String> p) {
         for (Player<String> player : players) {
             if (player.isConnect() && player != p) {
                 player.send(data);
@@ -297,7 +288,7 @@ public class Room {
             }
         }
         // interrupt all thread in current room
-        for (Thread t : threads){
+        for (Thread t : threads) {
             t.interrupt();
         }
     }
@@ -306,7 +297,7 @@ public class Room {
      * update the state(e.g. num of units and resources)
      * of current map after the end of each single round of playGame
      */
-    void updateWorld(){
+    void updateWorld() {
         // update tech&food resources for every player
         for (Player<String> player : players) {
             player.updateState();
@@ -327,7 +318,7 @@ public class Room {
         CyclicBarrier barrier = new CyclicBarrier(players.size() + 1);
 
         for (Player<String> player : players) {
-            Thread t = new PlayerThread(player, map, gameInfo, barrier,this.players);
+            Thread t = new PlayerThread(player, map, gameInfo, barrier, this.players);
             threads.add(t);
             t.start();
         }
@@ -380,6 +371,7 @@ public class Room {
 
     /**
      * get players
+     *
      * @return list of players in current room
      */
     public List<Player<String>> getPlayers() {
@@ -388,6 +380,7 @@ public class Room {
 
     /**
      * Find certain player.
+     *
      * @param name name of the player looking for
      * @return corresponding player object
      */
@@ -402,6 +395,7 @@ public class Room {
 
     /**
      * Check if certain player is in current room.
+     *
      * @param name player name
      * @return true for player in this room
      */
@@ -416,10 +410,11 @@ public class Room {
 
     /**
      * Check whether this player is lose.
+     *
      * @param playerName player name
      * @return true for lose
      */
-    public boolean isPlayerLose(String playerName){
+    public boolean isPlayerLose(String playerName) {
         for (Player<String> p : players) {
             if (p.getName().equals(playerName)) {
                 return p.getTerrNum() <= 0;
