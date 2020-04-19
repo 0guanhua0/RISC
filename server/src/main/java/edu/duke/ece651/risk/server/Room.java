@@ -120,7 +120,7 @@ public class Room {
         threads = new ArrayList<>();
         new Thread(() -> {
             try {
-                runGame();
+                reGame();
             } catch (Exception ignored) {
             }
         }).start();
@@ -330,6 +330,32 @@ public class Room {
         threads.add(tChat);
         tChat.start();
 
+        mainGame(barrier);
+        endGame();
+    }
+
+    //recover game
+    //only difference is that no need to select territory
+    void reGame() throws IOException {
+        // + 1 for main thread
+        CyclicBarrier barrier = new CyclicBarrier(players.size() + 1);
+
+        for (Player<String> player : players) {
+            Thread t = new PlayerThread(player, map, gameInfo, barrier, this.players);
+            threads.add(t);
+            t.start();
+        }
+        // open the chat thread
+        Thread tChat = new ChatThread<String>(players);
+        threads.add(tChat);
+        tChat.start();
+
+        mainGame(barrier);
+        endGame();
+    }
+
+    //main game process
+    void mainGame(CyclicBarrier barrier) throws IOException {
         while (true) {
             // wait for all player to ready start a round(give main thread some time to process round result)
             barrierWait(barrier);
@@ -359,9 +385,8 @@ public class Room {
             gameInfo.nextRound();
             updateWorld();
         }
-        endGame();
-    }
 
+    }
     void barrierWait(CyclicBarrier barrier) {
         try {
             barrier.await();
