@@ -39,7 +39,8 @@ public class PlayerThread extends Thread{
      * @param barrier barrier, used to synchronous multi-threading
      */
     public PlayerThread(Player<String> player, WorldMap<String> map,
-                        GameInfo gameInfo, CyclicBarrier barrier,List<Player<String>> players) {
+                        GameInfo gameInfo, CyclicBarrier barrier,
+                        List<Player<String>> players) {
         this(player, map, gameInfo, barrier, WAIT_TIME_OUT,players);
     }
 

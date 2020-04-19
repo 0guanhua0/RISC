@@ -104,7 +104,7 @@ public class MoveAction implements Action, Serializable {
         //update the food storage
         int foodCost = map.getMinCtrlDist(src,dest)*unitsNum;
         player.useFood(foodCost);
-
+        player.addAction(this);
         return true;
     }
 
