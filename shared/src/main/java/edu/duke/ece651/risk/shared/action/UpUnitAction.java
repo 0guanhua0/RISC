@@ -83,6 +83,7 @@ public class UpUnitAction implements Action, Serializable {
         player.useTech(cost);
 
         territory.upUnit(this.unitsNum,this.srcLevel,this.targetLevel);
+        player.addAction(this);
         return true;
     }
 

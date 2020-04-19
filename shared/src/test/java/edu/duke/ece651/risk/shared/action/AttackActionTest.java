@@ -208,4 +208,52 @@ class AttackActionTest {
         System.out.println("integer = " + integer);
 
     }
+
+    @Test
+    void testPeformWithAlly() throws IOException {
+        MapDataBase<String> mapDataBase = new MapDataBase<>();
+        //prepare the world
+        WorldMap<String> worldMap = mapDataBase.getMap("a clash of kings");
+        Territory storm = worldMap.getTerritory("the storm kingdom");
+        Territory reach = worldMap.getTerritory("kingdom of the reach");
+        Territory rock = worldMap.getTerritory("kingdom of the rock");
+        Territory vale = worldMap.getTerritory("kingdom of mountain and vale");
+        Territory north = worldMap.getTerritory("kingdom of the north");
+        Territory dorne = worldMap.getTerritory("principality of dorne");
+
+        //two players join this game
+        Player<String> p1 = new PlayerV2<>(Mock.setupMockInput(Arrays.asList()),new ByteArrayOutputStream());
+        p1.setId(1);
+        Player<String> p2 = new PlayerV2<>(Mock.setupMockInput(Arrays.asList()),new ByteArrayOutputStream());
+        p2.setId(2);
+
+        //assign some territories to each player
+        //player1
+        p1.addTerritory(vale);
+        //player2
+        p2.addTerritory(storm);
+        //assign some units to each territory, 5 units for each player
+        //player 1
+        vale.addBasicUnits(2);
+        //player2
+        storm.addBasicUnits(2);
+
+        WorldState worldState1 = new WorldState(p1, worldMap,Arrays.asList(p1,p2));
+        WorldState worldState2 = new WorldState(p2, worldMap,Arrays.asList(p1,p2));
+
+        //1 submit an ally request to ally with 2
+        AllyAction allyAction1 = new AllyAction(2);
+        allyAction1.perform(worldState1);
+        //2 submit an ally request to ally with 1
+        AllyAction allyAction2 = new AllyAction(1);
+        allyAction2.perform(worldState2);
+
+        assertTrue(p1.isAllyWith(p2));
+
+        //normal attack
+        AttackAction a0 = new AttackAction("kingdom of mountain and vale","the storm kingdom",1, 2);
+        assertTrue(a0.perform(worldState1));
+        assertFalse(p1.isAllyWith(p2));
+
+    }
 }

@@ -27,6 +27,7 @@ class AllyActionTest {
         player2.setId(2);
         player3.setId(3);
         WorldState worldState = new WorldState(player1, worldMap, Arrays.asList(player1, player2,player3));
+
         AllyAction allyAction = new AllyAction(2);
         assertTrue(allyAction.isValid(worldState));
         player1.setAllyRequest(2);
