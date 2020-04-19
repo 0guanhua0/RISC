@@ -19,15 +19,15 @@ public class SpyAction implements Action{
     public boolean isValid(WorldState worldState) {
         List<Player<String>> players = worldState.getPlayers();
         Player<String> myPlayer = worldState.getMyPlayer();
-        //check if is currently spying(assume the second spy action will be rendered invalid)
-        if (myPlayer.isSpying()){
-            return true;
-        }
-        //if not spying check if it has enough resources
-        if (!myPlayer.canAffordSpy()||targetId<0||targetId>=worldState.getPlayers().size()){
+        //check if the target is valid
+        if (targetId-1<0||targetId-1>=worldState.getPlayers().size()||targetId==myPlayer.getId()){
             return false;
-        } else{
+        }
+        //check if resource is enough
+        if (myPlayer.isSpying()||myPlayer.canAffordSpy()){
             return true;
+        }else{
+            return false;
         }
     }
 
@@ -44,7 +44,7 @@ public class SpyAction implements Action{
             //set isSpying to be true
             myPlayer.setIsSpying();
         }
-        List<Action> actions = worldState.getPlayers().get(targetId).getActions();
+        List<Action> actions = worldState.getPlayers().get(targetId-1).getActions();
         //TODO communication logic here
         return true;
     }
