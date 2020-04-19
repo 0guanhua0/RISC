@@ -441,8 +441,6 @@ class PlayerTest {
         assertEquals(0,player.getActions().size());
         player.addAction(new AllyAction(1));
         assertEquals(1,player.getActions().size());
-
-
     }
 
 

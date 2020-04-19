@@ -402,8 +402,10 @@ class TerritoryImplTest {
         combinedAttack.add(treeMap3);
 
         List<Integer> list1 = test.selectMaxAttackUnit(combinedAttack);
+
         assertEquals(1,list1.get(0));
         assertEquals(0,list1.get(1));
+
         treeMap3.put(1,1);
         List<Integer> list2 = test.selectMaxAttackUnit(combinedAttack);
         assertEquals(1,list2.get(0));
@@ -413,6 +415,13 @@ class TerritoryImplTest {
         List<Integer> list3 = test.selectMaxAttackUnit(combinedAttack);
         assertEquals(2,list3.get(0));
         assertEquals(2,list3.get(1));
+
+        treeMap2.put(0,1);
+        List<Integer> list4 = test.selectMaxAttackUnit(combinedAttack);
+        assertEquals(2,list4.get(0));
+        assertEquals(2,list4.get(1));
+
+
 
     }
 
@@ -443,6 +452,10 @@ class TerritoryImplTest {
         assertEquals(0,list3.get(0));
         assertEquals(2,list3.get(1));
 
+        treeMap2.put(4,1);
+        List<Integer> list4 = test.selectMinAttackUnit(combinedAttack);
+        assertEquals(0,list4.get(0));
+        assertEquals(2,list4.get(1));
     }
 
     @Test
