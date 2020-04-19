@@ -1,6 +1,5 @@
 package edu.duke.ece651.risk.server;
 
-import edu.duke.ece651.risk.shared.UnauthorizedUserException;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.map.TerritoryImpl;
 import edu.duke.ece651.risk.shared.network.Client;
