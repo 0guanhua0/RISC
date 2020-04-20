@@ -8,14 +8,17 @@ import org.json.JSONObject;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.List;
 import java.util.Set;
 
 import edu.duke.ece651.risk.shared.ToServerMsg.ServerSelect;
 import edu.duke.ece651.risk.shared.action.Action;
+import edu.duke.ece651.risk.shared.action.SpyAction;
 import edu.duke.ece651.riskclient.listener.onNewPlayerListener;
 import edu.duke.ece651.riskclient.listener.onReceiveListener;
 import edu.duke.ece651.riskclient.listener.onRecvAttackResultListener;
 import edu.duke.ece651.riskclient.listener.onResultListener;
+import edu.duke.ece651.riskclient.listener.onSpyListener;
 import edu.duke.ece651.riskclient.objects.SimplePlayer;
 
 import static edu.duke.ece651.risk.shared.Constant.ACTION_CREATE_GAME;
@@ -329,6 +332,47 @@ public class HTTPUtils {
                     public void onSuccessful() {
                         // valid action
                         listener.onSuccessful();
+                    }
+                });
+            }
+        });
+    }
+
+    public static void sendSpyAction(SpyAction action, onSpyListener listener){
+        send(action, new onResultListener() {
+            @Override
+            public void onFailure(String error) {
+                listener.onFailure(error);
+                Log.e(TAG, "sendSpyAction(send): " + error);
+            }
+
+            @Override
+            public void onSuccessful() {
+                recv(new onReceiveListener() {
+                    @Override
+                    public void onFailure(String error) {
+                        listener.onFailure(error);
+                        Log.e(TAG, "sendSpyAction(recv): " + error);
+                    }
+
+                    @Override
+                    public void onSuccessful(Object object) {
+                        listener.onSpyResult((List<Action>) object);
+                        // successful send the action, receive the result
+                        checkResult(new onResultListener() {
+                            @Override
+                            public void onFailure(String error) {
+                                // invalid action
+                                listener.onFailure(error);
+                                Log.e(TAG, "sendSpyAction(check): " + error);
+                            }
+
+                            @Override
+                            public void onSuccessful() {
+                                // valid action
+                                listener.onSuccessful();
+                            }
+                        });
                     }
                 });
             }

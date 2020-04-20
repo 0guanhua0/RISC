@@ -14,7 +14,7 @@ import java.util.Map;
 import static edu.duke.ece651.risk.shared.Constant.UNIT_NAME;
 
 
-public class AttackAction implements Action, Serializable {
+public class AttackAction implements Action {
     private static final long serialVersionUID = 2L;
 
     String src;

@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -164,6 +165,7 @@ public class MoveAttackActivity extends AppCompatActivity {
         });
 
         tvUnitsInfo = findViewById(R.id.tv_units_info);
+        tvUnitsInfo.setMovementMethod(new ScrollingMovementMethod());
         tvUnitsInfo.setText("");
 
         setUpSrcTerritory();

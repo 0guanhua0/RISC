@@ -17,7 +17,7 @@ import static edu.duke.ece651.risk.shared.Constant.UNIT_NAME;
  * @author: Mr.Wang
  * @create: 2020-03-30 21:35
  **/
-public class UpUnitAction implements Action, Serializable {
+public class UpUnitAction implements Action {
     private static final long serialVersionUID = 6L;
 
     String terr;

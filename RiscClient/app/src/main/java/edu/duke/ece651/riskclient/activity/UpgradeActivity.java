@@ -185,7 +185,7 @@ public class UpgradeActivity extends AppCompatActivity {
         tvCurrentLevel.setText(String.format(Locale.US, "Current tech level: %d", currentTechLevel));
 
         TextView tvCostToNext = findViewById(R.id.tv_cost_to_next);
-        tvCostToNext.setText(String.format(Locale.US, "Cost to upgrade to next: %d", TECH_MAP.get(currentTechLevel + 1)));
+        tvCostToNext.setText(String.format(Locale.US, "Cost to upgrade to next: %d", TECH_MAP.get(currentTechLevel)));
     }
 
     private void setUpSrcTerritory(){
@@ -361,7 +361,7 @@ public class UpgradeActivity extends AppCompatActivity {
         if (!t.getUnitGroup().containsKey(unitLevelFrom)){
             return false;
         }else {
-            return unitNum > Objects.requireNonNull(t.getUnitGroup().get(unitLevelFrom)).size();
+            return unitNum <= Objects.requireNonNull(t.getUnitGroup().get(unitLevelFrom)).size();
         }
     }
 }

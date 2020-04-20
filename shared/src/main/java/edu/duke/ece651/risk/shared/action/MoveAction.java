@@ -12,7 +12,7 @@ import java.util.Map;
 
 import static edu.duke.ece651.risk.shared.Constant.UNIT_NAME;
 
-public class MoveAction implements Action, Serializable {
+public class MoveAction implements Action {
     private static final long serialVersionUID = 4L;
 
     String src;
