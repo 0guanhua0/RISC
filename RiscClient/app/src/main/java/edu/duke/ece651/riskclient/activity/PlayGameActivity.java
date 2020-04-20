@@ -518,8 +518,15 @@ public class PlayGameActivity extends AppCompatActivity {
 
             @Override
             public void onSuccessful(Object object) {
+                if (object instanceof RoundInfo) {
+                    System.out.println("recv round info obj");
+                }
+                else {
+                    System.out.println("not round obj");
+                }
                 RoundInfo info = (RoundInfo) object;
                 roundNum = info.getRoundNum();
+                System.out.println(roundNum);
                 map = info.getMap();
                 player = info.getPlayer();
                 setPlayerID(player.getId());

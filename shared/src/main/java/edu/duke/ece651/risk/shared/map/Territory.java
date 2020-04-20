@@ -38,7 +38,16 @@ public abstract class Territory implements Serializable {
 
     //morphia constructor
     public Territory() {
+    }
 
+    //update Tstatus
+    //for recover
+    public void setStatus(TStatus status) {
+        this.status = status;
+    }
+
+    public TStatus getStatus() {
+        return status;
     }
 
     //get the owner id of corresponding territory

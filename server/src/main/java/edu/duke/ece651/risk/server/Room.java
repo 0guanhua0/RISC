@@ -4,10 +4,13 @@ import edu.duke.ece651.risk.shared.RoomInfo;
 import edu.duke.ece651.risk.shared.action.Action;
 import edu.duke.ece651.risk.shared.action.AttackResult;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
+import edu.duke.ece651.risk.shared.map.TStatus;
 import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.risk.shared.player.Player;
+import edu.duke.ece651.risk.shared.player.PlayerV2;
 import edu.duke.ece651.risk.shared.player.SPlayer;
+import org.checkerframework.checker.units.qual.A;
 import org.json.JSONObject;
 import org.mongodb.morphia.annotations.Embedded;
 import org.mongodb.morphia.annotations.Entity;
@@ -19,6 +22,8 @@ import java.util.*;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static edu.duke.ece651.risk.shared.Constant.*;
 
@@ -33,7 +38,7 @@ public class Room {
     String roomName;
     // all players in current room
     @Embedded
-    List<Player<String>>players;
+    List<Player<String>> players;
     // the map this room is playing
     @Embedded
     WorldMap<String> map;
@@ -45,7 +50,6 @@ public class Room {
     //ignore this field to store in mongo db
     @Transient
     List<Thread> threads;
-
 
 
     /**
@@ -106,7 +110,51 @@ public class Room {
     /**
      * recover
      */
-    void recover(MapDataBase mapDataBase)  {
+    void recover(MapDataBase mapDataBase) {
+        //set all player disconnect
+        for (Player p : players) {
+            p.setIn(null);
+            p.setOut(null);
+            p.setChatStream(null, null);
+            p.setConnect(false);
+
+            //restore action
+            List<Action> actions = new ArrayList<>();
+            p.setActions(actions);
+        }
+        //world map territory
+        String mapName = this.map.getName();
+        this.map = mapDataBase.getMap(mapName);
+
+        //update territory info
+        for (Player p : players) {
+            Set<Territory> territorySet = p.getTerritories();
+            //loop through, update Tstatus
+            for (Territory t : territorySet) {
+                String tName = t.getName();
+                TStatus tStatus = t.getStatus();
+                this.map.getTerritory(tName).setStatus(tStatus);
+            }
+        }
+        //recover player Set<Territory>
+        for (Player p : players) {
+            Set<Territory> newT = new HashSet<>();
+            Set<Territory> oldT = p.getTerritories();
+
+            for (Territory t : oldT) {
+                String tName = t.getName();
+                Territory tmp = this.map.getTerritory(tName);
+                newT.add(tmp);
+            }
+
+            p.setTerritories(newT);
+        }
+
+
+        //populate the ally field with null
+        for (Player p : players) {
+            p.setAlly(null);
+        }
 
         //player ally
         for (Player p : players) {
@@ -117,22 +165,20 @@ public class Room {
         }
 
 
-        //world map territory
-        this.map = mapDataBase.getMap(this.map.getName());
+        //restore territory status in map
 
         threads = new ArrayList<>();
 
-        //set all player disconnect
-        for (Player p : players) {
-            p.setConnect(false);
-        }
+
         //ready to restart game
         new Thread(() -> {
             try {
                 reGame();
             } catch (Exception ignored) {
             }
-        }).start();
+        }).
+
+                start();
 
 
     }
@@ -359,7 +405,7 @@ public class Room {
         threads.add(tChat);
         tChat.start();
 
-
+        barrierWait(barrier);
         mainGame(barrier);
         endGame();
     }
@@ -368,10 +414,13 @@ public class Room {
     void mainGame(CyclicBarrier barrier) throws IOException {
         while (true) {
             // wait for all player to ready start a round(give main thread some time to process round result)
+            System.out.println("room " + roomName + "  " + gameInfo.roundNum + " wait player start round");
             barrierWait(barrier);
+            System.out.println("room " + roomName + "  " + gameInfo.roundNum + " wait player play");
 
             // wait for all player to finish one round
             barrierWait(barrier);
+            System.out.println("room " + roomName + "  " + gameInfo.roundNum + " after");
 
             resolveCombats();
 
@@ -397,6 +446,7 @@ public class Room {
         }
 
     }
+
     void barrierWait(CyclicBarrier barrier) {
         try {
             barrier.await();

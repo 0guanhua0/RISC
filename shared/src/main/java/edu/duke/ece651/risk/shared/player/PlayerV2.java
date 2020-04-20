@@ -19,11 +19,9 @@ import static edu.duke.ece651.risk.shared.Constant.*;
  * @create: 2020-03-28 20:16
  **/
 @Embedded
-public class PlayerV2<T> extends PlayerV1<T> implements Serializable {
-
-
+public class PlayerV2<T> extends PlayerV1<T> implements Serializable { 
     private static final long serialVersionUID = 18L;
-
+    @Embedded
     BasicResource tech;
     @Embedded
     BasicResource food;

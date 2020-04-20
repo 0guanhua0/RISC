@@ -79,9 +79,10 @@ public class GameServer {
         Query<Room> query = datastore.createQuery(Room.class);
         List<Room> rooms = query.asList();
 
+        MapDataBase mDB = new MapDataBase<>();
         //it through rooms, put back to map
         for (Room r : rooms) {
-            r.recover(new MapDataBase<>());
+            r.recover(mDB);
             this.rooms.put(r.roomID, r);
         }
 
@@ -140,25 +141,27 @@ public class GameServer {
 
 
         // recognized action
-        if (actionMap.containsKey(action)){
+        if (actionMap.containsKey(action)) {
             try {
                 // use action mapping to avoid if-else
                 actionMap.get(action).apply(player, obj);
-            }catch (UnauthorizedUserException e){
+            } catch (UnauthorizedUserException e) {
                 // unauthorized user try to do something needed login
                 System.err.println(e.toString());
             }
-        }else {
+        } else {
             System.err.println("Unrecognized action type: " + action);
             player.send(INVALID_ACTION_TYPE);
         }
     }
 
     /* ============ below are the functions which follows the same interface and used to handle incoming request ============ */
+
     /**
      * Check whether a user has already logined.
+     *
      * @param player the player to be checked
-     * @param obj JSON object contains some other info we may need
+     * @param obj    JSON object contains some other info we may need
      * @throws UnauthorizedUserException user doesn't login
      */
     void checkLogin(Player<String> player, JSONObject obj) throws UnauthorizedUserException {
@@ -172,12 +175,13 @@ public class GameServer {
 
     /**
      * Handle the sign up related stuff(e.g. store to DB).
+     *
      * @param player new connection(wrap by player object)
-     * @param obj JSON object contains some other info we may need
-     * @throws SQLException database problem
+     * @param obj    JSON object contains some other info we may need
+     * @throws SQLException           database problem
      * @throws ClassNotFoundException receive unexpected data
      */
-    void signup(Player<String> player, JSONObject obj) throws SQLException, ClassNotFoundException{
+    void signup(Player<String> player, JSONObject obj) throws SQLException, ClassNotFoundException {
         String userName = obj.getString(USER_NAME);
         String userPassword = obj.getString(USER_PASSWORD);
         if (db.addUser(userName, userPassword)) {
@@ -189,12 +193,13 @@ public class GameServer {
 
     /**
      * Handle the login related stuff(e.g. verify).
+     *
      * @param player new connection(wrap by player object)
-     * @param obj JSON object contains some other info we may need
-     * @throws SQLException database problem
+     * @param obj    JSON object contains some other info we may need
+     * @throws SQLException           database problem
      * @throws ClassNotFoundException receive unexpected data
      */
-    void login(Player<String> player, JSONObject obj) throws SQLException, ClassNotFoundException{
+    void login(Player<String> player, JSONObject obj) throws SQLException, ClassNotFoundException {
         String userName = obj.getString(USER_NAME);
         String userPassword = obj.getString(USER_PASSWORD);
         if (db.authUser(userName, userPassword)) {
@@ -211,8 +216,9 @@ public class GameServer {
 
     /**
      * Get all rooms which is still waiting for new players.
+     *
      * @param player new connection(wrap by player object)
-     * @param obj JSON object contains some other info we may need
+     * @param obj    JSON object contains some other info we may need
      * @throws UnauthorizedUserException use not login, can't perform this action
      */
     void getWaitRoom(Player<String> player, JSONObject obj) throws UnauthorizedUserException {
@@ -222,8 +228,9 @@ public class GameServer {
 
     /**
      * Get all rooms which current player is inside.
+     *
      * @param player new connection(wrap by player object)
-     * @param obj JSON object contains some other info we may need
+     * @param obj    JSON object contains some other info we may need
      * @throws UnauthorizedUserException use not login, can't perform this action
      */
     void getInRoom(Player<String> player, JSONObject obj) throws UnauthorizedUserException {
@@ -234,11 +241,12 @@ public class GameServer {
 
     /**
      * Create a new room or join an existing room
+     *
      * @param player new connection(wrap by player object)
-     * @param obj JSON object contains some other info we may need
+     * @param obj    JSON object contains some other info we may need
      * @throws UnauthorizedUserException use not login, can't perform this action
-     * @throws IOException stream error
-     * @throws ClassNotFoundException receive unexpected data
+     * @throws IOException               stream error
+     * @throws ClassNotFoundException    receive unexpected data
      */
     void playGame(Player<String> player, JSONObject obj) throws UnauthorizedUserException, IOException, ClassNotFoundException {
         checkLogin(player, obj);
@@ -247,8 +255,9 @@ public class GameServer {
 
     /**
      * Player try to reconnect to a previous room.
+     *
      * @param player new connection(wrap by player object)
-     * @param obj JSON object contains some other info we may need
+     * @param obj    JSON object contains some other info we may need
      * @throws UnauthorizedUserException use not login, can't perform this action
      */
     void reconnect(Player<String> player, JSONObject obj) throws UnauthorizedUserException {
@@ -271,8 +280,9 @@ public class GameServer {
 
     /**
      * Player try to connect to the chat channel of a room.
+     *
      * @param player new connection(wrap by player object)
-     * @param obj JSON object contains some other info we may need
+     * @param obj    JSON object contains some other info we may need
      * @throws UnauthorizedUserException use not login, can't perform this action
      */
     void connectChat(Player<String> player, JSONObject obj) throws UnauthorizedUserException {

@@ -44,7 +44,7 @@ public abstract class Player<T> implements Serializable{
     //you need to clearly understand the definition of allyRequest:
     //the player id of target ally this player object receives from client side  during
     int allyRequest;
-
+    @Transient
     List<Action> actions;
     boolean isSpying;
 
@@ -102,8 +102,28 @@ public abstract class Player<T> implements Serializable{
 
     }
 
+    //set ally for reconstruct
+    public void setAlly(Player ally) {
+        this.ally = ally;
+    }
+
+    //getter for set of territory
+    public Set<Territory> getTerritories() {
+        return territories;
+    }
+
+    //setter for recover
+    public void setTerritories(Set<Territory> territories) {
+        this.territories = territories;
+    }
+
     public int getId() {
         return id;
+    }
+
+    //set action
+    public void setActions(List<Action> actions) {
+        this.actions = actions;
     }
 
     public void setId(int id) {
@@ -139,6 +159,8 @@ public abstract class Player<T> implements Serializable{
     }
 
     public void loseTerritory(Territory territory) throws IllegalArgumentException {
+
+
         if (!territories.contains(territory)) {
             throw new IllegalArgumentException("the territory doesn't belong to this user!");
         }

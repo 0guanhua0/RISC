@@ -61,9 +61,7 @@ public class PlayerThread extends Thread{
         }
     }
 
-    public PlayerThread() {
 
-    }
 
     @Override
     public void run() {
@@ -132,7 +130,11 @@ public class PlayerThread extends Thread{
         // 3. round number
         // 4. player object(contains the information of resources)
         RoundInfo roundInfo = new RoundInfo(gameInfo.getRoundNum(), map, gameInfo.getIdToName(), player);
-        player.send(roundInfo);
+
+        //only send if player is connect
+        if(player.isConnect()) {
+            player.send(roundInfo);
+        }
 
         // build the current state of playGame
         WorldState worldState = new WorldState(this.player,this.map,this.players);
