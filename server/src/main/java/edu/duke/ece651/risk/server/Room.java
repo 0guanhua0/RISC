@@ -110,9 +110,9 @@ public class Room {
     /**
      * recover
      */
-    void recover(MapDataBase mapDataBase) {
+    void recover(MapDataBase<String> mapDataBase) {
         //set all player disconnect
-        for (Player p : players) {
+        for (Player<?> p : players) {
             p.setIn(null);
             p.setOut(null);
             p.setChatStream(null, null);
@@ -127,7 +127,7 @@ public class Room {
         this.map = mapDataBase.getMap(mapName);
 
         //update territory info
-        for (Player p : players) {
+        for (Player<?> p : players) {
             Set<Territory> territorySet = p.getTerritories();
             //loop through, update Tstatus
             for (Territory t : territorySet) {
@@ -137,7 +137,7 @@ public class Room {
             }
         }
         //recover player Set<Territory>
-        for (Player p : players) {
+        for (Player<?> p : players) {
             Set<Territory> newT = new HashSet<>();
             Set<Territory> oldT = p.getTerritories();
 
@@ -152,14 +152,14 @@ public class Room {
 
 
         //populate the ally field with null
-        for (Player p : players) {
+        for (Player<?> p : players) {
             p.setAlly(null);
         }
 
         //player ally
-        for (Player p : players) {
+        for (Player<?> p : players) {
             if (p.getAllyRequest() != -1) {
-                Player ally = players.get(p.getAllyRequest());
+                Player<?> ally = players.get(p.getAllyRequest());
                 p.allyWith(ally);
             }
         }
