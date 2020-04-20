@@ -43,6 +43,8 @@ public class PlayerThreadRecover extends PlayerThread {
     @Override
     public void run() {
         try {
+            Thread.sleep(2000);
+            barrier.await();
             while (!gameInfo.hasFinished()){
                 playGame();
                 // give main thread some time to process round result

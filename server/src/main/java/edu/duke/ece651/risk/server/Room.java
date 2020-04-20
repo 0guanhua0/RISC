@@ -359,6 +359,7 @@ public class Room {
         threads.add(tChat);
         tChat.start();
 
+
         mainGame(barrier);
         endGame();
     }
