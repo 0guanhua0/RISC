@@ -96,6 +96,7 @@ public class PlayGameActivity extends AppCompatActivity {
      */
     private TextView tvRoundNum;
     private TextView tvPlayerInfo;
+    private TextView tvAllyInfo;
     private TextView tvActionInfo;
     private Button btPerform;
     private ImageView imgMap;
@@ -284,6 +285,9 @@ public class PlayGameActivity extends AppCompatActivity {
         tvPlayerInfo = findViewById(R.id.tv_player_info);
         tvPlayerInfo.setText("Please wait other players to finish assigning units...");
 
+        tvAllyInfo = findViewById(R.id.tv_ally_info);
+        tvAllyInfo.setText("");
+
         tvRoundNum = findViewById(R.id.tv_round_number);
         tvRoundNum.setText(String.valueOf(roundNum));
 
@@ -412,9 +416,11 @@ public class PlayGameActivity extends AppCompatActivity {
 
                         @Override
                         public void onSuccessful() {
-                            // valid action
-                            performedActions.add(action);
-                            showPerformedActions();
+                            runOnUiThread(() -> {
+                                // valid action
+                                performedActions.add(action);
+                                showPerformedActions();
+                            });
                         }
                     });
                 }
@@ -521,9 +527,10 @@ public class PlayGameActivity extends AppCompatActivity {
             public void onSuccessful(Object object) {
                 allPlayers = (ArrayList<SPlayer>) object;
                 // only support alliance action for 3 or more players
-                if (allPlayers.size() < 3){
-                    actionAdapter.remove(TYPE_ALLIANCE);
-                }
+                // TODO: uncomment this before release
+//                if (allPlayers.size() < 3){
+//                    actionAdapter.remove(TYPE_ALLIANCE);
+//                }
                 newRound();
             }
         });
@@ -623,6 +630,11 @@ public class PlayGameActivity extends AppCompatActivity {
                 .append("; Tech resource: ").append(player.getTechNum())
                 .append("\n");
         tvPlayerInfo.setText(builder);
+        if (player.getAlly() == null){
+            tvAllyInfo.setText("Allying with \"no body yet\"");
+        }else {
+            tvAllyInfo.setText(String.format("Allying with %s", player.getAlly().getName()));
+        }
     }
 
     /**
