@@ -38,7 +38,7 @@
         app:layout_constraintTop_toBottomOf="@id/tv_player_info"
         app:layout_constraintBottom_toTopOf="@id/rv_territory_list"/>
     
-    <ImageView
+    <com.github.chrisbanes.photoview.PhotoView
         android:id="@+id/img_map"
         android:layout_width="0dp"
         android:layout_height="@dimen/image_height"

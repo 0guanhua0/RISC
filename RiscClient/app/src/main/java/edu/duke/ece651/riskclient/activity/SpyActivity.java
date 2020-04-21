@@ -101,7 +101,7 @@ public class SpyActivity extends AppCompatActivity {
         tvSpyResult.setMovementMethod(new ScrollingMovementMethod());
 
         TextView tvResource = findViewById(R.id.tv_resource);
-        tvResource.setText(String.format(Locale.US, "Total tech resource(before this action): %d", techResource));
+        tvResource.setText(String.format(Locale.US, "Total tech resource(before this action): %d\nSpy action cost %d tech resource.", techResource, SPY_COST));
 
         setUpPlayerDropdown();
 
