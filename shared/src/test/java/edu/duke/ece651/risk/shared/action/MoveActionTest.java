@@ -169,17 +169,18 @@ class MoveActionTest {
         WorldState p1State = new WorldState(p1, worldMap);
         WorldState p2State = new WorldState(p2, worldMap);
 
-
         //test invalid action
         MoveAction a0 = new MoveAction(north, dorne, 1, 1);
         assertThrows(IllegalArgumentException.class,()->{a0.perform(p1State);});
 
         int northStart = northTerr.getBasicUnitsNum();
+        System.out.println("northStart = " + northStart);
         int valeStart = valeTerr.getBasicUnitsNum();
         int foodStorage = p1.getFoodNum();
         for (int i=1;i<=3;i++){
             MoveAction moveAction = new MoveAction(north, vale, 1, 2);
             moveAction.perform(p1State);
+            System.out.println(northTerr.getBasicUnitsNum());
             assertEquals(northTerr.getBasicUnitsNum(),northStart-i*2);
             assertEquals(valeTerr.getBasicUnitsNum(),valeStart+i*2);
             assertEquals(foodStorage-5*i*2,p1.getFoodNum());

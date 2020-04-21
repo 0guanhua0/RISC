@@ -91,8 +91,12 @@ public class MoveAction implements Action {
         for (Map.Entry<Integer, Integer> entry : levelToNum.entrySet()) {
             int num = entry.getValue();
             int level = entry.getKey();
-            srcNode.loseUnits(num, level);
             assert(destNode.getOwner()==player.getId()||destNode.getAllyId()==player.getId());
+            if (srcNode.getOwner()==player.getId()){
+                srcNode.loseUnits(num, level);
+            }else {
+                srcNode.loseAllyUnits(num, level);
+            }
             if (destNode.getOwner()==player.getId()){
                 destNode.addUnits(num, level);
             }else{
