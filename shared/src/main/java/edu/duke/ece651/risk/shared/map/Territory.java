@@ -189,6 +189,7 @@ public abstract class Territory implements Serializable {
     public abstract void loseAllyUnits(int num,int level);
 
 
+    public abstract boolean canLoseAllyUnits(int num,int level);
 
 
     /**

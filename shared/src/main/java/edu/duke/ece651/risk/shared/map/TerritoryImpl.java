@@ -541,13 +541,22 @@ public class TerritoryImpl extends Territory {
 
     @Override
     public void loseAllyUnits(int num, int level) {
-        if (null==allyUnits||allyUnits.isEmpty()||allyUnits.getOrDefault(level,new ArrayList<>()).size()<num){
-            throw new IllegalArgumentException("Invalid argument");
+        if (!canLoseAllyUnits(num,level)){
+            throw new IllegalArgumentException("Invalid");
         }
         List<Unit> units = this.allyUnits.get(level);
         for (int i=0;i<num;i++){
             units.remove(units.size()-1);
         }
         this.allyUnits.put(level,units);
+    }
+
+    @Override
+    public boolean canLoseAllyUnits(int num, int level) {
+        if (num<=0||!UNIT_BONUS.containsKey(level)||null==allyUnits||allyUnits.isEmpty()||allyUnits.getOrDefault(level,new ArrayList<>()).size()<num){
+            return false;
+        }else{
+            return true;
+        }
     }
 }
