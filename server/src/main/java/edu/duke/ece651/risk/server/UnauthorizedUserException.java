@@ -1,4 +1,4 @@
-package edu.duke.ece651.risk.shared;
+package edu.duke.ece651.risk.server;
 
 public class UnauthorizedUserException extends Exception{
     public UnauthorizedUserException(String message) {

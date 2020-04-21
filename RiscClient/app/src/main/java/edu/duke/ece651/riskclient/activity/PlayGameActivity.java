@@ -49,6 +49,7 @@ import edu.duke.ece651.riskclient.listener.onResultListener;
 
 import static edu.duke.ece651.risk.shared.Constant.ACTION_DONE;
 import static edu.duke.ece651.risk.shared.Constant.GAME_OVER;
+import static edu.duke.ece651.risk.shared.Constant.SPY_COST;
 import static edu.duke.ece651.riskclient.Constant.ACTION_PERFORMED;
 import static edu.duke.ece651.riskclient.Constant.MAP_NAME_TO_RESOURCE_ID;
 import static edu.duke.ece651.riskclient.Constant.NETWORK_PROBLEM;
@@ -80,6 +81,7 @@ public class PlayGameActivity extends AppCompatActivity {
     private static final String TYPE_UPGRADE_UNIT = "upgrade unit";
     private static final String TYPE_UPGRADE_MAX = "upgrade max tech";
     private static final String TYPE_ALLIANCE = "form alliance";
+    private static final String TYPE_SPY = "spy";
     private static final String TYPE_DONE = "done";
 
     private static final int REQUEST_ACTION_MOVE = 1;
@@ -87,6 +89,7 @@ public class PlayGameActivity extends AppCompatActivity {
     private static final int REQUEST_ACTION_UPGRADE_MAX = 3;
     private static final int REQUEST_ACTION_UPGRADE_UNIT = 4;
     private static final int REQUEST_ACTION_ALLIANCE = 5;
+    private static final int REQUEST_ACTION_SPY = 6;
 
     /**
      * UI variable
@@ -186,14 +189,28 @@ public class PlayGameActivity extends AppCompatActivity {
             case REQUEST_ACTION_ALLIANCE:
                 if (resultCode == RESULT_OK){
                     Action action = (Action) data.getSerializableExtra(ACTION_PERFORMED);
-                    // server check that the action is valid, so we perform it to update current map
-                    // NOTE: this only update the copy of the map, we will still get the latest map from server at the beginning of each term
-                    action.perform(new WorldState(player, map));
-                    performedActions.add(action);
-                    showPerformedActions();
-                    showPlayerInfo();
+                    if (action != null){
+                        // server check that the action is valid, so we perform it to update current map
+                        // NOTE: this only update the copy of the map, we will still get the latest map from server at the beginning of each term
+                        action.perform(new WorldState(player, map));
+                        performedActions.add(action);
+                        showPerformedActions();
+                        showPlayerInfo();
+                    }
                 }
                 break;
+            case REQUEST_ACTION_SPY:
+                if (resultCode == RESULT_OK){
+                    Action action = (Action) data.getSerializableExtra(ACTION_PERFORMED);
+                    if (action != null){
+                        // since we can't perform spy action on the client side, we simply subtract the tech resource
+                        player.useTech(SPY_COST);
+                        player.setIsSpying();
+                        performedActions.add(action);
+                        showPerformedActions();
+                        showPlayerInfo();
+                    }
+                }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -239,6 +256,13 @@ public class PlayGameActivity extends AppCompatActivity {
                     // alliance is relatively simple action, don't need a new page
                     showAllianceDialog();
                     return;
+                case TYPE_SPY:
+                    intent.setComponent(new ComponentName(PlayGameActivity.this, SpyActivity.class));
+                    bundle.putSerializable(DATA_CURRENT_PLAYER, player);
+                    bundle.putSerializable(DATA_ALL_PLAYERS, allPlayers);
+                    bundle.putInt(DATA_TECH_RESOURCE, player.getTechNum());
+                    requestCode = REQUEST_ACTION_SPY;
+                    break;
                 case TYPE_DONE:
                     // pop up a dialog to ask confirm
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -296,7 +320,7 @@ public class PlayGameActivity extends AppCompatActivity {
         TextInputLayout layout = findViewById(R.id.action_dropdown);
         layout.setHint("Action Type");
 
-        List<String> actions = new ArrayList<>(Arrays.asList(TYPE_MOVE, TYPE_ATTACK, TYPE_UPGRADE_UNIT, TYPE_UPGRADE_MAX, TYPE_ALLIANCE, TYPE_DONE));
+        List<String> actions = new ArrayList<>(Arrays.asList(TYPE_MOVE, TYPE_ATTACK, TYPE_UPGRADE_UNIT, TYPE_UPGRADE_MAX, TYPE_ALLIANCE, TYPE_SPY, TYPE_DONE));
         actionAdapter =
                 new ArrayAdapter<>(
                         PlayGameActivity.this,

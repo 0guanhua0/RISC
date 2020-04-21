@@ -23,7 +23,7 @@
             android:textSize="26sp"
             android:textStyle="bold"/>
 
-        <ImageView
+        <com.github.chrisbanes.photoview.PhotoView
             android:layout_width="match_parent"
             android:layout_height="@dimen/image_height"
             android:src="@drawable/risk_img"

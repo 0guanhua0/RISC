@@ -1,7 +1,6 @@
 package edu.duke.ece651.risk.server;
 
 import edu.duke.ece651.risk.shared.RoomInfo;
-import edu.duke.ece651.risk.shared.UnauthorizedUserException;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.network.Server;
 import edu.duke.ece651.risk.shared.player.Player;
