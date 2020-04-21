@@ -71,13 +71,21 @@ public class AttackAction implements Action {
         if (dst.getOwner() == this.playerId) {
             return false;
         }
-
-        for (Map.Entry<Integer, Integer> entry : this.levelToNum.entrySet()) {
-            //validate src has enough unit
-            if (!src.canLoseUnits(entry.getValue(),entry.getKey())) {
-                return false;
+        //validate src has enough unit
+        if (player.getId()==src.getOwner()){
+            for (Map.Entry<Integer, Integer> entry : this.levelToNum.entrySet()) {
+                if (!src.canLoseUnits(entry.getValue(),entry.getKey())) {
+                    return false;
+                }
+            }
+        }else {
+            for (Map.Entry<Integer, Integer> entry : this.levelToNum.entrySet()) {
+                if (!src.canLoseAllyUnits(entry.getValue(),entry.getKey())) {
+                    return false;
+                }
             }
         }
+
 
         //validate food storage
         int foodStorage = player.getFoodNum();
