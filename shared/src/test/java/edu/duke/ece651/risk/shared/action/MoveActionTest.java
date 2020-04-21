@@ -280,6 +280,13 @@ class MoveActionTest {
         assertDoesNotThrow(()->{moveAction3.perform(worldState1);});
         assertEquals(0,stormTerr.getUnitsNum(2));
         assertEquals(1,valeTerr.getAllyUnitsNum(2));
+
+        //test can perform attack action from a territory owned by ally
+        AttackAction attackAction = new AttackAction(vale, north, 1, unitMap2);
+        assertDoesNotThrow(()->{attackAction.perform(worldState1);});
+        assertEquals(0,valeTerr.getAllyUnitsNum(2));
+
+
         //move own units from a territory owned by ally
         assertEquals(0,valeTerr.getUnitsNum(0));
         assertEquals(1,stormTerr.getAllyUnitsNum(0));
