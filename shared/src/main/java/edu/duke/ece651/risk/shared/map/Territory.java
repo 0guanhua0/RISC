@@ -180,6 +180,18 @@ public abstract class Territory implements Serializable {
      */
     public abstract void loseUnits(int num,int level);
 
+
+    /**
+     * lose some units with specified level for an ally
+     * @param num: number of units to move
+     * @param level: technology level of this units
+     */
+    public abstract void loseAllyUnits(int num,int level);
+
+
+    public abstract boolean canLoseAllyUnits(int num,int level);
+
+
     /**
      * check if its a legal units group to add, also help ensure Liskov substitution
      * this method should ba called before any adding and losing operation
