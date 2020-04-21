@@ -30,8 +30,10 @@ import edu.duke.ece651.risk.shared.action.Action;
 import edu.duke.ece651.risk.shared.action.AttackAction;
 import edu.duke.ece651.risk.shared.action.MoveAction;
 import edu.duke.ece651.risk.shared.map.Territory;
+import edu.duke.ece651.risk.shared.map.TerritoryImpl;
 import edu.duke.ece651.risk.shared.map.Unit;
 import edu.duke.ece651.risk.shared.map.WorldMap;
+import edu.duke.ece651.risk.shared.player.Player;
 import edu.duke.ece651.riskclient.R;
 import edu.duke.ece651.riskclient.adapter.UnitAdapter;
 import edu.duke.ece651.riskclient.listener.onResultListener;
@@ -40,6 +42,7 @@ import edu.duke.ece651.riskclient.objects.UnitGroup;
 import static edu.duke.ece651.risk.shared.Constant.UNIT_NAME;
 import static edu.duke.ece651.riskclient.Constant.ACTION_PERFORMED;
 import static edu.duke.ece651.riskclient.RiskApplication.getPlayerID;
+import static edu.duke.ece651.riskclient.activity.PlayGameActivity.DATA_CURRENT_PLAYER;
 import static edu.duke.ece651.riskclient.activity.PlayGameActivity.DATA_FOOD_RESOURCE;
 import static edu.duke.ece651.riskclient.activity.PlayGameActivity.DATA_IS_MOVE;
 import static edu.duke.ece651.riskclient.activity.PlayGameActivity.DATA_PLAYING_MAP;
@@ -64,9 +67,12 @@ public class MoveAttackActivity extends AppCompatActivity {
     private AutoCompleteTextView dropdownDestTerritory;
     private boolean isMove;
     private WorldMap<String> map;
+    private Player<String> player;
     private int foodResource;
     // territory info
+    // territories own by current player(and his/her allay)
     List<String> territoryOwn;
+    // territories own by other players(except current player but include ally)
     List<String> territoryOther;
     // parameters of the action
     private String srcTerritory;
@@ -81,6 +87,7 @@ public class MoveAttackActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         if (bundle != null){
             map = (WorldMap<String>) bundle.getSerializable(DATA_PLAYING_MAP);
+            player = (Player<String>) bundle.getSerializable(DATA_CURRENT_PLAYER);
             foodResource = bundle.getInt(DATA_FOOD_RESOURCE);
             isMove = bundle.getBoolean(DATA_IS_MOVE);
         }
@@ -319,14 +326,20 @@ public class MoveAttackActivity extends AppCompatActivity {
             Territory t = map.getTerritory(srcTerritory);
             List<UnitGroup> unitGroups = new ArrayList<>();
             for (Map.Entry<Integer, List<Unit>> entry : t.getUnitGroup().entrySet()){
-                unitGroups.add(new UnitGroup(entry.getKey(), entry.getValue().size()));
+                unitGroups.add(new UnitGroup(entry.getKey(), entry.getValue().size(), false));
+            }
+            for (Map.Entry<Integer, List<Unit>> entry : t.getAllyUnitGroup().entrySet()){
+                unitGroups.add(new UnitGroup(entry.getKey(), entry.getValue().size(), true));
             }
             srcUnitAdapter.setUnits(unitGroups);
         }else {
             Territory t = map.getTerritory(destTerritory);
             List<UnitGroup> unitGroups = new ArrayList<>();
             for (Map.Entry<Integer, List<Unit>> entry : t.getUnitGroup().entrySet()){
-                unitGroups.add(new UnitGroup(entry.getKey(), entry.getValue().size()));
+                unitGroups.add(new UnitGroup(entry.getKey(), entry.getValue().size(), false));
+            }
+            for (Map.Entry<Integer, List<Unit>> entry : t.getAllyUnitGroup().entrySet()){
+                unitGroups.add(new UnitGroup(entry.getKey(), entry.getValue().size(), true));
             }
             destUnitAdapter.setUnits(unitGroups);
         }
@@ -356,10 +369,16 @@ public class MoveAttackActivity extends AppCompatActivity {
     private void groupTerritory(){
         List<Territory> territories = new ArrayList<>(map.getAtlas().values());
         for (Territory territory : territories){
-            if (territory.getOwner() == getPlayerID()){
+            if (territory.getOwner() == player.getId()){
                 territoryOwn.add(territory.getName());
             }else {
+                // territory own by ally should add in both tOwn & tOther
+                // since we can move to ally's territory
+                // we can also attack ally's territory
                 territoryOther.add(territory.getName());
+                if (territory.getOwner() == player.getAlly().getId()){
+                    territoryOwn.add(territory.getName());
+                }
             }
         }
     }

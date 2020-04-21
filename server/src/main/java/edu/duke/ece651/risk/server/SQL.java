@@ -4,14 +4,14 @@ import java.sql.*;
 
 //todo: add change password, encrypt password
 public class SQL {
-    static String dbUrl = "jdbc:postgresql://drona.db.elephantsql.com:5432/gqjnslms";
-    static String dbUser = "gqjnslms";
-    static String dbPassword = "lgdCePb8sUPuaIh1NxvkcXVcRIxc-lVp";
+//    static String dbUrl = "jdbc:postgresql://drona.db.elephantsql.com:5432/gqjnslms";
+//    static String dbUser = "gqjnslms";
+//    static String dbPassword = "lgdCePb8sUPuaIh1NxvkcXVcRIxc-lVp";
 
     // local test config
-//    static String dbUrl = "jdbc:postgresql://localhost:5432/risk";
-//    static String dbUser = "postgres";
-//    static String dbPassword = "postgres";
+    static String dbUrl = "jdbc:postgresql://localhost:5432/risk";
+    static String dbUser = "postgres";
+    static String dbPassword = "postgres";
 
     public SQL() throws ClassNotFoundException, SQLException {
         //drop table if exists

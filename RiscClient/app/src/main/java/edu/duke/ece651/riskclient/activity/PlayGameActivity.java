@@ -224,34 +224,22 @@ public class PlayGameActivity extends AppCompatActivity {
             int requestCode = -1;
             switch (actionType){
                 case TYPE_MOVE:
-                    intent.setComponent(new ComponentName(PlayGameActivity.this, MoveAttackActivity.class));
-                    bundle.putBoolean(DATA_IS_MOVE, true);
-                    bundle.putSerializable(DATA_PLAYING_MAP, map);
-                    bundle.putInt(DATA_FOOD_RESOURCE, player.getFoodNum());
-                    requestCode = REQUEST_ACTION_MOVE;
-                    break;
                 case TYPE_ATTACK:
                     intent.setComponent(new ComponentName(PlayGameActivity.this, MoveAttackActivity.class));
-                    bundle.putBoolean(DATA_IS_MOVE, false);
+                    bundle.putBoolean(DATA_IS_MOVE, actionType.equals(TYPE_MOVE));
                     bundle.putSerializable(DATA_PLAYING_MAP, map);
+                    bundle.putSerializable(DATA_CURRENT_PLAYER, player);
                     bundle.putInt(DATA_FOOD_RESOURCE, player.getFoodNum());
-                    requestCode = REQUEST_ACTION_ATTACK;
+                    requestCode = actionType.equals(TYPE_MOVE) ? REQUEST_ACTION_MOVE : REQUEST_ACTION_ATTACK;
                     break;
                 case TYPE_UPGRADE_UNIT:
-                    intent.setComponent(new ComponentName(PlayGameActivity.this, UpgradeActivity.class));
-                    bundle.putBoolean(DATA_IS_UPGRADE_MAX, false);
-                    bundle.putSerializable(DATA_PLAYING_MAP, map);
-                    bundle.putInt(DATA_TECH_RESOURCE, player.getTechNum());
-                    bundle.putInt(DATA_CURRENT_TECH_LEVEL, player.getTechLevel());
-                    requestCode = REQUEST_ACTION_UPGRADE_UNIT;
-                    break;
                 case TYPE_UPGRADE_MAX:
                     intent.setComponent(new ComponentName(PlayGameActivity.this, UpgradeActivity.class));
-                    bundle.putBoolean(DATA_IS_UPGRADE_MAX, true);
+                    bundle.putBoolean(DATA_IS_UPGRADE_MAX, actionType.equals(TYPE_UPGRADE_UNIT));
                     bundle.putSerializable(DATA_PLAYING_MAP, map);
                     bundle.putInt(DATA_TECH_RESOURCE, player.getTechNum());
                     bundle.putInt(DATA_CURRENT_TECH_LEVEL, player.getTechLevel());
-                    requestCode = REQUEST_ACTION_UPGRADE_MAX;
+                    requestCode = actionType.equals(TYPE_UPGRADE_UNIT) ? REQUEST_ACTION_UPGRADE_UNIT : REQUEST_ACTION_UPGRADE_MAX;
                     break;
                 case TYPE_ALLIANCE:
                     // alliance is relatively simple action, don't need a new page

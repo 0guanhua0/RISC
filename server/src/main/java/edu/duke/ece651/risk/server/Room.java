@@ -25,13 +25,14 @@ public class Room {
     String roomName;
     // all players in current room
     List<Player<String>> players;
+    // all audience in current room
+    List<Player<String>> audiences;
     // the map this room is playing
     WorldMap<String> map;
     // some basic info we need for a playGame(e.g. winnerID, roundNum)
     GameInfo gameInfo;
     // all new threads we create in this playGame(e.g. player thread, chat thread)
     List<Thread> threads;
-
 
 
     /**
@@ -49,6 +50,7 @@ public class Room {
         }
         this.roomID = roomID;
         this.roomName = "";
+        audiences = new ArrayList<>();
         players = new ArrayList<>();
         players.add(player);
         player.setId(players.size());
@@ -83,6 +85,7 @@ public class Room {
         this.roomName = "";
 
         players = new ArrayList<>();
+        audiences = new ArrayList<>();
 
         gameInfo = new GameInfo(-1, 1);
     }
@@ -126,6 +129,14 @@ public class Room {
         }
     }
 
+    /**
+     * This function will add an audience to current room.
+     * @param audience new audience
+     */
+    void addAudience(Player<String> audience){
+        audiences.add(audience);
+    }
+
     void initGame(MapDataBase<String> mapDataBase) throws ClassNotFoundException {
         Player<String> firstPlayer = players.get(0);
         firstPlayer.send(mapDataBase);
@@ -159,6 +170,28 @@ public class Room {
     }
 
     /**
+     * Send the data to all audience.
+     * @param data data to be sent
+     */
+    void sendToAllAudience(Object data){
+        for (Player<String> audience : audiences){
+            if (audience.isConnect()){
+                audience.send(data);
+            }else {
+                audiences.remove(audience);
+            }
+        }
+    }
+
+    /**
+     * This function will clean up any disconnect audience.
+     * Since audience will not affect the game, so we can simply remove them(if disconnect).
+     */
+    void clearAudience(){
+        audiences.removeIf(audience -> !audience.isConnect());
+    }
+
+    /**
      * This function will send the data to all players except p.
      * @param data data to be sent
      * @param p except this player
@@ -168,7 +201,6 @@ public class Room {
             if (player.isConnect() && player != p) {
                 player.send(data);
             }
-
         }
     }
 
@@ -275,7 +307,7 @@ public class Room {
         CyclicBarrier barrier = new CyclicBarrier(players.size() + 1);
 
         for (Player<String> player : players) {
-            Thread t = new PlayerThread(player, map, gameInfo, barrier,this.players);
+            Thread t = new PlayerThread(player, map, gameInfo, barrier, this.players);
             threads.add(t);
             t.start();
         }
@@ -290,12 +322,10 @@ public class Room {
         while (true) {
             // wait for all player to ready start a round(give main thread some time to process round result)
             barrierWait(barrier);
-
             // wait for all player to finish one round
             barrierWait(barrier);
-
+            // resolve all combats
             resolveCombats();
-
             // after execute all actions, tell the player to enter next round
             sendAll(ROUND_OVER);
             // check the playGame result
