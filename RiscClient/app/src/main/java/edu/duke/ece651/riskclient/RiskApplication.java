@@ -41,10 +41,12 @@ public class RiskApplication extends Application {
 
     private static Context context;
     /* ====== below are the parameters that need in one game(only need one copy in the whole program) ====== */
-
     private static SimplePlayer player;
     // one player can only in one room at the same time
     private static RoomInfo room;
+    // indicate whether the player is audience or playing
+    private static boolean isAudience;
+    /* ================== play game related variable ================== */
     // this socket is used to play a game
     // will be initialized once you join(or create) a room
     // will be closed once you leave a room
