@@ -132,6 +132,7 @@ public class HomeFragment extends Fragment {
         roomAdapter = new RoomAdapter();
         roomAdapter.setListener(position -> {
             setRoom(roomAdapter.getRoom(position));
+            // TODO: ask user join game or audience
             // initial the global game socket before join or back a game
             initGameSocket(new onResultListener() {
                 @Override

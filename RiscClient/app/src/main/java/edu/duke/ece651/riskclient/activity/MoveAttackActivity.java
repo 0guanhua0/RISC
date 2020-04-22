@@ -94,7 +94,7 @@ public class MoveAttackActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null){
-            getSupportActionBar().setTitle("Move/Attack");
+            getSupportActionBar().setTitle(isMove ? "Move" : "Attack");
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
@@ -182,12 +182,10 @@ public class MoveAttackActivity extends AppCompatActivity {
      * Popup a window to ask the user input units info
      */
     private void sendUnits(){
-        LayoutInflater layoutInflater = getLayoutInflater();
-
         Territory t = map.getTerritory(srcTerritory);
         int totalUnits = 0;
         // make sure at least has one data
-        List<String> unitLevel = new ArrayList<>(Collections.singleton("0"));
+        List<String> unitLevel = new ArrayList<>();
         // own territory or ally's territory
         if (t.getOwner() == player.getId()){
             for (Map.Entry<Integer, List<Unit>> entry : t.getUnitGroup().entrySet()){
@@ -204,6 +202,20 @@ public class MoveAttackActivity extends AppCompatActivity {
                 totalUnits += entry.getValue().size();
             }
         }
+        List<String> unitNumber = new ArrayList<>();
+        // constraint the max number of units player can send
+        for (int i = 1; i <= totalUnits; i++){
+            unitNumber.add(String.valueOf(i));
+        }
+        if (unitLevel.size() > 0 && unitNumber.size() > 0){
+            showWindow(unitLevel, unitNumber);
+        }else {
+            showToastUI(MoveAttackActivity.this, "You don't have units on current territory.");
+        }
+    }
+
+    private void showWindow(List<String> unitLevel, List<String> unitNumber){
+        LayoutInflater layoutInflater = getLayoutInflater();
         // sort the level
         unitLevel.sort(String::compareTo);
         ArrayAdapter<String> adapterLevel =
@@ -212,12 +224,6 @@ public class MoveAttackActivity extends AppCompatActivity {
                         R.layout.dropdown_menu_popup_item,
                         unitLevel);
 
-        List<String> unitNumber = new ArrayList<>();
-        // constraint the max number of units you can send
-        // start from 0 to make sure at least have some number
-        for (int i = 0; i <= totalUnits; i++){
-            unitNumber.add(String.valueOf(i));
-        }
         ArrayAdapter<String> adapterNumber =
                 new ArrayAdapter<>(
                         MoveAttackActivity.this,
@@ -272,13 +278,14 @@ public class MoveAttackActivity extends AppCompatActivity {
                         R.layout.dropdown_menu_popup_item,
                         new ArrayList<>(territoryOwn));
 
-        srcTerritory = srcTerritoryAdapter.getItem(0);
+        srcTerritory = srcTerritoryAdapter.getItem(0).split(":")[1].trim();
 
         AutoCompleteTextView dropdownSrcTerritory = view.findViewById(R.id.dd_input);
         dropdownSrcTerritory.setAdapter(srcTerritoryAdapter);
         dropdownSrcTerritory.setText(srcTerritory, false);
         dropdownSrcTerritory.setOnItemClickListener((parent, v, position, id) -> {
-            srcTerritory = srcTerritoryAdapter.getItem(position);
+            srcTerritory = srcTerritoryAdapter.getItem(position).split(":")[1].trim();
+            dropdownSrcTerritory.setText(srcTerritory);
             updateUnitList(true);
             // each time change src territory, you need to clear all units specify before
             units.clear();
@@ -311,13 +318,14 @@ public class MoveAttackActivity extends AppCompatActivity {
                         R.layout.dropdown_menu_popup_item,
                         new ArrayList<>(isMove ? territoryOwn : territoryOther));
 
-        destTerritory = destTerritoryAdapter.getItem(0);
+        destTerritory = destTerritoryAdapter.getItem(0).split(":")[1].trim();
 
         AutoCompleteTextView dropdownDestTerritory = view.findViewById(R.id.dd_input);
         dropdownDestTerritory.setAdapter(destTerritoryAdapter);
         dropdownDestTerritory.setText(destTerritory, false);
         dropdownDestTerritory.setOnItemClickListener((parent, v, position, id) -> {
-            destTerritory = destTerritoryAdapter.getItem(position);
+            destTerritory = destTerritoryAdapter.getItem(position).split(":")[1].trim();
+            dropdownDestTerritory.setText(destTerritory);
             updateUnitList(false);
         });
 
@@ -388,15 +396,19 @@ public class MoveAttackActivity extends AppCompatActivity {
         // we use two for loop to guarantee territory own by yourself comes first and then your ally
         for (Territory territory : territories){
             if (territory.getOwner() == player.getId()){
-                territoryOwn.add(territory.getName());
+                territoryOwn.add(String.format("own: %s", territory.getName()));
             }else {
-                territoryOther.add(territory.getName());
+                if (player.getAlly() != null && player.getAlly().getId() == territory.getOwner()){
+                    territoryOther.add(String.format("ally: %s", territory.getName()));
+                }else {
+                    territoryOther.add(String.format("enemy: %s", territory.getName()));
+                }
             }
         }
         if (player.getAlly() != null){
             for (Territory territory : territories){
                 if (territory.getOwner() == player.getAlly().getId()){
-                    territoryOwn.add(territory.getName());
+                    territoryOwn.add(String.format("allay: %s", territory.getName()));
                 }
             }
         }

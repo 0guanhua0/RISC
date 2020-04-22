@@ -524,6 +524,7 @@ public class PlayGameActivity extends AppCompatActivity {
 
             @Override
             public void onSuccessful(Object object) {
+                Log.e(TAG, "receiveLatestInfo recv: " + object);
                 allPlayers = (ArrayList<SPlayer>) object;
                 // only support alliance action for 3 or more players
                 // TODO: uncomment this before release
