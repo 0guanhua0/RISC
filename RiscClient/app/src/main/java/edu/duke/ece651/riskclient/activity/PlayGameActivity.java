@@ -351,6 +351,17 @@ public class PlayGameActivity extends AppCompatActivity {
             }
         }
 
+        detailInfo.append("Ally Units Info:\n");
+        Map<Integer, List<Unit>> allyUnits = territory.getAllyUnitGroup();
+        if (allyUnits.isEmpty()){
+            detailInfo.append("no ally units on this territory\n");
+        }
+        else {
+            for (Map.Entry<Integer, List<Unit>> entry : allyUnits.entrySet()){
+                detailInfo.append(entry.getValue().size()).append(" units with level ").append(entry.getKey()).append("\n");
+            }
+        }
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Detail Info");
         builder.setMessage(detailInfo.toString());
