@@ -340,7 +340,7 @@ public class PlayGameActivity extends AppCompatActivity {
         detailInfo.append("Resource Info:\n");
         detailInfo.append("Food yield: ").append(territory.getFoodYield()).append("\n");
         detailInfo.append("Tech yield: ").append(territory.getTechYield()).append("\n");
-        detailInfo.append("Units Info:\n");
+        detailInfo.append("Owner Units Info:\n");
         Map<Integer, List<Unit>> units = territory.getUnitGroup();
         if (units.isEmpty()){
             detailInfo.append("no units on this territory\n");

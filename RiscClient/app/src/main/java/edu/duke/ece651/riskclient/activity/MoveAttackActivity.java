@@ -376,9 +376,11 @@ public class MoveAttackActivity extends AppCompatActivity {
                 territoryOther.add(territory.getName());
             }
         }
-        for (Territory territory : territories){
-            if (territory.getOwner() == player.getAlly().getId()){
-                territoryOwn.add(territory.getName());
+        if (player.getAlly() != null){
+            for (Territory territory : territories){
+                if (territory.getOwner() == player.getAlly().getId()){
+                    territoryOwn.add(territory.getName());
+                }
             }
         }
     }
