@@ -16,9 +16,16 @@ public class AllyAction implements Action{
 
     //below is the id of the player that you want to ally with at this round
     int allyRequest;
+    String allyName;
 
     public AllyAction(int allyRequest) {
         this.allyRequest = allyRequest;
+        this.allyName = "";
+    }
+
+    public AllyAction(int allyRequest, String allyName){
+        this.allyRequest = allyRequest;
+        this.allyName = allyName;
     }
 
     /**
@@ -63,6 +70,10 @@ public class AllyAction implements Action{
     //TODO maybe change id to real name
     @Override
     public String toString() {
-        return String.format("You choose to allay with Player %d", allyRequest);
+        if (allyName.isEmpty()){
+            return String.format("You choose to allay with Player %d", allyRequest);
+        }else {
+            return String.format("You choose to allay with Player %s", allyName);
+        }
     }
 }

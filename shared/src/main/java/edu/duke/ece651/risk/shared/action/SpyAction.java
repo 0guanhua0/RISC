@@ -15,9 +15,16 @@ public class SpyAction implements Action {
     private static final long serialVersionUID = 26L;
 
     int targetId;
+    String targetName;
 
     public SpyAction(int targetId) {
         this.targetId = targetId;
+        this.targetName = "";
+    }
+
+    public SpyAction(int targetId, String targetName){
+        this.targetId = targetId;
+        this.targetName = targetName;
     }
 
     @Override
@@ -66,6 +73,10 @@ public class SpyAction implements Action {
 
     @Override
     public String toString() {
-        return String.format("You choose to spy the Player %d", targetId);
+        if (targetName.isEmpty()){
+            return String.format("You choose to spy the Player %d", targetId);
+        }else {
+            return String.format("You choose to spy the Player %s", targetName);
+        }
     }
 }

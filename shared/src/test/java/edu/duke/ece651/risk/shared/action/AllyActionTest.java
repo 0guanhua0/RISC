@@ -66,12 +66,18 @@ class AllyActionTest {
         AllyAction allyAction3 = new AllyAction(1);
         assertDoesNotThrow(()->{allyAction3.perform(worldState3);});
         assertThrows(IllegalArgumentException.class,()->{new AllyAction(3).perform(worldState1);});
-
     }
 
     @Test
-    void testToString() throws IOException {
+    void testToString() {
         AllyAction allyAction1 = new AllyAction(1);
-        System.out.println(allyAction1.toString());
+        assertEquals(1, allyAction1.allyRequest);
+        assertEquals("", allyAction1.allyName);
+        assertEquals("You choose to allay with Player 1", allyAction1.toString());
+
+        AllyAction allyAction2 = new AllyAction(2, "test");
+        assertEquals(2, allyAction2.allyRequest);
+        assertEquals("test", allyAction2.allyName);
+        assertEquals("You choose to allay with Player test", allyAction2.toString());
     }
 }
