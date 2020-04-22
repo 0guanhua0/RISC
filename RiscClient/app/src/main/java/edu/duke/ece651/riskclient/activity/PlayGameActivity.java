@@ -235,11 +235,11 @@ public class PlayGameActivity extends AppCompatActivity {
                 case TYPE_UPGRADE_UNIT:
                 case TYPE_UPGRADE_MAX:
                     intent.setComponent(new ComponentName(PlayGameActivity.this, UpgradeActivity.class));
-                    bundle.putBoolean(DATA_IS_UPGRADE_MAX, actionType.equals(TYPE_UPGRADE_UNIT));
+                    bundle.putBoolean(DATA_IS_UPGRADE_MAX, actionType.equals(TYPE_UPGRADE_MAX));
                     bundle.putSerializable(DATA_PLAYING_MAP, map);
                     bundle.putInt(DATA_TECH_RESOURCE, player.getTechNum());
                     bundle.putInt(DATA_CURRENT_TECH_LEVEL, player.getTechLevel());
-                    requestCode = actionType.equals(TYPE_UPGRADE_UNIT) ? REQUEST_ACTION_UPGRADE_UNIT : REQUEST_ACTION_UPGRADE_MAX;
+                    requestCode = actionType.equals(TYPE_UPGRADE_MAX) ? REQUEST_ACTION_UPGRADE_MAX : REQUEST_ACTION_UPGRADE_UNIT;
                     break;
                 case TYPE_ALLIANCE:
                     // alliance is relatively simple action, don't need a new page

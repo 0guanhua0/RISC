@@ -21,6 +21,7 @@ import android.widget.TextView;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -185,10 +186,23 @@ public class MoveAttackActivity extends AppCompatActivity {
 
         Territory t = map.getTerritory(srcTerritory);
         int totalUnits = 0;
-        List<String> unitLevel = new ArrayList<>();
-        for (Map.Entry<Integer, List<Unit>> entry : t.getUnitGroup().entrySet()){
-            unitLevel.add(String.valueOf(entry.getKey()));
-            totalUnits += entry.getValue().size();
+        // make sure at least has one data
+        List<String> unitLevel = new ArrayList<>(Collections.singleton("0"));
+        // own territory or ally's territory
+        if (t.getOwner() == player.getId()){
+            for (Map.Entry<Integer, List<Unit>> entry : t.getUnitGroup().entrySet()){
+                if (!unitLevel.contains(String.valueOf(entry.getKey()))){
+                    unitLevel.add(String.valueOf(entry.getKey()));
+                }
+                totalUnits += entry.getValue().size();
+            }
+        }else {
+            for (Map.Entry<Integer, List<Unit>> entry : t.getAllyUnitGroup().entrySet()){
+                if (!unitLevel.contains(String.valueOf(entry.getKey()))){
+                    unitLevel.add(String.valueOf(entry.getKey()));
+                }
+                totalUnits += entry.getValue().size();
+            }
         }
         // sort the level
         unitLevel.sort(String::compareTo);
@@ -200,7 +214,8 @@ public class MoveAttackActivity extends AppCompatActivity {
 
         List<String> unitNumber = new ArrayList<>();
         // constraint the max number of units you can send
-        for (int i = 1; i <= totalUnits; i++){
+        // start from 0 to make sure at least have some number
+        for (int i = 0; i <= totalUnits; i++){
             unitNumber.add(String.valueOf(i));
         }
         ArrayAdapter<String> adapterNumber =
@@ -228,15 +243,17 @@ public class MoveAttackActivity extends AppCompatActivity {
         mBuilder.setTitle("Add Units");
         mBuilder.setView(view);
         mBuilder.setPositiveButton("Confirm", ((dialogInterface, i) -> {
-            Integer level = Integer.parseInt(dpLevel.getText().toString());
-            Integer number = Integer.parseInt(dpNumber.getText().toString());
-            if (units.containsKey(level)){
-                int old = units.get(level);
-                units.replace(level, old + number);
-            }else {
-                units.put(level, number);
+            int level = Integer.parseInt(dpLevel.getText().toString());
+            int number = Integer.parseInt(dpNumber.getText().toString());
+            if (number != 0){
+                if (units.containsKey(level)){
+                    int old = units.get(level);
+                    units.replace(level, old + number);
+                }else {
+                    units.put(level, number);
+                }
+                refreshUnitsInfo();
             }
-            refreshUnitsInfo();
         }));
         mBuilder.setNegativeButton("Cancel", ((dialogInterface, i) -> {
         }));
