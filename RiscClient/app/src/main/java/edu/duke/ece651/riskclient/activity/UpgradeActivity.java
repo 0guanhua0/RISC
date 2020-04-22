@@ -301,7 +301,7 @@ public class UpgradeActivity extends AppCompatActivity {
         Territory t = map.getTerritory(srcTerritory);
         List<UnitGroup> unitGroups = new ArrayList<>();
         for (Map.Entry<Integer, List<Unit>> entry : t.getUnitGroup().entrySet()){
-            unitGroups.add(new UnitGroup(entry.getKey(), entry.getValue().size()));
+            unitGroups.add(new UnitGroup(entry.getKey(), entry.getValue().size(), false));
         }
         srcUnitAdapter.setUnits(unitGroups);
     }

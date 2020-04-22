@@ -393,7 +393,7 @@ public class PlayGameActivity extends AppCompatActivity {
             for (SPlayer p : allPlayers){
                 if (name.equals(p.getName())){
                     // construct and send the ally action
-                    AllyAction action = new AllyAction(p.getId());
+                    AllyAction action = new AllyAction(p.getId(), p.getName());
                     sendAction(action, new onResultListener() {
                         @Override
                         public void onFailure(String error) {

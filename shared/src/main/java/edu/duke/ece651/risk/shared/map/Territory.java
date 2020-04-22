@@ -151,7 +151,6 @@ public abstract class Territory implements Serializable {
 
     public abstract void addUnit(Unit unit);
 
-
     /**
      * add some basic units into this territory
      * @param num: number of level0 units
@@ -219,6 +218,7 @@ public abstract class Territory implements Serializable {
     abstract public int getFoodYield();
     abstract public int getTechYield();
     abstract public Map<Integer, List<Unit>> getUnitGroup();
+    abstract public Map<Integer, List<Unit>> getAllyUnitGroup();
 
 
     /**

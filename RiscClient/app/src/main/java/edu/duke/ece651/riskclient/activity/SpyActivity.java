@@ -110,7 +110,7 @@ public class SpyActivity extends AppCompatActivity {
 
         btConfirm.setOnClickListener(v -> {
             if (validateAction()) {
-                SpyAction tmpAction = new SpyAction(nameToID.get(spyTargetName));
+                SpyAction tmpAction = new SpyAction(nameToID.get(spyTargetName), spyTargetName);
 
                 sendSpyAction(tmpAction, new onSpyListener() {
                     @Override

@@ -232,6 +232,10 @@ public class TerritoryImpl extends Territory {
         return unitGroup;
     }
 
+    @Override
+    public Map<Integer, List<Unit>> getAllyUnitGroup() {
+        return allyUnits;
+    }
 
     @Override
     public void addAllyUnit(Unit unit) {

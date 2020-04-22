@@ -229,48 +229,6 @@ public class RiskApplication extends Application {
     }
 
     /**
-     * Initialize the chat socket, will close any old one.
-     * This function should be called only after you successfully join(reconnect the room) and the game is start.
-     * The server only support chat function after the game is begin.
-     * @param listener result listener
-     */
-//    public static void initChatSocket(onResultListener listener) {
-//        threadPool.execute(() -> {
-//            try {
-//                releaseChatSocket();
-//                chatSocket = new Socket(HOST, PORT);
-//                // WARNING!!! here you should initialize "out-in" in this order!!! Otherwise, it will
-//                // cause deadlock.(Because server will initialize in "in-out" order.
-//                // https://stackoverflow.com/questions/21075453/objectinputstream-from-socket-getinputstream
-//                RiskApplication.chatOut = new ObjectOutputStream(chatSocket.getOutputStream());
-//                RiskApplication.chatIn = new ObjectInputStream(chatSocket.getInputStream());
-//
-//                // send the connect chat message
-//                JSONObject jsonObject = new JSONObject();
-//                jsonObject.put(USER_NAME, getPlayerName());
-//                jsonObject.put(ROOM_ID, getRoomID());
-//                jsonObject.put(ACTION_TYPE, ACTION_CONNECT_CHAT);
-//                // send and receive the result
-//                chatOut.writeObject(jsonObject.toString());
-//                chatOut.flush();
-//                Object object = chatIn.readObject();
-//                if (object instanceof String){
-//                    if (object.equals(SUCCESSFUL)){
-//                        listener.onSuccessful();
-//                    }else{
-//                        listener.onFailure((String) object);
-//                    }
-//                }else {
-//                    listener.onFailure("");
-//                }
-//            }catch (IOException | JSONException | ClassNotFoundException e){
-//                Log.e(TAG, "initGameSocket error " + e.toString());
-//                listener.onFailure("can't initialize the game socket");
-//            }
-//        });
-//    }
-
-    /**
      * Send data to remote server, and check whether send successful.
      * Because android doesn't allow networking operation on the main thread.
      * We should use a thread pool to send info.

@@ -63,8 +63,6 @@ public class MoveAttackActivity extends AppCompatActivity {
     private UnitAdapter destUnitAdapter;
     private ArrayAdapter<String> srcTerritoryAdapter;
     private ArrayAdapter<String> destTerritoryAdapter;
-    private AutoCompleteTextView dropdownSrcTerritory;
-    private AutoCompleteTextView dropdownDestTerritory;
     private boolean isMove;
     private WorldMap<String> map;
     private Player<String> player;
@@ -144,7 +142,7 @@ public class MoveAttackActivity extends AppCompatActivity {
                         showToastUI(MoveAttackActivity.this, error);
                         // clear all input once action invalid
                         units.clear();
-                        refreshUnitsInfo();
+                        runOnUiThread(() -> refreshUnitsInfo());
                     }
 
                     @Override
@@ -259,8 +257,7 @@ public class MoveAttackActivity extends AppCompatActivity {
 
         srcTerritory = srcTerritoryAdapter.getItem(0);
 
-        dropdownSrcTerritory =
-                view.findViewById(R.id.dd_input);
+        AutoCompleteTextView dropdownSrcTerritory = view.findViewById(R.id.dd_input);
         dropdownSrcTerritory.setAdapter(srcTerritoryAdapter);
         dropdownSrcTerritory.setText(srcTerritory, false);
         dropdownSrcTerritory.setOnItemClickListener((parent, v, position, id) -> {
@@ -299,8 +296,7 @@ public class MoveAttackActivity extends AppCompatActivity {
 
         destTerritory = destTerritoryAdapter.getItem(0);
 
-        dropdownDestTerritory =
-                view.findViewById(R.id.dd_input);
+        AutoCompleteTextView dropdownDestTerritory = view.findViewById(R.id.dd_input);
         dropdownDestTerritory.setAdapter(destTerritoryAdapter);
         dropdownDestTerritory.setText(destTerritory, false);
         dropdownDestTerritory.setOnItemClickListener((parent, v, position, id) -> {
@@ -368,17 +364,21 @@ public class MoveAttackActivity extends AppCompatActivity {
 
     private void groupTerritory(){
         List<Territory> territories = new ArrayList<>(map.getAtlas().values());
+        // territory own by ally should add in both tOwn & tOther
+        // since we can
+        // 1. move to ally's territory
+        // 2. attack ally's territory
+        // we use two for loop to guarantee territory own by yourself comes first and then your ally
         for (Territory territory : territories){
             if (territory.getOwner() == player.getId()){
                 territoryOwn.add(territory.getName());
             }else {
-                // territory own by ally should add in both tOwn & tOther
-                // since we can move to ally's territory
-                // we can also attack ally's territory
                 territoryOther.add(territory.getName());
-                if (territory.getOwner() == player.getAlly().getId()){
-                    territoryOwn.add(territory.getName());
-                }
+            }
+        }
+        for (Territory territory : territories){
+            if (territory.getOwner() == player.getAlly().getId()){
+                territoryOwn.add(territory.getName());
             }
         }
     }
