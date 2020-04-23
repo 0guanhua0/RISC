@@ -181,8 +181,9 @@ public class GameServer {
      * @throws UnauthorizedUserException user doesn't login, can't perform this action
      */
     void getWaitRoom(Player<String> player, JSONObject obj) throws UnauthorizedUserException {
+        String userName = obj.getString(USER_NAME);
         checkLogin(player, obj);
-        player.send(getRoomList());
+        player.send(getRoomList(userName));
     }
 
     /**
@@ -348,13 +349,15 @@ public class GameServer {
      * This function will return the current running room list.
      * @return list of RoomInfo object
      */
-    List<RoomInfo> getRoomList() {
+    List<RoomInfo> getRoomList(String user) {
         // clear any finished room
         clearRoom();
 
         List<RoomInfo> roomInfoList = new ArrayList<>();
         for (Room room : rooms.values()) {
-            roomInfoList.add(new RoomInfo(room.roomID, room.roomName, room.map, room.players));
+            if (!room.hasPlayer(user)){
+                roomInfoList.add(new RoomInfo(room.roomID, room.roomName, room.map, room.players));
+            }
         }
         return roomInfoList;
     }

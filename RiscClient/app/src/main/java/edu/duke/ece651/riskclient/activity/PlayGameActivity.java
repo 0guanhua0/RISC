@@ -621,7 +621,7 @@ public class PlayGameActivity extends AppCompatActivity {
     private void updateUI(){
         runOnUiThread(() -> {
             if (isLose || isAudience()){
-                if (isLose){
+                if (isLose && !isAudience()){
                     // is user lose, hide all button
                     setAllButtonHidden();
                     if (!hasShowDialog){
