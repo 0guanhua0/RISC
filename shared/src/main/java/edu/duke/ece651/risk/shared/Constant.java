@@ -35,6 +35,10 @@ public class Constant {
 
     public static final int SPY_COST = 150;
 
+    public static final int RADIATE_LEVEL = 3;
+    public static final int RADIATE_COST = 100;
+
+
     //map info
     public static final String MAP_0 = "a clash of kings";
 
