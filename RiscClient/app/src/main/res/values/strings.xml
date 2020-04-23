@@ -66,6 +66,9 @@
     <string name="chat_action_copy">Copy</string>
     <string name="chat_action_delete">Delete</string>
 
+    <!-- radiate activity -->
+    <string name="radiate_intro">Radiate action\nonce you perform the radiate action, target territory will not produce any resource forever</string>
+
     <string name="menu_home">Home</string>
     <string name="menu_update">Change Password</string>
     <string name="menu_about">About</string>

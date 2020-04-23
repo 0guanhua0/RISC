@@ -50,6 +50,7 @@ import edu.duke.ece651.riskclient.listener.onResultListener;
 
 import static edu.duke.ece651.risk.shared.Constant.ACTION_DONE;
 import static edu.duke.ece651.risk.shared.Constant.GAME_OVER;
+import static edu.duke.ece651.risk.shared.Constant.RADIATE_LEVEL;
 import static edu.duke.ece651.risk.shared.Constant.SPY_COST;
 import static edu.duke.ece651.riskclient.Constant.ACTION_PERFORMED;
 import static edu.duke.ece651.riskclient.Constant.MAP_NAME_TO_RESOURCE_ID;
@@ -84,6 +85,7 @@ public class PlayGameActivity extends AppCompatActivity {
     private static final String TYPE_UPGRADE_MAX = "upgrade max tech";
     private static final String TYPE_ALLIANCE = "form alliance";
     private static final String TYPE_SPY = "spy";
+    private static final String TYPE_RADIATION = "radiation";
     private static final String TYPE_DONE = "done";
 
     private static final int REQUEST_ACTION_MOVE = 1;
@@ -92,6 +94,7 @@ public class PlayGameActivity extends AppCompatActivity {
     private static final int REQUEST_ACTION_UPGRADE_UNIT = 4;
     private static final int REQUEST_ACTION_ALLIANCE = 5;
     private static final int REQUEST_ACTION_SPY = 6;
+    private static final int REQUEST_ACTION_RADIATION = 7;
 
     /**
      * UI variable
@@ -199,6 +202,7 @@ public class PlayGameActivity extends AppCompatActivity {
             case REQUEST_ACTION_UPGRADE_UNIT:
             case REQUEST_ACTION_UPGRADE_MAX:
             case REQUEST_ACTION_ALLIANCE:
+            case REQUEST_ACTION_RADIATION:
                 if (resultCode == RESULT_OK){
                     Action action = (Action) data.getSerializableExtra(ACTION_PERFORMED);
                     if (action != null){
@@ -206,6 +210,7 @@ public class PlayGameActivity extends AppCompatActivity {
                         // NOTE: this only update the copy of the map, we will still get the latest map from server at the beginning of each term
                         action.perform(new WorldState(player, map));
                         performedActions.add(action);
+                        territoryAdapter.notifyDataSetChanged();
                         showPerformedActions();
                         showPlayerInfo();
                     }
@@ -255,13 +260,20 @@ public class PlayGameActivity extends AppCompatActivity {
                 case TYPE_ALLIANCE:
                     // alliance is relatively simple action, don't need a new page
                     showAllianceDialog();
-                    return;
+                return;
                 case TYPE_SPY:
                     intent.setComponent(new ComponentName(PlayGameActivity.this, SpyActivity.class));
                     bundle.putSerializable(DATA_CURRENT_PLAYER, player);
                     bundle.putSerializable(DATA_ALL_PLAYERS, allPlayers);
                     bundle.putInt(DATA_TECH_RESOURCE, player.getTechNum());
                     requestCode = REQUEST_ACTION_SPY;
+                    break;
+                case TYPE_RADIATION:
+                    intent.setComponent(new ComponentName(PlayGameActivity.this, RadiateActivity.class));
+                    bundle.putSerializable(DATA_CURRENT_PLAYER, player);
+                    bundle.putSerializable(DATA_PLAYING_MAP, map);
+                    bundle.putInt(DATA_TECH_RESOURCE, player.getTechNum());
+                    requestCode = REQUEST_ACTION_RADIATION;
                     break;
                 case TYPE_DONE:
                     // pop up a dialog to ask confirm
@@ -307,11 +319,7 @@ public class PlayGameActivity extends AppCompatActivity {
     private void setUpTerritoryList(){
         RecyclerView rvTerritoryList = findViewById(R.id.rv_territory_list);
 
-        Map<Integer, String> idToName = new HashMap<>();
-        for (SPlayer sPlayer : allPlayers){
-            idToName.put(sPlayer.getId(), sPlayer.getName());
-        }
-        territoryAdapter = new TerritoryAdapter(idToName);
+        territoryAdapter = new TerritoryAdapter();
         territoryAdapter.setListener(position -> {
             showTerritoryDetailDialog(territoryAdapter.getTerritory(position));
         });
@@ -359,8 +367,13 @@ public class PlayGameActivity extends AppCompatActivity {
         // generate the detail info of one territory
         StringBuilder detailInfo = new StringBuilder();
         detailInfo.append("Resource Info:\n");
-        detailInfo.append("Food yield: ").append(territory.getFoodYield()).append("\n");
-        detailInfo.append("Tech yield: ").append(territory.getTechYield()).append("\n");
+        if (territory.isRadiated()){
+            detailInfo.append("Food yield: 0\n");
+            detailInfo.append("Tech yield: 0\n");
+        }else {
+            detailInfo.append("Food yield: ").append(territory.getFoodYield()).append("\n");
+            detailInfo.append("Tech yield: ").append(territory.getTechYield()).append("\n");
+        }
         detailInfo.append("Owner Units Info:\n");
         Map<Integer, List<Unit>> units = territory.getUnitGroup();
         if (units.isEmpty()){
@@ -549,6 +562,11 @@ public class PlayGameActivity extends AppCompatActivity {
                 // TODO: when reconnect, we may receive the info of last round......
                if (object instanceof ArrayList){
                    allPlayers = (ArrayList<SPlayer>) object;
+                   Map<Integer, String> idToName = new HashMap<>();
+                   for (SPlayer sPlayer : allPlayers){
+                       idToName.put(sPlayer.getId(), sPlayer.getName());
+                   }
+                   territoryAdapter.setIdToName(idToName);
                    // only support alliance action for 3 or more players
                    // TODO: uncomment this before release
 //                if (allPlayers.size() < 3){
@@ -583,6 +601,10 @@ public class PlayGameActivity extends AppCompatActivity {
                 // if current user is audience, the player object will be null
                 if (player != null){
                     setPlayerID(player.getId());
+                    if (player.getTechLevel() >= RADIATE_LEVEL){
+                        actionAdapter.remove(TYPE_RADIATION);
+                        actionAdapter.add(TYPE_RADIATION);
+                    }
                 }
                 // clear all actions in the last round
                 performedActions.clear();

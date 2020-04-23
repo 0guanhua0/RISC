@@ -148,6 +148,7 @@ public class UpgradeActivity extends AppCompatActivity {
         Button btConfirm = findViewById(R.id.bt_confirm);
         Button btDecline = findViewById(R.id.bt_decline);
 
+        btConfirm.setText("Upgrade");
         btConfirm.setOnClickListener(v -> {
             if (isUpgradeMax){
                 UpMaxTechAction action = new UpMaxTechAction();
