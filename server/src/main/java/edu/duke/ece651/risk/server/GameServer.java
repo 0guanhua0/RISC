@@ -225,9 +225,9 @@ public class GameServer {
         }else if (!room.hasStarted()){
             player.send(INVALID_AUDIENCE_NOT_START);
         }else {
+            player.send(SUCCESSFUL);
             // we only allowed audience for the game which is started but not finished
             room.addAudience(player);
-            player.send(SUCCESSFUL);
         }
     }
 
