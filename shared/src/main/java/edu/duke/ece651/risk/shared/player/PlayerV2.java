@@ -41,11 +41,13 @@ public class PlayerV2<T> extends PlayerV1<T> implements Serializable {
     @Override
     public void updateState() {
         for (Territory territory : territories) {
-            territory.addBasicUnits(1);
-            int foodYield = territory.getFoodYield();
-            int techYield = territory.getTechYield();
-            tech.addResource(techYield);
-            food.addResource(foodYield);
+            if (!territory.isRadiated()){
+                territory.addBasicUnits(1);
+                int foodYield = territory.getFoodYield();
+                int techYield = territory.getTechYield();
+                tech.addResource(techYield);
+                food.addResource(foodYield);
+            }
         }
         if (!upTechRight){//note that we only update the max tech level after a round of game
             this.upTechRight = true;

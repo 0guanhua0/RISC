@@ -21,12 +21,14 @@ public abstract class Territory implements Serializable {
     //use null to represent don't have any friends
     Player ally;
 
+    boolean isRadiated;
 
     public Territory(String name) {
         this.neigh = new HashSet<>();
         this.status = new TStatus(name);
         this.attackAct = new HashMap<>();
         this.ally = null;
+        isRadiated = false;
     }
 
     //get the owner id of corresponding territory
@@ -128,6 +130,16 @@ public abstract class Territory implements Serializable {
         return attackResults;
     }
 
+    //return true is territory is under radiation
+    public boolean isRadiated(){
+        return this.isRadiated;
+    }
+
+    //set this territory to be radiated
+    public void setRadiation(){
+        this.isRadiated = true;
+    }
+
     /**
      * @return the number of basic units
      */
@@ -208,6 +220,7 @@ public abstract class Territory implements Serializable {
      * @return whether such operation is legality or not
      */
     public abstract boolean canLoseUnits(int num, int level);
+
 
     public abstract void addAttack(Player player, Army army);
 
