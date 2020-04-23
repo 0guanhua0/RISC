@@ -46,14 +46,6 @@ public class Constant {
     //for networking info
     public static final String ROOM_ID = "roomID";
 
-    //JSON communicate format
-    public static final String USER_NAME = "userName";
-    public static final String USER_PASSWORD = "userPassword";
-    public static final String ACTION = "action";
-    public static final String SIGNUP = "signup";
-    public static final String LOGIN = "login";
-
-
     //constant for info send to client
     public static final String INVALID_LOGIN = "invalid name/password";
     public static final String INVALID_SIGNUP = "user name already exists";
@@ -72,16 +64,21 @@ public class Constant {
     //player disconnect default input
     public static final String DISCONNECT_INPUT = "d";
 
+    // JSON communicate format
+    public static final String USER_NAME = "userName";
+    public static final String USER_PASSWORD = "userPassword";
+    public static final String ACTION_TYPE = "action";
 
-
-    // client requiring gaming info
-    public static final String ACTION_GET_WAIT_ROOM = "getWaitRoom";
+    public static final String ACTION_SIGN_UP = "signUp";
+    public static final String ACTION_LOGIN = "login";
+    public static final String ACTION_CHANGE_PASSWORD = "changePassword";
+    public static final String ACTION_GET_ALL_ROOM = "getAllRoom";
     public static final String ACTION_GET_IN_ROOM = "getInRoom";
     public static final String ACTION_JOIN_GAME = "joinGame";
     public static final String ACTION_CREATE_GAME = "createGame";
     public static final String ACTION_AUDIENCE_GAME = "audienceGame";
-    public static final String ACTION_RECONNECT_ROOM = "reconnect room";
-    public static final String ACTION_CONNECT_CHAT = "connect chat";
+    public static final String ACTION_RECONNECT_ROOM = "reconnectRoom";
+    public static final String ACTION_CONNECT_CHAT = "connectChat";
 
     public static final String ROOM_NAME = "roomName";
     public static final String MAP_NAME = "mapName";

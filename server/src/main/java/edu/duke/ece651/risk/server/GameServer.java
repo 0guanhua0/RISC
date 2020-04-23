@@ -43,9 +43,9 @@ public class GameServer {
         this.actionMap = new HashMap<>();
         // initialize the action handler
         // we abstract a corresponding function for each action
-        actionMap.put(SIGNUP, this::signup);
-        actionMap.put(LOGIN, this::login);
-        actionMap.put(ACTION_GET_WAIT_ROOM, this::getWaitRoom);
+        actionMap.put(ACTION_SIGN_UP, this::signup);
+        actionMap.put(ACTION_LOGIN, this::login);
+        actionMap.put(ACTION_GET_ALL_ROOM, this::getAllRoom);
         actionMap.put(ACTION_GET_IN_ROOM, this::getInRoom);
         actionMap.put(ACTION_CREATE_GAME, this::playGame);
         actionMap.put(ACTION_JOIN_GAME, this::playGame);
@@ -101,7 +101,7 @@ public class GameServer {
 
         JSONObject obj = new JSONObject(msg);
         String userName = obj.getString(USER_NAME);
-        String action = obj.getString(ACTION);
+        String action = obj.getString(ACTION_TYPE);
         player.setName(userName);
 
         // recognized action
@@ -180,10 +180,9 @@ public class GameServer {
      * @param obj JSON object contains some other info we may need
      * @throws UnauthorizedUserException user doesn't login, can't perform this action
      */
-    void getWaitRoom(Player<String> player, JSONObject obj) throws UnauthorizedUserException {
-        String userName = obj.getString(USER_NAME);
+    void getAllRoom(Player<String> player, JSONObject obj) throws UnauthorizedUserException {
         checkLogin(player, obj);
-        player.send(getRoomList(userName));
+        player.send(getRoomList());
     }
 
     /**
@@ -349,15 +348,13 @@ public class GameServer {
      * This function will return the current running room list.
      * @return list of RoomInfo object
      */
-    List<RoomInfo> getRoomList(String user) {
+    List<RoomInfo> getRoomList() {
         // clear any finished room
         clearRoom();
 
         List<RoomInfo> roomInfoList = new ArrayList<>();
         for (Room room : rooms.values()) {
-            if (!room.hasPlayer(user)){
-                roomInfoList.add(new RoomInfo(room.roomID, room.roomName, room.map, room.players));
-            }
+            roomInfoList.add(new RoomInfo(room.roomID, room.roomName, room.map, room.players));
         }
         return roomInfoList;
     }

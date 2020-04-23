@@ -65,6 +65,7 @@ import static edu.duke.ece651.riskclient.RiskApplication.startChatThread;
 import static edu.duke.ece651.riskclient.RiskApplication.stopChatThread;
 import static edu.duke.ece651.riskclient.utils.HTTPUtils.recvAttackResult;
 import static edu.duke.ece651.riskclient.utils.HTTPUtils.sendAction;
+import static edu.duke.ece651.riskclient.utils.UIUtils.showToast;
 import static edu.duke.ece651.riskclient.utils.UIUtils.showToastUI;
 
 public class PlayGameActivity extends AppCompatActivity {
@@ -479,6 +480,7 @@ public class PlayGameActivity extends AppCompatActivity {
 
             @Override
             public void onSuccessful() {
+                showToastUI(PlayGameActivity.this, String.format(Locale.US, "finish round %d", roundNum));
                 // successfully indicate we are finish, waiting for the attack result
                 receiveAttackResult();
             }

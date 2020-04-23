@@ -22,27 +22,26 @@ import edu.duke.ece651.riskclient.listener.onSpyListener;
 import edu.duke.ece651.riskclient.objects.SimplePlayer;
 
 import static edu.duke.ece651.risk.shared.Constant.ACTION_AUDIENCE_GAME;
+import static edu.duke.ece651.risk.shared.Constant.ACTION_CHANGE_PASSWORD;
 import static edu.duke.ece651.risk.shared.Constant.ACTION_CREATE_GAME;
+import static edu.duke.ece651.risk.shared.Constant.ACTION_GET_ALL_ROOM;
+import static edu.duke.ece651.risk.shared.Constant.ACTION_GET_IN_ROOM;
 import static edu.duke.ece651.risk.shared.Constant.ACTION_JOIN_GAME;
+import static edu.duke.ece651.risk.shared.Constant.ACTION_LOGIN;
 import static edu.duke.ece651.risk.shared.Constant.ACTION_RECONNECT_ROOM;
+import static edu.duke.ece651.risk.shared.Constant.ACTION_SIGN_UP;
+import static edu.duke.ece651.risk.shared.Constant.ACTION_TYPE;
+import static edu.duke.ece651.risk.shared.Constant.INFO_ALL_PLAYER;
+import static edu.duke.ece651.risk.shared.Constant.MAP_NAME;
 import static edu.duke.ece651.risk.shared.Constant.ROOM_ID;
+import static edu.duke.ece651.risk.shared.Constant.ROOM_NAME;
 import static edu.duke.ece651.risk.shared.Constant.ROUND_OVER;
-import static edu.duke.ece651.riskclient.Constant.ACTION_CHANGE_PASSWORD;
-import static edu.duke.ece651.riskclient.Constant.ACTION_CREATE_NEW_ROOM;
-import static edu.duke.ece651.riskclient.Constant.ACTION_GET_IN_ROOM;
-import static edu.duke.ece651.riskclient.Constant.ACTION_GET_WAIT_ROOM;
-import static edu.duke.ece651.riskclient.Constant.ACTION_LOGIN;
-import static edu.duke.ece651.riskclient.Constant.ACTION_SIGN_UP;
-import static edu.duke.ece651.riskclient.Constant.ACTION_TYPE;
+import static edu.duke.ece651.risk.shared.Constant.SUCCESSFUL;
+import static edu.duke.ece651.risk.shared.Constant.USER_NAME;
+import static edu.duke.ece651.risk.shared.Constant.USER_PASSWORD;
 import static edu.duke.ece651.riskclient.Constant.FAIL_TO_SEND;
-import static edu.duke.ece651.riskclient.Constant.INFO_ALL_PLAYER;
-import static edu.duke.ece651.riskclient.Constant.MAP_NAME;
 import static edu.duke.ece651.riskclient.Constant.PASSWORD_NEW;
 import static edu.duke.ece651.riskclient.Constant.PASSWORD_OLD;
-import static edu.duke.ece651.riskclient.Constant.ROOM_NAME;
-import static edu.duke.ece651.riskclient.Constant.SUCCESSFUL;
-import static edu.duke.ece651.riskclient.Constant.USER_NAME;
-import static edu.duke.ece651.riskclient.Constant.USER_PASSWORD;
 import static edu.duke.ece651.riskclient.RiskApplication.checkResult;
 import static edu.duke.ece651.riskclient.RiskApplication.getPlayerName;
 import static edu.duke.ece651.riskclient.RiskApplication.getRoomID;
@@ -124,7 +123,7 @@ public class HTTPUtils {
         try {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put(USER_NAME, getPlayerName());
-            jsonObject.put(ACTION_TYPE, isRoomIn ? ACTION_GET_IN_ROOM : ACTION_GET_WAIT_ROOM);
+            jsonObject.put(ACTION_TYPE, isRoomIn ? ACTION_GET_IN_ROOM : ACTION_GET_ALL_ROOM);
             sendAndRec(jsonObject.toString(), new onReceiveListener() {
                 @Override
                 public void onFailure(String error) {
@@ -183,7 +182,6 @@ public class HTTPUtils {
             jsonObject.put(USER_NAME, getPlayerName());
             jsonObject.put(ROOM_NAME, roomName);
             jsonObject.put(MAP_NAME, mapName);
-            jsonObject.put(ACTION_TYPE, ACTION_CREATE_NEW_ROOM);
             sendAndCheckSuccessG(jsonObject.toString(), listener);
         }catch (JSONException e){
             Log.e(TAG, e.toString());

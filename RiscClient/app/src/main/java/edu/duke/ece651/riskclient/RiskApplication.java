@@ -25,15 +25,12 @@ import edu.duke.ece651.riskclient.objects.Message;
 import edu.duke.ece651.riskclient.objects.SimplePlayer;
 
 import static edu.duke.ece651.risk.shared.Constant.ACTION_CONNECT_CHAT;
+import static edu.duke.ece651.risk.shared.Constant.ACTION_TYPE;
 import static edu.duke.ece651.risk.shared.Constant.ROOM_ID;
 import static edu.duke.ece651.risk.shared.Constant.SUCCESSFUL;
-import static edu.duke.ece651.riskclient.Constant.ACTION_CREATE_NEW_ROOM;
-import static edu.duke.ece651.riskclient.Constant.ACTION_TYPE;
+import static edu.duke.ece651.risk.shared.Constant.USER_NAME;
 import static edu.duke.ece651.riskclient.Constant.HOST;
-import static edu.duke.ece651.riskclient.Constant.MAP_NAME;
 import static edu.duke.ece651.riskclient.Constant.PORT;
-import static edu.duke.ece651.riskclient.Constant.ROOM_NAME;
-import static edu.duke.ece651.riskclient.Constant.USER_NAME;
 import static edu.duke.ece651.riskclient.utils.SQLUtils.insertMessage;
 
 public class RiskApplication extends Application {
