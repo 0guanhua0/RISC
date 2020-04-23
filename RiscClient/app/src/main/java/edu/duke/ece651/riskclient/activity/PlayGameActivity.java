@@ -56,6 +56,7 @@ import static edu.duke.ece651.riskclient.Constant.MAP_NAME_TO_RESOURCE_ID;
 import static edu.duke.ece651.riskclient.Constant.NETWORK_PROBLEM;
 import static edu.duke.ece651.riskclient.RiskApplication.getPlayerID;
 import static edu.duke.ece651.riskclient.RiskApplication.getRoomName;
+import static edu.duke.ece651.riskclient.RiskApplication.isAudience;
 import static edu.duke.ece651.riskclient.RiskApplication.recv;
 import static edu.duke.ece651.riskclient.RiskApplication.send;
 import static edu.duke.ece651.riskclient.RiskApplication.setPlayerID;
@@ -139,25 +140,34 @@ public class PlayGameActivity extends AppCompatActivity {
         setUpUI();
         // make sure user can't do anything before we receive the first round data
         setAllButtonClickable(false);
-        // these two function use separate sockets, can perform them in parallel
+        // these two functions use two separate sockets, can perform them in parallel
+        // receive player + round info
         receiveLatestInfo();
-        // connect to the chat room & start receiving incoming message(store into DB)
-        startChatThread(new onResultListener() {
-            @Override
-            public void onFailure(String error) {
-                Log.e(TAG, "start chat thread: " + error);
-            }
+        // only player can chat
+        if (!isAudience()){
+            // connect to the chat room & start receiving incoming message(store into DB)
+            startChatThread(new onResultListener() {
+                @Override
+                public void onFailure(String error) {
+                    Log.e(TAG, "start chat thread: " + error);
+                }
 
-            @Override
-            public void onSuccessful() {
-                showToastUI(PlayGameActivity.this, "Successfully connect to the chat room.");
-            }
-        });
+                @Override
+                public void onSuccessful() {
+                    showToastUI(PlayGameActivity.this, "Successfully connect to the chat room.");
+                }
+            });
+        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.play_game_menu,menu);
+        getMenuInflater().inflate(R.menu.play_game_menu, menu);
+        if (isAudience()){
+            menu.findItem(R.id.chat_room).setVisible(false);
+        }else {
+            menu.findItem(R.id.chat_room).setVisible(true);
+        }
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -270,6 +280,7 @@ public class PlayGameActivity extends AppCompatActivity {
             intent.putExtras(bundle);
             startActivityForResult(intent, requestCode);
         });
+        btPerform.setVisibility(isAudience() ? View.GONE : View.VISIBLE);
 
         tvPlayerInfo = findViewById(R.id.tv_player_info);
         tvPlayerInfo.setText("Please wait other players to finish assigning units...");
@@ -315,24 +326,29 @@ public class PlayGameActivity extends AppCompatActivity {
      */
     private void setUpActionDropdown(){
         TextInputLayout layout = findViewById(R.id.action_dropdown);
-        layout.setHint("Action Type");
+        // audience don't need the action drop down
+        if (isAudience()){
+            layout.setVisibility(View.GONE);
+        }else {
+            layout.setHint("Action Type");
 
-        List<String> actions = new ArrayList<>(Arrays.asList(TYPE_MOVE, TYPE_ATTACK, TYPE_UPGRADE_UNIT, TYPE_UPGRADE_MAX, TYPE_ALLIANCE, TYPE_SPY, TYPE_DONE));
-        actionAdapter =
-                new ArrayAdapter<>(
-                        PlayGameActivity.this,
-                        R.layout.dropdown_menu_popup_item,
-                        actions);
+            List<String> actions = new ArrayList<>(Arrays.asList(TYPE_MOVE, TYPE_ATTACK, TYPE_UPGRADE_UNIT, TYPE_UPGRADE_MAX, TYPE_ALLIANCE, TYPE_SPY, TYPE_DONE));
+            actionAdapter =
+                    new ArrayAdapter<>(
+                            PlayGameActivity.this,
+                            R.layout.dropdown_menu_popup_item,
+                            actions);
 
-        // set up default choice
-        actionType = actionAdapter.getItem(0);
+            // set up default choice
+            actionType = actionAdapter.getItem(0);
 
-        AutoCompleteTextView dropdownAction = layout.findViewById(R.id.dd_input);
-        dropdownAction.setAdapter(actionAdapter);
-        dropdownAction.setText(actionAdapter.getItem(0), false);
-        dropdownAction.setOnItemClickListener((parent, v, position, id) -> {
-            actionType = actionAdapter.getItem(position);
-        });
+            AutoCompleteTextView dropdownAction = layout.findViewById(R.id.dd_input);
+            dropdownAction.setAdapter(actionAdapter);
+            dropdownAction.setText(actionAdapter.getItem(0), false);
+            dropdownAction.setOnItemClickListener((parent, v, position, id) -> {
+                actionType = actionAdapter.getItem(position);
+            });
+        }
     }
 
     /**
@@ -540,7 +556,7 @@ public class PlayGameActivity extends AppCompatActivity {
 //                }
                    newRound();
                }else {
-                   // keep receiving
+                   // keep receiving if we receive some out-dated data
                    receiveLatestInfo();
                }
             }
@@ -564,7 +580,10 @@ public class PlayGameActivity extends AppCompatActivity {
                 roundNum = info.getRoundNum();
                 map = info.getMap();
                 player = info.getPlayer();
-                setPlayerID(player.getId());
+                // if current user is audience, the player object will be null
+                if (player != null){
+                    setPlayerID(player.getId());
+                }
                 // clear all actions in the last round
                 performedActions.clear();
                 showToastUI(PlayGameActivity.this, String.format(Locale.US,"start round %d", roundNum));
@@ -575,34 +594,37 @@ public class PlayGameActivity extends AppCompatActivity {
     }
 
     /**
-     * This function will update all UI in play game page, should be called each time received the latest round info.
+     * This function will update all UI in play game page, should be called at the beginning of each round.
+     * (i.e. each time receive the round info)
      */
     private void updateUI(){
         runOnUiThread(() -> {
-            if (isLose){
-                // is user lose, hide all button
-                setAllButtonHidden();
-                if (!hasShowDialog){
-                    AlertDialog.Builder builder = new AlertDialog.Builder(PlayGameActivity.this);
-                    builder.setPositiveButton("Yes", (dialog1, which) -> {
-                        showToastUI(PlayGameActivity.this, "you lose");
-                    });
-                    builder.setNegativeButton("No", (dialog2, which) -> {
-                        onBackPressed();
-                    });
-                    builder.setTitle("You Lose");
-                    builder.setMessage("Do you want to keep watching the game?");
-                    AlertDialog dialog = builder.create();
-                    dialog.setOnShowListener(dialog12 -> {
-                        dialog.getButton(AlertDialog.BUTTON_POSITIVE)
-                                .setTextColor(
-                                        getResources().getColor(R.color.colorPrimary)
-                                );
-                    });
-                    dialog.show();
-                    hasShowDialog = true;
+            if (isLose || isAudience()){
+                if (isLose){
+                    // is user lose, hide all button
+                    setAllButtonHidden();
+                    if (!hasShowDialog){
+                        AlertDialog.Builder builder = new AlertDialog.Builder(PlayGameActivity.this);
+                        builder.setPositiveButton("Yes", (dialog1, which) -> {
+                            showToastUI(PlayGameActivity.this, "you lose");
+                        });
+                        builder.setNegativeButton("No", (dialog2, which) -> {
+                            onBackPressed();
+                        });
+                        builder.setTitle("You Lose");
+                        builder.setMessage("Do you want to keep watching the game?");
+                        AlertDialog dialog = builder.create();
+                        dialog.setOnShowListener(dialog12 -> {
+                            dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                                    .setTextColor(
+                                            getResources().getColor(R.color.colorPrimary)
+                                    );
+                        });
+                        dialog.show();
+                        hasShowDialog = true;
+                    }
                 }
-                // do nothing, just waiting for attack result
+                // do nothing, just waiting for attack result(for both loser and audience)
                 receiveAttackResult();
             }else {
                 // set all button clickable, let user input
@@ -613,8 +635,12 @@ public class PlayGameActivity extends AppCompatActivity {
             tvRoundNum.setText(String.valueOf(roundNum));
             // set the map image
             imgMap.setImageResource(MAP_NAME_TO_RESOURCE_ID.get(map.getName()));
-            // update player info
-            showPlayerInfo();
+            if (!isAudience()){
+                // only update player info when this user is player
+                showPlayerInfo();
+            }else {
+                // TODO: maybe we can use the player info section to do something else
+            }
             // update territory list
             showTerritories();
         });
@@ -641,6 +667,7 @@ public class PlayGameActivity extends AppCompatActivity {
                 .append("; Tech resource: ").append(player.getTechNum())
                 .append("\n");
         tvPlayerInfo.setText(builder);
+        // ally info
         if (player.getAlly() == null){
             tvAllyInfo.setText("Allying with \"no body yet\"");
         }else {

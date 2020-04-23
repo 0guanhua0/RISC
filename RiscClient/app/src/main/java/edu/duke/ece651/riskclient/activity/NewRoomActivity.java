@@ -134,44 +134,6 @@ public class NewRoomActivity extends AppCompatActivity {
     }
 
     private void updateMaps(){
-        // fake data
-//        List<WorldMap> maps = new ArrayList<>();
-//        for (int i = 0; i < 10; i++){
-//            Map<String, Set<String>> m = new HashMap<String, Set<String>>() {{
-//                put("a", new HashSet<String>());
-//                put("b", new HashSet<String>());
-//                put("c", new HashSet<String>());
-//            }};
-//            Map<Set<String>,Boolean> groups = new HashMap<Set<String>, Boolean>(){{
-//                put(new HashSet<String>(Arrays.asList("a")),false);
-//                put(new HashSet<String>(Arrays.asList("b")),false);
-//                put(new HashSet<String>(Arrays.asList("c")),false);
-//            }};
-//            Map<String,Integer> sizes = new HashMap<String, Integer>(){{
-//                put("a",2);
-//                put("b",2);
-//                put("c",2);
-//            }};
-//
-//            Map<String,Integer> food = new HashMap<String, Integer>(){{
-//                put("a",3);
-//                put("b",3);
-//                put("c",3);
-//            }};
-//
-//            Map<String,Integer> tech = new HashMap<String, Integer>(){{
-//                put("a",4);
-//                put("b",4);
-//                put("c",4);
-//            }};
-//            List<String> colorList = new ArrayList<String>(Arrays.asList("red", "blue", "black"));
-//            maps.add(new WorldMapV2<String>(m, colorList,groups,sizes,food,tech));
-//        }
-//        mapAdapter.setMaps(maps);
-//        // set default selected map
-//        selectedMap = mapAdapter.getMap(0);
-//        tvMapName.setText(selectedMap.getName());
-
         recv(new onReceiveListener() {
             @Override
             public void onFailure(String error) {

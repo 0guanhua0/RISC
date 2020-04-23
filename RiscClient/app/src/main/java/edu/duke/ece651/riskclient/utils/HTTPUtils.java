@@ -21,6 +21,7 @@ import edu.duke.ece651.riskclient.listener.onResultListener;
 import edu.duke.ece651.riskclient.listener.onSpyListener;
 import edu.duke.ece651.riskclient.objects.SimplePlayer;
 
+import static edu.duke.ece651.risk.shared.Constant.ACTION_AUDIENCE_GAME;
 import static edu.duke.ece651.risk.shared.Constant.ACTION_CREATE_GAME;
 import static edu.duke.ece651.risk.shared.Constant.ACTION_JOIN_GAME;
 import static edu.duke.ece651.risk.shared.Constant.ACTION_RECONNECT_ROOM;
@@ -264,6 +265,34 @@ public class HTTPUtils {
             sendAndCheckSuccessG(jsonObject.toString(), listener);
         }catch (JSONException e){
             Log.e(TAG, "backGame: " + e.toString());
+        }
+    }
+
+    /**
+     * A new player want to join an room as an audience
+     * @param listener result listener
+     */
+    public static void audienceGame(onResultListener listener){
+        try {
+            // information header(tell serve what we want to do)
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put(USER_NAME, getPlayerName());
+            jsonObject.put(ACTION_TYPE, ACTION_AUDIENCE_GAME);
+            jsonObject.put(ROOM_ID, getRoomID());
+            send(jsonObject.toString(), new onResultListener() {
+                @Override
+                public void onFailure(String error) {
+                    Log.e(TAG, "audienceGame: " + error);
+                }
+
+                @Override
+                public void onSuccessful() {
+                    // join in an existing room
+                    sendAndCheckSuccessG(String.valueOf(getRoomID()), listener);
+                }
+            });
+        }catch (JSONException e){
+            Log.e(TAG, "audienceGame: " + e.toString());
         }
     }
 

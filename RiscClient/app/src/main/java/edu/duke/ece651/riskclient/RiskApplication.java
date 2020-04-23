@@ -126,6 +126,14 @@ public class RiskApplication extends Application {
         return room.getRoomID();
     }
 
+    public static boolean isAudience() {
+        return isAudience;
+    }
+
+    public static void setAudience(boolean isAudience) {
+        RiskApplication.isAudience = isAudience;
+    }
+
     /**
      * This function is used to get a temporary socket.
      * You should close the socket once you finish using it.
