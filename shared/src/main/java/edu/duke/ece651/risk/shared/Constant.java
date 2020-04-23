@@ -58,6 +58,8 @@ public class Constant {
     public static final String INVALID_USER = "invalid user / not login";
     public static final String INVALID_ACTION_TYPE = "unrecognized action";
     public static final String INVALID_RECONNECT = "the room ID you want to reconnect is invalid";
+    public static final String INVALID_AUDIENCE_FINISHED = "the room has already finished";
+    public static final String INVALID_AUDIENCE_NOT_START = "the room has not start yet";
 
 
     public static final String VALID_RECONNECT = "welcome back to game";
@@ -73,6 +75,7 @@ public class Constant {
     public static final String ACTION_GET_IN_ROOM = "getInRoom";
     public static final String ACTION_JOIN_GAME = "joinGame";
     public static final String ACTION_CREATE_GAME = "createGame";
+    public static final String ACTION_AUDIENCE_GAME = "audienceGame";
     public static final String ACTION_RECONNECT_ROOM = "reconnect room";
     public static final String ACTION_CONNECT_CHAT = "connect chat";
 
