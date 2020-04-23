@@ -28,6 +28,7 @@ import edu.duke.ece651.riskclient.adapter.RoomAdapter;
 import edu.duke.ece651.riskclient.listener.onReceiveListener;
 import edu.duke.ece651.riskclient.listener.onResultListener;
 
+import static edu.duke.ece651.riskclient.RiskApplication.getPlayerName;
 import static edu.duke.ece651.riskclient.RiskApplication.initGameSocket;
 import static edu.duke.ece651.riskclient.RiskApplication.setAudience;
 import static edu.duke.ece651.riskclient.RiskApplication.setRoom;
@@ -36,6 +37,7 @@ import static edu.duke.ece651.riskclient.utils.HTTPUtils.backGame;
 import static edu.duke.ece651.riskclient.utils.HTTPUtils.createNewRoom;
 import static edu.duke.ece651.riskclient.utils.HTTPUtils.getRoomList;
 import static edu.duke.ece651.riskclient.utils.HTTPUtils.joinGame;
+import static edu.duke.ece651.riskclient.utils.UIUtils.showToast;
 import static edu.duke.ece651.riskclient.utils.UIUtils.showToastUI;
 
 /**
@@ -162,6 +164,14 @@ public class HomeFragment extends Fragment {
             reconnectRoom();
         }else if (!roomInfo.hasStarted()){
             joinRoom();
+        }else {
+            checkAudience(roomInfo);
+        }
+    }
+
+    private void checkAudience(RoomInfo roomInfo){
+        if (roomInfo.getPlayerNames().contains(getPlayerName())){
+            showToast("You already in this room, please reconnect rather than audience.");
         }else {
             // show the audience dialog
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());

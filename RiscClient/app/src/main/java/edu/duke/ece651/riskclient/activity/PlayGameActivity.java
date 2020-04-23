@@ -559,7 +559,6 @@ public class PlayGameActivity extends AppCompatActivity {
             @Override
             public void onSuccessful(Object object) {
                 Log.e(TAG, "receiveLatestInfo recv: " + object);
-                // TODO: when reconnect, we may receive the info of last round......
                if (object instanceof ArrayList){
                    allPlayers = (ArrayList<SPlayer>) object;
                    Map<Integer, String> idToName = new HashMap<>();

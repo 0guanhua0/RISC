@@ -56,4 +56,9 @@ public class RadiateAction implements Action{
         target.setRadiation();
         return true;
     }
+
+    @Override
+    public String toString() {
+        return String.format("You choose to radiate territory %s", targetTerr);
+    }
 }
