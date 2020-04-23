@@ -1,5 +1,6 @@
 package edu.duke.ece651.riskclient.adapter;
 
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.riskclient.R;
@@ -18,10 +20,11 @@ import edu.duke.ece651.riskclient.listener.onClickListener;
 public class TerritoryAdapter extends RecyclerView.Adapter<TerritoryAdapter.RoomViewHolder> {
 
     private List<Territory> territories;
+    private Map<Integer, String> idToName;
     private onClickListener listener;
 
     public TerritoryAdapter(){
-        territories = new ArrayList<>();
+        this.territories = new ArrayList<>();
     }
 
     @NonNull
@@ -36,11 +39,24 @@ public class TerritoryAdapter extends RecyclerView.Adapter<TerritoryAdapter.Room
     public void onBindViewHolder(@NonNull RoomViewHolder holder, int position) {
         Territory territory = territories.get(position);
         StringBuilder builder = new StringBuilder();
-        builder.append("Own by: ").append(territory.getOwner()).append("; ");
-        builder.append("Produce ").append(territory.getFoodYield()).append(" food and ").append(territory.getTechYield()).append(" tech");
+        builder.append("Own by: ").append(idToName.get(territory.getOwner())).append("; ");
+        if (territory.isRadiated()){
+            builder.append("Produce 0 food and 0 tech");
+        }else {
+            builder.append("Produce ").append(territory.getFoodYield()).append(" food and ").append(territory.getTechYield()).append(" tech");
+        }
 
         holder.tvTerritoryName.setText(territory.getName());
         holder.tvTerritoryInfo.setText(builder.toString());
+
+        if (territory.isRadiated()){
+            holder.tvTerritoryName.setTextColor(Color.RED);
+            holder.tvTerritoryInfo.setTextColor(Color.RED);
+        }else {
+            holder.tvTerritoryName.setTextColor(Color.BLACK);
+            holder.tvTerritoryInfo.setTextColor(Color.BLACK);
+        }
+
         holder.itemView.setOnClickListener(v -> {
             if (listener != null){
                 listener.onClick(position);
@@ -55,6 +71,10 @@ public class TerritoryAdapter extends RecyclerView.Adapter<TerritoryAdapter.Room
 
     public void setListener(onClickListener listener){
         this.listener = listener;
+    }
+
+    public void setIdToName(Map<Integer, String> idToName) {
+        this.idToName = idToName;
     }
 
     public void setTerritories(List<Territory> territories){

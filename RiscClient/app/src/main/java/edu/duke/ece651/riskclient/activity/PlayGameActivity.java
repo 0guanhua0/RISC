@@ -26,6 +26,7 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -49,12 +50,14 @@ import edu.duke.ece651.riskclient.listener.onResultListener;
 
 import static edu.duke.ece651.risk.shared.Constant.ACTION_DONE;
 import static edu.duke.ece651.risk.shared.Constant.GAME_OVER;
+import static edu.duke.ece651.risk.shared.Constant.RADIATE_LEVEL;
 import static edu.duke.ece651.risk.shared.Constant.SPY_COST;
 import static edu.duke.ece651.riskclient.Constant.ACTION_PERFORMED;
 import static edu.duke.ece651.riskclient.Constant.MAP_NAME_TO_RESOURCE_ID;
 import static edu.duke.ece651.riskclient.Constant.NETWORK_PROBLEM;
 import static edu.duke.ece651.riskclient.RiskApplication.getPlayerID;
 import static edu.duke.ece651.riskclient.RiskApplication.getRoomName;
+import static edu.duke.ece651.riskclient.RiskApplication.isAudience;
 import static edu.duke.ece651.riskclient.RiskApplication.recv;
 import static edu.duke.ece651.riskclient.RiskApplication.send;
 import static edu.duke.ece651.riskclient.RiskApplication.setPlayerID;
@@ -62,6 +65,7 @@ import static edu.duke.ece651.riskclient.RiskApplication.startChatThread;
 import static edu.duke.ece651.riskclient.RiskApplication.stopChatThread;
 import static edu.duke.ece651.riskclient.utils.HTTPUtils.recvAttackResult;
 import static edu.duke.ece651.riskclient.utils.HTTPUtils.sendAction;
+import static edu.duke.ece651.riskclient.utils.UIUtils.showToast;
 import static edu.duke.ece651.riskclient.utils.UIUtils.showToastUI;
 
 public class PlayGameActivity extends AppCompatActivity {
@@ -82,6 +86,7 @@ public class PlayGameActivity extends AppCompatActivity {
     private static final String TYPE_UPGRADE_MAX = "upgrade max tech";
     private static final String TYPE_ALLIANCE = "form alliance";
     private static final String TYPE_SPY = "spy";
+    private static final String TYPE_RADIATION = "radiation";
     private static final String TYPE_DONE = "done";
 
     private static final int REQUEST_ACTION_MOVE = 1;
@@ -90,6 +95,7 @@ public class PlayGameActivity extends AppCompatActivity {
     private static final int REQUEST_ACTION_UPGRADE_UNIT = 4;
     private static final int REQUEST_ACTION_ALLIANCE = 5;
     private static final int REQUEST_ACTION_SPY = 6;
+    private static final int REQUEST_ACTION_RADIATION = 7;
 
     /**
      * UI variable
@@ -138,25 +144,34 @@ public class PlayGameActivity extends AppCompatActivity {
         setUpUI();
         // make sure user can't do anything before we receive the first round data
         setAllButtonClickable(false);
-        // these two function use separate sockets, can perform them in parallel
+        // these two functions use two separate sockets, can perform them in parallel
+        // receive player + round info
         receiveLatestInfo();
-        // connect to the chat room & start receiving incoming message(store into DB)
-        startChatThread(new onResultListener() {
-            @Override
-            public void onFailure(String error) {
-                Log.e(TAG, "start chat thread: " + error);
-            }
+        // only player can chat
+        if (!isAudience()){
+            // connect to the chat room & start receiving incoming message(store into DB)
+            startChatThread(new onResultListener() {
+                @Override
+                public void onFailure(String error) {
+                    Log.e(TAG, "start chat thread: " + error);
+                }
 
-            @Override
-            public void onSuccessful() {
-                showToastUI(PlayGameActivity.this, "Successfully connect to the chat room.");
-            }
-        });
+                @Override
+                public void onSuccessful() {
+                    showToastUI(PlayGameActivity.this, "Successfully connect to the chat room.");
+                }
+            });
+        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.play_game_menu,menu);
+        getMenuInflater().inflate(R.menu.play_game_menu, menu);
+        if (isAudience()){
+            menu.findItem(R.id.chat_room).setVisible(false);
+        }else {
+            menu.findItem(R.id.chat_room).setVisible(true);
+        }
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -188,6 +203,7 @@ public class PlayGameActivity extends AppCompatActivity {
             case REQUEST_ACTION_UPGRADE_UNIT:
             case REQUEST_ACTION_UPGRADE_MAX:
             case REQUEST_ACTION_ALLIANCE:
+            case REQUEST_ACTION_RADIATION:
                 if (resultCode == RESULT_OK){
                     Action action = (Action) data.getSerializableExtra(ACTION_PERFORMED);
                     if (action != null){
@@ -195,6 +211,7 @@ public class PlayGameActivity extends AppCompatActivity {
                         // NOTE: this only update the copy of the map, we will still get the latest map from server at the beginning of each term
                         action.perform(new WorldState(player, map));
                         performedActions.add(action);
+                        territoryAdapter.notifyDataSetChanged();
                         showPerformedActions();
                         showPlayerInfo();
                     }
@@ -244,13 +261,20 @@ public class PlayGameActivity extends AppCompatActivity {
                 case TYPE_ALLIANCE:
                     // alliance is relatively simple action, don't need a new page
                     showAllianceDialog();
-                    return;
+                return;
                 case TYPE_SPY:
                     intent.setComponent(new ComponentName(PlayGameActivity.this, SpyActivity.class));
                     bundle.putSerializable(DATA_CURRENT_PLAYER, player);
                     bundle.putSerializable(DATA_ALL_PLAYERS, allPlayers);
                     bundle.putInt(DATA_TECH_RESOURCE, player.getTechNum());
                     requestCode = REQUEST_ACTION_SPY;
+                    break;
+                case TYPE_RADIATION:
+                    intent.setComponent(new ComponentName(PlayGameActivity.this, RadiateActivity.class));
+                    bundle.putSerializable(DATA_CURRENT_PLAYER, player);
+                    bundle.putSerializable(DATA_PLAYING_MAP, map);
+                    bundle.putInt(DATA_TECH_RESOURCE, player.getTechNum());
+                    requestCode = REQUEST_ACTION_RADIATION;
                     break;
                 case TYPE_DONE:
                     // pop up a dialog to ask confirm
@@ -269,6 +293,7 @@ public class PlayGameActivity extends AppCompatActivity {
             intent.putExtras(bundle);
             startActivityForResult(intent, requestCode);
         });
+        btPerform.setVisibility(isAudience() ? View.GONE : View.VISIBLE);
 
         tvPlayerInfo = findViewById(R.id.tv_player_info);
         tvPlayerInfo.setText("Please wait other players to finish assigning units...");
@@ -310,24 +335,29 @@ public class PlayGameActivity extends AppCompatActivity {
      */
     private void setUpActionDropdown(){
         TextInputLayout layout = findViewById(R.id.action_dropdown);
-        layout.setHint("Action Type");
+        // audience don't need the action drop down
+        if (isAudience()){
+            layout.setVisibility(View.GONE);
+        }else {
+            layout.setHint("Action Type");
 
-        List<String> actions = new ArrayList<>(Arrays.asList(TYPE_MOVE, TYPE_ATTACK, TYPE_UPGRADE_UNIT, TYPE_UPGRADE_MAX, TYPE_ALLIANCE, TYPE_SPY, TYPE_DONE));
-        actionAdapter =
-                new ArrayAdapter<>(
-                        PlayGameActivity.this,
-                        R.layout.dropdown_menu_popup_item,
-                        actions);
+            List<String> actions = new ArrayList<>(Arrays.asList(TYPE_MOVE, TYPE_ATTACK, TYPE_UPGRADE_UNIT, TYPE_UPGRADE_MAX, TYPE_ALLIANCE, TYPE_SPY, TYPE_DONE));
+            actionAdapter =
+                    new ArrayAdapter<>(
+                            PlayGameActivity.this,
+                            R.layout.dropdown_menu_popup_item,
+                            actions);
 
-        // set up default choice
-        actionType = actionAdapter.getItem(0);
+            // set up default choice
+            actionType = actionAdapter.getItem(0);
 
-        AutoCompleteTextView dropdownAction = layout.findViewById(R.id.dd_input);
-        dropdownAction.setAdapter(actionAdapter);
-        dropdownAction.setText(actionAdapter.getItem(0), false);
-        dropdownAction.setOnItemClickListener((parent, v, position, id) -> {
-            actionType = actionAdapter.getItem(position);
-        });
+            AutoCompleteTextView dropdownAction = layout.findViewById(R.id.dd_input);
+            dropdownAction.setAdapter(actionAdapter);
+            dropdownAction.setText(actionAdapter.getItem(0), false);
+            dropdownAction.setOnItemClickListener((parent, v, position, id) -> {
+                actionType = actionAdapter.getItem(position);
+            });
+        }
     }
 
     /**
@@ -338,8 +368,13 @@ public class PlayGameActivity extends AppCompatActivity {
         // generate the detail info of one territory
         StringBuilder detailInfo = new StringBuilder();
         detailInfo.append("Resource Info:\n");
-        detailInfo.append("Food yield: ").append(territory.getFoodYield()).append("\n");
-        detailInfo.append("Tech yield: ").append(territory.getTechYield()).append("\n");
+        if (territory.isRadiated()){
+            detailInfo.append("Food yield: 0\n");
+            detailInfo.append("Tech yield: 0\n");
+        }else {
+            detailInfo.append("Food yield: ").append(territory.getFoodYield()).append("\n");
+            detailInfo.append("Tech yield: ").append(territory.getTechYield()).append("\n");
+        }
         detailInfo.append("Owner Units Info:\n");
         Map<Integer, List<Unit>> units = territory.getUnitGroup();
         if (units.isEmpty()){
@@ -400,7 +435,7 @@ public class PlayGameActivity extends AppCompatActivity {
         mBuilder.setView(view);
         mBuilder.setPositiveButton("Confirm", ((dialogInterface, i) -> {
             String name = dpAlliance.getText().toString();
-            showToastUI(PlayGameActivity.this, "form alliance with " + name);
+            showToastUI(PlayGameActivity.this, "make a request to form alliance with " + name);
             for (SPlayer p : allPlayers){
                 if (name.equals(p.getName())){
                     // construct and send the ally action
@@ -445,6 +480,7 @@ public class PlayGameActivity extends AppCompatActivity {
 
             @Override
             public void onSuccessful() {
+                showToastUI(PlayGameActivity.this, String.format(Locale.US, "finish round %d", roundNum));
                 // successfully indicate we are finish, waiting for the attack result
                 receiveAttackResult();
             }
@@ -525,13 +561,23 @@ public class PlayGameActivity extends AppCompatActivity {
             @Override
             public void onSuccessful(Object object) {
                 Log.e(TAG, "receiveLatestInfo recv: " + object);
-                allPlayers = (ArrayList<SPlayer>) object;
-                // only support alliance action for 3 or more players
-                // TODO: uncomment this before release
+               if (object instanceof ArrayList){
+                   allPlayers = (ArrayList<SPlayer>) object;
+                   Map<Integer, String> idToName = new HashMap<>();
+                   for (SPlayer sPlayer : allPlayers){
+                       idToName.put(sPlayer.getId(), sPlayer.getName());
+                   }
+                   territoryAdapter.setIdToName(idToName);
+                   // only support alliance action for 3 or more players
+                   // TODO: uncomment this before release
 //                if (allPlayers.size() < 3){
 //                    actionAdapter.remove(TYPE_ALLIANCE);
 //                }
-                newRound();
+                   newRound();
+               }else {
+                   // keep receiving if we receive some out-dated data
+                   receiveLatestInfo();
+               }
             }
         });
     }
@@ -553,7 +599,14 @@ public class PlayGameActivity extends AppCompatActivity {
                 roundNum = info.getRoundNum();
                 map = info.getMap();
                 player = info.getPlayer();
-                setPlayerID(player.getId());
+                // if current user is audience, the player object will be null
+                if (player != null){
+                    setPlayerID(player.getId());
+                    if (player.getTechLevel() >= RADIATE_LEVEL){
+                        actionAdapter.remove(TYPE_RADIATION);
+                        actionAdapter.add(TYPE_RADIATION);
+                    }
+                }
                 // clear all actions in the last round
                 performedActions.clear();
                 showToastUI(PlayGameActivity.this, String.format(Locale.US,"start round %d", roundNum));
@@ -564,34 +617,37 @@ public class PlayGameActivity extends AppCompatActivity {
     }
 
     /**
-     * This function will update all UI in play game page, should be called each time received the latest round info.
+     * This function will update all UI in play game page, should be called at the beginning of each round.
+     * (i.e. each time receive the round info)
      */
     private void updateUI(){
         runOnUiThread(() -> {
-            if (isLose){
-                // is user lose, hide all button
-                setAllButtonHidden();
-                if (!hasShowDialog){
-                    AlertDialog.Builder builder = new AlertDialog.Builder(PlayGameActivity.this);
-                    builder.setPositiveButton("Yes", (dialog1, which) -> {
-                        showToastUI(PlayGameActivity.this, "you lose");
-                    });
-                    builder.setNegativeButton("No", (dialog2, which) -> {
-                        onBackPressed();
-                    });
-                    builder.setTitle("You Lose");
-                    builder.setMessage("Do you want to keep watching the game?");
-                    AlertDialog dialog = builder.create();
-                    dialog.setOnShowListener(dialog12 -> {
-                        dialog.getButton(AlertDialog.BUTTON_POSITIVE)
-                                .setTextColor(
-                                        getResources().getColor(R.color.colorPrimary)
-                                );
-                    });
-                    dialog.show();
-                    hasShowDialog = true;
+            if (isLose || isAudience()){
+                if (isLose && !isAudience()){
+                    // is user lose, hide all button
+                    setAllButtonHidden();
+                    if (!hasShowDialog){
+                        AlertDialog.Builder builder = new AlertDialog.Builder(PlayGameActivity.this);
+                        builder.setPositiveButton("Yes", (dialog1, which) -> {
+                            showToastUI(PlayGameActivity.this, "you lose");
+                        });
+                        builder.setNegativeButton("No", (dialog2, which) -> {
+                            onBackPressed();
+                        });
+                        builder.setTitle("You Lose");
+                        builder.setMessage("Do you want to keep watching the game?");
+                        AlertDialog dialog = builder.create();
+                        dialog.setOnShowListener(dialog12 -> {
+                            dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                                    .setTextColor(
+                                            getResources().getColor(R.color.colorPrimary)
+                                    );
+                        });
+                        dialog.show();
+                        hasShowDialog = true;
+                    }
                 }
-                // do nothing, just waiting for attack result
+                // do nothing, just waiting for attack result(for both loser and audience)
                 receiveAttackResult();
             }else {
                 // set all button clickable, let user input
@@ -602,8 +658,12 @@ public class PlayGameActivity extends AppCompatActivity {
             tvRoundNum.setText(String.valueOf(roundNum));
             // set the map image
             imgMap.setImageResource(MAP_NAME_TO_RESOURCE_ID.get(map.getName()));
-            // update player info
-            showPlayerInfo();
+            if (!isAudience()){
+                // only update player info when this user is player
+                showPlayerInfo();
+            }else {
+                // TODO: maybe we can use the player info section to do something else
+            }
             // update territory list
             showTerritories();
         });
@@ -630,6 +690,7 @@ public class PlayGameActivity extends AppCompatActivity {
                 .append("; Tech resource: ").append(player.getTechNum())
                 .append("\n");
         tvPlayerInfo.setText(builder);
+        // ally info
         if (player.getAlly() == null){
             tvAllyInfo.setText("Allying with \"no body yet\"");
         }else {

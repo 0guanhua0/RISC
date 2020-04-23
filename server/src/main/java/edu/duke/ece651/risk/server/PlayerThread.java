@@ -30,7 +30,6 @@ public class PlayerThread extends Thread{
     int waitTimeOut;
     List<Player<String>> players;
 
-
     /**
      *
      * @param player current player

@@ -1,7 +1,7 @@
 package edu.duke.ece651.risk.server;
 
 import edu.duke.ece651.risk.shared.RoomInfo;
-import edu.duke.ece651.risk.shared.action.Action;
+import edu.duke.ece651.risk.shared.ToClientMsg.RoundInfo;
 import edu.duke.ece651.risk.shared.action.AttackResult;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.map.Territory;
@@ -13,7 +13,6 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.BrokenBarrierException;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CyclicBarrier;
 
 import static edu.duke.ece651.risk.shared.Constant.*;
@@ -25,7 +24,11 @@ public class Room {
     String roomName;
     // all players in current room
     List<Player<String>> players;
-    // all audience in current room
+    // all audience in current room, audience can
+    // 1. receive the latest round info at the beginning of each round
+    // 2. receive attack result at the end of each round
+    // 3. receive round over signal(indicate that send out all attack result)
+    // 4. receive game result at the end of each round(e.g. continue or GAME_OVER)
     List<Player<String>> audiences;
     // the map this room is playing
     WorldMap<String> map;
@@ -34,10 +37,8 @@ public class Room {
     // all new threads we create in this playGame(e.g. player thread, chat thread)
     List<Thread> threads;
 
-
     /**
-     * The constructor, initialize the whole playGame(room.
-     *
+     * The constructor, initialize the whole room.
      * @param roomID      roomID for this room
      * @param player      the "beginner", the player create this room
      * @param mapDataBase all map we have
@@ -64,9 +65,6 @@ public class Room {
         player.sendPlayerInfo();
 
         player.send(new RoomInfo(roomID, roomName, map, players));
-
-        // don't need this message anymore
-//        player.send(String.format("Please wait other players to join th playGame(need %d, joined %d)", colorList.size(), players.size()));
 
         gameInfo = new GameInfo(-1, 1);
         gameInfo.addPlayer(player.getId(), player.getName());
@@ -133,8 +131,17 @@ public class Room {
      * This function will add an audience to current room.
      * @param audience new audience
      */
-    void addAudience(Player<String> audience){
+    void addAudience(Player<String> audience) throws IOException, ClassNotFoundException {
         audiences.add(audience);
+        // once the audience connect to the game, we will send he/she
+        // 1. player info
+        // 2. latest round info
+        List<SPlayer> allPlayers = new ArrayList<>();
+        for (Player<String> p : this.players){
+            allPlayers.add(new SPlayer(p.getId(), p.getName()));
+        }
+        audience.send(allPlayers);
+        audience.send(new RoundInfo(gameInfo.getRoundNum(), map, gameInfo.getIdToName(), null));
     }
 
     void initGame(MapDataBase<String> mapDataBase) throws ClassNotFoundException {
@@ -170,15 +177,13 @@ public class Room {
     }
 
     /**
-     * Send the data to all audience.
+     * This function will send the data to all audience in current room.
      * @param data data to be sent
      */
     void sendToAllAudience(Object data){
         for (Player<String> audience : audiences){
             if (audience.isConnect()){
                 audience.send(data);
-            }else {
-                audiences.remove(audience);
             }
         }
     }
@@ -187,7 +192,7 @@ public class Room {
      * This function will clean up any disconnect audience.
      * Since audience will not affect the game, so we can simply remove them(if disconnect).
      */
-    void clearAudience(){
+    void clearDisconnectAudience(){
         audiences.removeIf(audience -> !audience.isConnect());
     }
 
@@ -246,6 +251,8 @@ public class Room {
 
                 // send the result of each attack action to all players
                 sendAll(sb.toString());
+                // send the attack result to all audience
+                sendToAllAudience(sb.toString());
             }
         }
     }
@@ -277,6 +284,7 @@ public class Room {
                 player.send(YOU_WINS);
             }
         }
+        sendToAllAudience(String.format("Winner is the %s player.", winnerName));
         // interrupt all thread in current room
         for (Thread t : threads){
             t.interrupt();
@@ -302,7 +310,7 @@ public class Room {
         return players.size() == map.getColorList().size();
     }
 
-    void runGame() throws IOException {
+    void runGame() throws IOException, ClassNotFoundException {
         // + 1 for main thread
         CyclicBarrier barrier = new CyclicBarrier(players.size() + 1);
 
@@ -322,18 +330,27 @@ public class Room {
         while (true) {
             // wait for all player to ready start a round(give main thread some time to process round result)
             barrierWait(barrier);
+            // send latest round info to all audience
+            RoundInfo roundInfo = new RoundInfo(gameInfo.getRoundNum(), map, gameInfo.getIdToName(), null);
+            sendToAllAudience(roundInfo);
             // wait for all player to finish one round
             barrierWait(barrier);
+            // clear any disconnect audience at the end of each round
+            clearDisconnectAudience();
             // resolve all combats
             resolveCombats();
             // after execute all actions, tell the player to enter next round
             sendAll(ROUND_OVER);
+            sendToAllAudience(ROUND_OVER);
+
             // check the playGame result
             checkWinner();
             if (!gameInfo.hasFinished()) {
                 sendAll("continue");
+                sendToAllAudience("continue");
             } else {
                 sendAll(GAME_OVER);
+                sendToAllAudience(GAME_OVER);
                 break;
             }
             gameInfo.nextRound();

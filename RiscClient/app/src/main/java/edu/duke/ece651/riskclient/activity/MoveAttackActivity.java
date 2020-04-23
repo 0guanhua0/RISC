@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -51,6 +52,8 @@ import static edu.duke.ece651.riskclient.utils.HTTPUtils.sendAction;
 import static edu.duke.ece651.riskclient.utils.UIUtils.showToastUI;
 
 public class MoveAttackActivity extends AppCompatActivity {
+
+    private static final String TAG = MoveAttackActivity.class.getSimpleName();
 
     /**
      * UI variable
@@ -141,6 +144,7 @@ public class MoveAttackActivity extends AppCompatActivity {
                     public void onFailure(String error) {
                         // either invalid action or networking problem
                         showToastUI(MoveAttackActivity.this, error);
+                        Log.e(TAG, "sendAction: " + error);
                         // clear all input once action invalid
                         units.clear();
                         runOnUiThread(() -> refreshUnitsInfo());
@@ -285,7 +289,7 @@ public class MoveAttackActivity extends AppCompatActivity {
         dropdownSrcTerritory.setText(srcTerritory, false);
         dropdownSrcTerritory.setOnItemClickListener((parent, v, position, id) -> {
             srcTerritory = srcTerritoryAdapter.getItem(position).split(":")[1].trim();
-            dropdownSrcTerritory.setText(srcTerritory);
+            dropdownSrcTerritory.setText(srcTerritory, false);
             updateUnitList(true);
             // each time change src territory, you need to clear all units specify before
             units.clear();
@@ -325,7 +329,7 @@ public class MoveAttackActivity extends AppCompatActivity {
         dropdownDestTerritory.setText(destTerritory, false);
         dropdownDestTerritory.setOnItemClickListener((parent, v, position, id) -> {
             destTerritory = destTerritoryAdapter.getItem(position).split(":")[1].trim();
-            dropdownDestTerritory.setText(destTerritory);
+            dropdownDestTerritory.setText(destTerritory, false);
             updateUnitList(false);
         });
 

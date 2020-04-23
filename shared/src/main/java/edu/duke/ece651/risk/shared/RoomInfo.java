@@ -65,4 +65,8 @@ public class RoomInfo implements Serializable {
     public String getDetailInfo(){
         return String.format("(%d players needed, %d players inside, playing map \"%s\")", getPlayerNeedTotal(), getPlayerCnt(), getMapName());
     }
+
+    public boolean hasStarted(){
+        return map.getColorList().size() == players.size();
+    }
 }

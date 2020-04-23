@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,12 +28,16 @@ import edu.duke.ece651.riskclient.adapter.RoomAdapter;
 import edu.duke.ece651.riskclient.listener.onReceiveListener;
 import edu.duke.ece651.riskclient.listener.onResultListener;
 
+import static edu.duke.ece651.riskclient.RiskApplication.getPlayerName;
 import static edu.duke.ece651.riskclient.RiskApplication.initGameSocket;
+import static edu.duke.ece651.riskclient.RiskApplication.setAudience;
 import static edu.duke.ece651.riskclient.RiskApplication.setRoom;
+import static edu.duke.ece651.riskclient.utils.HTTPUtils.audienceGame;
 import static edu.duke.ece651.riskclient.utils.HTTPUtils.backGame;
 import static edu.duke.ece651.riskclient.utils.HTTPUtils.createNewRoom;
 import static edu.duke.ece651.riskclient.utils.HTTPUtils.getRoomList;
 import static edu.duke.ece651.riskclient.utils.HTTPUtils.joinGame;
+import static edu.duke.ece651.riskclient.utils.UIUtils.showToast;
 import static edu.duke.ece651.riskclient.utils.UIUtils.showToastUI;
 
 /**
@@ -95,33 +100,7 @@ public class HomeFragment extends Fragment {
 
     private void setUpUI(View view){
         FloatingActionButton fab = view.findViewById(R.id.fab);
-        fab.setOnClickListener(v -> {
-            // initial the global game socket before start or join a game
-            initGameSocket(new onResultListener() {
-                @Override
-                public void onFailure(String error) {
-                    Log.e(TAG, "fab: " + error);
-                }
-
-                @Override
-                public void onSuccessful() {
-                    // should use the game socket only after successfully initialize it
-                    // return the result of choose room
-                    createNewRoom(new onResultListener() {
-                        @Override
-                        public void onFailure(String error) {
-                            Log.e(TAG, "createNewRoom: " + error);
-                        }
-
-                        @Override
-                        public void onSuccessful() {
-                            Intent intent = new Intent(getActivity(), NewRoomActivity.class);
-                            startActivity(intent);
-                        }
-                    });
-                }
-            });
-        });
+        fab.setOnClickListener(v -> clickFAB());
 
         ChipGroup cgRoom = view.findViewById(R.id.cg_room_type);
         cgRoom.setOnCheckedChangeListener((chipGroup, id) -> {
@@ -130,50 +109,7 @@ public class HomeFragment extends Fragment {
         });
 
         roomAdapter = new RoomAdapter();
-        roomAdapter.setListener(position -> {
-            setRoom(roomAdapter.getRoom(position));
-            // TODO: ask user join game or audience
-            // initial the global game socket before join or back a game
-            initGameSocket(new onResultListener() {
-                @Override
-                public void onFailure(String error) {
-                    Log.e(TAG, "join room: " + error);
-                }
-
-                @Override
-                public void onSuccessful() {
-                    if (isInRoom){
-                        // want to go back to the game
-                        backGame(new onResultListener() {
-                            @Override
-                            public void onFailure(String error) {
-                                Log.e(TAG, "back room: " + error);
-                            }
-
-                            @Override
-                            public void onSuccessful() {
-                                Intent intent = new Intent(getActivity(), PlayGameActivity.class);
-                                startActivity(intent);
-                            }
-                        });
-                    }else {
-                        // want to join a new room
-                        joinGame(new onResultListener() {
-                            @Override
-                            public void onFailure(String error) {
-                                Log.e(TAG, "join room: " + error);
-                            }
-
-                            @Override
-                            public void onSuccessful() {
-                                Intent intent = new Intent(getActivity(), WaitGameActivity.class);
-                                startActivity(intent);
-                            }
-                        });
-                    }
-                }
-            });
-        });
+        roomAdapter.setListener(position -> clickRoom(roomAdapter.getRoom(position)));
 
         RecyclerView rcRoomList = view.findViewById(R.id.rv_room_list);
         rcRoomList.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -185,6 +121,157 @@ public class HomeFragment extends Fragment {
 
         tvRoomInfo = view.findViewById(R.id.tv_no_room);
         tvRoomInfo.setVisibility(View.INVISIBLE);
+    }
+
+    /**
+     * Handle the click event of the FAB.
+     */
+    private void clickFAB(){
+        // initial the global game socket before start or join a game
+        initGameSocket(new onResultListener() {
+            @Override
+            public void onFailure(String error) {
+                Log.e(TAG, "fab: " + error);
+            }
+
+            @Override
+            public void onSuccessful() {
+                // should use the game socket only after successfully initialize it
+                // return the result of choose room
+                createNewRoom(new onResultListener() {
+                    @Override
+                    public void onFailure(String error) {
+                        Log.e(TAG, "createNewRoom: " + error);
+                    }
+
+                    @Override
+                    public void onSuccessful() {
+                        Intent intent = new Intent(getActivity(), NewRoomActivity.class);
+                        startActivity(intent);
+                    }
+                });
+            }
+        });
+    }
+
+    /**
+     * Handle the event of click a specific room.
+     * @param roomInfo roomInfo of the clicked room
+     */
+    private void clickRoom(RoomInfo roomInfo){
+        setRoom(roomInfo);
+        if (isInRoom){
+            reconnectRoom();
+        }else if (!roomInfo.hasStarted()){
+            joinRoom();
+        }else {
+            checkAudience(roomInfo);
+        }
+    }
+
+    private void checkAudience(RoomInfo roomInfo){
+        if (roomInfo.getPlayerNames().contains(getPlayerName())){
+            showToast("You already in this room, please reconnect rather than audience.");
+        }else {
+            // show the audience dialog
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setTitle("Important info");
+            builder.setMessage("This room has already started, you can only join as an audience. Do you still want to join?");
+            builder.setPositiveButton("Yes", (dialog, which) -> {
+                audienceRoom();
+            });
+            builder.setNegativeButton("no", ((dialog, which) -> {
+                // do nothing
+            }));
+            builder.show();
+        }
+    }
+
+    /**
+     * User want to join in a room(as player).
+     */
+    private void joinRoom(){
+        initGameSocket(new onResultListener() {
+            @Override
+            public void onFailure(String error) {
+                Log.e(TAG, "join room: " + error);
+            }
+
+            @Override
+            public void onSuccessful() {
+                joinGame(new onResultListener() {
+                    @Override
+                    public void onFailure(String error) {
+                        Log.e(TAG, "join game: " + error);
+                    }
+
+                    @Override
+                    public void onSuccessful() {
+                        setAudience(false);
+                        Intent intent = new Intent(getActivity(), WaitGameActivity.class);
+                        startActivity(intent);
+                    }
+                });
+            }
+        });
+    }
+
+    /**
+     * User want to reconnect to a room.
+     */
+    private void reconnectRoom(){
+        initGameSocket(new onResultListener() {
+            @Override
+            public void onFailure(String error) {
+                Log.e(TAG, "reconnect room: " + error);
+            }
+
+            @Override
+            public void onSuccessful() {
+                backGame(new onResultListener() {
+                    @Override
+                    public void onFailure(String error) {
+                        Log.e(TAG, "back room: " + error);
+                    }
+
+                    @Override
+                    public void onSuccessful() {
+                        setAudience(false);
+                        Intent intent = new Intent(getActivity(), PlayGameActivity.class);
+                        startActivity(intent);
+                    }
+                });
+            }
+        });
+    }
+
+    /**
+     * User want to audience a room.
+     */
+    private void audienceRoom(){
+        initGameSocket(new onResultListener() {
+            @Override
+            public void onFailure(String error) {
+                Log.e(TAG, "audience room: " + error);
+            }
+
+            @Override
+            public void onSuccessful() {
+                audienceGame(new onResultListener() {
+                    @Override
+                    public void onFailure(String error) {
+                        Log.e(TAG, "audience room: " + error);
+                    }
+
+                    @Override
+                    public void onSuccessful() {
+                        setAudience(true);
+                        Intent intent = new Intent(getActivity(), PlayGameActivity.class);
+                        startActivity(intent);
+                    }
+                });
+            }
+        });
     }
 
     private void updateData(){
