@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.riskclient.R;
@@ -18,10 +19,12 @@ import edu.duke.ece651.riskclient.listener.onClickListener;
 public class TerritoryAdapter extends RecyclerView.Adapter<TerritoryAdapter.RoomViewHolder> {
 
     private List<Territory> territories;
+    private Map<Integer, String> idToName;
     private onClickListener listener;
 
-    public TerritoryAdapter(){
-        territories = new ArrayList<>();
+    public TerritoryAdapter(Map<Integer, String> idToName){
+        this.territories = new ArrayList<>();
+        this.idToName = idToName;
     }
 
     @NonNull
@@ -36,7 +39,7 @@ public class TerritoryAdapter extends RecyclerView.Adapter<TerritoryAdapter.Room
     public void onBindViewHolder(@NonNull RoomViewHolder holder, int position) {
         Territory territory = territories.get(position);
         StringBuilder builder = new StringBuilder();
-        builder.append("Own by: ").append(territory.getOwner()).append("; ");
+        builder.append("Own by: ").append(idToName.get(territory.getOwner())).append("; ");
         builder.append("Produce ").append(territory.getFoodYield()).append(" food and ").append(territory.getTechYield()).append(" tech");
 
         holder.tvTerritoryName.setText(territory.getName());

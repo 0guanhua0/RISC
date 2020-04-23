@@ -26,6 +26,7 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -295,7 +296,11 @@ public class PlayGameActivity extends AppCompatActivity {
     private void setUpTerritoryList(){
         RecyclerView rvTerritoryList = findViewById(R.id.rv_territory_list);
 
-        territoryAdapter = new TerritoryAdapter();
+        Map<Integer, String> idToName = new HashMap<>();
+        for (SPlayer sPlayer : allPlayers){
+            idToName.put(sPlayer.getId(), sPlayer.getName());
+        }
+        territoryAdapter = new TerritoryAdapter(idToName);
         territoryAdapter.setListener(position -> {
             showTerritoryDetailDialog(territoryAdapter.getTerritory(position));
         });
