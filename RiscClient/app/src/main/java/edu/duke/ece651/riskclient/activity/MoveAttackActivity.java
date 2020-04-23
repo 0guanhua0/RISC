@@ -285,7 +285,7 @@ public class MoveAttackActivity extends AppCompatActivity {
         dropdownSrcTerritory.setText(srcTerritory, false);
         dropdownSrcTerritory.setOnItemClickListener((parent, v, position, id) -> {
             srcTerritory = srcTerritoryAdapter.getItem(position).split(":")[1].trim();
-            dropdownSrcTerritory.setText(srcTerritory);
+            dropdownSrcTerritory.setText(srcTerritory, false);
             updateUnitList(true);
             // each time change src territory, you need to clear all units specify before
             units.clear();
@@ -325,7 +325,7 @@ public class MoveAttackActivity extends AppCompatActivity {
         dropdownDestTerritory.setText(destTerritory, false);
         dropdownDestTerritory.setOnItemClickListener((parent, v, position, id) -> {
             destTerritory = destTerritoryAdapter.getItem(position).split(":")[1].trim();
-            dropdownDestTerritory.setText(destTerritory);
+            dropdownDestTerritory.setText(destTerritory, false);
             updateUnitList(false);
         });
 

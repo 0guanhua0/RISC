@@ -400,7 +400,7 @@ public class PlayGameActivity extends AppCompatActivity {
         mBuilder.setView(view);
         mBuilder.setPositiveButton("Confirm", ((dialogInterface, i) -> {
             String name = dpAlliance.getText().toString();
-            showToastUI(PlayGameActivity.this, "form alliance with " + name);
+            showToastUI(PlayGameActivity.this, "make a request to form alliance with " + name);
             for (SPlayer p : allPlayers){
                 if (name.equals(p.getName())){
                     // construct and send the ally action
@@ -525,13 +525,19 @@ public class PlayGameActivity extends AppCompatActivity {
             @Override
             public void onSuccessful(Object object) {
                 Log.e(TAG, "receiveLatestInfo recv: " + object);
-                allPlayers = (ArrayList<SPlayer>) object;
-                // only support alliance action for 3 or more players
-                // TODO: uncomment this before release
+                // TODO: when reconnect, we may receive the info of last round......
+               if (object instanceof ArrayList){
+                   allPlayers = (ArrayList<SPlayer>) object;
+                   // only support alliance action for 3 or more players
+                   // TODO: uncomment this before release
 //                if (allPlayers.size() < 3){
 //                    actionAdapter.remove(TYPE_ALLIANCE);
 //                }
-                newRound();
+                   newRound();
+               }else {
+                   // keep receiving
+                   receiveLatestInfo();
+               }
             }
         });
     }
