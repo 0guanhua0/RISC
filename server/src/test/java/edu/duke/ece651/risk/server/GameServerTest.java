@@ -443,7 +443,7 @@ public class GameServerTest {
         gameServer.rooms.put(room3.roomID, room3);
 
         assertEquals(3, gameServer.rooms.size());
-        assertEquals(1, gameServer.getRoomList().size()); // only one room waiting for new player
+        assertEquals(2, gameServer.getRoomList().size()); // only one room waiting for new player
         assertEquals(2, gameServer.rooms.size()); // the room finished is removed
     }
 
