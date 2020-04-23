@@ -94,7 +94,7 @@ class RadiateActionTest {
 
         Territory stormTerr = worldMap.getTerritory("the storm kingdom");
         Territory reachTerr = worldMap.getTerritory("kingdom of the reach");
-
+        reachTerr.addBasicUnits(10);
         player1.addTerritory(stormTerr);
         player2.addTerritory(reachTerr);
 
@@ -116,9 +116,16 @@ class RadiateActionTest {
         RadiateAction radiateAction = new RadiateAction("invalid");
         assertThrows(IllegalArgumentException.class,()->{radiateAction.perform(worldState);});
 
+        assertEquals(10,reachTerr.getUnitsNum(0));
+        int techNum = player2.getTechNum();
         RadiateAction radiateAction1 = new RadiateAction(reach);
         radiateAction1.perform(worldState);
         assertTrue(reachTerr.isRadiated());
+        player2.updateState();
+        assertEquals(10,reachTerr.getUnitsNum(0));
+        assertEquals(techNum,player2.getTechNum());
+
+
 
     }
 }
