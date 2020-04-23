@@ -84,7 +84,41 @@ class RadiateActionTest {
     }
 
     @Test
-    void perform() {
+    void perform() throws IOException {
+        MapDataBase<String> mapDataBase = new MapDataBase<>();
+        WorldMap<String> worldMap = mapDataBase.getMap("a clash of kings");
+        PlayerV2<String> player1 = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),new ByteArrayOutputStream());
+        PlayerV2<String> player2 = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),new ByteArrayOutputStream());
+        player1.setId(1);
+        player2.setId(2);
+
+        Territory stormTerr = worldMap.getTerritory("the storm kingdom");
+        Territory reachTerr = worldMap.getTerritory("kingdom of the reach");
+
+        player1.addTerritory(stormTerr);
+        player2.addTerritory(reachTerr);
+
+
+        WorldState worldState = new WorldState(player1, worldMap, Arrays.asList(player1, player2));
+
+
+        player1.upMaxTech();
+        for (int i = 0; i < 10; i++) {
+            player1.updateState();
+        }
+        player1.upMaxTech();
+        for (int i = 0; i < 30; i++) {
+            player1.updateState();
+        }
+        player1.upMaxTech();
+
+
+        RadiateAction radiateAction = new RadiateAction("invalid");
+        assertThrows(IllegalArgumentException.class,()->{radiateAction.perform(worldState);});
+
+        RadiateAction radiateAction1 = new RadiateAction(reach);
+        radiateAction1.perform(worldState);
+        assertTrue(reachTerr.isRadiated());
 
     }
 }
