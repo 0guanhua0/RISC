@@ -9,6 +9,7 @@ import edu.duke.ece651.risk.shared.player.Player;
 import static edu.duke.ece651.risk.shared.Constant.*;
 
 public class RadiateAction implements Action{
+    private static final long serialVersionUID = 27L;
 
     String targetTerr;
 
@@ -49,6 +50,7 @@ public class RadiateAction implements Action{
         if (!this.isValid(worldState)){
             throw new IllegalArgumentException("Invalid argument");
         }
+        // TODO: forget to subtract the tech resource from player?
         WorldMap<String> map = worldState.getMap();
         Territory target = map.getTerritory(this.targetTerr);
         target.setRadiation();

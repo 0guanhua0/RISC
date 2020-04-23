@@ -216,7 +216,7 @@ public class GameServer {
      * @param obj JSON object contains some other info we may need
      * @throws UnauthorizedUserException user doesn't login, can't perform this action
      */
-    void audienceGame(Player<String> player, JSONObject obj) throws UnauthorizedUserException {
+    void audienceGame(Player<String> player, JSONObject obj) throws UnauthorizedUserException, IOException, ClassNotFoundException {
         checkLogin(player, obj);
         int roomID = obj.getInt(ROOM_ID);
         Room room = rooms.get(roomID);

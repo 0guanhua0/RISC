@@ -7,6 +7,7 @@ import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.risk.shared.player.Player;
+import edu.duke.ece651.risk.shared.player.SPlayer;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -130,8 +131,17 @@ public class Room {
      * This function will add an audience to current room.
      * @param audience new audience
      */
-    void addAudience(Player<String> audience){
+    void addAudience(Player<String> audience) throws IOException, ClassNotFoundException {
         audiences.add(audience);
+        // once the audience connect to the game, we will send he/she
+        // 1. player info
+        // 2. latest round info
+        List<SPlayer> allPlayers = new ArrayList<>();
+        for (Player<String> p : this.players){
+            allPlayers.add(new SPlayer(p.getId(), p.getName()));
+        }
+        audience.send(allPlayers);
+        audience.send(new RoundInfo(gameInfo.getRoundNum(), map, gameInfo.getIdToName(), null));
     }
 
     void initGame(MapDataBase<String> mapDataBase) throws ClassNotFoundException {
