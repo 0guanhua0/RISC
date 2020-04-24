@@ -297,8 +297,10 @@ public class PlayGameActivity extends AppCompatActivity {
 
         tvActionInfo = findViewById(R.id.tv_action_info);
         tvActionInfo.setMovementMethod(new ScrollingMovementMethod());
+        tvActionInfo.setText("");
 
         setUpTerritoryList();
+        tiActionDrop = findViewById(R.id.action_dropdown);
 
         if (isAudience()){
             btPerform.setVisibility(View.GONE);
@@ -441,14 +443,14 @@ public class PlayGameActivity extends AppCompatActivity {
                     // otherwise, set all button clickable
                     setAllButtonClickable(true);
                 }
-                // as long as the user is in the room, we should update these info
-                // set the round number
-                tvRoundNum.setText(String.valueOf(roundNum));
-                // set the map image
-                imgMap.setImageResource(MAP_NAME_TO_RESOURCE_ID.get(map.getName()));
                 // only update player info when this user is player
                 showPlayerInfo();
             }
+            // as long as the user is in the room, we should update these info
+            // set the round number
+            tvRoundNum.setText(String.valueOf(roundNum));
+            // set the map image
+            imgMap.setImageResource(MAP_NAME_TO_RESOURCE_ID.get(map.getName()));
             // update territory list
             updateTerritories();
         });
@@ -459,7 +461,9 @@ public class PlayGameActivity extends AppCompatActivity {
      * we use a while loop to keep receiving all results until OVER
      */
     private void receiveAttackResult(){
-        tvActionInfo.append("Attack result:\n");
+        runOnUiThread(() -> {
+            tvActionInfo.append("Attack result:\n");
+        });
         recvAttackResult(new onRecvInfoListener() {
             @Override
             public void onNewResult(String result) {
@@ -558,7 +562,7 @@ public class PlayGameActivity extends AppCompatActivity {
      * This function will receive the performed action info of all players.
      */
     private void receiveActionInfo(){
-        tvActionInfo.append(String.format(Locale.US, "** round %d **", roundNum));
+        tvActionInfo.append(String.format(Locale.US, "** round %d **\n", roundNum));
         recvActionInfo(new onRecvInfoListener() {
             @Override
             public void onNewResult(String result) {
@@ -589,7 +593,6 @@ public class PlayGameActivity extends AppCompatActivity {
      * Set up the action type drop down.
      */
     private void setUpActionDropdown(){
-        tiActionDrop = findViewById(R.id.action_dropdown);
         tiActionDrop.setVisibility(View.VISIBLE);
         tiActionDrop.setHint("Action Type");
 
@@ -655,7 +658,9 @@ public class PlayGameActivity extends AppCompatActivity {
      * @param isClickable is clickable or not
      */
     private void setAllButtonClickable(boolean isClickable){
-        btPerform.setClickable(isClickable);
+        runOnUiThread(() -> {
+            btPerform.setClickable(isClickable);
+        });
     }
 
     /**
