@@ -23,7 +23,6 @@ public class MoveAction implements Action {
     //key is technology level of corresponding units, value is number of units
     Map<Integer,Integer> levelToNum;
 
-
     public MoveAction(String src, String dest,
                       int playerId, int unitsNum) {
         this.src = src.toLowerCase();

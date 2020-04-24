@@ -24,24 +24,19 @@ public class Constant {
     public static final String SELECT_MAP_ERROR = "The map name you select is invalid.";
     public static final String SELECT_TERR_ERROR = "The territories you select is invalid.";
 
-
     public static final String INVALID_ACTION = "Your action is invalid.";
     public static final String YOU_WINS = "Congratulation, you win!!!";
 
+    // constant value for a game
     public static final int UNITS_PER_TERR = 5;
-
     public static final int INITIAL_FOOD_NUM = 30;
     public static final int INITIAL_TECH_NUM = 50;
-
     public static final int SPY_COST = 150;
-
     public static final int RADIATE_LEVEL = 3;
     public static final int RADIATE_COST = 100;
 
-
     //map info
     public static final String MAP_0 = "a clash of kings";
-
 
     //for networking info
     public static final String ROOM_ID = "roomID";
@@ -57,18 +52,16 @@ public class Constant {
     public static final String INVALID_AUDIENCE_FINISHED = "the room has already finished";
     public static final String INVALID_AUDIENCE_NOT_START = "the room has not start yet";
 
-
     public static final String VALID_RECONNECT = "welcome back to game";
-
 
     //player disconnect default input
     public static final String DISCONNECT_INPUT = "d";
 
-    // JSON communicate format
+    // JSON communication format
     public static final String USER_NAME = "userName";
     public static final String USER_PASSWORD = "userPassword";
     public static final String ACTION_TYPE = "action";
-
+    // type name of all support actions
     public static final String ACTION_SIGN_UP = "signUp";
     public static final String ACTION_LOGIN = "login";
     public static final String ACTION_CHANGE_PASSWORD = "changePassword";
@@ -83,12 +76,11 @@ public class Constant {
     public static final String ROOM_NAME = "roomName";
     public static final String MAP_NAME = "mapName";
     public static final String INFO_ALL_PLAYER = "allPlayer";
-
+    public static final String INFO_TO_RECEIVE_ATTACK_RESULT = "toReceive";
 
     // the time other player will wait for any player which is disconnected
     // i.e. a player disconnect but don't reconnect in 60s, his/her round will be forced finished
     public static final int WAIT_TIME_OUT = 60;
-
 
     // the key is current technical level, value is the cost of tech resources to upgrade maximum tech level to the next technical level
     public static final Map<Integer, Integer> TECH_MAP = new HashMap<Integer, Integer>() {
@@ -100,6 +92,7 @@ public class Constant {
             put(5, 300);
         }
     };
+
     // key is the level of units, value is the name of corresponding units
     public static final Map<Integer, String> UNIT_NAME = new HashMap<Integer, String>() {{
         put(0, "Light Infantry");
@@ -124,6 +117,7 @@ public class Constant {
             put(6,140);
         }
     };
+
     //key is the current level of units, value is the extra bonus for a fight
     public static final Map<Integer, Integer> UNIT_BONUS = new HashMap<Integer, Integer>() {
         {
