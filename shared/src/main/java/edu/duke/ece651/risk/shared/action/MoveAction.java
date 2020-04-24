@@ -6,7 +6,6 @@ import edu.duke.ece651.risk.shared.map.Unit;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.risk.shared.player.Player;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,7 +21,6 @@ public class MoveAction implements Action {
 
     //key is technology level of corresponding units, value is number of units
     Map<Integer,Integer> levelToNum;
-
 
     public MoveAction(String src, String dest,
                       int playerId, int unitsNum) {

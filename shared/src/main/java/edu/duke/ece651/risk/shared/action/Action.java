@@ -22,5 +22,6 @@ public interface Action extends Serializable {
      */
     boolean perform(WorldState worldState);
 
+    @Override
     String toString();
 }

@@ -41,7 +41,6 @@ class RadiateActionTest {
         player2.addTerritory(reachTerr);
         player3.addTerritory(rockTerr);
 
-
         WorldState worldState = new WorldState(player1, worldMap, Arrays.asList(player1, player2,player3));
 
         AllyAction allyAction = new AllyAction(2);
@@ -56,6 +55,8 @@ class RadiateActionTest {
             player1.updateState();
         }
         RadiateAction radiateAction = new RadiateAction("rock");
+        assertFalse(radiateAction.isValid(worldState));
+        radiateAction = new RadiateAction(rock);
         assertFalse(radiateAction.isValid(worldState));
 
         player1.upMaxTech();
@@ -81,6 +82,7 @@ class RadiateActionTest {
         player1.useTech(techNum-80);
         RadiateAction radiateAction5 = new RadiateAction(rock);
         assertFalse(radiateAction5.isValid(worldState));
+        assertEquals("You choose to radiate territory kingdom of the rock", radiateAction5.toString());
     }
 
     @Test
@@ -100,7 +102,7 @@ class RadiateActionTest {
 
 
         WorldState worldState = new WorldState(player1, worldMap, Arrays.asList(player1, player2));
-
+        RadiateAction radiateAction = new RadiateAction("invalid");
 
         player1.upMaxTech();
         for (int i = 0; i < 10; i++) {
@@ -113,7 +115,7 @@ class RadiateActionTest {
         player1.upMaxTech();
 
 
-        RadiateAction radiateAction = new RadiateAction("invalid");
+
         assertThrows(IllegalArgumentException.class,()->{radiateAction.perform(worldState);});
 
         assertEquals(10,reachTerr.getUnitsNum(0));

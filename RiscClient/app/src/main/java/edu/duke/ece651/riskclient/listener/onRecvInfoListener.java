@@ -1,6 +1,9 @@
 package edu.duke.ece651.riskclient.listener;
 
-public interface onRecvAttackResultListener {
+/**
+ * This listener is used to receive continues info stream(in String) which will have a terminate sign.
+ */
+public interface onRecvInfoListener {
     /**
      * receive one attack result
      * @param result attack result

@@ -16,7 +16,7 @@ import edu.duke.ece651.risk.shared.action.Action;
 import edu.duke.ece651.risk.shared.action.SpyAction;
 import edu.duke.ece651.riskclient.listener.onNewPlayerListener;
 import edu.duke.ece651.riskclient.listener.onReceiveListener;
-import edu.duke.ece651.riskclient.listener.onRecvAttackResultListener;
+import edu.duke.ece651.riskclient.listener.onRecvInfoListener;
 import edu.duke.ece651.riskclient.listener.onResultListener;
 import edu.duke.ece651.riskclient.listener.onSpyListener;
 import edu.duke.ece651.riskclient.objects.SimplePlayer;
@@ -32,6 +32,7 @@ import static edu.duke.ece651.risk.shared.Constant.ACTION_RECONNECT_ROOM;
 import static edu.duke.ece651.risk.shared.Constant.ACTION_SIGN_UP;
 import static edu.duke.ece651.risk.shared.Constant.ACTION_TYPE;
 import static edu.duke.ece651.risk.shared.Constant.INFO_ALL_PLAYER;
+import static edu.duke.ece651.risk.shared.Constant.INFO_TO_RECEIVE_ATTACK_RESULT;
 import static edu.duke.ece651.risk.shared.Constant.MAP_NAME;
 import static edu.duke.ece651.risk.shared.Constant.ROOM_ID;
 import static edu.duke.ece651.risk.shared.Constant.ROOM_NAME;
@@ -406,7 +407,7 @@ public class HTTPUtils {
         });
     }
 
-    public static void recvAttackResult(onRecvAttackResultListener listener){
+    public static void recvAttackResult(onRecvInfoListener listener){
         recv(new onReceiveListener() {
             @Override
             public void onFailure(String error) {
@@ -425,6 +426,34 @@ public class HTTPUtils {
                         // keep listening
                         recvAttackResult(listener);
                     }
+                }else {
+                    Log.e(TAG, "recvAttackResult expects String but is " + object);
+                }
+            }
+        });
+    }
+
+    public static void recvActionInfo(onRecvInfoListener listener){
+        recv(new onReceiveListener() {
+            @Override
+            public void onFailure(String error) {
+                listener.onFailure(error);
+            }
+
+            @Override
+            public void onSuccessful(Object object) {
+                if (object instanceof String){
+                    String result = (String) object;
+                    // all players finish their round
+                    if (result.equals(INFO_TO_RECEIVE_ATTACK_RESULT)){
+                        listener.onOver();
+                    }else {
+                        listener.onNewResult(result);
+                        // keep listening
+                        recvActionInfo(listener);
+                    }
+                }else {
+                    Log.e(TAG, "recvActionInfo expects String but is " + object);
                 }
             }
         });

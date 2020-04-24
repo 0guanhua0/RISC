@@ -2,6 +2,7 @@ package edu.duke.ece651.risk.server;
 
 import edu.duke.ece651.risk.shared.RoomInfo;
 import edu.duke.ece651.risk.shared.ToClientMsg.RoundInfo;
+import edu.duke.ece651.risk.shared.action.Action;
 import edu.duke.ece651.risk.shared.action.AttackResult;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.map.Territory;
@@ -75,7 +76,7 @@ public class Room {
     }
 
     // constructor for testing
-    public Room(int roomID, MapDataBase<String> mapDataBase) throws IllegalArgumentException {
+    public Room(int roomID) throws IllegalArgumentException {
         if (roomID < 0) {
             throw new IllegalArgumentException("Invalid value of Room Id");
         }
@@ -315,7 +316,21 @@ public class Room {
         CyclicBarrier barrier = new CyclicBarrier(players.size() + 1);
 
         for (Player<String> player : players) {
-            Thread t = new PlayerThread(player, map, gameInfo, barrier, this.players);
+            Thread t = new PlayerThread(player, map, gameInfo, barrier, players, new onNewActionListener() {
+                @Override
+                public void newAction(String playerName, Action action) {
+                    // player perform a valid action
+                    String info = String.format("Player %s performs a/an %s.\n[info: %s]", playerName, action.getClass().getSimpleName(), action.toString());
+                    sendToAllAudience(info);
+                }
+
+                @Override
+                public void finishRound(String playerName) {
+                    // player finish his/her round
+                    String info = String.format("Player %s finish his/her round.", playerName);
+                    sendToAllAudience(info);
+                }
+            });
             threads.add(t);
             t.start();
         }
@@ -337,6 +352,10 @@ public class Room {
             barrierWait(barrier);
             // clear any disconnect audience at the end of each round
             clearDisconnectAudience();
+
+            // ask all audience to receive the attack result
+            sendToAllAudience(INFO_TO_RECEIVE_ATTACK_RESULT);
+
             // resolve all combats
             resolveCombats();
             // after execute all actions, tell the player to enter next round
