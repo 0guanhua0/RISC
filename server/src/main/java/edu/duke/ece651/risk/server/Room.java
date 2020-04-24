@@ -76,7 +76,7 @@ public class Room {
     }
 
     // constructor for testing
-    public Room(int roomID, MapDataBase<String> mapDataBase) throws IllegalArgumentException {
+    public Room(int roomID) throws IllegalArgumentException {
         if (roomID < 0) {
             throw new IllegalArgumentException("Invalid value of Room Id");
         }

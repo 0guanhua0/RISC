@@ -14,17 +14,13 @@ import static edu.duke.ece651.risk.shared.Constant.MAP_NAME;
 import static edu.duke.ece651.risk.shared.Constant.ROOM_NAME;
 import static edu.duke.ece651.risk.shared.Mock.setupMockInput;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class RoomInfoTest {
-
-
-
     static Map<Integer, String> players = new HashMap<>();
-
 
     @Test
     public void testGetter() throws IOException {
-
         RoomInfo roomInfo = new RoomInfo(1, "test");
         assertEquals(1, roomInfo.getRoomID());
         assertEquals("test", roomInfo.getRoomName());
@@ -40,7 +36,6 @@ public class RoomInfoTest {
 
         players.add(p1);
 
-
         MapDataBase<String> mapDataBase = new MapDataBase<>();
         WorldMap<String> map0 = mapDataBase.getMap(map);
 
@@ -50,6 +45,7 @@ public class RoomInfoTest {
         assertEquals(2, roomInfo2.getPlayerNeedTotal());
         assertEquals("[null]", roomInfo2.getPlayerNames().toString());
         assertEquals("(2 players needed, 1 players inside, playing map \"a clash of kings\")", roomInfo2.getDetailInfo());
+        assertFalse(roomInfo2.hasStarted());
     }
 
 } 

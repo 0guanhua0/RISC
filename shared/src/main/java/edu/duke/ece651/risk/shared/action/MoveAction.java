@@ -6,7 +6,6 @@ import edu.duke.ece651.risk.shared.map.Unit;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.risk.shared.player.Player;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
