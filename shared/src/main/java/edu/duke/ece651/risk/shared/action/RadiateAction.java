@@ -50,8 +50,8 @@ public class RadiateAction implements Action{
         if (!this.isValid(worldState)){
             throw new IllegalArgumentException("Invalid argument");
         }
-        // TODO: forget to subtract the tech resource from player?
         WorldMap<String> map = worldState.getMap();
+        worldState.getMyPlayer().useTech(RADIATE_COST);
         Territory target = map.getTerritory(this.targetTerr);
         target.setRadiation();
         return true;
