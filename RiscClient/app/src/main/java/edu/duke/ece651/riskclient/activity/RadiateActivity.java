@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -44,6 +45,7 @@ import static edu.duke.ece651.riskclient.utils.HTTPUtils.sendAction;
 import static edu.duke.ece651.riskclient.utils.UIUtils.showToastUI;
 
 public class RadiateActivity extends AppCompatActivity {
+    private static final String TAG = RadiateActivity.class.getSimpleName();
 
     private static final String NONE = "enemy: none";
 
@@ -118,6 +120,7 @@ public class RadiateActivity extends AppCompatActivity {
                     public void onFailure(String error) {
                         // either invalid action or networking problem
                         showToastUI(RadiateActivity.this, error);
+                        Log.e(TAG, "confirm: " + error);
                     }
 
                     @Override
@@ -161,9 +164,14 @@ public class RadiateActivity extends AppCompatActivity {
     }
 
     private boolean validateAction(){
-        if (targetTerritory.equals("none")){
+        if (targetTerritory.equals("none") || !map.hasTerritory(targetTerritory)){
             showToastUI(RadiateActivity.this, "No such territory");
+            return false;
         }
-        return player.getTechNum() >= RADIATE_COST && map.hasTerritory(targetTerritory);
+        if (player.getTechNum() < RADIATE_COST){
+            showToastUI(RadiateActivity.this, "You don't have enough resource");
+            return false;
+        }
+        return true;
     }
 }

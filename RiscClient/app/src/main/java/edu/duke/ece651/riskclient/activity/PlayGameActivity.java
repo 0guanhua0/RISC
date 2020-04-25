@@ -365,8 +365,7 @@ public class PlayGameActivity extends AppCompatActivity {
                     }
                     territoryAdapter.setIdToName(idToName);
                     // only support alliance action for 3 or more players
-                    // TODO: uncomment this before release
-                    if (allPlayers.size() < 3){
+                    if (!isAudience() && allPlayers.size() < 3){
                         actionAdapter.remove(TYPE_ALLIANCE);
                     }
                     newRound();
@@ -462,7 +461,7 @@ public class PlayGameActivity extends AppCompatActivity {
      */
     private void receiveAttackResult(){
         runOnUiThread(() -> {
-            tvActionInfo.append("Attack result:\n");
+            tvActionInfo.append("Waiting for other players...\n");
         });
         recvAttackResult(new onRecvInfoListener() {
             @Override
@@ -642,7 +641,7 @@ public class PlayGameActivity extends AppCompatActivity {
         StringBuilder builder = new StringBuilder();
         builder.append("Actions performed:\n");
         if (performedActions.isEmpty()){
-            builder.append("no action performed for now");
+            builder.append("no action performed for now\n");
         }else {
             int index = 1;
             for (Action action : performedActions){

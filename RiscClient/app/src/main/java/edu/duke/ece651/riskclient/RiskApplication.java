@@ -344,20 +344,6 @@ public class RiskApplication extends Application {
         }
     }
 
-//    public static void releaseChatSocketAsy() {
-//        threadPool.execute(() -> {
-//            try {
-//                if (chatSocket != null && !chatSocket.isClosed()){
-//                    chatSocket.close();
-//                    chatSocket.shutdownOutput();
-//                    chatSocket.shutdownInput();
-//                }
-//            }catch (IOException e){
-//                Log.e(TAG, "releaseChatSocket error");
-//            }
-//        });
-//    }
-
     /**
      * This function will receive a result message from server, and return the error message if fail.
      */
