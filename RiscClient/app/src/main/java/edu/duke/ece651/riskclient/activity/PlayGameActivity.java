@@ -366,9 +366,9 @@ public class PlayGameActivity extends AppCompatActivity {
                     territoryAdapter.setIdToName(idToName);
                     // only support alliance action for 3 or more players
                     // TODO: uncomment this before release
-//                if (allPlayers.size() < 3){
-//                    actionAdapter.remove(TYPE_ALLIANCE);
-//                }
+                    if (allPlayers.size() < 3){
+                        actionAdapter.remove(TYPE_ALLIANCE);
+                    }
                     newRound();
                 }else {
                     Log.e(TAG, "receiveLatestInfo expects ArrayList but is " + object);
