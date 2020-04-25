@@ -50,6 +50,8 @@ dependencies {
     // char library
     implementation 'com.github.stfalcon:chatkit:0.3.3'
     implementation "de.hdodenhof:circleimageview:2.2.0"
+    // photo view(zoomable0
+    implementation 'com.github.chrisbanes:PhotoView:2.3.0'
 
     // testing library
     testImplementation 'junit:junit:4.12'
@@ -72,7 +74,8 @@ dependencies {
     // android room(an abstraction over SQL)
     def room_version = "2.2.5"
     implementation "androidx.room:room-runtime:$room_version"
-    annotationProcessor "androidx.room:room-compiler:$room_version" // For Kotlin use kapt instead of annotationProcessor
+    annotationProcessor "androidx.room:room-compiler:$room_version"
+    // For Kotlin use kapt instead of annotationProcessor
     // optional - Kotlin Extensions and Coroutines support for Room
     implementation "androidx.room:room-ktx:$room_version"
     // optional - RxJava support for Room

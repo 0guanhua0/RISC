@@ -1,5 +1,6 @@
 package edu.duke.ece651.riskclient.adapter;
 
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,6 +42,13 @@ public class UnitAdapter extends RecyclerView.Adapter<UnitAdapter.RoomViewHolder
         UnitGroup unit = units.get(position);
 
         holder.tvUnitInfo.setText(String.format(Locale.US, "%d %s(level %d)", unit.getNumber(), UNIT_NAME.get(unit.getLevel()), unit.getLevel()));
+        // differentiate the unit of territory owner and allay
+        if (unit.isAllay()){
+            holder.tvUnitInfo.setTextColor(Color.RED);
+        }else {
+            holder.tvUnitInfo.setTextColor(Color.BLACK);
+        }
+
         holder.itemView.setOnClickListener(v -> {
             if (listener != null){
                 listener.onClick(position);

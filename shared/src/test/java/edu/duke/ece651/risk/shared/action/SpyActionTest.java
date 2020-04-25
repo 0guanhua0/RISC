@@ -18,6 +18,19 @@ import static org.junit.jupiter.api.Assertions.*;
 class SpyActionTest {
 
     @Test
+    void spyToString(){
+        SpyAction spyAction1 = new SpyAction(1);
+        assertEquals(1, spyAction1.targetId);
+        assertEquals("", spyAction1.targetName);
+        assertEquals("You choose to spy the Player 1", spyAction1.toString());
+
+        SpyAction spyAction2 = new SpyAction(2, "test");
+        assertEquals(2, spyAction2.targetId);
+        assertEquals("test", spyAction2.targetName);
+        assertEquals("You choose to spy the Player test", spyAction2.toString());
+    }
+
+    @Test
     void isValid() throws IOException {
         MapDataBase<String> mapDataBase = new MapDataBase<>();
         WorldMap<String> worldMap = mapDataBase.getMap("a clash of kings");
@@ -92,9 +105,5 @@ class SpyActionTest {
         spyAction2.perform(worldState1);
         assertEquals(techNum-SPY_COST,player1.getTechNum());
         assertTrue(player1.isSpying());
-
-
-
-
     }
 }

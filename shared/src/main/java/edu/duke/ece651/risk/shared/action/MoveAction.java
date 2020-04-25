@@ -6,13 +6,12 @@ import edu.duke.ece651.risk.shared.map.Unit;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.risk.shared.player.Player;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 import static edu.duke.ece651.risk.shared.Constant.UNIT_NAME;
 
-public class MoveAction implements Action, Serializable {
+public class MoveAction implements Action {
     private static final long serialVersionUID = 4L;
 
     String src;
@@ -22,7 +21,6 @@ public class MoveAction implements Action, Serializable {
 
     //key is technology level of corresponding units, value is number of units
     Map<Integer,Integer> levelToNum;
-
 
     public MoveAction(String src, String dest,
                       int playerId, int unitsNum) {
@@ -69,11 +67,21 @@ public class MoveAction implements Action, Serializable {
         if (player.getFoodNum()<dist*unitsNum){
             return false;
         }
-        for (Map.Entry<Integer, Integer> entry : this.levelToNum.entrySet()) {
-            if (!srcNode.canLoseUnits(entry.getValue(),entry.getKey())) {
-                return false;
+
+        if (player.getId()==srcNode.getOwner()){
+            for (Map.Entry<Integer, Integer> entry : this.levelToNum.entrySet()) {
+                if (!srcNode.canLoseUnits(entry.getValue(),entry.getKey())) {
+                    return false;
+                }
+            }
+        }else{
+            for (Map.Entry<Integer, Integer> entry : this.levelToNum.entrySet()) {
+                if (!srcNode.canLoseAllyUnits(entry.getValue(),entry.getKey())) {
+                    return false;
+                }
             }
         }
+
         return true;
 
     }
@@ -91,8 +99,12 @@ public class MoveAction implements Action, Serializable {
         for (Map.Entry<Integer, Integer> entry : levelToNum.entrySet()) {
             int num = entry.getValue();
             int level = entry.getKey();
-            srcNode.loseUnits(num, level);
             assert(destNode.getOwner()==player.getId()||destNode.getAllyId()==player.getId());
+            if (srcNode.getOwner()==player.getId()){
+                srcNode.loseUnits(num, level);
+            }else {
+                srcNode.loseAllyUnits(num, level);
+            }
             if (destNode.getOwner()==player.getId()){
                 destNode.addUnits(num, level);
             }else{

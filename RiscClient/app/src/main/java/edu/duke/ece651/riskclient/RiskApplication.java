@@ -25,15 +25,12 @@ import edu.duke.ece651.riskclient.objects.Message;
 import edu.duke.ece651.riskclient.objects.SimplePlayer;
 
 import static edu.duke.ece651.risk.shared.Constant.ACTION_CONNECT_CHAT;
+import static edu.duke.ece651.risk.shared.Constant.ACTION_TYPE;
 import static edu.duke.ece651.risk.shared.Constant.ROOM_ID;
 import static edu.duke.ece651.risk.shared.Constant.SUCCESSFUL;
-import static edu.duke.ece651.riskclient.Constant.ACTION_CREATE_NEW_ROOM;
-import static edu.duke.ece651.riskclient.Constant.ACTION_TYPE;
+import static edu.duke.ece651.risk.shared.Constant.USER_NAME;
 import static edu.duke.ece651.riskclient.Constant.HOST;
-import static edu.duke.ece651.riskclient.Constant.MAP_NAME;
 import static edu.duke.ece651.riskclient.Constant.PORT;
-import static edu.duke.ece651.riskclient.Constant.ROOM_NAME;
-import static edu.duke.ece651.riskclient.Constant.USER_NAME;
 import static edu.duke.ece651.riskclient.utils.SQLUtils.insertMessage;
 
 public class RiskApplication extends Application {
@@ -41,10 +38,12 @@ public class RiskApplication extends Application {
 
     private static Context context;
     /* ====== below are the parameters that need in one game(only need one copy in the whole program) ====== */
-
     private static SimplePlayer player;
     // one player can only in one room at the same time
     private static RoomInfo room;
+    // indicate whether the player is audience or playing
+    private static boolean isAudience;
+    /* ================== play game related variable ================== */
     // this socket is used to play a game
     // will be initialized once you join(or create) a room
     // will be closed once you leave a room
@@ -122,6 +121,14 @@ public class RiskApplication extends Application {
 
     public static int getRoomID(){
         return room.getRoomID();
+    }
+
+    public static boolean isAudience() {
+        return isAudience;
+    }
+
+    public static void setAudience(boolean isAudience) {
+        RiskApplication.isAudience = isAudience;
     }
 
     /**
@@ -227,48 +234,6 @@ public class RiskApplication extends Application {
     public static void registerMsgListener(onNewMessageListener listener){
         RiskApplication.msgListener = listener;
     }
-
-    /**
-     * Initialize the chat socket, will close any old one.
-     * This function should be called only after you successfully join(reconnect the room) and the game is start.
-     * The server only support chat function after the game is begin.
-     * @param listener result listener
-     */
-//    public static void initChatSocket(onResultListener listener) {
-//        threadPool.execute(() -> {
-//            try {
-//                releaseChatSocket();
-//                chatSocket = new Socket(HOST, PORT);
-//                // WARNING!!! here you should initialize "out-in" in this order!!! Otherwise, it will
-//                // cause deadlock.(Because server will initialize in "in-out" order.
-//                // https://stackoverflow.com/questions/21075453/objectinputstream-from-socket-getinputstream
-//                RiskApplication.chatOut = new ObjectOutputStream(chatSocket.getOutputStream());
-//                RiskApplication.chatIn = new ObjectInputStream(chatSocket.getInputStream());
-//
-//                // send the connect chat message
-//                JSONObject jsonObject = new JSONObject();
-//                jsonObject.put(USER_NAME, getPlayerName());
-//                jsonObject.put(ROOM_ID, getRoomID());
-//                jsonObject.put(ACTION_TYPE, ACTION_CONNECT_CHAT);
-//                // send and receive the result
-//                chatOut.writeObject(jsonObject.toString());
-//                chatOut.flush();
-//                Object object = chatIn.readObject();
-//                if (object instanceof String){
-//                    if (object.equals(SUCCESSFUL)){
-//                        listener.onSuccessful();
-//                    }else{
-//                        listener.onFailure((String) object);
-//                    }
-//                }else {
-//                    listener.onFailure("");
-//                }
-//            }catch (IOException | JSONException | ClassNotFoundException e){
-//                Log.e(TAG, "initGameSocket error " + e.toString());
-//                listener.onFailure("can't initialize the game socket");
-//            }
-//        });
-//    }
 
     /**
      * Send data to remote server, and check whether send successful.

@@ -217,6 +217,8 @@ class TerritoryImplTest {
         Map<Integer, List<Unit>> unitGroup = northTerr.getUnitGroup();
         assertFalse(unitGroup.containsKey(0));
         assertEquals(5,unitGroup.get(1).size());
+        Map<Integer, List<Unit>> allyUnitGroup = northTerr.getAllyUnitGroup();
+        assertEquals(0, allyUnitGroup.size());
     }
 
     @Test

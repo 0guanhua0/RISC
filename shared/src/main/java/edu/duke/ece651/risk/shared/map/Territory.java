@@ -29,11 +29,16 @@ public abstract class Territory implements Serializable {
     @Transient
     Player ally;
 
+
+    boolean isRadiated;
+
+
     public Territory(String name) {
         this.neigh = new HashSet<>();
         this.status = new TStatus(name);
         this.attackAct = new HashMap<>();
         this.ally = null;
+        isRadiated = false;
     }
 
     //morphia constructor
@@ -149,6 +154,16 @@ public abstract class Territory implements Serializable {
         return attackResults;
     }
 
+    //return true is territory is under radiation
+    public boolean isRadiated(){
+        return this.isRadiated;
+    }
+
+    //set this territory to be radiated
+    public void setRadiation(){
+        this.isRadiated = true;
+    }
+
     /**
      * @return the number of basic units
      */
@@ -171,7 +186,6 @@ public abstract class Territory implements Serializable {
     public abstract int getAllyUnitsNum(int level);
 
     public abstract void addUnit(Unit unit);
-
 
     /**
      * add some basic units into this territory
@@ -201,6 +215,18 @@ public abstract class Territory implements Serializable {
      */
     public abstract void loseUnits(int num,int level);
 
+
+    /**
+     * lose some units with specified level for an ally
+     * @param num: number of units to move
+     * @param level: technology level of this units
+     */
+    public abstract void loseAllyUnits(int num,int level);
+
+
+    public abstract boolean canLoseAllyUnits(int num,int level);
+
+
     /**
      * check if its a legal units group to add, also help ensure Liskov substitution
      * this method should ba called before any adding and losing operation
@@ -219,6 +245,7 @@ public abstract class Territory implements Serializable {
      */
     public abstract boolean canLoseUnits(int num, int level);
 
+
     public abstract void addAttack(Player player, Army army);
 
     abstract AttackResult resolveCombat(Map<Player, List<Army>> unifiedArmy, Random diceAttack, Random diceDefend);
@@ -228,6 +255,7 @@ public abstract class Territory implements Serializable {
     abstract public int getFoodYield();
     abstract public int getTechYield();
     abstract public Map<Integer, List<Unit>> getUnitGroup();
+    abstract public Map<Integer, List<Unit>> getAllyUnitGroup();
 
 
     /**

@@ -107,4 +107,16 @@ class TerritoryTest {
 
 
     }
+
+    @Test
+    void isRadiated() throws IOException {
+        MapDataBase<String> mapDataBase = new MapDataBase<>();
+        WorldMap<String> worldMap = mapDataBase.getMap("a clash of kings");
+
+        Territory stormTerr = worldMap.getTerritory("the storm kingdom");
+        assertFalse(stormTerr.isRadiated());
+        stormTerr.setRadiation();
+        assertTrue(stormTerr.isRadiated());
+
+    }
 }

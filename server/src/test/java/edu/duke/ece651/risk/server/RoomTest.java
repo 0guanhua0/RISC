@@ -23,12 +23,9 @@ public class RoomTest {
 
     @Test
     void testConstructor() throws IOException, ClassNotFoundException {
-        assertThrows(IllegalArgumentException.class, () -> {
-            new Room(-3, null, new MapDataBase<String>());
-        });
-        assertThrows(IllegalArgumentException.class, () -> {
-            new Room(-3, new MapDataBase<String>());
-        });
+
+        assertThrows(IllegalArgumentException.class,()->{new Room(-3,null, new MapDataBase<String>());});
+        assertThrows(IllegalArgumentException.class,()->{new Room(-3);});
 
         String m1 = "hogwarts";
         String r1 = "1";
@@ -301,7 +298,6 @@ public class RoomTest {
         p1Group.add("kingdom of mountain and vale");
         p1Group.add("the storm kingdom");
 
-
         //valid input objects for p1
         HashMap<String, Integer> p1Chosen1 = new HashMap<>();
         p1Chosen1.put("kingdom of the north", 5);
@@ -368,7 +364,16 @@ public class RoomTest {
                                 ACTION_DONE
                         ))), new ByteArrayOutputStream());
 
+        Player<String> audience1 = new PlayerV1<>(
+                setupMockInput(new ArrayList<>()), new ByteArrayOutputStream());
+
+        Player<String> audience2 = new PlayerV1<>(
+                setupMockInput(new ArrayList<>()), new ByteArrayOutputStream());
+        audience2.setConnect(false);
+
         Room room = new Room(1, player1, new MapDataBase<>());
+        room.addAudience(audience1);
+        room.addAudience(audience2);
         room.addPlayer(player2);
 
         // player 1 should win the game
@@ -384,7 +389,7 @@ public class RoomTest {
         MapDataBase<String> mapDataBase = new MapDataBase<>();
 
         //room 0
-        Room room = new Room(0, mapDataBase);
+        Room room = new Room(0);
 
         ByteArrayOutputStream o1 = new ByteArrayOutputStream();
         String map = "a clash of kings";
@@ -400,7 +405,7 @@ public class RoomTest {
         assertEquals(SUCCESSFUL, readAllStringFromObjectStream(o1));
 
         //room 2
-        Room room2 = new Room(0, mapDataBase);
+        Room room2 = new Room(0);
 
         String map2 = "a clash of kings";
         String rName2 = "2";
@@ -425,7 +430,7 @@ public class RoomTest {
         MapDataBase<String> mapDataBase = new MapDataBase<>();
 
         //room 0
-        Room room = new Room(0, mapDataBase);
+        Room room = new Room(0);
         assertNull(room.getPlayer("1"));
         assertFalse(room.hasPlayer("1"));
         assertFalse(room.isPlayerLose("1"));

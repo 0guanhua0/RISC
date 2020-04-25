@@ -3,7 +3,7 @@ package edu.duke.ece651.risk.server;
 
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
-import edu.duke.ece651.risk.shared.UnauthorizedUserException;
+
 
 import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.map.TerritoryImpl;
@@ -70,7 +70,7 @@ public class GameServerTest {
 
         String s11 = "{\"" + USER_NAME + "\": \"" + userName1 + "\",\n" +
                 "\"" + USER_PASSWORD + "\": \"" + userPassword1 + "\",\n" +
-                "\"" + ACTION + "\": \"" + SIGNUP + "\" }";
+                "\"" + ACTION_TYPE + "\": \"" + ACTION_SIGN_UP + "\" }";
 
         when(socket1.getInputStream()).thenReturn(setupMockInput(new ArrayList<>(Arrays.asList(s11))));
         when(socket1.getOutputStream()).thenReturn(outputStream);
@@ -81,7 +81,7 @@ public class GameServerTest {
 
         String s21 = "{\"" + USER_NAME + "\": \"" + userName1 + "\",\n" +
                 "\"" + USER_PASSWORD + "\": \"" + userPassword1 + "\",\n" +
-                "\"" + ACTION + "\": \"" + SIGNUP + "\" }";
+                "\"" + ACTION_TYPE + "\": \"" + ACTION_SIGN_UP + "\" }";
         Socket socket2 = mock(Socket.class);
         when(socket2.getInputStream()).thenReturn(setupMockInput(new ArrayList<>(Arrays.asList(s21))));
         when(socket2.getOutputStream()).thenReturn(new ByteArrayOutputStream());
@@ -91,7 +91,7 @@ public class GameServerTest {
 
         String s31 = "{\"" + USER_NAME + "\": \"" + userName1 + "\",\n" +
                 "\"" + USER_PASSWORD + "\": \"" + userPassword1 + "\",\n" +
-                "\"" + ACTION + "\": \"" + SIGNUP + "\" }";
+                "\"" + ACTION_TYPE + "\": \"" + ACTION_SIGN_UP + "\" }";
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         stream.close();
         Socket socketError = mock(Socket.class);
@@ -130,7 +130,7 @@ public class GameServerTest {
 
         String s1 = "{\"" + USER_NAME + "\": \"" + user1Name + "\",\n" +
                 "\"" + USER_PASSWORD + "\": \"" + user1Password + "\",\n" +
-                "\"" + ACTION + "\": \"" + SIGNUP + "\" }";
+                "\"" + ACTION_TYPE + "\": \"" + ACTION_SIGN_UP + "\" }";
 
         Socket socket1 = mock(Socket.class);
         when(socket1.getInputStream())
@@ -149,7 +149,7 @@ public class GameServerTest {
 
         String s2 = "{\"" + USER_NAME + "\": \"" + userName2 + "\",\n" +
                 "\"" + USER_PASSWORD + "\": \"" + userPassword2 + "\",\n" +
-                "\"" + ACTION + "\": \"" + LOGIN + "\" }";
+                "\"" + ACTION_TYPE + "\": \"" + ACTION_LOGIN + "\" }";
 
         when(socket2.getInputStream())
                 .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList(s2))));
@@ -166,7 +166,7 @@ public class GameServerTest {
 
         String s2b = "{\"" + USER_NAME + "\": \"" + userName2b + "\",\n" +
                 "\"" + USER_PASSWORD + "\": \"" + userPassword2b + "\",\n" +
-                "\"" + ACTION + "\": \"" + LOGIN + "\" }";
+                "\"" + ACTION_TYPE + "\": \"" + ACTION_LOGIN + "\" }";
 
         when(socket2b.getInputStream())
                 .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList(s2b))));
@@ -182,7 +182,7 @@ public class GameServerTest {
 
         String s3 = "{\"" + USER_NAME + "\": \"" + userName3 + "\",\n" +
                 "\"" + USER_PASSWORD + "\": \"" + userPassword3 + "\",\n" +
-                "\"" + ACTION + "\": \"" + SIGNUP + "\" }";
+                "\"" + ACTION_TYPE + "\": \"" + ACTION_SIGN_UP + "\" }";
 
         Socket socket3 = mock(Socket.class);
         when(socket3.getInputStream())
@@ -200,7 +200,7 @@ public class GameServerTest {
 
         String s4 = "{\"" + USER_NAME + "\": \"" + userName4 + "\",\n" +
                 "\"" + USER_PASSWORD + "\": \"" + userPassword4 + "\",\n" +
-                "\"" + ACTION + "\": \"" + LOGIN + "\" }";
+                "\"" + ACTION_TYPE + "\": \"" + ACTION_LOGIN + "\" }";
 
         Socket socket4 = mock(Socket.class);
         when(socket4.getInputStream())
@@ -217,7 +217,7 @@ public class GameServerTest {
 
         String s5 = "{\"" + USER_NAME + "\": \"" + userName5 + "\",\n" +
                 "\"" + USER_PASSWORD + "\": \"" + userPassword5 + "\",\n" +
-                "\"" + ACTION + "\": \"" + "xxx" + "\" }";
+                "\"" + ACTION_TYPE + "\": \"" + "xxx" + "\" }";
 
         Socket socket5 = mock(Socket.class);
         when(socket5.getInputStream())
@@ -232,7 +232,7 @@ public class GameServerTest {
 
         String s6 = "{\"" + USER_NAME + "\": \"" + userName2 + "\",\n" +
                 "\"" + USER_PASSWORD + "\": \"" + userPassword2 + "\",\n" +
-                "\"" + ACTION + "\": \"" + ACTION_GET_WAIT_ROOM + "\" }";
+                "\"" + ACTION_TYPE + "\": \"" + ACTION_GET_ALL_ROOM + "\" }";
 
         Socket socket6 = mock(Socket.class);
         when(socket6.getInputStream())
@@ -247,7 +247,7 @@ public class GameServerTest {
 
         String s7 = "{\"" + USER_NAME + "\": \"" + userName2 + "\",\n" +
                 "\"" + USER_PASSWORD + "\": \"" + userPassword2 + "\",\n" +
-                "\"" + ACTION + "\": \"" + ACTION_GET_IN_ROOM + "\" }";
+                "\"" + ACTION_TYPE + "\": \"" + ACTION_GET_IN_ROOM + "\" }";
 
         Socket socket7 = mock(Socket.class);
         when(socket7.getInputStream())
@@ -266,7 +266,7 @@ public class GameServerTest {
 
         String s8 = "{\"" + USER_NAME + "\": \"" + "zxc" + "\",\n" +
                 "\"" + USER_PASSWORD + "\": \"" + "zxc" + "\",\n" +
-                "\"" + ACTION + "\": \"" + ACTION_GET_IN_ROOM + "\" }";
+                "\"" + ACTION_TYPE + "\": \"" + ACTION_GET_IN_ROOM + "\" }";
 
         Socket socket8 = mock(Socket.class);
         when(socket8.getInputStream())
@@ -291,13 +291,29 @@ public class GameServerTest {
         gameServer.db.addUser(userName1, userPassword1);
         gameServer.userList.addUser(user1);
 
+        String userName2 = "2";
+        String userPassword2 = "2";
+        User user2 = new User(userName2, userPassword2);
+        gameServer.db.addUser(userName2, userPassword2);
+        gameServer.userList.addUser(user2);
+
+        String userName3 = "3";
+        String userPassword3 = "3";
+        User user3 = new User(userName3, userPassword3);
+        gameServer.db.addUser(userName3, userPassword3);
+        gameServer.userList.addUser(user3);
+
         String s11 = "{\"" + USER_NAME + "\": \"" + userName1 + "\",\n" +
                 "\"" + USER_PASSWORD + "\": \"" + userPassword1 + "\",\n" +
-                "\"" + ACTION + "\": \"" + ACTION_CREATE_GAME + "\" }";
+                "\"" + ACTION_TYPE + "\": \"" + ACTION_CREATE_GAME + "\" }";
 
         String rName = "1";
 
-        String s13 = "{\"" + MAP_NAME + "\": \"" + "test" + "\",\n" +
+        // room 0 has enough player
+        String s13 = "{\"" + MAP_NAME + "\": \"" + "a clash of kings" + "\",\n" +
+                "\"" + ROOM_NAME +"\": \"" + rName + "\" }";
+        // room 1 doesn't have enough player
+        String s14 = "{\"" + MAP_NAME + "\": \"" + "test" + "\",\n" +
                 "\"" + ROOM_NAME +"\": \"" + rName + "\" }";
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -312,16 +328,21 @@ public class GameServerTest {
         assertEquals(0, gameServer.rooms.get(0).roomID);
         assertTrue(user1.isInRoom(0));
 
-        //2 login user join existing room
-        String u2 = "2";
-        String pwd2 = "2";
-        User user2 = new User(u2, pwd2);
-        gameServer.db.addUser(u2, pwd2);
-        gameServer.userList.addUser(user2);
+        socket1 = mock(Socket.class);
+        when(socket1.getInputStream())
+                .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList(s11, "-1", s14))));
+        when(socket1.getOutputStream()).thenReturn(outputStream);
+        gameServer.handleIncomeRequest(socket1);
+        assertEquals(2, gameServer.rooms.size());
+        assertEquals(1, gameServer.rooms.get(1).players.size());
+        assertEquals(1, gameServer.rooms.get(1).roomID);
+        assertTrue(user1.isInRoom(1));
 
-        String s21 = "{\"" + USER_NAME + "\": \"" + u2 + "\",\n" +
-                "\"" + USER_PASSWORD + "\": \"" + pwd2 + "\",\n" +
-                "\"" + ACTION + "\": \"" + ACTION_JOIN_GAME + "\" }";
+        // 2 login user join existing room
+
+        String s21 = "{\"" + USER_NAME + "\": \"" + userName2 + "\",\n" +
+                "\"" + USER_PASSWORD + "\": \"" + userPassword2 + "\",\n" +
+                "\"" + ACTION_TYPE + "\": \"" + ACTION_JOIN_GAME + "\" }";
 
         ByteArrayOutputStream o2 = new ByteArrayOutputStream();
         Socket socket2 = mock(Socket.class);
@@ -330,14 +351,14 @@ public class GameServerTest {
         when(socket2.getOutputStream()).thenReturn(o2);
 
         gameServer.handleIncomeRequest(socket2);
-        assertEquals(1, gameServer.rooms.size());
+        assertEquals(2, gameServer.rooms.size());
         assertEquals(2, gameServer.rooms.get(0).players.size());
         assertTrue(user2.isInRoom(0));
 
         //3 login user reconnect to room
         String s31 = "{\"" + USER_NAME + "\": \"" + userName1 + "\",\n" +
                 "\"" + ROOM_ID + "\": \"" + 0 + "\",\n" +
-                "\"" + ACTION + "\": \"" + ACTION_RECONNECT_ROOM + "\" }";
+                "\"" + ACTION_TYPE + "\": \"" + ACTION_RECONNECT_ROOM + "\" }";
 
         ByteArrayOutputStream o3 = new ByteArrayOutputStream();
         Socket socket3 = mock(Socket.class);
@@ -352,7 +373,7 @@ public class GameServerTest {
         //4 invalid reconnect
         String s41 = "{\"" + USER_NAME + "\": \"" + userName1 + "\",\n" +
                 "\"" + ROOM_ID + "\": \"" + 5 + "\",\n" +
-                "\"" + ACTION + "\": \"" + ACTION_RECONNECT_ROOM + "\" }";
+                "\"" + ACTION_TYPE + "\": \"" + ACTION_RECONNECT_ROOM + "\" }";
 
         ByteArrayOutputStream o4 = new ByteArrayOutputStream();
         Socket socket4 = mock(Socket.class);
@@ -366,7 +387,7 @@ public class GameServerTest {
         //5 strange action
         String s51 = "{\"" + USER_NAME + "\": \"" + userName1 + "\",\n" +
                 "\"" + ROOM_ID + "\": \"" + 5 + "\",\n" +
-                "\"" + ACTION + "\": \"" + "xxx" + "\" }";
+                "\"" + ACTION_TYPE + "\": \"" + "xxx" + "\" }";
 
         ByteArrayOutputStream o5 = new ByteArrayOutputStream();
         Socket socket5 = mock(Socket.class);
@@ -382,7 +403,7 @@ public class GameServerTest {
         //6 login user connect to the chat
         String s6 = "{\"" + USER_NAME + "\": \"" + userName1 + "\",\n" +
                 "\"" + ROOM_ID + "\": \"" + 0 + "\",\n" +
-                "\"" + ACTION + "\": \"" + ACTION_CONNECT_CHAT + "\" }";
+                "\"" + ACTION_TYPE + "\": \"" + ACTION_CONNECT_CHAT + "\" }";
 
         ByteArrayOutputStream o6 = new ByteArrayOutputStream();
         Socket socket6 = mock(Socket.class);
@@ -397,7 +418,7 @@ public class GameServerTest {
         // 7 login user connect to the chat but no in this room
         String s7 = "{\"" + USER_NAME + "\": \"" + userName1 + "\",\n" +
                 "\"" + ROOM_ID + "\": \"" + 10 + "\",\n" +
-                "\"" + ACTION + "\": \"" + ACTION_CONNECT_CHAT + "\" }";
+                "\"" + ACTION_TYPE + "\": \"" + ACTION_CONNECT_CHAT + "\" }";
 
         ByteArrayOutputStream o7 = new ByteArrayOutputStream();
         Socket socket7 = mock(Socket.class);
@@ -408,6 +429,46 @@ public class GameServerTest {
         gameServer.handleIncomeRequest(socket7);
 
         assertEquals(INVALID_RECONNECT, readAllStringFromObjectStream(o7));
+
+        //8 login user audience game
+        String s8 = "{\"" + USER_NAME + "\": \"" + userName1 + "\",\n" +
+                "\"" + ROOM_ID + "\": \"" + 0 + "\",\n" +
+                "\"" + ACTION_TYPE + "\": \"" + ACTION_AUDIENCE_GAME + "\" }";
+        String s9 = "{\"" + USER_NAME + "\": \"" + userName1 + "\",\n" +
+                "\"" + ROOM_ID + "\": \"" + 1 + "\",\n" +
+                "\"" + ACTION_TYPE + "\": \"" + ACTION_AUDIENCE_GAME + "\" }";
+        String s10 = "{\"" + USER_NAME + "\": \"" + userName1 + "\",\n" +
+                "\"" + ROOM_ID + "\": \"" + 2 + "\",\n" +
+                "\"" + ACTION_TYPE + "\": \"" + ACTION_AUDIENCE_GAME + "\" }";
+
+        ByteArrayOutputStream o8 = new ByteArrayOutputStream();
+        Socket socket8 = mock(Socket.class);
+        when(socket8.getInputStream())
+                .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList(s8))));
+        when(socket8.getOutputStream()).thenReturn(o8);
+
+        o8.reset();
+        gameServer.handleIncomeRequest(socket8);
+        assertEquals(SUCCESSFUL, readAllStringFromObjectStream(o8));
+
+        socket8 = mock(Socket.class);
+        when(socket8.getInputStream())
+                .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList(s9))));
+        when(socket8.getOutputStream()).thenReturn(o8);
+        o8.reset();
+        gameServer.handleIncomeRequest(socket8);
+        assertEquals(INVALID_AUDIENCE_NOT_START, readAllStringFromObjectStream(o8));
+
+        Room room = new Room(2);
+        room.gameInfo.winnerID = 1;
+        gameServer.rooms.put(2, room);
+        socket8 = mock(Socket.class);
+        when(socket8.getInputStream())
+                .thenReturn(setupMockInput(new ArrayList<>(Arrays.asList(s10))));
+        when(socket8.getOutputStream()).thenReturn(o8);
+        o8.reset();
+        gameServer.handleIncomeRequest(socket8);
+        assertEquals(INVALID_AUDIENCE_FINISHED, readAllStringFromObjectStream(o8));
     }
 
     @Test
@@ -450,6 +511,7 @@ public class GameServerTest {
                         new ArrayList<>(Arrays.asList(
                                 s11, s11, s11
                         ))), new ByteArrayOutputStream());
+        player.setName("test");
 
         Room room1 = new Room(1, player, new MapDataBase<>()); // waiting
         Room room2 = new Room(2, player, new MapDataBase<>()); // running
@@ -466,7 +528,7 @@ public class GameServerTest {
         gameServer.rooms.put(room3.roomID, room3);
 
         assertEquals(3, gameServer.rooms.size());
-        assertEquals(1, gameServer.getRoomList().size()); // only one room waiting for new player
+        assertEquals(2, gameServer.getRoomList().size()); // only one room waiting for new player
         assertEquals(2, gameServer.rooms.size()); // the room finished is removed
     }
 
@@ -490,7 +552,7 @@ public class GameServerTest {
 
         String s11 = "{\"" + USER_NAME + "\": \"" + userName1 + "\",\n" +
                 "\"" + USER_PASSWORD + "\": \"" + userPassword1 + "\",\n" +
-                "\"" + ACTION + "\": \"" + SIGNUP + "\" }";
+                "\"" + ACTION_TYPE + "\": \"" + ACTION_SIGN_UP + "\" }";
 
         client.send(s11);
         Thread.sleep(2000);

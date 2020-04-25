@@ -29,7 +29,7 @@ public class PlayerThread extends Thread{
     CyclicBarrier barrier;
     int waitTimeOut;
     List<Player<String>> players;
-
+    onNewActionListener listener;
 
     /**
      *
@@ -40,21 +40,24 @@ public class PlayerThread extends Thread{
      */
     public PlayerThread(Player<String> player, WorldMap<String> map,
                         GameInfo gameInfo, CyclicBarrier barrier,
-                        List<Player<String>> players) {
-        this(player, map, gameInfo, barrier, WAIT_TIME_OUT,players);
+                        List<Player<String>> players, onNewActionListener actionListener) {
+        this(player, map, gameInfo, barrier, WAIT_TIME_OUT, players, actionListener);
     }
 
     /**
      * This is mainly for testing purpose, control the timeout
      */
     public PlayerThread(Player<String> player, WorldMap<String> map,
-                        GameInfo gameInfo, CyclicBarrier barrier, int timeout,List<Player<String>> players) {
+                        GameInfo gameInfo, CyclicBarrier barrier,
+                        int timeout, List<Player<String>> players,
+                        onNewActionListener actionListener) {
         this.player = player;
         this.map = map;
         this.gameInfo = gameInfo;
         this.barrier = barrier;
         this.waitTimeOut = timeout;
         this.players = players;
+        this.listener = actionListener;
         allPlayers = new ArrayList<>();
         for (Player<String> p : this.players){
             allPlayers.add(new SPlayer(p.getId(), p.getName()));
@@ -137,21 +140,21 @@ public class PlayerThread extends Thread{
         }
 
         // build the current state of playGame
-        WorldState worldState = new WorldState(this.player,this.map,this.players);
+        WorldState worldState = new WorldState(player, map, players);
         // if player hasn't lose yet, let him or her play another round of playGame
-        if (this.player.getTerrNum() > 0){
+        if (player.getTerrNum() > 0){
             int checkCnt = 0;
             boolean reconnect = false;
             while (true){
                 // we will only wait for user input unless he/she is connected
                 // otherwise we will want 1s and then check if user is connected or not
-                if (this.player.isConnect()){
+                if (player.isConnect()){
                     if (reconnect){
                         // once user reconnect, send he/she all player info & the latest roundInfo
                         player.send(allPlayers);
                         player.send(roundInfo);
                     }
-                    Object recvRes = this.player.recv();
+                    Object recvRes = player.recv();
                     if (recvRes instanceof Action){
                         Action action = (Action) recvRes;
                         synchronized (this) {
@@ -159,16 +162,22 @@ public class PlayerThread extends Thread{
                             if (action.isValid(worldState)){
                                 // if valid, update the state of the world
                                 action.perform(worldState);
-                                this.player.send(SUCCESSFUL);
+                                player.send(SUCCESSFUL);
+                                if (listener != null){
+                                    listener.newAction(player.getName(), action);
+                                }
                             }else{
                                 // otherwise ask user to resend the information
                                 this.player.send(INVALID_ACTION);
                             }
                         }
                     }else if (recvRes instanceof String && recvRes.equals(ACTION_DONE)){
+                        if (listener != null){
+                            listener.finishRound(player.getName());
+                        }
                         break;
                     }else {
-                        this.player.send(INVALID_ACTION);
+                        player.send(INVALID_ACTION);
                     }
                 }else {
                     Thread.sleep(1000);

@@ -169,17 +169,18 @@ class MoveActionTest {
         WorldState p1State = new WorldState(p1, worldMap);
         WorldState p2State = new WorldState(p2, worldMap);
 
-
         //test invalid action
         MoveAction a0 = new MoveAction(north, dorne, 1, 1);
         assertThrows(IllegalArgumentException.class,()->{a0.perform(p1State);});
 
         int northStart = northTerr.getBasicUnitsNum();
+        System.out.println("northStart = " + northStart);
         int valeStart = valeTerr.getBasicUnitsNum();
         int foodStorage = p1.getFoodNum();
         for (int i=1;i<=3;i++){
             MoveAction moveAction = new MoveAction(north, vale, 1, 2);
             moveAction.perform(p1State);
+            System.out.println(northTerr.getBasicUnitsNum());
             assertEquals(northTerr.getBasicUnitsNum(),northStart-i*2);
             assertEquals(valeTerr.getBasicUnitsNum(),valeStart+i*2);
             assertEquals(foodStorage-5*i*2,p1.getFoodNum());
@@ -237,10 +238,8 @@ class MoveActionTest {
         player2.addTerritory(valeTerr);
         player2.addTerritory(dorneTerr);
 
-
         WorldState worldState1 = new WorldState(player1, worldMap, Arrays.asList(player1,player2));
         WorldState worldState2 = new WorldState(player2, worldMap, Arrays.asList(player1,player2));
-
 
         //1 submit an ally request to ally with 2
         AllyAction allyAction1 = new AllyAction(2);
@@ -249,29 +248,31 @@ class MoveActionTest {
         AllyAction allyAction2 = new AllyAction(1);
         allyAction2.perform(worldState2);
 
-        valeTerr.addUnit(new Unit(0));
-        valeTerr.addUnit(new Unit(0));
-
+        //player1
         stormTerr.addUnit(new Unit(1));
         stormTerr.addUnit(new Unit(2));
-
+        //player2
+        valeTerr.addUnit(new Unit(0));
+        valeTerr.addUnit(new Unit(0));
         dorneTerr.addUnit(new Unit(3));
         dorneTerr.addUnit(new Unit(4));
+
+
 
         assertEquals(0,dorneTerr.getUnitsNum(0));
         Map<Integer, Integer> unitMap = new HashMap<Integer, Integer>(){{
             put(0,1);
         }};
-
+        //move own units into a territory owned by ally
         MoveAction moveAction1 = new MoveAction(vale, storm, 2, unitMap);
         assertDoesNotThrow(()->{moveAction1.perform(worldState2);});
         assertEquals(1,stormTerr.getAllyUnitsNum(0));
-
+        //move units but crosses a territory owned by ally
         MoveAction moveAction2 = new MoveAction(vale, dorne, 2, unitMap);
         assertDoesNotThrow(()->{moveAction2.perform(worldState2);});
         assertEquals(0,valeTerr.getUnitsNum(0));
         assertEquals(1,dorneTerr.getUnitsNum(0));
-
+        //move own units into a territory owned by ally
         Map<Integer, Integer> unitMap2 = new HashMap<Integer, Integer>(){{
             put(2,1);
         }};
@@ -280,8 +281,20 @@ class MoveActionTest {
         assertEquals(0,stormTerr.getUnitsNum(2));
         assertEquals(1,valeTerr.getAllyUnitsNum(2));
 
+        //test can perform attack action from a territory owned by ally
+        AttackAction attackAction = new AttackAction(vale, north, 1, unitMap2);
+        assertDoesNotThrow(()->{attackAction.perform(worldState1);});
+        assertEquals(0,valeTerr.getAllyUnitsNum(2));
 
 
+        //move own units from a territory owned by ally
+        assertEquals(0,valeTerr.getUnitsNum(0));
+        assertEquals(1,stormTerr.getAllyUnitsNum(0));
+        MoveAction moveAction4 = new MoveAction(storm, vale, 2, unitMap);
+//        moveAction4.perform(worldState2);
+        assertDoesNotThrow(()->{moveAction4.perform(worldState2);});
+        assertEquals(1,valeTerr.getUnitsNum(0));
+        assertEquals(0,stormTerr.getAllyUnitsNum(2));
 
     }
 

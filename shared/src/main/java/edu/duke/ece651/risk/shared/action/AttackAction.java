@@ -14,7 +14,7 @@ import java.util.Map;
 import static edu.duke.ece651.risk.shared.Constant.UNIT_NAME;
 
 
-public class AttackAction implements Action, Serializable {
+public class AttackAction implements Action {
     private static final long serialVersionUID = 2L;
 
     String src;
@@ -60,24 +60,32 @@ public class AttackAction implements Action, Serializable {
             return false;
         }
 
-        //validate src own by player
+        //validate src is owned by player or her ally
         Territory src = worldMap.getTerritory(this.src);
-        if (src.getOwner() != this.playerId) {
+        if (src.getOwner()!= player.getId()&&src.getAllyId()!=player.getId()) {
             return false;
         }
 
-        //validate dst owns by opponent
+        //validate dst is owned by opponent
         Territory dst = worldMap.getTerritory(this.dest);
         if (dst.getOwner() == this.playerId) {
             return false;
         }
-
-        for (Map.Entry<Integer, Integer> entry : this.levelToNum.entrySet()) {
-            //validate src has enough unit
-            if (!src.canLoseUnits(entry.getValue(),entry.getKey())) {
-                return false;
+        //validate src has enough unit
+        if (player.getId()==src.getOwner()){
+            for (Map.Entry<Integer, Integer> entry : this.levelToNum.entrySet()) {
+                if (!src.canLoseUnits(entry.getValue(),entry.getKey())) {
+                    return false;
+                }
+            }
+        }else {
+            for (Map.Entry<Integer, Integer> entry : this.levelToNum.entrySet()) {
+                if (!src.canLoseAllyUnits(entry.getValue(),entry.getKey())) {
+                    return false;
+                }
             }
         }
+
 
         //validate food storage
         int foodStorage = player.getFoodNum();
@@ -115,10 +123,14 @@ public class AttackAction implements Action, Serializable {
         if (myPlayer.hasAlly()&&destOwner==myPlayer.getAlly().getId()){
             myPlayer.ruptureAlly();
         }
+        Territory srcTerr = worldMap.getTerritory(src);
 
         for (Map.Entry<Integer, Integer> entry : levelToNum.entrySet()) {
-            // reduce src units
-            worldMap.getTerritory(src).loseUnits(entry.getValue(),entry.getKey());
+            if (myPlayer.getId()==srcTerr.getOwner()){// reduce src units
+                srcTerr.loseUnits(entry.getValue(),entry.getKey());
+            }else{
+                srcTerr.loseAllyUnits(entry.getValue(),entry.getKey());
+            }
         }
 
         // add attack units to target territory's attack buffer

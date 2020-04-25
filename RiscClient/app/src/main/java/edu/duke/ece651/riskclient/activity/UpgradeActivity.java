@@ -148,6 +148,7 @@ public class UpgradeActivity extends AppCompatActivity {
         Button btConfirm = findViewById(R.id.bt_confirm);
         Button btDecline = findViewById(R.id.bt_decline);
 
+        btConfirm.setText("Upgrade");
         btConfirm.setOnClickListener(v -> {
             if (isUpgradeMax){
                 UpMaxTechAction action = new UpMaxTechAction();
@@ -185,7 +186,7 @@ public class UpgradeActivity extends AppCompatActivity {
         tvCurrentLevel.setText(String.format(Locale.US, "Current tech level: %d", currentTechLevel));
 
         TextView tvCostToNext = findViewById(R.id.tv_cost_to_next);
-        tvCostToNext.setText(String.format(Locale.US, "Cost to upgrade to next: %d", TECH_MAP.get(currentTechLevel + 1)));
+        tvCostToNext.setText(String.format(Locale.US, "Cost to upgrade to next: %d", TECH_MAP.get(currentTechLevel)));
     }
 
     private void setUpSrcTerritory(){
@@ -301,7 +302,7 @@ public class UpgradeActivity extends AppCompatActivity {
         Territory t = map.getTerritory(srcTerritory);
         List<UnitGroup> unitGroups = new ArrayList<>();
         for (Map.Entry<Integer, List<Unit>> entry : t.getUnitGroup().entrySet()){
-            unitGroups.add(new UnitGroup(entry.getKey(), entry.getValue().size()));
+            unitGroups.add(new UnitGroup(entry.getKey(), entry.getValue().size(), false));
         }
         srcUnitAdapter.setUnits(unitGroups);
     }
@@ -361,7 +362,7 @@ public class UpgradeActivity extends AppCompatActivity {
         if (!t.getUnitGroup().containsKey(unitLevelFrom)){
             return false;
         }else {
-            return unitNum > Objects.requireNonNull(t.getUnitGroup().get(unitLevelFrom)).size();
+            return unitNum <= Objects.requireNonNull(t.getUnitGroup().get(unitLevelFrom)).size();
         }
     }
 }

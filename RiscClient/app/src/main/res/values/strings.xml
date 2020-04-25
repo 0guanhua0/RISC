@@ -13,7 +13,7 @@
     <string name="signup_password2_hint">Again</string>
 
     <!--  home fragment  -->
-    <string name="home_all_room">rooms waiting for players</string>
+    <string name="home_all_room">all rooms</string>
     <string name="home_room_in">rooms you in</string>
     <string name="home_no_room_wait">Currently there are no rooms waiting for new player.</string>
     <string name="home_no_room_in">Currently you don\'t have any playing rooms.</string>
@@ -65,6 +65,9 @@
     <string name="chat_hint_to_player">To:</string>
     <string name="chat_action_copy">Copy</string>
     <string name="chat_action_delete">Delete</string>
+
+    <!-- radiate activity -->
+    <string name="radiate_intro">Radiate action\nonce you perform the radiate action, target territory will not produce any resource forever</string>
 
     <string name="menu_home">Home</string>
     <string name="menu_update">Change Password</string>

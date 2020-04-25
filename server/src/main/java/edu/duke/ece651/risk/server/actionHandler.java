@@ -1,6 +1,5 @@
 package edu.duke.ece651.risk.server;
 
-import edu.duke.ece651.risk.shared.UnauthorizedUserException;
 import edu.duke.ece651.risk.shared.player.Player;
 import org.json.JSONObject;
 

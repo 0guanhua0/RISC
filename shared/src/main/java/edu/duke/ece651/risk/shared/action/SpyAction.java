@@ -2,17 +2,29 @@ package edu.duke.ece651.risk.shared.action;
 
 
 import edu.duke.ece651.risk.shared.Constant;
+import edu.duke.ece651.risk.shared.Utils;
 import edu.duke.ece651.risk.shared.WorldState;
 import edu.duke.ece651.risk.shared.player.Player;
 
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
-public class SpyAction implements Action{
+public class SpyAction implements Action {
+    private static final long serialVersionUID = 26L;
 
     int targetId;
+    String targetName;
 
     public SpyAction(int targetId) {
         this.targetId = targetId;
+        this.targetName = "";
+    }
+
+    public SpyAction(int targetId, String targetName){
+        this.targetId = targetId;
+        this.targetName = targetName;
     }
 
     @Override
@@ -46,8 +58,25 @@ public class SpyAction implements Action{
         }
         List<Action> actions = worldState.getPlayers().get(targetId-1).getActions();
 
+        // pure magic, the same magic of round info, we need to clone a new object
+        // otherwise client will always receive 0
+        ArrayList<Action> a = new ArrayList<>(actions);
+        try {
+            myPlayer.send(Utils.clone(a));
+        } catch (IOException | ClassNotFoundException ignored) {
+        }
         //TODO use communication to replace the standard output here
         System.out.println(actions);
+
         return true;
+    }
+
+    @Override
+    public String toString() {
+        if (targetName.isEmpty()){
+            return String.format("You choose to spy the Player %d", targetId);
+        }else {
+            return String.format("You choose to spy the Player %s", targetName);
+        }
     }
 }

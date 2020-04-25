@@ -13,9 +13,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".activity.ChatActivity">
-
-        </activity>
+        <activity android:name=".activity.RadiateActivity"></activity>
+        <activity android:name=".activity.SpyActivity" />
+        <activity android:name=".activity.ChatActivity" />
         <activity android:name=".activity.SelectTerritoryActivity" />
         <activity android:name=".activity.UpgradeActivity" />
         <activity android:name=".activity.MoveAttackActivity" />

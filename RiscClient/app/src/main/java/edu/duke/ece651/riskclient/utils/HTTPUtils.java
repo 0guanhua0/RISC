@@ -8,37 +8,41 @@ import org.json.JSONObject;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.List;
 import java.util.Set;
 
 import edu.duke.ece651.risk.shared.ToServerMsg.ServerSelect;
 import edu.duke.ece651.risk.shared.action.Action;
+import edu.duke.ece651.risk.shared.action.SpyAction;
 import edu.duke.ece651.riskclient.listener.onNewPlayerListener;
 import edu.duke.ece651.riskclient.listener.onReceiveListener;
-import edu.duke.ece651.riskclient.listener.onRecvAttackResultListener;
+import edu.duke.ece651.riskclient.listener.onRecvInfoListener;
 import edu.duke.ece651.riskclient.listener.onResultListener;
+import edu.duke.ece651.riskclient.listener.onSpyListener;
 import edu.duke.ece651.riskclient.objects.SimplePlayer;
 
+import static edu.duke.ece651.risk.shared.Constant.ACTION_AUDIENCE_GAME;
+import static edu.duke.ece651.risk.shared.Constant.ACTION_CHANGE_PASSWORD;
 import static edu.duke.ece651.risk.shared.Constant.ACTION_CREATE_GAME;
+import static edu.duke.ece651.risk.shared.Constant.ACTION_GET_ALL_ROOM;
+import static edu.duke.ece651.risk.shared.Constant.ACTION_GET_IN_ROOM;
 import static edu.duke.ece651.risk.shared.Constant.ACTION_JOIN_GAME;
+import static edu.duke.ece651.risk.shared.Constant.ACTION_LOGIN;
 import static edu.duke.ece651.risk.shared.Constant.ACTION_RECONNECT_ROOM;
+import static edu.duke.ece651.risk.shared.Constant.ACTION_SIGN_UP;
+import static edu.duke.ece651.risk.shared.Constant.ACTION_TYPE;
+import static edu.duke.ece651.risk.shared.Constant.INFO_ALL_PLAYER;
+import static edu.duke.ece651.risk.shared.Constant.INFO_TO_RECEIVE_ATTACK_RESULT;
+import static edu.duke.ece651.risk.shared.Constant.MAP_NAME;
 import static edu.duke.ece651.risk.shared.Constant.ROOM_ID;
+import static edu.duke.ece651.risk.shared.Constant.ROOM_NAME;
 import static edu.duke.ece651.risk.shared.Constant.ROUND_OVER;
-import static edu.duke.ece651.riskclient.Constant.ACTION_CHANGE_PASSWORD;
-import static edu.duke.ece651.riskclient.Constant.ACTION_CREATE_NEW_ROOM;
-import static edu.duke.ece651.riskclient.Constant.ACTION_GET_IN_ROOM;
-import static edu.duke.ece651.riskclient.Constant.ACTION_GET_WAIT_ROOM;
-import static edu.duke.ece651.riskclient.Constant.ACTION_LOGIN;
-import static edu.duke.ece651.riskclient.Constant.ACTION_SIGN_UP;
-import static edu.duke.ece651.riskclient.Constant.ACTION_TYPE;
+import static edu.duke.ece651.risk.shared.Constant.SUCCESSFUL;
+import static edu.duke.ece651.risk.shared.Constant.USER_NAME;
+import static edu.duke.ece651.risk.shared.Constant.USER_PASSWORD;
 import static edu.duke.ece651.riskclient.Constant.FAIL_TO_SEND;
-import static edu.duke.ece651.riskclient.Constant.INFO_ALL_PLAYER;
-import static edu.duke.ece651.riskclient.Constant.MAP_NAME;
 import static edu.duke.ece651.riskclient.Constant.PASSWORD_NEW;
 import static edu.duke.ece651.riskclient.Constant.PASSWORD_OLD;
-import static edu.duke.ece651.riskclient.Constant.ROOM_NAME;
-import static edu.duke.ece651.riskclient.Constant.SUCCESSFUL;
-import static edu.duke.ece651.riskclient.Constant.USER_NAME;
-import static edu.duke.ece651.riskclient.Constant.USER_PASSWORD;
 import static edu.duke.ece651.riskclient.RiskApplication.checkResult;
 import static edu.duke.ece651.riskclient.RiskApplication.getPlayerName;
 import static edu.duke.ece651.riskclient.RiskApplication.getRoomID;
@@ -120,7 +124,7 @@ public class HTTPUtils {
         try {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put(USER_NAME, getPlayerName());
-            jsonObject.put(ACTION_TYPE, isRoomIn ? ACTION_GET_IN_ROOM : ACTION_GET_WAIT_ROOM);
+            jsonObject.put(ACTION_TYPE, isRoomIn ? ACTION_GET_IN_ROOM : ACTION_GET_ALL_ROOM);
             sendAndRec(jsonObject.toString(), new onReceiveListener() {
                 @Override
                 public void onFailure(String error) {
@@ -179,7 +183,6 @@ public class HTTPUtils {
             jsonObject.put(USER_NAME, getPlayerName());
             jsonObject.put(ROOM_NAME, roomName);
             jsonObject.put(MAP_NAME, mapName);
-            jsonObject.put(ACTION_TYPE, ACTION_CREATE_NEW_ROOM);
             sendAndCheckSuccessG(jsonObject.toString(), listener);
         }catch (JSONException e){
             Log.e(TAG, e.toString());
@@ -265,6 +268,34 @@ public class HTTPUtils {
     }
 
     /**
+     * A new player want to join an room as an audience
+     * @param listener result listener
+     */
+    public static void audienceGame(onResultListener listener){
+        try {
+            // information header(tell serve what we want to do)
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put(USER_NAME, getPlayerName());
+            jsonObject.put(ACTION_TYPE, ACTION_AUDIENCE_GAME);
+            jsonObject.put(ROOM_ID, getRoomID());
+            send(jsonObject.toString(), new onResultListener() {
+                @Override
+                public void onFailure(String error) {
+                    Log.e(TAG, "audienceGame: " + error);
+                }
+
+                @Override
+                public void onSuccessful() {
+                    // join in an existing room
+                    sendAndCheckSuccessG(String.valueOf(getRoomID()), listener);
+                }
+            });
+        }catch (JSONException e){
+            Log.e(TAG, "audienceGame: " + e.toString());
+        }
+    }
+
+    /**
      * Send the territory group to server to verify, return success or fail message.
      * @param group the territory group you choose
      * @param listener result listener
@@ -335,7 +366,48 @@ public class HTTPUtils {
         });
     }
 
-    public static void recvAttackResult(onRecvAttackResultListener listener){
+    public static void sendSpyAction(SpyAction action, onSpyListener listener){
+        send(action, new onResultListener() {
+            @Override
+            public void onFailure(String error) {
+                listener.onFailure(error);
+                Log.e(TAG, "sendSpyAction(send): " + error);
+            }
+
+            @Override
+            public void onSuccessful() {
+                recv(new onReceiveListener() {
+                    @Override
+                    public void onFailure(String error) {
+                        listener.onFailure(error);
+                        Log.e(TAG, "sendSpyAction(recv): " + error);
+                    }
+
+                    @Override
+                    public void onSuccessful(Object object) {
+                        listener.onSpyResult((List<Action>) object);
+                        // successful send the action, receive the result
+                        checkResult(new onResultListener() {
+                            @Override
+                            public void onFailure(String error) {
+                                // invalid action
+                                listener.onFailure(error);
+                                Log.e(TAG, "sendSpyAction(check): " + error);
+                            }
+
+                            @Override
+                            public void onSuccessful() {
+                                // valid action
+                                listener.onSuccessful();
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    }
+
+    public static void recvAttackResult(onRecvInfoListener listener){
         recv(new onReceiveListener() {
             @Override
             public void onFailure(String error) {
@@ -354,6 +426,34 @@ public class HTTPUtils {
                         // keep listening
                         recvAttackResult(listener);
                     }
+                }else {
+                    Log.e(TAG, "recvAttackResult expects String but is " + object);
+                }
+            }
+        });
+    }
+
+    public static void recvActionInfo(onRecvInfoListener listener){
+        recv(new onReceiveListener() {
+            @Override
+            public void onFailure(String error) {
+                listener.onFailure(error);
+            }
+
+            @Override
+            public void onSuccessful(Object object) {
+                if (object instanceof String){
+                    String result = (String) object;
+                    // all players finish their round
+                    if (result.equals(INFO_TO_RECEIVE_ATTACK_RESULT)){
+                        listener.onOver();
+                    }else {
+                        listener.onNewResult(result);
+                        // keep listening
+                        recvActionInfo(listener);
+                    }
+                }else {
+                    Log.e(TAG, "recvActionInfo expects String but is " + object);
                 }
             }
         });
