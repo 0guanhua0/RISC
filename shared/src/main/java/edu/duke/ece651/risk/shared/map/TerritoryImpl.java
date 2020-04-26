@@ -473,7 +473,7 @@ public class TerritoryImpl extends Territory {
         if (0==idx){//update the owner
             this.loseUnits(1,level);
         }else {//update the ally
-            assert(allyUnits.get(level).size()>=1);
+//            assert(allyUnits.get(level).size()>=1);
             if (allyUnits.get(level).size()==1){
                 allyUnits.remove(level);
             }else{

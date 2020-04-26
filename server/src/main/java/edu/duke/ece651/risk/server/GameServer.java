@@ -70,13 +70,8 @@ public class GameServer {
                 threadPool.execute(() -> {
                     try {
                         handleIncomeRequest(socket);
-                    } catch (IOException | ClassNotFoundException | SQLException e) {
-                        // IO Exception, probably a bette way is write to log file
-                        try {
-                            socket.close();
-                        } catch (IOException ignored) {
-                        }
-                    }
+                        socket.close();
+                    } catch (IOException | ClassNotFoundException | SQLException e) {}
                 });
             }
         }
