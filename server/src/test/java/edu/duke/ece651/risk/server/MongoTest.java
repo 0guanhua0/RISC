@@ -62,7 +62,7 @@ class MongoTest {
         final Query<Room> query = datastore.createQuery(Room.class);
         final List<Room> rooms = query.asList();
 
-        assertEquals(1, rooms.get(0).roomID);
+        assertEquals(0, rooms.get(0).roomID);
 
         MongoClient mongoClient = new MongoClient(new MongoClientURI(MONGO_URL));
         mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_COLLECTION).drop();
