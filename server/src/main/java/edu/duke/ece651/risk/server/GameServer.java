@@ -70,7 +70,6 @@ public class GameServer {
                 threadPool.execute(() -> {
                     try {
                         handleIncomeRequest(socket);
-                        socket.close();
                     } catch (IOException | ClassNotFoundException | SQLException e) {}
                 });
             }
