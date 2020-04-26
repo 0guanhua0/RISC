@@ -77,6 +77,7 @@ public class PlayerThread extends Thread{
                 playGame();
                 // give main thread some time to process round result
                 barrier.await();
+                barrier.await();
             }
         }catch (Exception ignored){
         }

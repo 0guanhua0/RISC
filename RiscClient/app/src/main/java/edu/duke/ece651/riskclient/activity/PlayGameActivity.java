@@ -572,26 +572,6 @@ public class PlayGameActivity extends AppCompatActivity {
             }
 
             @Override
-<<<<<<< HEAD
-            public void onSuccessful(Object object) {
-                if (object instanceof RoundInfo) {
-                    System.out.println("recv round info obj");
-                }
-                else {
-                    System.out.println("not round obj");
-                }
-                RoundInfo info = (RoundInfo) object;
-                roundNum = info.getRoundNum();
-                System.out.println(roundNum);
-                map = info.getMap();
-                player = info.getPlayer();
-                setPlayerID(player.getId());
-                // clear all actions in the last round
-                performedActions.clear();
-                showToastUI(PlayGameActivity.this, String.format(Locale.US,"start round %d", roundNum));
-                checkLose();
-                updateUI();
-=======
             public void onOver() {
                 // all players finish their round, go to receive the attack result
                 receiveAttackResult();
@@ -601,7 +581,6 @@ public class PlayGameActivity extends AppCompatActivity {
             public void onFailure(String error) {
                 Log.e(TAG, "receiveActionInfo: " + error);
                 showToastUI(PlayGameActivity.this, error);
->>>>>>> master
             }
         });
     }

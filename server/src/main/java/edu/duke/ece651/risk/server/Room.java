@@ -44,6 +44,7 @@ public class Room {
     // 2. receive attack result at the end of each round
     // 3. receive round over signal(indicate that send out all attack result)
     // 4. receive game result at the end of each round(e.g. continue or GAME_OVER)
+    @Transient
     List<Player<String>> audiences;
     // the map this room is playing
     @Embedded
@@ -175,12 +176,13 @@ public class Room {
         //restore territory status in map
 
         threads = new ArrayList<>();
+        audiences = new ArrayList<>();
 
 
         //ready to restart game
         new Thread(() -> {
             try {
-                reGame();
+                runGame(true);
             } catch (Exception ignored) {
             }
         }).
@@ -221,7 +223,7 @@ public class Room {
                 // use a separate thread to run the playGame
                 new Thread(() -> {
                     try {
-                        runGame();
+                        runGame(false);
                     } catch (Exception ignored) {
                     }
                 }).start();
@@ -413,29 +415,51 @@ public class Room {
         return players.size() == map.getColorList().size();
     }
 
-    void runGame() throws IOException, ClassNotFoundException {
+    void runGame(Boolean regame) throws IOException, ClassNotFoundException {
         // + 1 for main thread
         CyclicBarrier barrier = new CyclicBarrier(players.size() + 1);
 
         for (Player<String> player : players) {
-            Thread t = new PlayerThread(player, map, gameInfo, barrier, players, new onNewActionListener() {
-                @Override
-                public void newAction(String playerName, Action action) {
-                    // player perform a valid action
-                    String info = String.format("Player %s performs a/an %s.\n[info: %s]", playerName, action.getClass().getSimpleName(), action.toString());
-                    sendToAllAudience(info);
-                }
+            if (regame.equals(false)) {
+                Thread t = new PlayerThread(player, map, gameInfo, barrier, players, new onNewActionListener() {
+                    @Override
+                    public void newAction(String playerName, Action action) {
+                        // player perform a valid action
+                        String info = String.format("Player %s performs a/an %s.\n[info: %s]", playerName, action.getClass().getSimpleName(), action.toString());
+                        sendToAllAudience(info);
+                    }
 
-                @Override
-                public void finishRound(String playerName) {
-                    // player finish his/her round
-                    String info = String.format("Player %s finish his/her round.", playerName);
-                    sendToAllAudience(info);
-                }
-            });
-            threads.add(t);
-            t.start();
+                    @Override
+                    public void finishRound(String playerName) {
+                        // player finish his/her round
+                        String info = String.format("Player %s finish his/her round.", playerName);
+                        sendToAllAudience(info);
+                    }
+                });
+                threads.add(t);
+                t.start();
+            } else {
+                Thread t = new PlayerThreadRecover(player, map, gameInfo, barrier, players, new onNewActionListener() {
+                    @Override
+                    public void newAction(String playerName, Action action) {
+                        // player perform a valid action
+                        String info = String.format("Player %s performs a/an %s.\n[info: %s]", playerName, action.getClass().getSimpleName(), action.toString());
+                        sendToAllAudience(info);
+                    }
+
+                    @Override
+                    public void finishRound(String playerName) {
+                        // player finish his/her round
+                        String info = String.format("Player %s finish his/her round.", playerName);
+                        sendToAllAudience(info);
+                    }
+                });
+                threads.add(t);
+                t.start();
+            }
         }
+
+
         // wait for selecting territory
         barrierWait(barrier);
 
@@ -448,42 +472,17 @@ public class Room {
         endGame();
     }
 
-    //recover game
-    //diff: no need to select territory
-    //use recover player thread
-    void reGame() throws IOException, ClassNotFoundException {
-        // + 1 for main thread
-        CyclicBarrier barrier = new CyclicBarrier(players.size() + 1);
-
-        for (Player<String> player : players) {
-            Thread t = new PlayerThreadRecover(player, map, gameInfo, barrier, this.players);
-            threads.add(t);
-            t.start();
-        }
-        // open the chat thread
-        Thread tChat = new ChatThread<String>(players);
-        threads.add(tChat);
-        tChat.start();
-
-        barrierWait(barrier);
-        mainGame(barrier);
-        endGame();
-    }
 
     //main game process
     void mainGame(CyclicBarrier barrier) throws IOException, ClassNotFoundException {
         while (true) {
             // wait for all player to ready start a round(give main thread some time to process round result)
-            System.out.println("room " + roomName + "  " + gameInfo.roundNum + " wait player start round");
             barrierWait(barrier);
 
             // send latest round info to all audience
             RoundInfo roundInfo = new RoundInfo(gameInfo.getRoundNum(), map, gameInfo.getIdToName(), null);
             sendToAllAudience(roundInfo);
-            System.out.println("room " + roomName + "  " + gameInfo.roundNum + " wait player play");
             // wait for all player to finish one round
-            barrierWait(barrier);
-            System.out.println("room " + roomName + "  " + gameInfo.roundNum + " after");
             // clear any disconnect audience at the end of each round
             clearDisconnectAudience();
 
@@ -491,6 +490,7 @@ public class Room {
             // ask all audience to receive the attack result
             sendToAllAudience(INFO_TO_RECEIVE_ATTACK_RESULT);
 
+            barrierWait(barrier);
             // resolve all combats
             resolveCombats();
             // after execute all actions, tell the player to enter next round
@@ -515,6 +515,7 @@ public class Room {
             }
             gameInfo.nextRound();
             updateWorld();
+            barrierWait(barrier);
         }
 
     }
