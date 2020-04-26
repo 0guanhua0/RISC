@@ -255,7 +255,7 @@ public abstract class Player<T> implements Serializable{
      */
     public void ruptureAlly(){
         if (hasAlly()){
-            assert(ally.ally==this);//used only for debugging
+//            assert(ally.ally==this);//used only for debugging
             //change the state of all territories
             for (Territory territory : this.territories) {
                 territory.ruptureAlly();

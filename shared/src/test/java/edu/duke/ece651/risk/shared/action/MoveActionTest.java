@@ -287,14 +287,23 @@ class MoveActionTest {
         assertEquals(0,valeTerr.getAllyUnitsNum(2));
 
 
-        //move own units from a territory owned by ally
         assertEquals(0,valeTerr.getUnitsNum(0));
         assertEquals(1,stormTerr.getAllyUnitsNum(0));
-        MoveAction moveAction4 = new MoveAction(storm, vale, 2, unitMap);
-//        moveAction4.perform(worldState2);
-        assertDoesNotThrow(()->{moveAction4.perform(worldState2);});
+
+        //invalid move own units from a territory owned by ally
+        MoveAction moveAction4 = new MoveAction(storm, vale, 2, new HashMap<Integer, Integer>(){{
+            put(0,1);
+            put(1,2);
+        }});
+        assertFalse(moveAction4.isValid(worldState2));
+        //move own units from a territory owned by ally
+        MoveAction moveAction5 = new MoveAction(storm, vale, 2, unitMap);
+        assertDoesNotThrow(()->{moveAction5.perform(worldState2);});
         assertEquals(1,valeTerr.getUnitsNum(0));
         assertEquals(0,stormTerr.getAllyUnitsNum(2));
+
+
+
 
     }
 
