@@ -11,6 +11,7 @@ import edu.duke.ece651.risk.shared.map.WorldMapImpl;
 import edu.duke.ece651.risk.shared.player.Player;
 import edu.duke.ece651.risk.shared.player.PlayerV1;
 import edu.duke.ece651.risk.shared.player.PlayerV2;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
@@ -27,6 +28,13 @@ import static edu.duke.ece651.risk.shared.Mock.setupMockInput;
 import static org.junit.jupiter.api.Assertions.*;
 
 class MongoTest {
+    //clean mongo db
+    @AfterEach
+    public void cleanMongo() {
+        MongoClient mongoClient = new MongoClient(new MongoClientURI(MONGO_URL));
+        mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_COLLECTION).drop();
+        mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_USERLIST).drop();
+    }
     @Test
     public void save() throws IOException, ClassNotFoundException {
 

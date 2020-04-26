@@ -83,16 +83,18 @@ public class PlayerThreadTest {
         barrier.await(); // select territory
         barrier.await(); // start playing playGame
         barrier.await(); // finish one round
+        barrier.await(); // finish one round
         player.loseTerritory(map.getTerritory("kingdom of the north"));
         player.loseTerritory(map.getTerritory("kingdom of mountain and vale"));
         player.loseTerritory(map.getTerritory("the storm kingdom"));
         barrier.await(); // main thread finish processing round result
         barrier.await(); // finish one round
+        barrier.await(); // finish one round
         gameInfo.winnerID = 1;
         barrier.await(); // main thread finish processing round result
         gameInfo.winnerID = 1;
 
-        verify(barrier, times(12)).await();
+        verify(barrier, times(16)).await();
         playerThread.interrupt();
         playerThread.join();
     }
@@ -131,13 +133,15 @@ public class PlayerThreadTest {
         player.loseTerritory(map.getTerritory("kingdom of mountain and vale"));
         player.loseTerritory(map.getTerritory("the storm kingdom"));
         barrier.await(); // main thread finish processing round result
+        barrier.await(); // main thread finish processing round result
 
+        barrier.await(); // finish one round
         barrier.await(); // finish one round
         gameInfo.winnerID = 1;
         barrier.await(); // main thread finish processing round result
         gameInfo.winnerID = 1;
 
-        verify(barrier, times(12)).await();
+        verify(barrier, times(16)).await();
         playerThread.interrupt();
         playerThread.join();
     }
@@ -176,13 +180,15 @@ public class PlayerThreadTest {
         player.loseTerritory(map.getTerritory("kingdom of mountain and vale"));
         player.loseTerritory(map.getTerritory("the storm kingdom"));
         barrier.await(); // main thread finish processing round result
+        barrier.await(); // main thread finish processing round result
 
         barrier.await(); // finish one round
         gameInfo.winnerID = 1;
         barrier.await(); // main thread finish processing round result
+        barrier.await(); // main thread finish processing round result
         gameInfo.winnerID = 1;
 
-        verify(barrier, times(12)).await();
+        verify(barrier, times(16)).await();
         playerThread.interrupt();
         playerThread.join();
     }
