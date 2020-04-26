@@ -235,6 +235,7 @@ class MoveActionTest {
         player2.setId(2);
 
         player1.addTerritory(stormTerr);
+        player1.addTerritory(northTerr);
         player2.addTerritory(valeTerr);
         player2.addTerritory(dorneTerr);
 
@@ -251,6 +252,7 @@ class MoveActionTest {
         //player1
         stormTerr.addUnit(new Unit(1));
         stormTerr.addUnit(new Unit(2));
+        northTerr.addUnit(new Unit(0));
         //player2
         valeTerr.addUnit(new Unit(0));
         valeTerr.addUnit(new Unit(0));
@@ -282,8 +284,9 @@ class MoveActionTest {
         assertEquals(1,valeTerr.getAllyUnitsNum(2));
 
         //test can perform attack action from a territory owned by ally
-        AttackAction attackAction = new AttackAction(vale, north, 1, unitMap2);
-        assertDoesNotThrow(()->{attackAction.perform(worldState1);});
+        AttackAction attackAction = new AttackAction(vale, rock, 1, unitMap2);
+        attackAction.perform(worldState1);
+//        assertDoesNotThrow(()->{attackAction.perform(worldState1);});
         assertEquals(0,valeTerr.getAllyUnitsNum(2));
 
 
@@ -296,6 +299,15 @@ class MoveActionTest {
             put(1,2);
         }});
         assertFalse(moveAction4.isValid(worldState2));
+
+
+        AttackAction attackAction1 = new AttackAction(storm, north, 2, new HashMap<Integer, Integer>() {{
+            put(0, 1);
+            put(1, 2);
+        }});
+        assertFalse(attackAction1.isValid(worldState2));
+
+
         //move own units from a territory owned by ally
         MoveAction moveAction5 = new MoveAction(storm, vale, 2, unitMap);
         assertDoesNotThrow(()->{moveAction5.perform(worldState2);});
