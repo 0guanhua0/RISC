@@ -17,6 +17,10 @@ import java.util.concurrent.CyclicBarrier;
 
 import static edu.duke.ece651.risk.shared.Constant.*;
 
+/**
+ * this is the thread will run when game resume
+ * only difference is that no select territory in play game
+ */
 public class PlayerThreadRecover extends Thread {
     Player<String> player;
     List<SPlayer> allPlayers;
@@ -53,6 +57,7 @@ public class PlayerThreadRecover extends Thread {
                 playGame();
                 // give main thread some time to process round result
                 barrier.await();
+                //make sure the round num is updated
                 barrier.await();
 
             }
@@ -61,6 +66,13 @@ public class PlayerThreadRecover extends Thread {
     }
 
 
+    /**
+     * the method that run game
+     * @throws IOException the socket just close, and we have handled that in player class
+     * @throws ClassNotFoundException
+     * @throws BrokenBarrierException: possible because some exception throw, then the barrier is broken
+     * @throws InterruptedException thread sleep maybe interrupted
+     */
     void playGame() throws IOException, ClassNotFoundException, BrokenBarrierException, InterruptedException {
         // tell client the round info, contains:
         // 1. latest WorldMap

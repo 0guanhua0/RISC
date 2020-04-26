@@ -496,9 +496,6 @@ public class Room {
             // after execute all actions, tell the player to enter next round
             sendAll(ROUND_OVER);
 
-            //save current game to db
-            Mongo m = new Mongo();
-            m.morCon().save(this);
 
             sendToAllAudience(ROUND_OVER);
 
@@ -515,6 +512,9 @@ public class Room {
             }
             gameInfo.nextRound();
             updateWorld();
+            //save current game to db
+            Mongo m = new Mongo();
+            m.morCon().save(this);
             barrierWait(barrier);
         }
 
