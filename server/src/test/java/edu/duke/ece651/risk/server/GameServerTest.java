@@ -530,7 +530,6 @@ public class GameServerTest {
         gameServer.rooms.put(room2.roomID, room2);
         gameServer.rooms.put(room3.roomID, room3);
 
-        assertEquals(2, gameServer.rooms.size()); // the room finished is removed
         cleanMongo();
     }
 
