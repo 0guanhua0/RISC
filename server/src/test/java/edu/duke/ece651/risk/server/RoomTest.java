@@ -533,5 +533,6 @@ public class RoomTest {
         assertFalse(room.hasPlayer("4"));
         assertFalse(room.isPlayerLose("4"));
         assertTrue(room.isPlayerLose("1"));
+        cleanMongo();
     }
 }
