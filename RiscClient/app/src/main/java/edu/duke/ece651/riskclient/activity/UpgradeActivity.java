@@ -360,9 +360,13 @@ public class UpgradeActivity extends AppCompatActivity {
         }
         Territory t = map.getTerritory(srcTerritory);
         if (!t.getUnitGroup().containsKey(unitLevelFrom)){
+            showToastUI(UpgradeActivity.this, String.format(Locale.US, "Don't have units of level %d.", unitLevelFrom));
             return false;
-        }else {
-            return unitNum <= Objects.requireNonNull(t.getUnitGroup().get(unitLevelFrom)).size();
         }
+        if (unitNum > Objects.requireNonNull(t.getUnitGroup().get(unitLevelFrom)).size()){
+            showToastUI(UpgradeActivity.this, String.format(Locale.US, "Don't have enough units of level %d.", unitLevelFrom));
+            return false;
+        }
+        return true;
     }
 }

@@ -284,7 +284,7 @@ public class Room {
      * This function will send the data to all audience in current room.
      * @param data data to be sent
      */
-    void sendToAllAudience(Object data){
+    synchronized void sendToAllAudience(Object data){
         for (Player<String> audience : audiences){
             if (audience.isConnect()){
                 audience.send(data);
