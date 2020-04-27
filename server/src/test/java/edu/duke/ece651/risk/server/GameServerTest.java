@@ -39,12 +39,12 @@ public class GameServerTest {
         MongoClient mongoClient = new MongoClient(new MongoClientURI(MONGO_URL));
         mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_COLLECTION).drop();
         mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_USERLIST).drop();
-        Thread.sleep(5000);
     }
 
 
     @Test
-    public void testConstructor() throws IOException, SQLException, ClassNotFoundException {
+    public void testConstructor() throws IOException, SQLException, ClassNotFoundException, InterruptedException {
+        cleanMongo();
         GameServer gameServer = new GameServer(new Server(8000));
         assertEquals(gameServer.rooms.size(), 0);
         assertNotNull(gameServer.threadPool);
@@ -122,8 +122,9 @@ public class GameServerTest {
     }
 
     @Test
-    public void testHandleIncomeRequest() throws IOException, ClassNotFoundException, SQLException {
+    public void testHandleIncomeRequest() throws IOException, ClassNotFoundException, SQLException, InterruptedException {
 
+        cleanMongo();
         GameServer gameServer = new GameServer(null);
         //1 valid signup
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -284,7 +285,8 @@ public class GameServerTest {
     }
 
     @Test
-    public void testLongSocket() throws SQLException, ClassNotFoundException, IOException {
+    public void testLongSocket() throws SQLException, ClassNotFoundException, IOException, InterruptedException {
+        cleanMongo();
         GameServer gameServer = new GameServer(null);
 
         //1 login user create room
@@ -475,7 +477,7 @@ public class GameServerTest {
     }
 
     @Test
-    public void testAskValidRoomNum() throws IOException, ClassNotFoundException, SQLException {
+    public void testAskValidRoomNum() throws IOException, ClassNotFoundException, SQLException, InterruptedException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
         //p1
@@ -495,6 +497,7 @@ public class GameServerTest {
         Player<String> player1 = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList(s11, s12))), new ByteArrayOutputStream());
         Player<String> player2 = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList("abc", "10", "0"))), outputStream);
         int roomID = 0;
+        cleanMongo();
         GameServer gameServer = new GameServer(null);
         gameServer.rooms.put(roomID, new Room(roomID, player1, new MapDataBase<>()));
         assertEquals(roomID, gameServer.askValidRoomNum(player2));
@@ -538,6 +541,7 @@ public class GameServerTest {
     @Test
     public void testMain() throws IOException, InterruptedException, ClassNotFoundException {
 
+        cleanMongo();
         Thread th = new Thread(() -> {
             try {
                 GameServer.main(null);
@@ -567,8 +571,9 @@ public class GameServerTest {
     }
 
     @Test
-    void testStartGame() throws IOException, SQLException, ClassNotFoundException {
+    void testStartGame() throws IOException, SQLException, ClassNotFoundException, InterruptedException {
 
+        cleanMongo();
         GameServer gameServer = new GameServer(null);
         assertEquals(0, gameServer.rooms.size());
 
@@ -635,7 +640,7 @@ public class GameServerTest {
 
 
     @Test
-    void UserRoom() throws IOException, SQLException, ClassNotFoundException {
+    void UserRoom() throws IOException, SQLException, ClassNotFoundException, InterruptedException {
 
         String r1 = "1";
 
@@ -669,6 +674,7 @@ public class GameServerTest {
         room4.gameInfo.winnerID = 2;
 
         Server server = mock(Server.class);
+        cleanMongo();
         GameServer gameServer = new GameServer(server);
 
         User u1 = new User(player1.getName(), "1");
