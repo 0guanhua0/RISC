@@ -39,6 +39,7 @@ public class GameServerTest {
         MongoClient mongoClient = new MongoClient(new MongoClientURI(MONGO_URL));
         mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_COLLECTION).drop();
         mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_USERLIST).drop();
+        Thread.sleep(2000);
     }
 
 
@@ -502,10 +503,11 @@ public class GameServerTest {
         gameServer.rooms.put(roomID, new Room(roomID, player1, new MapDataBase<>()));
         assertEquals(roomID, gameServer.askValidRoomNum(player2));
         assertEquals("Invalid choice, try again.".repeat(2) + SUCCESSFUL, readAllStringFromObjectStream(outputStream));
+        cleanMongo();
     }
 
     @Test
-    public void testGetRoomList() throws IOException, ClassNotFoundException, SQLException {
+    public void testGetRoomList() throws IOException, ClassNotFoundException, SQLException, InterruptedException {
 
         String r1 = "1";
 
@@ -526,6 +528,8 @@ public class GameServerTest {
         room2.players.add(new PlayerV1<>("Green", 1));
         room3.gameInfo.winnerID = 1;
 
+
+        cleanMongo();
         Server server = mock(Server.class);
         GameServer gameServer = new GameServer(server);
 
@@ -536,6 +540,7 @@ public class GameServerTest {
         assertEquals(3, gameServer.rooms.size());
         assertEquals(2, gameServer.getRoomList().size()); // only one room waiting for new player
         assertEquals(2, gameServer.rooms.size()); // the room finished is removed
+        cleanMongo();
     }
 
     @Test
@@ -567,6 +572,7 @@ public class GameServerTest {
 
         th.interrupt();
         th.join();
+        cleanMongo();
 
     }
 
@@ -636,6 +642,7 @@ public class GameServerTest {
         assertEquals(1, gameServer.rooms.size());
         assertEquals(3, gameServer.rooms.get(0).players.size());
         assertEquals(0, gameServer.rooms.get(0).roomID);
+        cleanMongo();
     }
 
 
