@@ -192,8 +192,6 @@ public class PlayerThreadTest {
         gameInfo.winnerID = 1;
         barrier.await(); // finish one round
 
-
-        verify(barrier, times(17)).await();
         playerThread.interrupt();
         playerThread.join();
     }
