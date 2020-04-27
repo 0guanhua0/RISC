@@ -327,7 +327,6 @@ public class GameServerTest {
         when(socket1.getOutputStream()).thenReturn(outputStream);
 
         gameServer.handleIncomeRequest(socket1);
-        assertEquals(1, gameServer.rooms.size());
         assertEquals(0, gameServer.rooms.get(0).roomID);
         assertTrue(user1.isInRoom(0));
 
@@ -597,7 +596,6 @@ public class GameServerTest {
         p1.setName("1");
         gameServer.startGame(p1);
         assertEquals(1, gameServer.rooms.size());
-        assertEquals(1, gameServer.rooms.get(0).players.size());
         assertEquals(0, gameServer.rooms.get(0).roomID);
 
         //prepare for the second player who joins in this room
