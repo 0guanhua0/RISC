@@ -54,6 +54,7 @@ public class PlayerThreadRecover extends Thread {
         try {
             barrier.await();
             while (!gameInfo.hasFinished()) {
+                barrier.await();
                 playGame();
                 // give main thread some time to process round result
                 barrier.await();
@@ -128,7 +129,7 @@ public class PlayerThreadRecover extends Thread {
                         player.send(INVALID_ACTION);
                     }
                 } else {
-                    Thread.sleep(100);
+                    Thread.sleep(1000);
                     checkCnt++;
                     reconnect = true;
                 }

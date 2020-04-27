@@ -33,6 +33,11 @@ class MongoTest {
     //clean mongo db
 
     @BeforeEach
+    public void cleanMongoBefore() {
+        MongoClient mongoClient = new MongoClient(new MongoClientURI(MONGO_URL));
+        mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_COLLECTION).drop();
+        mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_USERLIST).drop();
+    }
     @AfterEach
     public void cleanMongo() {
         MongoClient mongoClient = new MongoClient(new MongoClientURI(MONGO_URL));

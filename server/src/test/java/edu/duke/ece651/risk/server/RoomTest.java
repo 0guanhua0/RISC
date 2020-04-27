@@ -24,6 +24,11 @@ import static org.junit.jupiter.api.Assertions.*;
 public class RoomTest {
     //clean mongo db
     @AfterEach
+    public void cleanMongoAfter() {
+        MongoClient mongoClient = new MongoClient(new MongoClientURI(MONGO_URL));
+        mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_COLLECTION).drop();
+        mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_USERLIST).drop();
+    }
     @BeforeEach
     public void cleanMongo() {
         MongoClient mongoClient = new MongoClient(new MongoClientURI(MONGO_URL));

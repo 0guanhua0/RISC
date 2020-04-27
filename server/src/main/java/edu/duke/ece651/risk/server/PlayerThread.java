@@ -74,6 +74,7 @@ public class PlayerThread extends Thread{
             // once the player finished assign units, send them the player info
             player.send(allPlayers);
             while (!gameInfo.hasFinished()){
+                barrier.await();
                 playGame();
                 // give main thread some time to process round result
                 barrier.await();

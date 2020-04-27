@@ -94,7 +94,7 @@ public class PlayerThreadTest {
         barrier.await(); // main thread finish processing round result
         gameInfo.winnerID = 1;
 
-        verify(barrier, times(16)).await();
+        verify(barrier, times(17)).await();
         playerThread.interrupt();
         playerThread.join();
     }
@@ -141,7 +141,7 @@ public class PlayerThreadTest {
         barrier.await(); // main thread finish processing round result
         gameInfo.winnerID = 1;
 
-        verify(barrier, times(16)).await();
+        verify(barrier, times(17)).await();
         playerThread.interrupt();
         playerThread.join();
     }
@@ -183,12 +183,13 @@ public class PlayerThreadTest {
         barrier.await(); // main thread finish processing round result
 
         barrier.await(); // finish one round
+        barrier.await(); // finish one round
         gameInfo.winnerID = 1;
         barrier.await(); // main thread finish processing round result
         barrier.await(); // main thread finish processing round result
         gameInfo.winnerID = 1;
 
-        verify(barrier, times(16)).await();
+        verify(barrier, times(19)).await();
         playerThread.interrupt();
         playerThread.join();
     }

@@ -37,8 +37,12 @@ class PlayerThreadRecoverTest {
     static MoveAction a2;
     static String a3;
 
-    //clean mongo db
     @AfterEach
+    public void cleanMongoAfter() {
+        MongoClient mongoClient = new MongoClient(new MongoClientURI(MONGO_URL));
+        mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_COLLECTION).drop();
+        mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_USERLIST).drop();
+    }
     @BeforeEach
     public void cleanMongo() {
         MongoClient mongoClient = new MongoClient(new MongoClientURI(MONGO_URL));
@@ -112,7 +116,7 @@ class PlayerThreadRecoverTest {
         barrier.await(); // main thread finish processing round result
         gameInfo.winnerID = 1;
 
-        verify(barrier, times(14)).await();
+        verify(barrier, times(15)).await();
         playerThread.interrupt();
         playerThread.join();
     }
@@ -162,7 +166,7 @@ class PlayerThreadRecoverTest {
         barrier.await(); // main thread finish processing round result
         gameInfo.winnerID = 1;
 
-        verify(barrier, times(14)).await();
+        verify(barrier, times(15)).await();
         playerThread.interrupt();
         playerThread.join();
     }

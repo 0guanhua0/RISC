@@ -51,6 +51,8 @@ public abstract class Player<T> implements Serializable{
     @Transient
     Player ally;
 
+    String allyName;
+
     public Player(InputStream in, OutputStream out) throws IOException {
         this.territories = new HashSet<>();
         this.in = new ObjectInputStream(in);
@@ -59,6 +61,7 @@ public abstract class Player<T> implements Serializable{
         this.isConnect = true;
         this.allyRequest = -1;
         this.ally = null;
+        this.allyName = null;
         actions = new ArrayList<>();
         isSpying = false;
     }
@@ -100,6 +103,11 @@ public abstract class Player<T> implements Serializable{
     //constructor for mongo
     public Player() {
 
+    }
+
+    //get ally name
+    public String getAllyName() {
+        return allyName;
     }
 
     //set ally for reconstruct
@@ -240,6 +248,12 @@ public abstract class Player<T> implements Serializable{
         this.allyRequest = allyRequest;
     }
 
+    //reconstruct the ally request
+    public void reAllyRequest(int allyRequest) {
+        this.allyRequest = allyRequest;
+    }
+
+
     public boolean hasRecvAlly(){
         return this.allyRequest!=-1;
     }
@@ -261,7 +275,9 @@ public abstract class Player<T> implements Serializable{
             throw new IllegalArgumentException("Invalid argument");
         }
         this.ally = p;
+        this.allyName = p.name;
         p.ally = this;
+        p.allyName = this.name;
         this.setTerrAlly();
         p.setTerrAlly();
     }

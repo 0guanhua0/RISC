@@ -61,6 +61,7 @@ public class Room {
 
     /**
      * The constructor, initialize the whole room.
+     *
      * @param roomID      roomID for this room
      * @param player      the "beginner", the player create this room
      * @param mapDataBase all map we have
@@ -166,9 +167,18 @@ public class Room {
 
         //player ally
         for (Player<?> p : players) {
-            if (p.getAllyRequest() != -1) {
-                Player<?> ally = players.get(p.getAllyRequest());
-                p.allyWith(ally);
+            if (p.getAllyName() != null) {
+                for (Player<?> p0 : players) {
+                    if (p0.getName().equals(p.getAllyName())) {
+                        p.reAllyRequest(p0.getId());
+                        p0.reAllyRequest(p.getId());
+
+                        if (p.canAllyWith(p0)) {
+                            p.allyWith(p0);
+                        }
+                    }
+
+                }
             }
         }
 
@@ -233,6 +243,7 @@ public class Room {
 
     /**
      * This function will add an audience to current room.
+     *
      * @param audience new audience
      */
     void addAudience(Player<String> audience) throws IOException, ClassNotFoundException {
@@ -241,7 +252,7 @@ public class Room {
         // 1. player info
         // 2. latest round info
         List<SPlayer> allPlayers = new ArrayList<>();
-        for (Player<String> p : this.players){
+        for (Player<String> p : this.players) {
             allPlayers.add(new SPlayer(p.getId(), p.getName()));
         }
         audience.send(allPlayers);
@@ -282,11 +293,12 @@ public class Room {
 
     /**
      * This function will send the data to all audience in current room.
+     *
      * @param data data to be sent
      */
-    synchronized void sendToAllAudience(Object data){
-        for (Player<String> audience : audiences){
-            if (audience.isConnect()){
+    synchronized void sendToAllAudience(Object data) {
+        for (Player<String> audience : audiences) {
+            if (audience.isConnect()) {
                 audience.send(data);
             }
         }
@@ -296,7 +308,7 @@ public class Room {
      * This function will clean up any disconnect audience.
      * Since audience will not affect the game, so we can simply remove them(if disconnect).
      */
-    void clearDisconnectAudience(){
+    void clearDisconnectAudience() {
         audiences.removeIf(audience -> !audience.isConnect());
     }
 
@@ -476,7 +488,9 @@ public class Room {
     //main game process
     void mainGame(CyclicBarrier barrier) throws IOException, ClassNotFoundException {
         while (true) {
+
             // wait for all player to ready start a round(give main thread some time to process round result)
+            barrierWait(barrier);
             barrierWait(barrier);
 
             // send latest round info to all audience
