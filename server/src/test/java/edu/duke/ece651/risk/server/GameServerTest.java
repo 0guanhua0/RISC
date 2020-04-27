@@ -475,13 +475,13 @@ public class GameServerTest {
 
         //p1
         String m1 = "-1";
-        String r1 = "askvalid";
+        String r1 = "askvalid1";
 
         String s11 = "{\"" + MAP_NAME + "\": \"" + m1 + "\",\n" +
                 "\"" + ROOM_NAME + "\": \"" + r1 + "\" }";
 
         String m2 = "test";
-        String r2 = "askvalid";
+        String r2 = "askvalid2";
 
         String s12 = "{\"" + MAP_NAME + "\": \"" + m2 + "\",\n" +
                 "\"" + ROOM_NAME + "\": \"" + r2 + "\" }";

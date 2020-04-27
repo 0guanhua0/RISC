@@ -44,19 +44,19 @@ public class RoomTest {
         assertThrows(IllegalArgumentException.class,()->{new Room(-3);});
 
         String m1 = "hogwarts";
-        String r1 = "1";
+        String r1 = "testConstructor1";
 
         String s11 = "{\"" + MAP_NAME + "\": \"" + m1 + "\",\n" +
                 "\"" + ROOM_NAME + "\": \"" + r1 + "\" }";
 
         String m2 = "";
-        String r2 = "1";
+        String r2 = "testConstructor2";
 
         String s12 = "{\"" + MAP_NAME + "\": \"" + m2 + "\",\n" +
                 "\"" + ROOM_NAME + "\": \"" + r2 + "\" }";
 
         String m3 = "a clash of kings";
-        String r3 = "1";
+        String r3 = "testConstructor3";
 
         String s13 = "{\"" + MAP_NAME + "\": \"" + m3 + "\",\n" +
                 "\"" + ROOM_NAME + "\": \"" + r3 + "\" }";
@@ -77,7 +77,7 @@ public class RoomTest {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
         String m1 = "test";
-        String r1 = "1";
+        String r1 = "testAddPlayer1";
 
         String s11 = "{\"" + MAP_NAME + "\": \"" + m1 + "\",\n" +
                 "\"" + ROOM_NAME + "\": \"" + r1 + "\" }";
@@ -101,7 +101,7 @@ public class RoomTest {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
         String m1 = "test";
-        String r1 = "1";
+        String r1 = "testSendAll1";
 
         String s11 = "{\"" + MAP_NAME + "\": \"" + m1 + "\",\n" +
                 "\"" + ROOM_NAME + "\": \"" + r1 + "\" }";
@@ -132,19 +132,19 @@ public class RoomTest {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
         String m1 = "hogwarts";
-        String r1 = "1";
+        String r1 = "testAskForMap1";
 
         String s11 = "{\"" + MAP_NAME + "\": \"" + m1 + "\",\n" +
                 "\"" + ROOM_NAME + "\": \"" + r1 + "\" }";
 
         String m2 = "";
-        String r2 = "1";
+        String r2 = "testAskForMap2";
 
         String s12 = "{\"" + MAP_NAME + "\": \"" + m2 + "\",\n" +
                 "\"" + ROOM_NAME + "\": \"" + r2 + "\" }";
 
         String m3 = "a clash of kings";
-        String r3 = "1";
+        String r3 = "testAskForMap3";
 
         String s13 = "{\"" + MAP_NAME + "\": \"" + m3 + "\",\n" +
                 "\"" + ROOM_NAME + "\": \"" + r3 + "\" }";
@@ -181,7 +181,7 @@ public class RoomTest {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
         String map = "a clash of kings";
-        String rName = "1";
+        String rName = "getWinnerId";
 
         String s11 = "{\"" + MAP_NAME + "\": \"" + map + "\",\n" +
                 "\"" + ROOM_NAME + "\": \"" + rName + "\" }";
@@ -235,7 +235,7 @@ public class RoomTest {
     @Test
     void testResolveCombat() throws IOException, ClassNotFoundException {
         String map = "a clash of kings";
-        String rName = "1";
+        String rName = "testResolveCombat";
 
         String s11 = "{\"" + MAP_NAME + "\": \"" + map + "\",\n" +
                 "\"" + ROOM_NAME + "\": \"" + rName + "\" }";
@@ -283,7 +283,7 @@ public class RoomTest {
         ByteArrayOutputStream p2OutStream = new ByteArrayOutputStream();
 
         String map = "a clash of kings";
-        String rName = "1";
+        String rName = "testEndGame";
 
         String s11 = "{\"" + MAP_NAME + "\": \"" + map + "\",\n" +
                 "\"" + ROOM_NAME + "\": \"" + rName + "\" }";
@@ -349,7 +349,7 @@ public class RoomTest {
         AttackAction a23 = new AttackAction("principality of dorne", "kingdom of the reach", 1, 4);
 
         String map = "a clash of kings";
-        String rName = "1";
+        String rName = "testRunGame";
 
         String s11 = "{\"" + MAP_NAME + "\": \"" + map + "\",\n" +
                 "\"" + ROOM_NAME + "\": \"" + rName + "\" }";
@@ -409,7 +409,7 @@ public class RoomTest {
 
         ByteArrayOutputStream o1 = new ByteArrayOutputStream();
         String map = "a clash of kings";
-        String rName = "1";
+        String rName = "initGame1";
 
         String s11 = "{\"" + MAP_NAME + "\": \"" + map + "\",\n" +
                 "\"" + ROOM_NAME + "\": \"" + rName + "\" }";
@@ -424,10 +424,10 @@ public class RoomTest {
         Room room2 = new Room(0);
 
         String map2 = "a clash of kings";
-        String rName2 = "2";
+        String rName2 = "initGame2";
 
         String s21 = "{\"" + MAP_NAME + "\": \"" + "xxx" + "\",\n" +
-                "\"" + ROOM_NAME + "\": \"" + rName + "\" }";
+                "\"" + ROOM_NAME + "\": \"" + rName2 + "\" }";
 
         String s22 = "{\"" + MAP_NAME + "\": \"" + map2 + "\",\n" +
                 "\"" + ROOM_NAME + "\": \"" + rName2 + "\" }";
@@ -453,7 +453,7 @@ public class RoomTest {
 
         ByteArrayOutputStream o1 = new ByteArrayOutputStream();
         String map = "a clash of kings";
-        String rName = "1";
+        String rName = "player";
 
         String s11 = "{\"" + MAP_NAME + "\": \"" + map + "\",\n" +
                 "\"" + ROOM_NAME + "\": \"" + rName + "\" }";
@@ -464,10 +464,10 @@ public class RoomTest {
         //player 2
         ByteArrayOutputStream o2 = new ByteArrayOutputStream();
         String map2 = "a clash of kings";
-        String rName2 = "2";
+        String rName2 = "player2";
 
-        String s21 = "{\"" + MAP_NAME + "\": \"" + map + "\",\n" +
-                "\"" + ROOM_NAME + "\": \"" + rName + "\" }";
+        String s21 = "{\"" + MAP_NAME + "\": \"" + map2 + "\",\n" +
+                "\"" + ROOM_NAME + "\": \"" + rName2 + "\" }";
         Player<String> p2 = new PlayerV2<>(setupMockInput(new ArrayList<>(Arrays.asList(s21))), o2);
 
         p2.setName("2");
@@ -498,7 +498,7 @@ public class RoomTest {
 
         ByteArrayOutputStream o1 = new ByteArrayOutputStream();
         String map = "a clash of kings";
-        String rName = "1";
+        String rName = "recover1";
 
         String s11 = "{\"" + MAP_NAME + "\": \"" + map + "\",\n" +
                 "\"" + ROOM_NAME + "\": \"" + rName + "\" }";
@@ -509,10 +509,10 @@ public class RoomTest {
         //player 2
         ByteArrayOutputStream o2 = new ByteArrayOutputStream();
         String map2 = "a clash of kings";
-        String rName2 = "2";
+        String rName2 = "recover2";
 
-        String s21 = "{\"" + MAP_NAME + "\": \"" + map + "\",\n" +
-                "\"" + ROOM_NAME + "\": \"" + rName + "\" }";
+        String s21 = "{\"" + MAP_NAME + "\": \"" + map2 + "\",\n" +
+                "\"" + ROOM_NAME + "\": \"" + rName2 + "\" }";
         Player<String> p2 = new PlayerV2<>(setupMockInput(new ArrayList<>(Arrays.asList(s21))), o2);
 
         p2.setName("2");
