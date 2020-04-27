@@ -312,7 +312,7 @@ public class GameServerTest {
                 "\"" + USER_PASSWORD + "\": \"" + userPassword1 + "\",\n" +
                 "\"" + ACTION_TYPE + "\": \"" + ACTION_CREATE_GAME + "\" }";
 
-        String rName = "1";
+        String rName = "LONGSocket";
 
         // room 0 has enough player
         String s13 = "{\"" + MAP_NAME + "\": \"" + "a clash of kings" + "\",\n" +
@@ -482,13 +482,13 @@ public class GameServerTest {
 
         //p1
         String m1 = "-1";
-        String r1 = "1";
+        String r1 = "askvalid";
 
         String s11 = "{\"" + MAP_NAME + "\": \"" + m1 + "\",\n" +
                 "\"" + ROOM_NAME + "\": \"" + r1 + "\" }";
 
         String m2 = "test";
-        String r2 = "1";
+        String r2 = "askvalid";
 
         String s12 = "{\"" + MAP_NAME + "\": \"" + m2 + "\",\n" +
                 "\"" + ROOM_NAME + "\": \"" + r2 + "\" }";
@@ -508,7 +508,7 @@ public class GameServerTest {
     @Test
     public void testGetRoomList() throws IOException, ClassNotFoundException, SQLException, InterruptedException {
 
-        String r1 = "1";
+        String r1 = "GetRoomList";
 
         String s11 = "{\"" + MAP_NAME + "\": \"" + MAP_0 + "\",\n" +
                 "\"" + ROOM_NAME + "\": \"" + r1 + "\" }";
@@ -584,7 +584,7 @@ public class GameServerTest {
 
         //p1
         String m1 = "test";
-        String r1 = "1";
+        String r1 = "startGame";
 
         String s11 = "{\"" + MAP_NAME + "\": \"" + m1 + "\",\n" +
                 "\"" + ROOM_NAME + "\": \"" + r1 + "\" }";
@@ -648,7 +648,7 @@ public class GameServerTest {
     @Test
     void UserRoom() throws IOException, SQLException, ClassNotFoundException, InterruptedException {
 
-        String r1 = "1";
+        String r1 = "UserRoom";
 
         String s11 = "{\"" + MAP_NAME + "\": \"" + MAP_0 + "\",\n" +
                 "\"" + ROOM_NAME + "\": \"" + r1 + "\" }";
