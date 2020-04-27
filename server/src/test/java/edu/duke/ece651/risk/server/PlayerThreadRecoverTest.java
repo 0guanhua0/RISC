@@ -99,22 +99,19 @@ class PlayerThreadRecoverTest {
         PlayerThreadRecover playerThread = new PlayerThreadRecover(player, map, gameInfo, barrier, new ArrayList<>(), null);
         playerThread.start();
 
+        barrier.await();
         player.addTerritory(map.getTerritory("kingdom of the north"));
         player.addTerritory(map.getTerritory("kingdom of mountain and vale"));
         player.addTerritory(map.getTerritory("the storm kingdom"));
 
-        barrier.await(); // start playing playGame
-        barrier.await(); // finish one round
-        barrier.await(); // finish one round
+        barrier.await();
         player.loseTerritory(map.getTerritory("kingdom of the north"));
         player.loseTerritory(map.getTerritory("kingdom of mountain and vale"));
         player.loseTerritory(map.getTerritory("the storm kingdom"));
-        barrier.await(); // main thread finish processing round result
-        barrier.await(); // finish one round
-        barrier.await(); // finish one round
         gameInfo.winnerID = 1;
+        barrier.await();
 
-        verify(barrier, times(12)).await();
+        verify(barrier, times(7)).await();
         playerThread.interrupt();
         playerThread.join();
     }
