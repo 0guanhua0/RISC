@@ -1,5 +1,6 @@
 package edu.duke.ece651.risk.server;
 
+import com.mongodb.client.model.Filters;
 import edu.duke.ece651.risk.shared.RoomInfo;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.network.Server;
@@ -77,6 +78,8 @@ public class GameServer {
         Mongo m = new Mongo();
         Datastore datastore = m.morCon();
         Query<Room> query = datastore.createQuery(Room.class);
+        //query.filter(Filters.eq("gameinfo",-1),);
+
         List<Room> rooms = query.asList();
 
         MapDataBase mDB = new MapDataBase<>();
@@ -218,13 +221,9 @@ public class GameServer {
      * Get all rooms which is still waiting for new players.
      *
      * @param player new connection(wrap by player object)
-<<<<<<< HEAD
-     * @param obj    JSON object contains some other info we may need
-     * @throws UnauthorizedUserException use not login, can't perform this action
-=======
+
      * @param obj JSON object contains some other info we may need
      * @throws UnauthorizedUserException user doesn't login, can't perform this action
->>>>>>> master
      */
     void getAllRoom(Player<String> player, JSONObject obj) throws UnauthorizedUserException {
         checkLogin(player, obj);
@@ -235,13 +234,8 @@ public class GameServer {
      * Get all rooms which current player is inside.
      *
      * @param player new connection(wrap by player object)
-<<<<<<< HEAD
-     * @param obj    JSON object contains some other info we may need
-     * @throws UnauthorizedUserException use not login, can't perform this action
-=======
      * @param obj JSON object contains some other info we may need
      * @throws UnauthorizedUserException user doesn't login, can't perform this action
->>>>>>> master
      */
     void getInRoom(Player<String> player, JSONObject obj) throws UnauthorizedUserException {
         String userName = obj.getString(USER_NAME);
@@ -250,22 +244,12 @@ public class GameServer {
     }
 
     /**
-<<<<<<< HEAD
-     * Create a new room or join an existing room
-     *
-     * @param player new connection(wrap by player object)
-     * @param obj    JSON object contains some other info we may need
-     * @throws UnauthorizedUserException use not login, can't perform this action
-     * @throws IOException               stream error
-     * @throws ClassNotFoundException    receive unexpected data
-=======
      * Create a new room or join an existing room.
      * @param player new connection(wrap by player object)
      * @param obj JSON object contains some other info we may need
      * @throws UnauthorizedUserException user doesn't login, can't perform this action
      * @throws IOException stream error
      * @throws ClassNotFoundException receive unexpected data
->>>>>>> master
      */
     void playGame(Player<String> player, JSONObject obj) throws UnauthorizedUserException, IOException, ClassNotFoundException {
         checkLogin(player, obj);
@@ -297,13 +281,8 @@ public class GameServer {
      * Player try to reconnect to a previous room.
      *
      * @param player new connection(wrap by player object)
-<<<<<<< HEAD
-     * @param obj    JSON object contains some other info we may need
-     * @throws UnauthorizedUserException use not login, can't perform this action
-=======
      * @param obj JSON object contains some other info we may need
      * @throws UnauthorizedUserException user doesn't login, can't perform this action
->>>>>>> master
      */
     void reconnect(Player<String> player, JSONObject obj) throws UnauthorizedUserException {
         checkLogin(player, obj);
@@ -327,13 +306,8 @@ public class GameServer {
      * Player try to connect to the chat channel of a room.
      *
      * @param player new connection(wrap by player object)
-<<<<<<< HEAD
-     * @param obj    JSON object contains some other info we may need
-     * @throws UnauthorizedUserException use not login, can't perform this action
-=======
      * @param obj JSON object contains some other info we may need
      * @throws UnauthorizedUserException user doesn't login, can't perform this action
->>>>>>> master
      */
     void connectChat(Player<String> player, JSONObject obj) throws UnauthorizedUserException {
         checkLogin(player, obj);

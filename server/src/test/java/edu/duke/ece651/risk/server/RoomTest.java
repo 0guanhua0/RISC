@@ -9,6 +9,8 @@ import edu.duke.ece651.risk.shared.map.*;
 import edu.duke.ece651.risk.shared.player.Player;
 import edu.duke.ece651.risk.shared.player.PlayerV1;
 import edu.duke.ece651.risk.shared.player.PlayerV2;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
@@ -20,6 +22,15 @@ import static edu.duke.ece651.risk.shared.Mock.setupMockInput;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class RoomTest {
+    //clean mongo db
+    @AfterEach
+    @BeforeEach
+    public void cleanMongo() {
+        MongoClient mongoClient = new MongoClient(new MongoClientURI(MONGO_URL));
+        mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_COLLECTION).drop();
+        mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_USERLIST).drop();
+    }
+
 
     @Test
     void testConstructor() throws IOException, ClassNotFoundException {
