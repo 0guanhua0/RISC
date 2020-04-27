@@ -52,7 +52,9 @@ subprojects{
     }
 
     test{
+        maxParallelForks = 1
         testLogging{
+
             showStandardStreams = true
             exceptionFormat = 'full'
         }

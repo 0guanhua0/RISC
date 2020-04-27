@@ -619,6 +619,16 @@ class TerritoryImplTest {
         test.addUnit(new Unit(0));
 
         assertEquals(0,test.getAllyUnitsNum(0));
+        test.getUnitGroup();
+        test.getAllyUnitGroup();
+        assertEquals(1, test.getUnitGroup().size());
+        assertEquals(0, test.getAllyUnitGroup().size());
+        test.setUnitGroup((TreeMap<Integer, List<Unit>>) test.getUnitGroup());
+        test.setAllyUnits((TreeMap<Integer, List<Unit>>) test.getAllyUnitGroup());
+        assertEquals(1, test.getUnitGroup().size());
+        assertEquals(0, test.getAllyUnitGroup().size());
+
+
         WorldState worldState1 = new WorldState(player1, worldMap, Arrays.asList(player1,player2));
         WorldState worldState2 = new WorldState(player2, worldMap, Arrays.asList(player1,player2));
         AllyAction allyAction1 = new AllyAction(2);
@@ -627,6 +637,8 @@ class TerritoryImplTest {
         allyAction2.perform(worldState2);
 
         test.addAllyUnit(new Unit(0));
+        test.setAllyUnits((TreeMap<Integer, List<Unit>>) test.getAllyUnitGroup());
+        assertEquals(1, test.getAllyUnitsNum(0));
         assertEquals(1,test.getAllyUnitsNum(0));
         test.loseAllyUnits(1,0);
         assertEquals(0,test.getAllyUnitsNum(0));

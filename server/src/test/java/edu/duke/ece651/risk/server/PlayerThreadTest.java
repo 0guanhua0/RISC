@@ -98,9 +98,6 @@ public class PlayerThreadTest {
         playerThread.start();
 
         barrier.await(); // select territory
-        barrier.await(); // start playing playGame
-        barrier.await(); // finish one round
-        barrier.await(); // finish one round
         player.loseTerritory(map.getTerritory("kingdom of the north"));
         player.loseTerritory(map.getTerritory("kingdom of mountain and vale"));
         player.loseTerritory(map.getTerritory("the storm kingdom"));
@@ -108,10 +105,8 @@ public class PlayerThreadTest {
         barrier.await(); // finish one round
         barrier.await(); // finish one round
         gameInfo.winnerID = 1;
-        barrier.await(); // main thread finish processing round result
-        gameInfo.winnerID = 1;
 
-        verify(barrier, times(17)).await();
+        verify(barrier, times(9)).await();
         playerThread.interrupt();
         playerThread.join();
     }
@@ -146,6 +141,7 @@ public class PlayerThreadTest {
         Thread.sleep(1000);
         player.setConnect(true);
         barrier.await(); // finish one round
+        barrier.await(); // finish one round
         player.loseTerritory(map.getTerritory("kingdom of the north"));
         player.loseTerritory(map.getTerritory("kingdom of mountain and vale"));
         player.loseTerritory(map.getTerritory("the storm kingdom"));
@@ -153,12 +149,9 @@ public class PlayerThreadTest {
         barrier.await(); // main thread finish processing round result
 
         barrier.await(); // finish one round
-        barrier.await(); // finish one round
-        gameInfo.winnerID = 1;
-        barrier.await(); // main thread finish processing round result
         gameInfo.winnerID = 1;
 
-        verify(barrier, times(17)).await();
+        verify(barrier, times(14)).await();
         playerThread.interrupt();
         playerThread.join();
     }
@@ -190,7 +183,7 @@ public class PlayerThreadTest {
         barrier.await(); // select territory
         barrier.await(); // start playing playGame
         // sleep some time and then reconnect
-        Thread.sleep(5000);
+        Thread.sleep(3000);
         player.setConnect(true);
         barrier.await(); // finish one round
         player.loseTerritory(map.getTerritory("kingdom of the north"));
@@ -202,11 +195,10 @@ public class PlayerThreadTest {
         barrier.await(); // finish one round
         barrier.await(); // finish one round
         gameInfo.winnerID = 1;
-        barrier.await(); // main thread finish processing round result
-        barrier.await(); // main thread finish processing round result
-        gameInfo.winnerID = 1;
+        barrier.await(); // finish one round
 
-        verify(barrier, times(19)).await();
+
+        verify(barrier, times(17)).await();
         playerThread.interrupt();
         playerThread.join();
     }

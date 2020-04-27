@@ -38,7 +38,7 @@ public class TerritoryImpl extends Territory {
         this.size = size;
         this.foodYield = foodYield;
         this.techYield = techYield;
-        this.unitGroup = new TreeMap<>();;
+        this.unitGroup = new TreeMap<>();
         this.allyUnits = new TreeMap<>();
     }
 
@@ -240,6 +240,16 @@ public class TerritoryImpl extends Territory {
     @Override
     public Map<Integer, List<Unit>> getAllyUnitGroup() {
         return allyUnits;
+    }
+
+    @Override
+    public void setAllyUnits(TreeMap<Integer, List<Unit>> allyUnits) {
+        this.allyUnits = allyUnits;
+    }
+
+    @Override
+    public void setUnitGroup(TreeMap<Integer, List<Unit>> unitGroup) {
+        this.unitGroup = unitGroup;
     }
 
     @Override

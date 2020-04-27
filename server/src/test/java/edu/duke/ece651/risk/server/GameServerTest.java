@@ -33,24 +33,18 @@ import static org.mockito.Mockito.*;
 public class GameServerTest {
     //clean mongo db
 
+    @AfterEach
     @BeforeEach
-    public void cleanMongo() {
+    public void cleanMongo() throws InterruptedException {
         MongoClient mongoClient = new MongoClient(new MongoClientURI(MONGO_URL));
         mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_COLLECTION).drop();
         mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_USERLIST).drop();
+        Thread.sleep(2000);
     }
 
-    @AfterEach
-    public void cleanMongoAfter() {
-        MongoClient mongoClient = new MongoClient(new MongoClientURI(MONGO_URL));
-        mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_COLLECTION).drop();
-        mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_USERLIST).drop();
-    }
 
     @Test
     public void testConstructor() throws IOException, SQLException, ClassNotFoundException {
-
-        cleanMongo();
         GameServer gameServer = new GameServer(new Server(8000));
         assertEquals(gameServer.rooms.size(), 0);
         assertNotNull(gameServer.threadPool);
@@ -65,7 +59,6 @@ public class GameServerTest {
         }).start();
         Client client = new Client();
         client.init("127.0.0.1", 8000);
-        cleanMongoAfter();
     }
 
     @Test
@@ -131,7 +124,6 @@ public class GameServerTest {
     @Test
     public void testHandleIncomeRequest() throws IOException, ClassNotFoundException, SQLException {
 
-        cleanMongo();
         GameServer gameServer = new GameServer(null);
         //1 valid signup
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -566,7 +558,7 @@ public class GameServerTest {
                 "\"" + ACTION_TYPE + "\": \"" + ACTION_SIGN_UP + "\" }";
 
         client.send(s11);
-        Thread.sleep(2000);
+        Thread.sleep(1000);
         assertEquals(SUCCESSFUL, client.recv());
 
         th.interrupt();

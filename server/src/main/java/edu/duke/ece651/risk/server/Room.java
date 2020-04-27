@@ -4,10 +4,7 @@ import edu.duke.ece651.risk.shared.RoomInfo;
 import edu.duke.ece651.risk.shared.ToClientMsg.RoundInfo;
 import edu.duke.ece651.risk.shared.action.Action;
 import edu.duke.ece651.risk.shared.action.AttackResult;
-import edu.duke.ece651.risk.shared.map.MapDataBase;
-import edu.duke.ece651.risk.shared.map.TStatus;
-import edu.duke.ece651.risk.shared.map.Territory;
-import edu.duke.ece651.risk.shared.map.WorldMap;
+import edu.duke.ece651.risk.shared.map.*;
 import edu.duke.ece651.risk.shared.player.Player;
 import edu.duke.ece651.risk.shared.player.PlayerV2;
 import edu.duke.ece651.risk.shared.player.SPlayer;
@@ -139,10 +136,12 @@ public class Room {
         for (Player<?> p : players) {
             Set<Territory> territorySet = p.getTerritories();
             //loop through, update Tstatus
-            for (Territory t : territorySet) {
-                String tName = t.getName();
-                TStatus tStatus = t.getStatus();
-                this.map.getTerritory(tName).setStatus(tStatus);
+            if (territorySet != null) {
+                for (Territory t : territorySet) {
+                    String tName = t.getName();
+                    TStatus tStatus = t.getStatus();
+                    this.map.getTerritory(tName).setStatus(tStatus);
+                }
             }
         }
         //recover player Set<Territory>
@@ -150,10 +149,28 @@ public class Room {
             Set<Territory> newT = new HashSet<>();
             Set<Territory> oldT = p.getTerritories();
 
-            for (Territory t : oldT) {
-                String tName = t.getName();
-                Territory tmp = this.map.getTerritory(tName);
-                newT.add(tmp);
+            if (oldT != null) {
+                for (Territory t : oldT) {
+                    String tName = t.getName();
+                    Territory tmp = this.map.getTerritory(tName);
+                    //recover unit info
+                    Map<Integer, List<Unit>> oldU = t.getUnitGroup();
+                    Map<Integer, List<Unit>> oldA = t.getAllyUnitGroup();
+
+                    if (oldU != null) {
+                        tmp.setUnitGroup((TreeMap<Integer, List<Unit>>) oldU);
+                    } else {
+                        tmp.setUnitGroup(new TreeMap<>());
+                    }
+                    if (oldA != null) {
+
+                        tmp.setAllyUnits((TreeMap<Integer, List<Unit>>) oldA);
+                    } else {
+                        tmp.setAllyUnits(new TreeMap<>());
+                    }
+
+                    newT.add(tmp);
+                }
             }
 
             p.setTerritories(newT);

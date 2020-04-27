@@ -393,7 +393,7 @@ public class RoomTest {
         room.addPlayer(player2);
 
         // player 1 should win the game
-        Thread.sleep(5000); // because the game will run in a separate thread, we will need to wait some time and then check the result
+        Thread.sleep(7000); // because the game will run in a separate thread, we will need to wait some time and then check the result
         assertEquals(1, room.gameInfo.winnerID);
 
         MongoClient mongoClient = new MongoClient(new MongoClientURI(MONGO_URL));

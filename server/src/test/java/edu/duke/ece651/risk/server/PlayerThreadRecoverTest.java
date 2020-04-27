@@ -113,10 +113,8 @@ class PlayerThreadRecoverTest {
         barrier.await(); // finish one round
         barrier.await(); // finish one round
         gameInfo.winnerID = 1;
-        barrier.await(); // main thread finish processing round result
-        gameInfo.winnerID = 1;
 
-        verify(barrier, times(15)).await();
+        verify(barrier, times(12)).await();
         playerThread.interrupt();
         playerThread.join();
     }
@@ -163,8 +161,7 @@ class PlayerThreadRecoverTest {
         barrier.await(); // finish one round
         barrier.await(); // finish one round
         gameInfo.winnerID = 1;
-        barrier.await(); // main thread finish processing round result
-        gameInfo.winnerID = 1;
+        barrier.await(); // finish one round
 
         verify(barrier, times(15)).await();
         playerThread.interrupt();
