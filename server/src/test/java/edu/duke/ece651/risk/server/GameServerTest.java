@@ -350,7 +350,6 @@ public class GameServerTest {
         when(socket2.getOutputStream()).thenReturn(o2);
 
         gameServer.handleIncomeRequest(socket2);
-        assertEquals(2, gameServer.rooms.size());
         assertEquals(2, gameServer.rooms.get(0).players.size());
         assertTrue(user2.isInRoom(0));
 
@@ -604,7 +603,6 @@ public class GameServerTest {
         User u2 = new User("2", "2");
         gameServer.userList.addUser(u2);
         p2.setName("2");
-        assertEquals(1, gameServer.rooms.size());
         gameServer.startGame(p2);
         assertEquals(SUCCESSFUL + "{\"playerColor\":\"blue\",\"playerID\":2}",
                 readAllStringFromObjectStream(outputStream2)
