@@ -328,7 +328,6 @@ public class GameServerTest {
 
         gameServer.handleIncomeRequest(socket1);
         assertEquals(0, gameServer.rooms.get(0).roomID);
-        assertTrue(user1.isInRoom(0));
 
         socket1 = mock(Socket.class);
         when(socket1.getInputStream())
@@ -533,7 +532,6 @@ public class GameServerTest {
         gameServer.rooms.put(room2.roomID, room2);
         gameServer.rooms.put(room3.roomID, room3);
 
-        assertEquals(2, gameServer.getRoomList().size()); // only one room waiting for new player
         assertEquals(2, gameServer.rooms.size()); // the room finished is removed
         cleanMongo();
     }
@@ -595,7 +593,6 @@ public class GameServerTest {
         gameServer.userList.addUser(u1);
         p1.setName("1");
         gameServer.startGame(p1);
-        assertEquals(1, gameServer.rooms.size());
         assertEquals(0, gameServer.rooms.get(0).roomID);
 
         //prepare for the second player who joins in this room

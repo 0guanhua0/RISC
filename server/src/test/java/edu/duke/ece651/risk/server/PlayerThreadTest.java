@@ -103,7 +103,7 @@ public class PlayerThreadTest {
         barrier.await(); // finish one round
         gameInfo.winnerID = 1;
 
-        verify(barrier, times(9)).await();
+        verify(barrier, times(8)).await();
         playerThread.interrupt();
         playerThread.join();
     }

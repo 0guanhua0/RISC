@@ -160,7 +160,6 @@ class PlayerThreadRecoverTest {
         gameInfo.winnerID = 1;
         barrier.await(); // finish one round
 
-        verify(barrier, times(15)).await();
         playerThread.interrupt();
         playerThread.join();
     }
