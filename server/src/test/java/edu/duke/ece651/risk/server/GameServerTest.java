@@ -32,9 +32,16 @@ import static org.mockito.Mockito.*;
 
 public class GameServerTest {
     //clean mongo db
-    @AfterEach
+
     @BeforeEach
     public void cleanMongo() {
+        MongoClient mongoClient = new MongoClient(new MongoClientURI(MONGO_URL));
+        mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_COLLECTION).drop();
+        mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_USERLIST).drop();
+    }
+
+    @AfterEach
+    public void cleanMongoAfter() {
         MongoClient mongoClient = new MongoClient(new MongoClientURI(MONGO_URL));
         mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_COLLECTION).drop();
         mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_USERLIST).drop();

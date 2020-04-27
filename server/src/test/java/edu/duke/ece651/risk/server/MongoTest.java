@@ -13,6 +13,7 @@ import edu.duke.ece651.risk.shared.player.Player;
 import edu.duke.ece651.risk.shared.player.PlayerV1;
 import edu.duke.ece651.risk.shared.player.PlayerV2;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
@@ -31,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class MongoTest {
     //clean mongo db
 
+    @BeforeEach
     @AfterEach
     public void cleanMongo() {
         MongoClient mongoClient = new MongoClient(new MongoClientURI(MONGO_URL));

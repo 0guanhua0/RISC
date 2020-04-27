@@ -1,12 +1,16 @@
 package edu.duke.ece651.risk.server;
 
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
 import edu.duke.ece651.risk.shared.ToServerMsg.ServerSelect;
 import edu.duke.ece651.risk.shared.action.MoveAction;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 import edu.duke.ece651.risk.shared.player.Player;
 import edu.duke.ece651.risk.shared.player.PlayerV1;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -15,7 +19,8 @@ import java.util.*;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 
-import static edu.duke.ece651.risk.shared.Constant.ACTION_DONE;
+import static edu.duke.ece651.risk.shared.Constant.*;
+import static edu.duke.ece651.risk.shared.Constant.MONGO_USERLIST;
 import static edu.duke.ece651.risk.shared.Mock.setupMockInput;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -32,6 +37,14 @@ class PlayerThreadRecoverTest {
     static MoveAction a2;
     static String a3;
 
+    //clean mongo db
+    @AfterEach
+    @BeforeEach
+    public void cleanMongo() {
+        MongoClient mongoClient = new MongoClient(new MongoClientURI(MONGO_URL));
+        mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_COLLECTION).drop();
+        mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_USERLIST).drop();
+    }
     @BeforeAll
     public static void beforeAll() {
         // invalid select group of objects for p1
