@@ -50,7 +50,7 @@ public class GameServerTest {
     @Test
     public void testConstructor() throws IOException, SQLException, ClassNotFoundException {
 
-
+        cleanMongo();
         GameServer gameServer = new GameServer(new Server(8000));
         assertEquals(gameServer.rooms.size(), 0);
         assertNotNull(gameServer.threadPool);
@@ -65,11 +65,13 @@ public class GameServerTest {
         }).start();
         Client client = new Client();
         client.init("127.0.0.1", 8000);
+        cleanMongoAfter();
     }
 
     @Test
     public void testRun() throws IOException, InterruptedException {
 
+        cleanMongo();
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         Socket socket1 = mock(Socket.class);
 
@@ -129,6 +131,7 @@ public class GameServerTest {
     @Test
     public void testHandleIncomeRequest() throws IOException, ClassNotFoundException, SQLException {
 
+        cleanMongo();
         GameServer gameServer = new GameServer(null);
         //1 valid signup
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
