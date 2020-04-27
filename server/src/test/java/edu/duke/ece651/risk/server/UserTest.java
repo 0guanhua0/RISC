@@ -29,6 +29,10 @@ class UserTest {
         user1.rmRoom(1);
         assertFalse(user1.isInRoom(1));
 
+        User user2 = new User();
+        user2.addRoom(3);
+        assertTrue(user2.isInRoom(3));
+
 
 
 

@@ -471,6 +471,51 @@ public class RoomTest {
     }
 
     @Test
-    void recover() {
+    void recover() throws IOException, ClassNotFoundException {
+        MapDataBase<String> mapDataBase = new MapDataBase<>();
+
+        //room 0
+        Room room = new Room(0);
+        assertNull(room.getPlayer("1"));
+        assertFalse(room.hasPlayer("1"));
+        assertFalse(room.isPlayerLose("1"));
+
+        ByteArrayOutputStream o1 = new ByteArrayOutputStream();
+        String map = "a clash of kings";
+        String rName = "1";
+
+        String s11 = "{\"" + MAP_NAME + "\": \"" + map + "\",\n" +
+                "\"" + ROOM_NAME + "\": \"" + rName + "\" }";
+        Player<String> p1 = new PlayerV2<>(setupMockInput(new ArrayList<>(Arrays.asList(s11))), o1);
+
+        p1.setName("1");
+
+        //player 2
+        ByteArrayOutputStream o2 = new ByteArrayOutputStream();
+        String map2 = "a clash of kings";
+        String rName2 = "2";
+
+        String s21 = "{\"" + MAP_NAME + "\": \"" + map + "\",\n" +
+                "\"" + ROOM_NAME + "\": \"" + rName + "\" }";
+        Player<String> p2 = new PlayerV2<>(setupMockInput(new ArrayList<>(Arrays.asList(s21))), o2);
+
+        p2.setName("2");
+
+
+        room.getPlayers().add(p1);
+        room.getPlayers().add(p2);
+
+        room.initGame(mapDataBase);
+
+
+
+
+        room.recover(mapDataBase);
+        assertEquals(p1, room.getPlayer("1"));
+        assertNull(room.getPlayer("4"));
+        assertTrue(room.hasPlayer("1"));
+        assertFalse(room.hasPlayer("4"));
+        assertFalse(room.isPlayerLose("4"));
+        assertTrue(room.isPlayerLose("1"));
     }
 }
