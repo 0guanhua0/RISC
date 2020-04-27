@@ -39,7 +39,7 @@ public class GameServerTest {
         MongoClient mongoClient = new MongoClient(new MongoClientURI(MONGO_URL));
         mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_COLLECTION).drop();
         mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_USERLIST).drop();
-        Thread.sleep(2000);
+        Thread.sleep(5000);
     }
 
 
