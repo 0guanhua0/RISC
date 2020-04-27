@@ -4,6 +4,7 @@ import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
+import com.mongodb.client.model.Filters;
 import edu.duke.ece651.risk.shared.map.MapDataBase;
 import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.WorldMap;
@@ -29,15 +30,17 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class MongoTest {
     //clean mongo db
+
     @AfterEach
     public void cleanMongo() {
         MongoClient mongoClient = new MongoClient(new MongoClientURI(MONGO_URL));
         mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_COLLECTION).drop();
         mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_USERLIST).drop();
     }
+
+
     @Test
     public void save() throws IOException, ClassNotFoundException {
-
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
 

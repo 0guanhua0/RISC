@@ -78,7 +78,7 @@ public class GameServer {
         Mongo m = new Mongo();
         Datastore datastore = m.morCon();
         Query<Room> query = datastore.createQuery(Room.class);
-        //query.filter(Filters.eq("gameinfo",-1),);
+        query.filter("gameInfo.winnerID ==",-1);
 
         List<Room> rooms = query.asList();
 
