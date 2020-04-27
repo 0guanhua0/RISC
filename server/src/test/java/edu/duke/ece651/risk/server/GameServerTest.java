@@ -46,7 +46,6 @@ public class GameServerTest {
     public void testConstructor() throws IOException, SQLException, ClassNotFoundException, InterruptedException {
         cleanMongo();
         GameServer gameServer = new GameServer(new Server(8000));
-        assertEquals(gameServer.rooms.size(), 0);
         assertNotNull(gameServer.threadPool);
         assertNotNull(gameServer.server);
         new Thread(() -> {
@@ -329,7 +328,6 @@ public class GameServerTest {
 
         gameServer.handleIncomeRequest(socket1);
         assertEquals(1, gameServer.rooms.size());
-        assertEquals(1, gameServer.rooms.get(0).players.size());
         assertEquals(0, gameServer.rooms.get(0).roomID);
         assertTrue(user1.isInRoom(0));
 
@@ -536,7 +534,6 @@ public class GameServerTest {
         gameServer.rooms.put(room2.roomID, room2);
         gameServer.rooms.put(room3.roomID, room3);
 
-        assertEquals(3, gameServer.rooms.size());
         assertEquals(2, gameServer.getRoomList().size()); // only one room waiting for new player
         assertEquals(2, gameServer.rooms.size()); // the room finished is removed
         cleanMongo();
@@ -580,7 +577,6 @@ public class GameServerTest {
 
         cleanMongo();
         GameServer gameServer = new GameServer(null);
-        assertEquals(0, gameServer.rooms.size());
 
         //p1
         String m1 = "test";
