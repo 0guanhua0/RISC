@@ -185,9 +185,7 @@ class PlayerThreadRecoverTest {
         Thread.sleep(3000);
         player.setConnect(true);
         barrier.await(); // finish one round
-        player.loseTerritory(map.getTerritory("kingdom of the north"));
-        player.loseTerritory(map.getTerritory("kingdom of mountain and vale"));
-        player.loseTerritory(map.getTerritory("the storm kingdom"));
+
         barrier.await(); // main thread finish processing round result
         barrier.await(); // main thread finish processing round result
 

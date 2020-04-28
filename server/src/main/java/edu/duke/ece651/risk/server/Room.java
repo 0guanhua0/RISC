@@ -180,10 +180,7 @@ public class Room {
         }
 
 
-        //populate the ally field with null
-        for (Player<?> p : players) {
-            p.setAlly(null);
-        }
+
 
         //player ally
         for (Player<?> p : players) {
