@@ -9,6 +9,7 @@ import edu.duke.ece651.risk.shared.map.*;
 import edu.duke.ece651.risk.shared.player.Player;
 import edu.duke.ece651.risk.shared.player.PlayerV1;
 import edu.duke.ece651.risk.shared.player.PlayerV2;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,12 +24,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class RoomTest {
     //clean mongo db
-    @AfterEach
-    public void cleanMongoAfter() {
+    @AfterAll
+    public static void cleanMongoAfter() {
         MongoClient mongoClient = new MongoClient(new MongoClientURI(MONGO_URL));
         mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_COLLECTION).drop();
         mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_USERLIST).drop();
     }
+
     @BeforeEach
     public void cleanMongo() {
         MongoClient mongoClient = new MongoClient(new MongoClientURI(MONGO_URL));
@@ -40,8 +42,12 @@ public class RoomTest {
     @Test
     void testConstructor() throws IOException, ClassNotFoundException {
 
-        assertThrows(IllegalArgumentException.class,()->{new Room(-3,null, new MapDataBase<String>());});
-        assertThrows(IllegalArgumentException.class,()->{new Room(-3);});
+        assertThrows(IllegalArgumentException.class, () -> {
+            new Room(-3, null, new MapDataBase<String>());
+        });
+        assertThrows(IllegalArgumentException.class, () -> {
+            new Room(-3);
+        });
 
         String m1 = "hogwarts";
         String r1 = "testConstructor1";
@@ -487,7 +493,7 @@ public class RoomTest {
     }
 
     @Test
-    void recover() throws IOException, ClassNotFoundException {
+    void recover() throws IOException, ClassNotFoundException, InterruptedException {
         MapDataBase<String> mapDataBase = new MapDataBase<>();
 
         //room 0
@@ -522,8 +528,7 @@ public class RoomTest {
         room.getPlayers().add(p2);
 
         room.initGame(mapDataBase);
-
-
+        room.actualRecover = false;
 
 
         room.recover(mapDataBase);
@@ -533,6 +538,9 @@ public class RoomTest {
         assertFalse(room.hasPlayer("4"));
         assertFalse(room.isPlayerLose("4"));
         assertTrue(room.isPlayerLose("1"));
+
+
         cleanMongo();
+
     }
 }

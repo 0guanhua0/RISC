@@ -55,6 +55,9 @@ public class Room {
     @Transient
     List<Thread> threads;
 
+    //distinct testing & actual running
+    Boolean actualRecover = true;
+
 
     /**
      * The constructor, initialize the whole room.
@@ -207,14 +210,14 @@ public class Room {
 
 
         //ready to restart game
-        new Thread(() -> {
-            try {
-                runGame(true);
-            } catch (Exception ignored) {
-            }
-        }).
-
-                start();
+        if (actualRecover) {
+            new Thread(() -> {
+                try {
+                    runGame(true);
+                } catch (Exception ignored) {
+                }
+            }).start();
+        }
 
 
     }
@@ -556,6 +559,14 @@ public class Room {
             barrier.await();
         } catch (InterruptedException | BrokenBarrierException ignored) {
         }
+    }
+
+    /**
+     * get all threads, testing
+     */
+
+    public List<Thread> getThreads() {
+        return threads;
     }
 
     /**
