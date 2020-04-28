@@ -22,7 +22,7 @@ import static edu.duke.ece651.risk.shared.Constant.*;
  * @create: 2020-03-09 16:24
  **/
 @Embedded
-public abstract class Player<T> implements Serializable{
+public abstract class Player<T> implements Serializable {
     private static final long serialVersionUID = 16L;
 
     @Transient
@@ -154,6 +154,7 @@ public abstract class Player<T> implements Serializable{
     /**
      * actually, it's not a very good to implement it like so, actually, we shouldn't decouple setOwner and addTerritory
      * maybe change that in future commit
+     *
      * @param territory: territory you want to add to this player
      * @throws IllegalArgumentException
      */
@@ -190,8 +191,7 @@ public abstract class Player<T> implements Serializable{
         Object o = null;
         try {
             o = in.readObject();
-        }
-        catch (IOException ignored) {
+        } catch (IOException ignored) {
             this.setConnect(false);
         }
         return o;
@@ -199,13 +199,14 @@ public abstract class Player<T> implements Serializable{
 
     /**
      * Send a chat message to the player, use a separate socket.
+     *
      * @param message simple message object
      */
-    public void sendChatMessage(Object message){
+    public void sendChatMessage(Object message) {
         try {
             chatOut.writeObject(message);
             chatOut.flush();
-        } catch (IOException ignored){
+        } catch (IOException ignored) {
             // user disconnect from chat, not mean disconnect from game
             // this.setConnect(false);
         }
@@ -214,6 +215,7 @@ public abstract class Player<T> implements Serializable{
 
     /**
      * Use the chat socket to receive a chat message from this player.
+     *
      * @return ChatMessage
      */
     public Object recvChatMessage() {
@@ -243,7 +245,7 @@ public abstract class Player<T> implements Serializable{
     }
 
     public void setAllyRequest(int allyRequest) {
-        if (this.allyRequest!=-1){
+        if (this.allyRequest != -1) {
             throw new IllegalArgumentException("Invalid argument!");
         }
         this.allyRequest = allyRequest;
@@ -255,24 +257,24 @@ public abstract class Player<T> implements Serializable{
     }
 
 
-    public boolean hasRecvAlly(){
-        return this.allyRequest!=-1;
+    public boolean hasRecvAlly() {
+        return this.allyRequest != -1;
     }
 
-    public boolean hasAlly(){
-        return this.ally!=null;
+    public boolean hasAlly() {
+        return this.ally != null;
     }
 
-    public boolean canAllyWith(Player p){
-        if (!this.hasAlly()&&!p.hasAlly()&&this.allyRequest==p.getId()&&p.allyRequest==this.getId()&&this.allyRequest!=-1){
+    public boolean canAllyWith(Player p) {
+        if (!this.hasAlly() && !p.hasAlly() && this.allyRequest == p.getId() && p.allyRequest == this.getId() && this.allyRequest != -1) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
 
-    public void allyWith(Player p){
-        if (!this.canAllyWith(p)){
+    public void allyWith(Player p) {
+        if (!this.canAllyWith(p)) {
             throw new IllegalArgumentException("Invalid argument");
         }
         this.ally = p;
@@ -283,8 +285,8 @@ public abstract class Player<T> implements Serializable{
         p.setTerrAlly();
     }
 
-    public boolean isAllyWith(Player p){
-        return this.ally==p;
+    public boolean isAllyWith(Player p) {
+        return this.ally == p;
     }
 
 
@@ -292,7 +294,7 @@ public abstract class Player<T> implements Serializable{
         return allyRequest;
     }
 
-    public void setTerrAlly(){
+    public void setTerrAlly() {
         for (Territory territory : this.territories) {
             territory.setAlly(this.ally);
         }
@@ -306,46 +308,48 @@ public abstract class Player<T> implements Serializable{
     /**
      * rupture of alliance between this player and her ally
      */
-    public void ruptureAlly(){
-        if (hasAlly()){
+    public void ruptureAlly() {
+        if (hasAlly()) {
 //            assert(ally.ally==this);//used only for debugging
             //change the state of all territories
             for (Territory territory : this.territories) {
                 territory.ruptureAlly();
             }
             for (Object o : this.ally.territories) {
-                Territory territory = (Territory)o;
+                Territory territory = (Territory) o;
                 territory.ruptureAlly();
             }
+            this.ally.allyName = null;
             this.ally.ally = null;
             this.ally.allyRequest = -1;
             this.allyRequest = -1;
             this.ally = null;
-        }else{
+            this.allyName = null;
+        } else {
             throw new IllegalStateException("trying to rupture an not existed alliance");
         }
     }
 
-    public void addAction(Action action){
+    public void addAction(Action action) {
         this.actions.add(action);
     }
 
-    public void setIsSpying(){
-        if (isSpying){
+    public void setIsSpying() {
+        if (isSpying) {
             throw new IllegalStateException("Invalid state");
         }
         this.isSpying = true;
     }
 
-    public boolean isSpying(){
+    public boolean isSpying() {
         return this.isSpying;
     }
 
-    public boolean canAffordSpy(){
-        return this.getTechNum()>=SPY_COST;
+    public boolean canAffordSpy() {
+        return this.getTechNum() >= SPY_COST;
     }
 
-    public List<Action> getActions(){
+    public List<Action> getActions() {
         return this.actions;
     }
 
@@ -393,10 +397,11 @@ public abstract class Player<T> implements Serializable{
 
     /**
      * This function will update the chat stream of current user
-     * @param in chat in stream
+     *
+     * @param in  chat in stream
      * @param out chat out stream
      */
-    public void setChatStream(ObjectInputStream in, ObjectOutputStream out){
+    public void setChatStream(ObjectInputStream in, ObjectOutputStream out) {
         this.chatIn = in;
         this.chatOut = out;
     }

@@ -144,6 +144,10 @@ public class Room {
                     String tName = t.getName();
                     TStatus tStatus = t.getStatus();
                     this.map.getTerritory(tName).setStatus(tStatus);
+                    //update radiation info
+                    if (t.isRadiated()) {
+                        this.map.getTerritory(tName).setRadiation();
+                    }
                 }
             }
         }
@@ -178,8 +182,6 @@ public class Room {
 
             p.setTerritories(newT);
         }
-
-
 
 
         //player ally
