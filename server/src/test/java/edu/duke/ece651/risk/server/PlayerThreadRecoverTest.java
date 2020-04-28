@@ -43,12 +43,14 @@ class PlayerThreadRecoverTest {
         mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_COLLECTION).drop();
         mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_USERLIST).drop();
     }
+
     @BeforeEach
     public void cleanMongo() {
         MongoClient mongoClient = new MongoClient(new MongoClientURI(MONGO_URL));
         mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_COLLECTION).drop();
         mongoClient.getDatabase(MONGO_DB_NAME).getCollection(MONGO_USERLIST).drop();
     }
+
     @BeforeAll
     public static void beforeAll() {
         // invalid select group of objects for p1
@@ -80,13 +82,7 @@ class PlayerThreadRecoverTest {
     @Test
     public void testRun() throws IOException, BrokenBarrierException, InterruptedException {
         Player<String> player = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList(
-                p1Group,
-                p2Group,
-                s1,
-                s2,
-                a1,
-                a2,
-                a3,
+
                 ACTION_DONE,
                 ACTION_DONE
         ))), new ByteArrayOutputStream());
@@ -119,14 +115,9 @@ class PlayerThreadRecoverTest {
     @Test
     public void testReconnect() throws IOException, BrokenBarrierException, InterruptedException {
         Player<String> player = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList(
-                p1Group,
-                p2Group,
-                s1,
-                s2,
-                a1,
-                a2,
+
                 ACTION_DONE,
-                a3,
+
                 ACTION_DONE
         ))), new ByteArrayOutputStream());
         player.setId(1);
@@ -164,8 +155,52 @@ class PlayerThreadRecoverTest {
         playerThread.join();
     }
 
+    @Test
+    public void testTimeOut() throws IOException, BrokenBarrierException, InterruptedException {
+        Player<String> player = new PlayerV1<>(setupMockInput(new ArrayList<>(Arrays.asList(
+                p1Group,
+                p2Group,
+                s1,
+                s2,
+                a1,
+                a2,
+                ACTION_DONE,
+                a3,
+                ACTION_DONE
+        ))), new ByteArrayOutputStream());
+        player.setId(1);
+        player.setConnect(false);
+
+        GameInfo gameInfo = new GameInfo(-1, 1);
+        WorldMap<String> map = new MapDataBase<String>().getMap("a clash of kings");
+
+        CyclicBarrier b = new CyclicBarrier(2);
+        CyclicBarrier barrier = spy(b);
+        PlayerThreadRecover playerThread = new PlayerThreadRecover(player, map, gameInfo, barrier, new ArrayList<>(), null);
+        playerThread.start();
+
+        barrier.await(); // select territory
+        barrier.await(); // start playing playGame
+        // sleep some time and then reconnect
+        Thread.sleep(3000);
+        player.setConnect(true);
+        barrier.await(); // finish one round
+        player.loseTerritory(map.getTerritory("kingdom of the north"));
+        player.loseTerritory(map.getTerritory("kingdom of mountain and vale"));
+        player.loseTerritory(map.getTerritory("the storm kingdom"));
+        barrier.await(); // main thread finish processing round result
+        barrier.await(); // main thread finish processing round result
+
+        barrier.await(); // finish one round
+        barrier.await(); // finish one round
+        gameInfo.winnerID = 1;
+        barrier.await(); // finish one round
+
+        playerThread.interrupt();
+        playerThread.join();
 
 
+    }
 }
 
 

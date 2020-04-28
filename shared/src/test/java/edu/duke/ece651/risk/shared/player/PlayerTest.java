@@ -7,6 +7,7 @@ import edu.duke.ece651.risk.shared.map.Territory;
 import edu.duke.ece651.risk.shared.map.TerritoryImpl;
 import edu.duke.ece651.risk.shared.map.WorldMap;
 import org.junit.jupiter.api.Test;
+import org.stringtemplate.v4.ST;
 
 import java.io.*;
 import java.net.Socket;
@@ -268,6 +269,37 @@ class PlayerTest {
         for (Territory territory : player2.territories) {
             assertEquals(1,territory.getAllyId());
         }
+
+        //for recover
+        PlayerV2 p3 = new PlayerV2<String>() ;
+        p3.setId(3);
+
+        PlayerV2<String> player4 = new PlayerV2<String>(Mock.setupMockInput(Arrays.asList()),new ByteArrayOutputStream());
+        player4.setId(4);
+        player4.setName("4");
+
+        TerritoryImpl test4 = new TerritoryImpl("test", 3, 20, 20);
+        player4.addTerritory(test4);
+
+        assertTrue(player4.getTerritories().contains(test4));
+
+        p3.setTerritories(player4.getTerritories());
+        assertTrue(p3.getTerritories().contains(test4));
+
+        p3.setActions(new ArrayList<>());
+        assertEquals(new ArrayList<>(), p3.getActions());
+
+        p3.reAllyRequest(4);
+        player4.reAllyRequest(3);
+
+        p3.setAlly(player4);
+
+
+        assertEquals("4", p3.getAllyName());
+
+
+
+
     }
 
     @Test

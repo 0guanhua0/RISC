@@ -113,6 +113,7 @@ public abstract class Player<T> implements Serializable{
     //set ally for reconstruct
     public void setAlly(Player ally) {
         this.ally = ally;
+        this.allyName = ally.getName();
     }
 
     //getter for set of territory
