@@ -1,13 +1,48 @@
-# ece651-spr20-g1
+# ece651-spr20-RISC
 
-## master
+Android game in Java
 
-![pipeline](https://gitlab.oit.duke.edu/cw402/ece651-spr20-g1/badges/master/pipeline.svg)
+grade: 97/100
 
-![coverage](https://gitlab.oit.duke.edu/cw402/ece651-spr20-g1/badges/master/coverage.svg?job=test)
+## prelude
 
-## Coverage
-[Detailed coverage](https://cw402.pages.oit.duke.edu/ece651-spr20-g1/dashboard.html)
+Thanks to my teammate Kewei & Chendga. It is a great journey.
+
+I am responsible for persisting data & recovering.
+
+We use IntelliJ IDEA for editing & debugging
+
+It is much better than Emacs
+
+## video demo for evo.2
+
+[evo.2](https://www.youtube.com/watch?v=VKZ7AIK8RCM)
+
+## preview
+
+login
+
+![login](pics/login.png)
+
+room view
+
+![room](pics/room.png)
+
+add room
+
+![addroom](pics/addroom.png)
+
+choose territory
+
+![init](pics/init.png)
+
+play
+
+![play](pics/play.png)
+
+action
+
+![action](pics/action.png)
 
 ## UML
 
@@ -15,22 +50,81 @@
 
 [evo.2](https://app.creately.com/diagram/YXyNF32eHrc/edit)
 
-## test files
-In the *test_files* directory, there are several txt files which can represent a whole process of one game.
-* test case 1 --- player2 win
-    * player1.txt --- input of player1
-    * player2.txt --- input of player2
-    
-To run this test files, you need to open three terminals(one for server, two for different players).
+## code structure
 
-* terminal 1 --- `gradle run-server`(set up the game server)
-* terminal 2 --- `gradle run-client --console=plain < test_files/player1_2.txt`(run player1, will create a new roomInfo)
-* terminal 3 --- `gradle run-client --console=plain < test_files/player2_2.txt`(run player2, will join in the roomInfo)
+3 parts:
 
-**NOTE**: please strictly follow the order of commands above, otherwise you can't run the test case successfully.
+### frontend
 
-some common errors you will get(if don't follow the order):
+```shell script
+RiscClient/app/src/main/java/edu/duke/ece651/riskclient
+```
 
-* java.net.ConnectException: Connection refused --- you run the client program without setting up the server program
-* java.util.NoSuchElementException: No line found --- you run player 2 first(since it will try to join the roomInfo, but the roomInfo is not created) 
+### backend
 
+```shell script
+server/src/main/java/edu/duke/ece651/risk/server
+```
+
+```shell script
+shared/src/main/java/edu/duke/ece651/risk/shared
+```
+
+## suggestions
+
+### persist & recover
+I use Postgres to store the User name & password
+
+I use MongoDB for storing gaming data, because the data is more like document.
+
+I use Morphia for ODM, and use annotation to store the data. 
+
+db config:
+```shell script
+server/src/main/java/edu/duke/ece651/risk/server/Mongo.java
+```
+
+save & recover
+```shell script
+server/src/main/java/edu/duke/ece651/risk/server/Room.java
+```
+
+save in Room.java mainGame
+```java
+Mongo m = new Mongo();
+m.morCon().save(this);
+```
+
+recover in Room.java recover
+
+### Threading strategy 
+Server has thread pool to handle the incoming request.
+
+Each room has 1 main thread, and each player thread has its own player thread & its own chat thread.
+
+### synchronization
+
+We use barrier to make sure all info for all thread are up to date
+
+Print out the info can help, but I think setting break point is much better
+
+## run game
+
+My vm may stop working at this moment, and you need to config the MongoDB & Postgres
+to make it works.
+
+### client
+
+in 
+
+```shell script
+RiscClient/app/src/main/java/edu/duke/ece651/riskclient/Constant.java
+```
+
+```java
+//local ip for debug, change it to where you run the server
+public static final String HOST = "192.168.0.132"; 
+public static final int PORT = 12345;
+```
+
+change the host
